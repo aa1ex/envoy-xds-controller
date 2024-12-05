@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sigs.k8s.io/controller-runtime/pkg/log"
 	"strconv"
 
 	corev1 "k8s.io/api/core/v1"
@@ -358,6 +359,8 @@ func main() {
 	}
 
 	var startServers manager.RunnableFunc = func(ctx context.Context) error {
+		setupServers := log.FromContext(ctx)
+		setupServers.Info("Starting servers")
 
 		if err := cacheUpdater.Init(ctx, mgr.GetClient()); err != nil {
 			return fmt.Errorf("unable to init cache updater: %w", err)
@@ -365,7 +368,7 @@ func main() {
 
 		go func() {
 			if err = xds.RunServer(server.NewServer(ctx, snapshotCache, &test.Callbacks{Debug: true}), cfg.XDS.Port); err != nil {
-				setupLog.Error(err, "cannot run xDS server")
+				setupServers.Error(err, "cannot run xDS server")
 				os.Exit(1)
 			}
 		}()
@@ -380,12 +383,12 @@ func main() {
 				if acl := os.Getenv("ACL_CONFIG"); acl != "" {
 					err = json.Unmarshal([]byte(acl), &xdsServerCfg.Auth.ACL)
 					if err != nil {
-						setupLog.Error(err, "failed to parse ACL config")
+						setupServers.Error(err, "failed to parse ACL config")
 						os.Exit(1)
 					}
 				}
 				if err := api.New(snapshotCache, xdsServerCfg).Run(cacheAPIPort, cacheAPIScheme, cacheAPIAddr); err != nil {
-					setupLog.Error(err, "cannot run http xDS server")
+					setupServers.Error(err, "cannot run http xDS server")
 					os.Exit(1)
 				}
 			}()
