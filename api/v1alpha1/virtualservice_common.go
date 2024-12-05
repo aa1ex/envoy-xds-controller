@@ -3,8 +3,7 @@ package v1alpha1
 import "k8s.io/apimachinery/pkg/runtime"
 
 type VirtualServiceCommonSpec struct {
-	VirtualHost *runtime.RawExtension `json:"virtualHost,omitempty"`
-	// +kubebuilder:validation:Required
+	VirtualHost           *runtime.RawExtension `json:"virtualHost,omitempty"`
 	Listener              *ResourceRef          `json:"listener,omitempty"`
 	TlsConfig             *TlsConfig            `json:"tlsConfig,omitempty"`
 	AccessLog             *runtime.RawExtension `json:"accessLog,omitempty"`
@@ -29,4 +28,10 @@ type TlsConfig struct {
 
 	// Find secret with domain in annotation "envoy.kaasops.io/domains"
 	AutoDiscovery *bool `json:"autoDiscovery,omitempty"`
+}
+
+type VirtualServiceRBACSpec struct {
+	Action             string                           `json:"action,omitempty"`
+	Policies           map[string]*runtime.RawExtension `json:"policies,omitempty"`
+	AdditionalPolicies []*ResourceRef                   `json:"additionalPolicies,omitempty"`
 }
