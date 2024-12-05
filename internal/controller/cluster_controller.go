@@ -50,12 +50,14 @@ type ClusterReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
-
-	if err := r.Updater.UpdateCache(ctx, r.Client); err != nil {
-		return ctrl.Result{}, err
+	var cluster envoyv1alpha1.Cluster
+	if err := r.Get(ctx, req.NamespacedName, &cluster); err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, r.Updater.DeleteCluster(ctx, req.NamespacedName)
 	}
-
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, r.Updater.UpsertCluster(ctx, &cluster)
 }
 
 // SetupWithManager sets up the controller with the Manager.

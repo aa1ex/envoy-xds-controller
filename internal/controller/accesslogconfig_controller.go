@@ -50,12 +50,14 @@ type AccessLogConfigReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *AccessLogConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
-
-	if err := r.Updater.UpdateCache(ctx, r.Client); err != nil {
-		return ctrl.Result{}, err
+	var accessLogConfig envoyv1alpha1.AccessLogConfig
+	if err := r.Get(ctx, req.NamespacedName, &accessLogConfig); err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, r.Updater.DeleteAccessLogConfig(ctx, req.NamespacedName)
 	}
-
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, r.Updater.UpsertAccessLogConfig(ctx, &accessLogConfig)
 }
 
 // SetupWithManager sets up the controller with the Manager.

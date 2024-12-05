@@ -30,3 +30,28 @@ func (c *Cluster) unmarshalV3() (*cluster.Cluster, error) {
 	}
 	return &clusterV3, nil
 }
+
+func (c *Cluster) IsEqual(other *Cluster) bool {
+	if c == nil && other == nil {
+		return true
+	}
+	if c == nil || other == nil {
+		return false
+	}
+	if c.Spec == nil && other.Spec == nil {
+		return true
+	}
+	if c.Spec == nil || other.Spec == nil {
+		return false
+	}
+	if c.Spec.Raw == nil && other.Spec.Raw == nil {
+		return true
+	}
+	if c.Spec.Raw == nil || other.Spec.Raw == nil {
+		return false
+	}
+	if string(c.Spec.Raw) == string(other.Spec.Raw) {
+		return true
+	}
+	return false
+}

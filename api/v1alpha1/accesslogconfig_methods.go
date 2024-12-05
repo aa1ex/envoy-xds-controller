@@ -96,3 +96,28 @@ func (a *AccessLogConfig) unmarshalV3(options ...func(*opts)) (*accesslogv3.Acce
 	}
 	return accessLog, nil
 }
+
+func (a *AccessLogConfig) IsEqual(other *AccessLogConfig) bool {
+	if a == nil && other == nil {
+		return true
+	}
+	if a == nil || other == nil {
+		return false
+	}
+	if a.Spec == nil && other.Spec == nil && annotationsEqual(a.Annotations, other.Annotations) {
+		return true
+	}
+	if a.Spec == nil || other.Spec == nil {
+		return false
+	}
+	if a.Spec.Raw == nil && other.Spec.Raw == nil && annotationsEqual(a.Annotations, other.Annotations) {
+		return true
+	}
+	if a.Spec.Raw == nil || other.Spec.Raw == nil {
+		return false
+	}
+	if string(a.Spec.Raw) == string(other.Spec.Raw) && annotationsEqual(a.Annotations, other.Annotations) {
+		return true
+	}
+	return false
+}
