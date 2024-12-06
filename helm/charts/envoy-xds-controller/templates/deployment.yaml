@@ -49,7 +49,6 @@ spec:
           - --cache-api-port={{ .Values.cacheAPI.port }}
           - --cache-api-scheme={{ .Values.cacheAPI.scheme }}
           - --cache-api-addr={{ .Values.cacheAPI.address }}
-          - --cache-api-dev-mode={{ .Values.cacheAPI.devMode }}
           {{- end }}
         {{- else if .Values.cacheAPI.enabled }}
         args:
@@ -57,7 +56,6 @@ spec:
           - --cache-api-port={{ .Values.cacheAPI.port }}
           - --cache-api-scheme={{ .Values.cacheAPI.scheme }}
           - --cache-api-addr={{ .Values.cacheAPI.address }}
-          - --cache-api-dev-mode={{ .Values.cacheAPI.devMode }}
         {{- end }}
         env:
           - name: XDS_PORT

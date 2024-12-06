@@ -1,6 +1,21 @@
 # Image URL to use all building/pushing image targets
-IMG ?= controller:latest
-IMG_UI ?= controller-ui:latest
+REV=$(shell git rev-parse --short HEAD)
+TAG ?= $(REV)
+
+IMG_WITHOUT_TAG ?= $(REGISTRY)/envoy-xds-controller
+UI_IMG_WITHOUT_TAG ?= $(REGISTRY)/envoy-xds-controller-ui
+
+IMG ?= $(IMG_WITHOUT_TAG):$(TAG)
+UI_IMG ?= $(UI_IMG_WITHOUT_TAG):$(TAG)
+
+DEPLOY_TIMEOUT ?= 5m
+
+# REGISTRY is the image registry to use for build and push image targets.
+REGISTRY ?= docker.io/kaasops
+
+# LOCAL_REGISTRY is the local image registry to use for build and push image targets.
+LOCAL_REGISTRY ?= localhost:5001
+
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.31.0
 
@@ -109,10 +124,13 @@ docker-build: ## Build docker image with the manager.
 
 .PHONY: docker-build-ui
 docker-build-ui: ## Build docker image with the ui.
-	$(CONTAINER_TOOL) build -t ${IMG_UI} -f ui/Dockerfile ./ui
+	$(CONTAINER_TOOL) build -t ${UI_IMG} -f ui/Dockerfile ./ui
 
 .PHONY: docker-build-all
 docker-build-all: docker-build docker-build-ui
+
+.PHONY: docker-build-all-local
+docker-build-all-local: set-local docker-build-all
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
@@ -120,10 +138,13 @@ docker-push: ## Push docker image with the manager.
 
 .PHONY: docker-push-ui
 docker-push-ui: ## Push docker image with the ui
-	$(CONTAINER_TOOL) push ${IMG_UI}
+	$(CONTAINER_TOOL) push ${UI_IMG}
 
 .PHONY: docker-push-all
 docker-push-all: docker-push docker-push-ui
+
+.PHONY: docker-push-all-local
+docker-push-all-local: set-local docker-push-all
 
 # PLATFORMS defines the target platforms for the manager image be built to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
@@ -245,31 +266,19 @@ helm-index:
 
 ### HELM DEPLOY
 
-# REGISTRY is the image registry to use for build and push image targets.
-REGISTRY ?= docker.io/kaasops
-
-# LOCAL_REGISTRY is the local image registry to use for build and push image targets.
-LOCAL_REGISTRY ?= localhost:5001
-
-# IMAGE_NAME is the name of EXC image
-# Use envoy-xds-controller-dev in default when developing
-# Use envoy-xds-controller when releasing an image.
-IMAGE_NAME ?= envoy-xds-controller
-UI_IMAGE_NAME ?= envoy-xds-controller-ui
-
-# IMAGE is the image URL for build and push image targets.
-IMAGE ?= ${REGISTRY}/${IMAGE_NAME}
-UI_IMAGE ?= ${REGISTRY}/${UI_IMAGE_NAME}
-
-# LOCAL_IMAGE is the local image URL for build and push image targets.
-LOCAL_IMAGE ?= ${LOCAL_REGISTRY}/${IMAGE_NAME}
-LOCAL_UI_IMAGE ?= ${LOCAL_REGISTRY}/${UI_IMAGE_NAME}
-
-# Tag is the tag to use for build and push image targets.
-TAG ?= $(REV)
-WAIT_TIMEOUT ?= 15m
-
 .PHONY: helm-deploy-local
-helm-deploy-local: manifests ## Install Envoy xDS Controller into the local Kubernetes cluster specified in ~/.kube/config.
+helm-deploy-local: manifests set-local## Install Envoy xDS Controller into the local Kubernetes cluster specified in ~/.kube/config.
 	@$(LOG_TARGET)
-	helm install exc --set image.repository=$(LOCAL_IMAGE) --set image.tag=$(TAG) --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(WAIT_TIMEOUT)' --wait
+	helm install exc --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set ui.enabled=true --set cacheAPI.enabled=true --set ui.image.repository=$(UI_IMG_WITHOUT_TAG) --set ui.image.tag=$(TAG) --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+
+.PHONY: set-local
+set-local:
+	$(eval REGISTRY := $(LOCAL_REGISTRY))
+
+.PHONY: debug-local
+debug-local: set-local
+	@echo $(REGISTRY)
+	@echo $(IMG)
+
+.PHONY: dev-local
+dev-local: set-local docker-build-all docker-push-all helm-deploy-local
