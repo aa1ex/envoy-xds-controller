@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"bytes"
 	listenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 )
@@ -32,20 +33,8 @@ func (l *Listener) IsEqual(other *Listener) bool {
 	if l == nil && other == nil {
 		return true
 	}
-	if l == nil || other == nil {
+	if l == nil || other == nil || l.Spec == nil || other.Spec == nil || l.Spec.Raw == nil || other.Spec.Raw == nil {
 		return false
 	}
-	if l.Spec == nil && other.Spec == nil {
-		return true
-	}
-	if l.Spec == nil || other.Spec == nil {
-		return false
-	}
-	if l.Spec.Raw == nil && other.Spec.Raw == nil {
-		return true
-	}
-	if l.Spec.Raw == nil || other.Spec.Raw == nil {
-		return false
-	}
-	return string(l.Spec.Raw) == string(other.Spec.Raw)
+	return bytes.Equal(l.Spec.Raw, other.Spec.Raw)
 }

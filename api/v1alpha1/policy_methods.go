@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"bytes"
 	rbacv3 "github.com/envoyproxy/go-control-plane/envoy/config/rbac/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 )
@@ -50,5 +51,5 @@ func (p *Policy) IsEqual(other *Policy) bool {
 	if p.Spec.Raw == nil || other.Spec.Raw == nil {
 		return false
 	}
-	return string(p.Spec.Raw) == string(other.Spec.Raw)
+	return bytes.Equal(p.Spec.Raw, other.Spec.Raw)
 }

@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	accesslogv3 "github.com/envoyproxy/go-control-plane/envoy/config/accesslog/v3"
@@ -104,20 +105,22 @@ func (a *AccessLogConfig) IsEqual(other *AccessLogConfig) bool {
 	if a == nil || other == nil {
 		return false
 	}
-	if a.Annotations[annotationAutogenFilename] != other.Annotations[annotationAutogenFilename] {
+
+	valA, okA := a.Annotations[annotationAutogenFilename]
+	valB, okB := other.Annotations[annotationAutogenFilename]
+	if okA != okB || valA != valB {
 		return false
 	}
+
 	if a.Spec == nil && other.Spec == nil {
 		return true
 	}
 	if a.Spec == nil || other.Spec == nil {
 		return false
 	}
-	if a.Spec.Raw == nil && other.Spec.Raw == nil {
-		return true
-	}
-	if a.Spec.Raw == nil || other.Spec.Raw == nil {
+	if !bytes.Equal(a.Spec.Raw, other.Spec.Raw) {
 		return false
 	}
-	return string(a.Spec.Raw) == string(other.Spec.Raw)
+
+	return true
 }

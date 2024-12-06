@@ -77,35 +77,31 @@ func (vs *VirtualService) IsEqual(other *VirtualService) bool {
 	if vs == nil || other == nil {
 		return false
 	}
+	if vs.Annotations == nil || other.Annotations == nil {
+		return false
+	}
 	if vs.Annotations[annotationKeyEnvoyKaaSopsIoNodeID] != other.Annotations[annotationKeyEnvoyKaaSopsIoNodeID] {
 		return false
 	}
 	if !vs.Spec.VirtualServiceCommonSpec.IsEqual(&other.Spec.VirtualServiceCommonSpec) {
 		return false
 	}
-	if vs.Spec.Template == nil && other.Spec.Template != nil {
-		return false
-	}
-	if vs.Spec.Template != nil && other.Spec.Template == nil {
+	if (vs.Spec.Template == nil) != (other.Spec.Template == nil) {
 		return false
 	}
 	if vs.Spec.Template != nil && other.Spec.Template != nil {
-		if vs.Spec.Template.Name != other.Spec.Template.Name {
+		if vs.Spec.Template.Name != other.Spec.Template.Name ||
+			vs.Spec.Template.Namespace != other.Spec.Template.Namespace {
 			return false
 		}
-		if vs.Spec.Template.Namespace != other.Spec.Template.Namespace {
+	}
+	if len(vs.Spec.TemplateOptions) != len(other.Spec.TemplateOptions) {
+		return false
+	}
+	for i := range vs.Spec.TemplateOptions {
+		if vs.Spec.TemplateOptions[i].Field != other.Spec.TemplateOptions[i].Field ||
+			vs.Spec.TemplateOptions[i].Modifier != other.Spec.TemplateOptions[i].Modifier {
 			return false
-		}
-		if len(vs.Spec.TemplateOptions) != len(other.Spec.TemplateOptions) {
-			return false
-		}
-		for i, opt := range vs.Spec.TemplateOptions {
-			if other.Spec.TemplateOptions[i].Field != opt.Field {
-				return false
-			}
-			if other.Spec.TemplateOptions[i].Modifier != opt.Modifier {
-				return false
-			}
 		}
 	}
 	return true

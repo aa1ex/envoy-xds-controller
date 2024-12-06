@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"bytes"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 )
@@ -49,7 +50,7 @@ func (r *Route) IsEqual(other *Route) bool {
 		return false
 	}
 	for i, route := range r.Spec {
-		if string(other.Spec[i].Raw) != string(route.Raw) {
+		if !bytes.Equal(other.Spec[i].Raw, route.Raw) {
 			return false
 		}
 	}

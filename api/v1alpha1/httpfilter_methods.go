@@ -1,8 +1,10 @@
 package v1alpha1
 
 import (
+	"encoding/json"
 	hcmv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
+	"reflect"
 )
 
 func (h *HttpFilter) UnmarshalV3() ([]*hcmv3.HttpFilter, error) {
@@ -48,8 +50,24 @@ func (h *HttpFilter) IsEqual(other *HttpFilter) bool {
 	if len(h.Spec) != len(other.Spec) {
 		return false
 	}
+
 	for i, httpFilterSpec := range h.Spec {
-		if string(other.Spec[i].Raw) != string(httpFilterSpec.Raw) {
+		if httpFilterSpec == nil || other.Spec[i] == nil {
+			if httpFilterSpec != other.Spec[i] {
+				return false
+			}
+			continue
+		}
+
+		var thisJSON, otherJSON any
+		if err := json.Unmarshal(httpFilterSpec.Raw, &thisJSON); err != nil {
+			return false
+		}
+		if err := json.Unmarshal(other.Spec[i].Raw, &otherJSON); err != nil {
+			return false
+		}
+
+		if !reflect.DeepEqual(thisJSON, otherJSON) {
 			return false
 		}
 	}

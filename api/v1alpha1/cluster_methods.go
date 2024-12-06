@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"bytes"
 	cluster "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 )
@@ -50,8 +51,11 @@ func (c *Cluster) IsEqual(other *Cluster) bool {
 	if c.Spec.Raw == nil || other.Spec.Raw == nil {
 		return false
 	}
-	if string(c.Spec.Raw) == string(other.Spec.Raw) {
-		return true
+	if len(c.Spec.Raw) != len(other.Spec.Raw) {
+		return false
 	}
-	return false
+	if !bytes.Equal(c.Spec.Raw, other.Spec.Raw) {
+		return false
+	}
+	return true
 }

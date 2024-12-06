@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	"bytes"
 	"encoding/json"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -46,8 +47,8 @@ func (vsc *VirtualServiceCommonSpec) IsEqual(other *VirtualServiceCommonSpec) bo
 	if vsc == nil || other == nil {
 		return false
 	}
-	// TODO:
+	// TODO: bad performance
 	vscBytes, _ := json.Marshal(vsc)
 	vscOtherBytes, _ := json.Marshal(other)
-	return string(vscBytes) == string(vscOtherBytes)
+	return bytes.Equal(vscBytes, vscOtherBytes)
 }
