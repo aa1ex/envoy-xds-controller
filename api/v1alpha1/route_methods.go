@@ -37,3 +37,21 @@ func (r *Route) unmarshalV3() ([]*routev3.Route, error) {
 	}
 	return routesV3, nil
 }
+
+func (r *Route) IsEqual(other *Route) bool {
+	if r == nil && other == nil {
+		return true
+	}
+	if r == nil || other == nil {
+		return false
+	}
+	if len(r.Spec) != len(other.Spec) {
+		return false
+	}
+	for i, route := range r.Spec {
+		if string(other.Spec[i].Raw) != string(route.Raw) {
+			return false
+		}
+	}
+	return true
+}

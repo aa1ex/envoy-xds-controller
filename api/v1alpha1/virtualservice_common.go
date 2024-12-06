@@ -1,6 +1,9 @@
 package v1alpha1
 
-import "k8s.io/apimachinery/pkg/runtime"
+import (
+	"encoding/json"
+	"k8s.io/apimachinery/pkg/runtime"
+)
 
 type VirtualServiceCommonSpec struct {
 	VirtualHost           *runtime.RawExtension `json:"virtualHost,omitempty"`
@@ -34,4 +37,17 @@ type VirtualServiceRBACSpec struct {
 	Action             string                           `json:"action,omitempty"`
 	Policies           map[string]*runtime.RawExtension `json:"policies,omitempty"`
 	AdditionalPolicies []*ResourceRef                   `json:"additionalPolicies,omitempty"`
+}
+
+func (vsc *VirtualServiceCommonSpec) IsEqual(other *VirtualServiceCommonSpec) bool {
+	if vsc == nil && other == nil {
+		return true
+	}
+	if vsc == nil || other == nil {
+		return false
+	}
+	// TODO:
+	vscBytes, _ := json.Marshal(vsc)
+	vscOtherBytes, _ := json.Marshal(other)
+	return string(vscBytes) == string(vscOtherBytes)
 }

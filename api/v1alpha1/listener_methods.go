@@ -27,3 +27,25 @@ func (l *Listener) UnmarshalV3AndValidate() (*listenerv3.Listener, error) {
 	}
 	return nil, listener.ValidateAll()
 }
+
+func (l *Listener) IsEqual(other *Listener) bool {
+	if l == nil && other == nil {
+		return true
+	}
+	if l == nil || other == nil {
+		return false
+	}
+	if l.Spec == nil && other.Spec == nil {
+		return true
+	}
+	if l.Spec == nil || other.Spec == nil {
+		return false
+	}
+	if l.Spec.Raw == nil && other.Spec.Raw == nil {
+		return true
+	}
+	if l.Spec.Raw == nil || other.Spec.Raw == nil {
+		return false
+	}
+	return string(l.Spec.Raw) == string(other.Spec.Raw)
+}

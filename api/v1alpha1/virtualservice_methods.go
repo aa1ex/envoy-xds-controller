@@ -7,9 +7,13 @@ import (
 	"strings"
 )
 
+const (
+	annotationKeyEnvoyKaaSopsIoNodeID = "envoy.kaasops.io/node-id"
+)
+
 func (vs *VirtualService) GetNodeIDs() []string {
 	annotations := vs.GetAnnotations()
-	nodeIDsAnnotation, _ := annotations["envoy.kaasops.io/node-id"]
+	nodeIDsAnnotation, _ := annotations[annotationKeyEnvoyKaaSopsIoNodeID]
 	if nodeIDsAnnotation == "" {
 		return nil
 	}
@@ -64,4 +68,45 @@ func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, template
 		return err
 	}
 	return nil
+}
+
+func (vs *VirtualService) IsEqual(other *VirtualService) bool {
+	if vs == nil && other == nil {
+		return true
+	}
+	if vs == nil || other == nil {
+		return false
+	}
+	if vs.Annotations[annotationKeyEnvoyKaaSopsIoNodeID] != other.Annotations[annotationKeyEnvoyKaaSopsIoNodeID] {
+		return false
+	}
+	if !vs.Spec.VirtualServiceCommonSpec.IsEqual(&other.Spec.VirtualServiceCommonSpec) {
+		return false
+	}
+	if vs.Spec.Template == nil && other.Spec.Template != nil {
+		return false
+	}
+	if vs.Spec.Template != nil && other.Spec.Template == nil {
+		return false
+	}
+	if vs.Spec.Template != nil && other.Spec.Template != nil {
+		if vs.Spec.Template.Name != other.Spec.Template.Name {
+			return false
+		}
+		if vs.Spec.Template.Namespace != other.Spec.Template.Namespace {
+			return false
+		}
+		if len(vs.Spec.TemplateOptions) != len(other.Spec.TemplateOptions) {
+			return false
+		}
+		for i, opt := range vs.Spec.TemplateOptions {
+			if other.Spec.TemplateOptions[i].Field != opt.Field {
+				return false
+			}
+			if other.Spec.TemplateOptions[i].Modifier != opt.Modifier {
+				return false
+			}
+		}
+	}
+	return true
 }

@@ -30,3 +30,25 @@ func (p *Policy) UnmarshalV3AndValidate() (*rbacv3.Policy, error) {
 	}
 	return policy, nil
 }
+
+func (p *Policy) IsEqual(other *Policy) bool {
+	if p == nil && other == nil {
+		return true
+	}
+	if p == nil || other == nil {
+		return false
+	}
+	if p.Spec == nil && other.Spec == nil {
+		return true
+	}
+	if p.Spec == nil || other.Spec == nil {
+		return false
+	}
+	if p.Spec.Raw == nil && other.Spec.Raw == nil {
+		return true
+	}
+	if p.Spec.Raw == nil || other.Spec.Raw == nil {
+		return false
+	}
+	return string(p.Spec.Raw) == string(other.Spec.Raw)
+}

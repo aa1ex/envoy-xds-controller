@@ -37,3 +37,21 @@ func (h *HttpFilter) unmarshalV3() ([]*hcmv3.HttpFilter, error) {
 	}
 	return httpFilters, nil
 }
+
+func (h *HttpFilter) IsEqual(other *HttpFilter) bool {
+	if h == nil && other == nil {
+		return true
+	}
+	if h == nil || other == nil {
+		return false
+	}
+	if len(h.Spec) != len(other.Spec) {
+		return false
+	}
+	for i, httpFilterSpec := range h.Spec {
+		if string(other.Spec[i].Raw) != string(httpFilterSpec.Raw) {
+			return false
+		}
+	}
+	return true
+}

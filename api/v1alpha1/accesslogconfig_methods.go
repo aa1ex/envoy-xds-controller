@@ -104,20 +104,20 @@ func (a *AccessLogConfig) IsEqual(other *AccessLogConfig) bool {
 	if a == nil || other == nil {
 		return false
 	}
-	if a.Spec == nil && other.Spec == nil && annotationsEqual(a.Annotations, other.Annotations) {
+	if a.Annotations[annotationAutogenFilename] != other.Annotations[annotationAutogenFilename] {
+		return false
+	}
+	if a.Spec == nil && other.Spec == nil {
 		return true
 	}
 	if a.Spec == nil || other.Spec == nil {
 		return false
 	}
-	if a.Spec.Raw == nil && other.Spec.Raw == nil && annotationsEqual(a.Annotations, other.Annotations) {
+	if a.Spec.Raw == nil && other.Spec.Raw == nil {
 		return true
 	}
 	if a.Spec.Raw == nil || other.Spec.Raw == nil {
 		return false
 	}
-	if string(a.Spec.Raw) == string(other.Spec.Raw) && annotationsEqual(a.Annotations, other.Annotations) {
-		return true
-	}
-	return false
+	return string(a.Spec.Raw) == string(other.Spec.Raw)
 }

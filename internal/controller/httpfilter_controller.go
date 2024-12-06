@@ -50,12 +50,14 @@ type HttpFilterReconciler struct {
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *HttpFilterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
-
-	if err := r.Updater.UpdateCache(ctx, r.Client); err != nil {
-		return ctrl.Result{}, err
+	var httpFilter envoyv1alpha1.HttpFilter
+	if err := r.Get(ctx, req.NamespacedName, &httpFilter); err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, r.Updater.DeleteHTTPFilter(ctx, req.NamespacedName)
 	}
-
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, r.Updater.UpsertHTTPFilter(ctx, &httpFilter)
 }
 
 // SetupWithManager sets up the controller with the Manager.
