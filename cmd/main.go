@@ -73,7 +73,7 @@ func init() {
 
 type Config struct {
 	WatchNamespaces       string `default:""                     envconfig:"WATCH_NAMESPACES"`
-	InstallationNamespace string `default:"envoy-xds-controller-system" envconfig:"INSTALLATION_NAMESPACE"`
+	InstallationNamespace string `default:"envoy-xds-controller" envconfig:"INSTALLATION_NAMESPACE"`
 	XDS                   struct {
 		Port int `default:"8888" envconfig:"XDS_PORT"`
 	}

@@ -121,24 +121,23 @@ func (r *WebhookReconciler) ReconcileCertificates(ctx context.Context, certSecre
 
 	if err := r.Client.Get(ctx, types.NamespacedName{Namespace: certSecret.Namespace, Name: certSecret.Name}, certSecret); err != nil {
 		if err := r.Client.Create(ctx, certSecret); err != nil {
-			return err
+			return fmt.Errorf("failed to create secret: %w", err)
 		}
 	}
 
-	// If need create of update certificate for webhook - do it
 	if r.shouldUpdateCertificate(certSecret) {
 		r.Log.Info("Generating new TLS Certificate")
 
 		ca, err := cert.GenerateCertificateAuthority()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to generate certificate authority: %w", err)
 		}
 
 		opts := cert.NewCertOpts(time.Now().Add(certificateValidity), fmt.Sprintf("envoy-xds-controller-webhook-service.%s.svc", r.Namespace))
 
 		crt, key, err := ca.GenerateCertificate(opts)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to generate certificate: %w", err)
 		}
 
 		caCrt, _ := ca.CACertificatePem()
@@ -157,7 +156,7 @@ func (r *WebhookReconciler) ReconcileCertificates(ctx context.Context, certSecre
 			return nil
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to update secret: %w", err)
 		}
 	}
 
@@ -166,7 +165,10 @@ func (r *WebhookReconciler) ReconcileCertificates(ctx context.Context, certSecre
 		return fmt.Errorf("missing %s field in %s secret", corev1.ServiceAccountRootCAKey, r.TLSSecretName)
 	}
 
-	return r.updateValidatingWebhookConfiguration(ctx, caBundle)
+	if err := r.updateValidatingWebhookConfiguration(ctx, caBundle); err != nil {
+		return fmt.Errorf("failed to update ValidatingWebhookConfiguration: %w", err)
+	}
+	return nil
 }
 
 // shouldUpdateCertificate checks whether it is necessary to update or create a certificate

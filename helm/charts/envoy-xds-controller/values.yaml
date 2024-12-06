@@ -1,0 +1,179 @@
+fullnameOverride: ""
+nameOverride: ""
+namespaceOverride: ""
+
+xds:
+  port: 9000
+
+cacheAPI:
+  enabled: false
+  devMode: false
+  port: 9999
+  address: "localhost:9999"
+  scheme: "http"
+  ingress:
+    enabled: false
+    annotations: {}
+    className: ""
+    hosts: []
+    # - host: envoy-xds-controller-api.<DOMAIN-ZONE>
+    #    paths:
+    #      - path: /
+    #        pathType: Prefix
+    tls: []
+    # - hosts:
+    #   - envoy-xds-controller-api.<DOMAIN-ZONE>
+
+
+ui:
+  enabled: false
+  image:
+    repository: kaasops/envoy-xds-controller-ui
+    tag: "" # rewrites Chart.AppVersion
+    pullPolicy: IfNotPresent
+  args: []
+  envs: {}
+  cacheAPI: "http://exc-envoy-xds-controller-cache-api:9999"
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 50Mi
+  port: 8080
+  ingress:
+    enabled: false
+    annotations:
+      nginx.ingress.kubernetes.io/app-root: /nodeIDs
+    className: ""
+    hosts: []
+    # - host: envoy-xds-controller-ui.<DOMAIN-ZONE>
+    #    paths:
+    #      - path: /
+    #        pathType: Prefix
+    tls: []
+    # - hosts:
+    #   - envoy-xds-controller-ui.<DOMAIN-ZONE>
+
+
+# if not set - watch all namespaces!
+watchNamespaces: []
+
+
+replicaCount: 1
+
+image:
+  repository: kaasops/envoy-xds-controller
+  tag: "" # rewrites Chart.AppVersion
+  pullPolicy: IfNotPresent
+
+# -- enables CRD creation and management.
+# -- with this option, if you remove this chart, all crd resources will be deleted with it.
+createCRD: true
+
+strategy: {}
+# rollingUpdate:
+#  maxSurge: 25%
+#  maxUnavailable: 25%
+# type: RollingUpdate
+
+imagePullSecrets: []
+
+securityContext: {}
+  # allowPrivilegeEscalation: false
+  # runAsGroup: 1000
+  # runAsNonRoot: true
+  # readOnlyRootFilesystem: true
+  # seccompProfile:
+  #   type: RuntimeDefault
+  # capabilities:
+  #   drop:
+  #     - ALL
+
+podSecurityContext: {}
+
+envs: {}
+
+tolerations: {}
+
+resources:
+  limits:
+    cpu: "1"
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 50Mi
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  annotations: {}
+  className: ""
+  hosts: []
+  # - host: envoy-xds-controller.<DOMAIN-ZONE>
+  #    paths:
+  #      - path: /
+  #        pathType: Prefix
+  tls: []
+  # - hosts:
+  #   - envoy-xds-controller.<DOMAIN-ZONE>
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+rbac:
+  create: true
+  annotations: {}
+  extraLabels: {}
+
+# extra Labels for Pods, Deployment
+extraLabels: {}
+
+# Annotations to be added to the deployment
+annotations: {}
+
+# Args to path to operator
+args: []
+
+secrets: {}
+# - name: elastic-creds
+#   data:
+#     username: "logstash"
+#     password: "password"
+
+
+# Validating Webhook Options
+webhook:
+  enabled: true
+  name: "envoy-xds-controller-validating-webhook-cfg"
+  port: 9443
+  tls:
+    # -- Name of the Envoy xDS Controller TLS Secret name when externally managed.
+    name: "envoy-xds-controller-tls"
+
+auth:
+  enabled: false
+  oidc:
+    clientId: "envoy-xds-controller"
+    issuerUrl: "http://dex.dex:5556"
+    scope: "openid profile groups"
+    redirectUri: "http://localhost:8080/callback"
+  acl:
+    nodeIdsByGroup:
+      admins:
+        - "*"
+      authors:
+        - "node1"
+      users:
+        - "node1"
+        - "node2"

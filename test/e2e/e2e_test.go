@@ -35,7 +35,7 @@ import (
 )
 
 // namespace where the project is deployed in
-const namespace = "envoy-xds-controller-system"
+const namespace = "envoy-xds-controller"
 
 // serviceAccountName created for the project
 const serviceAccountName = "envoy-xds-controller-controller-manager"

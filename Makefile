@@ -1,5 +1,6 @@
 # Image URL to use all building/pushing image targets
 IMG ?= controller:latest
+IMG_UI ?= controller-ui:latest
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.31.0
 
@@ -46,6 +47,7 @@ help: ## Display this help.
 .PHONY: manifests
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=helm/charts/envoy-xds-controller/crds
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
@@ -105,9 +107,23 @@ run: manifests generate fmt vet ## Run a controller from your host.
 docker-build: ## Build docker image with the manager.
 	$(CONTAINER_TOOL) build -t ${IMG} .
 
+.PHONY: docker-build-ui
+docker-build-ui: ## Build docker image with the ui.
+	$(CONTAINER_TOOL) build -t ${IMG_UI} -f ui/Dockerfile ./ui
+
+.PHONY: docker-build-all
+docker-build-all: docker-build docker-build-ui
+
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
 	$(CONTAINER_TOOL) push ${IMG}
+
+.PHONY: docker-push-ui
+docker-push-ui: ## Push docker image with the ui
+	$(CONTAINER_TOOL) push ${IMG_UI}
+
+.PHONY: docker-push-all
+docker-push-all: docker-push docker-push-ui
 
 # PLATFORMS defines the target platforms for the manager image be built to provide support to multiple
 # architectures. (i.e. make docker-buildx IMG=myregistry/mypoperator:0.0.1). To use this option you need to:
@@ -210,3 +226,50 @@ mv $(1) $(1)-$(3) ;\
 } ;\
 ln -sf $(1)-$(3) $(1)
 endef
+
+## HELM
+
+URL=https://kaasops.github.io/envoy-xds-controller/helm
+
+.PHONY: helm-lint
+helm-lint:
+	helm lint helm/charts/envoy-xds-controller
+
+.PHONY: helm-package
+helm-package:
+	helm package helm/charts/* -d helm/packages
+
+.PHONY: helm-index
+helm-index:
+	helm repo index --url ${URL} ./helm
+
+### HELM DEPLOY
+
+# REGISTRY is the image registry to use for build and push image targets.
+REGISTRY ?= docker.io/kaasops
+
+# LOCAL_REGISTRY is the local image registry to use for build and push image targets.
+LOCAL_REGISTRY ?= localhost:5001
+
+# IMAGE_NAME is the name of EXC image
+# Use envoy-xds-controller-dev in default when developing
+# Use envoy-xds-controller when releasing an image.
+IMAGE_NAME ?= envoy-xds-controller
+UI_IMAGE_NAME ?= envoy-xds-controller-ui
+
+# IMAGE is the image URL for build and push image targets.
+IMAGE ?= ${REGISTRY}/${IMAGE_NAME}
+UI_IMAGE ?= ${REGISTRY}/${UI_IMAGE_NAME}
+
+# LOCAL_IMAGE is the local image URL for build and push image targets.
+LOCAL_IMAGE ?= ${LOCAL_REGISTRY}/${IMAGE_NAME}
+LOCAL_UI_IMAGE ?= ${LOCAL_REGISTRY}/${UI_IMAGE_NAME}
+
+# Tag is the tag to use for build and push image targets.
+TAG ?= $(REV)
+WAIT_TIMEOUT ?= 15m
+
+.PHONY: helm-deploy-local
+helm-deploy-local: manifests ## Install Envoy xDS Controller into the local Kubernetes cluster specified in ~/.kube/config.
+	@$(LOG_TARGET)
+	helm install exc --set image.repository=$(LOCAL_IMAGE) --set image.tag=$(TAG) --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(WAIT_TIMEOUT)' --wait
