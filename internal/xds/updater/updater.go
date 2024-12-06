@@ -7,6 +7,7 @@ import (
 	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
 	"github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/resource/v3"
+	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	wrapped "github.com/kaasops/envoy-xds-controller/internal/xds/cache"
@@ -60,9 +61,14 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	usedSecrets := make(map[helpers.NamespacedName]helpers.NamespacedName)
 
 	nodeIDsForCleanup := c.snapshotCache.GetNodeIDsAsMap()
+	var commonVirtualSerices []*v1alpha1.VirtualService
 
 	for _, vs := range c.store.VirtualServices {
 		vsNodeIDs := vs.GetNodeIDs()
+		if isCommonVirtualService(vsNodeIDs) {
+			commonVirtualSerices = append(commonVirtualSerices, vs)
+			continue
+		}
 
 		vsRes, vsUsedSecrets, err := resbuilder.BuildResources(vs, c.store)
 		if err != nil {
@@ -101,6 +107,29 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 					for i, secret := range vsRes.Secrets {
 						tmp[nodeID][resource.SecretType][i] = secret
 					}
+				}
+			}
+		}
+	}
+
+	if len(commonVirtualSerices) > 0 {
+		for _, vs := range commonVirtualSerices {
+			vsRes, vsUsedSecrets, err := resbuilder.BuildResources(vs, c.store)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+			for _, secret := range vsUsedSecrets {
+				usedSecrets[secret] = helpers.NamespacedName{Name: vs.Name, Namespace: vs.Namespace}
+			}
+			for _, resources := range tmp {
+				resources[resource.ListenerType] = append(resources[resource.ListenerType], vsRes.Listener)
+				resources[resource.RouteType] = append(resources[resource.RouteType], vsRes.RouteConfig)
+				for _, cl := range vsRes.Clusters {
+					resources[resource.ClusterType] = append(resources[resource.ClusterType], cl)
+				}
+				for _, secret := range vsRes.Secrets {
+					resources[resource.SecretType] = append(resources[resource.SecretType], secret)
 				}
 			}
 		}
@@ -211,4 +240,8 @@ func getName(msg proto.Message) string {
 		}
 	}
 	return ""
+}
+
+func isCommonVirtualService(nodeIDs []string) bool {
+	return len(nodeIDs) == 1 && nodeIDs[0] == "*"
 }
