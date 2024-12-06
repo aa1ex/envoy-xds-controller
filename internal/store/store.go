@@ -35,6 +35,7 @@ func New() *Store {
 		Policies:                make(map[helpers.NamespacedName]*v1alpha1.Policy),
 		Secrets:                 make(map[helpers.NamespacedName]*v1.Secret),
 	}
+	store.UpdateDomainSecretsMap()
 	return store
 }
 
@@ -120,14 +121,14 @@ func (s *Store) Fill(ctx context.Context, cl client.Client) error {
 	for _, secret := range secrets.Items {
 		s.Secrets[helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name}] = &secret
 	}
-	s.DomainToSecretMap, err = buildDomainToSecretMap(secrets.Items)
+	s.UpdateDomainSecretsMap()
 	return err
 }
 
-func buildDomainToSecretMap(secrets []v1.Secret) (map[string]v1.Secret, error) {
+func (s *Store) UpdateDomainSecretsMap() {
 	m := make(map[string]v1.Secret)
 
-	for _, secret := range secrets {
+	for _, secret := range s.Secrets {
 		for _, domain := range strings.Split(secret.Annotations["envoy.kaasops.io/domains"], ",") {
 			domain = strings.TrimSpace(domain)
 			if domain == "" {
@@ -137,9 +138,8 @@ func buildDomainToSecretMap(secrets []v1.Secret) (map[string]v1.Secret, error) {
 				// TODO domain already exist in another secret! Need create error case
 				continue
 			}
-			m[domain] = secret
+			m[domain] = *secret
 		}
 	}
-
-	return m, nil
+	s.DomainToSecretMap = m
 }
