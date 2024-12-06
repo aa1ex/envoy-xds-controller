@@ -58,6 +58,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		if !ok {
 			return nil, nil, fmt.Errorf("virtual service template %s/%s not found", helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace), vs.Spec.Template.Name)
 		}
+		vs = vs.DeepCopy()
 		err = vs.FillFromTemplate(vst, vs.Spec.TemplateOptions...)
 		if err != nil {
 			return nil, nil, err
