@@ -2,6 +2,8 @@ package cache
 
 import (
 	"context"
+	"sync"
+
 	clusterv3 "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	listenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
@@ -9,7 +11,6 @@ import (
 	"github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	resourcev3 "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
 	"golang.org/x/exp/maps"
-	"sync"
 )
 
 type SnapshotCache struct {
@@ -34,7 +35,7 @@ func (c *SnapshotCache) SetSnapshot(ctx context.Context, nodeID string, snapshot
 
 func (c *SnapshotCache) GetSnapshot(nodeID string) (cache.ResourceSnapshot, error) {
 	c.mu.RLock()
-	c.mu.RUnlock()
+	defer c.mu.RUnlock()
 	return c.SnapshotCache.GetSnapshot(nodeID)
 }
 
@@ -65,13 +66,13 @@ func (c *SnapshotCache) GetNodeIDs() []string {
 
 func (c *SnapshotCache) GetClusters(nodeID string) ([]*clusterv3.Cluster, error) {
 	c.mu.RLock()
-	c.mu.RUnlock()
+	defer c.mu.RUnlock()
 	snapshot, err := c.SnapshotCache.GetSnapshot(nodeID)
 	if err != nil {
 		return nil, err
 	}
 	data := snapshot.GetResources(resourcev3.ClusterType)
-	var clusters []*clusterv3.Cluster
+	clusters := make([]*clusterv3.Cluster, 0, len(data))
 	for _, cluster := range data {
 		clusters = append(clusters, cluster.(*clusterv3.Cluster))
 	}
@@ -80,13 +81,13 @@ func (c *SnapshotCache) GetClusters(nodeID string) ([]*clusterv3.Cluster, error)
 
 func (c *SnapshotCache) GetSecrets(nodeID string) ([]*tlsv3.Secret, error) {
 	c.mu.RLock()
-	c.mu.RUnlock()
+	defer c.mu.RUnlock()
 	snapshot, err := c.SnapshotCache.GetSnapshot(nodeID)
 	if err != nil {
 		return nil, err
 	}
 	data := snapshot.GetResources(resourcev3.SecretType)
-	var secrets []*tlsv3.Secret
+	secrets := make([]*tlsv3.Secret, 0, len(data))
 	for _, secret := range data {
 		secrets = append(secrets, secret.(*tlsv3.Secret))
 	}
@@ -95,13 +96,13 @@ func (c *SnapshotCache) GetSecrets(nodeID string) ([]*tlsv3.Secret, error) {
 
 func (c *SnapshotCache) GetRouteConfigurations(nodeID string) ([]*routev3.RouteConfiguration, error) {
 	c.mu.RLock()
-	c.mu.RUnlock()
+	defer c.mu.RUnlock()
 	snapshot, err := c.SnapshotCache.GetSnapshot(nodeID)
 	if err != nil {
 		return nil, err
 	}
 	data := snapshot.GetResources(resourcev3.RouteType)
-	var rConfigs []*routev3.RouteConfiguration
+	rConfigs := make([]*routev3.RouteConfiguration, 0, len(data))
 	for _, rc := range data {
 		rConfigs = append(rConfigs, rc.(*routev3.RouteConfiguration))
 	}
@@ -110,13 +111,13 @@ func (c *SnapshotCache) GetRouteConfigurations(nodeID string) ([]*routev3.RouteC
 
 func (c *SnapshotCache) GetListeners(nodeID string) ([]*listenerv3.Listener, error) {
 	c.mu.RLock()
-	c.mu.RUnlock()
+	defer c.mu.RUnlock()
 	snapshot, err := c.SnapshotCache.GetSnapshot(nodeID)
 	if err != nil {
 		return nil, err
 	}
 	data := snapshot.GetResources(resourcev3.ListenerType)
-	var listeners []*listenerv3.Listener
+	listeners := make([]*listenerv3.Listener, 0, len(data))
 	for _, listener := range data {
 		listeners = append(listeners, listener.(*listenerv3.Listener))
 	}

@@ -36,11 +36,11 @@ type VirtualServiceStatus struct {
 	LastAppliedHash *uint32 `json:"lastAppliedHash,omitempty"`
 }
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-//+kubebuilder:resource:shortName=vs,categories=all
-//+kubebuilder:printcolumn:name="Valid",type="boolean",JSONPath=".status.valid"
-//+kubebuilder:printcolumn:name="Message",type="string",JSONPath=".status.message"
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:resource:shortName=vs,categories=all
+// +kubebuilder:printcolumn:name="Valid",type="boolean",JSONPath=".status.valid"
+// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=".status.message"
 
 // VirtualService is the Schema for the virtualservices API.
 type VirtualService struct {

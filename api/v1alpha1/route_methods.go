@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"bytes"
+
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 )

@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"context"
+
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gin-gonic/gin"

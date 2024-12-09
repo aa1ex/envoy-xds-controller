@@ -19,11 +19,12 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
-	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

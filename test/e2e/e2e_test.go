@@ -277,6 +277,7 @@ var _ = Describe("Manager", Ordered, func() {
 			verifyConfigUpdated := func(g Gomega) {
 				cfgDump := getEnvoyConfigDump()
 				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
+				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                "test",
 					"configs.0.bootstrap.node.cluster":                                                                                           "e2e",
@@ -488,6 +489,7 @@ var _ = Describe("Manager", Ordered, func() {
 			verifyConfigUpdated := func(g Gomega) {
 				cfgDump := getEnvoyConfigDump()
 				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
+				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                "test",
 					"configs.0.bootstrap.node.cluster":                                                                                           "e2e",
@@ -523,7 +525,7 @@ var _ = Describe("Manager", Ordered, func() {
 			err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
 			Expect(err).To(HaveOccurred())
 
-			/////////////
+			// ---
 
 			By("cleanup virtual service")
 			err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service.yaml")
@@ -596,7 +598,7 @@ func serviceAccountToken() (string, error) {
 
 		// Parse the JSON output to extract the token
 		var token tokenRequest
-		err = json.Unmarshal([]byte(output), &token)
+		err = json.Unmarshal(output, &token)
 		g.Expect(err).NotTo(HaveOccurred())
 
 		out = token.Status.Token

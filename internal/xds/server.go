@@ -25,10 +25,6 @@ const (
 	grpcMaxConcurrentStreams = 1000000
 )
 
-type Server struct {
-	xdsserver server.Server
-}
-
 func registerServer(grpcServer *grpc.Server, server server.Server) {
 	// register services
 	discoverygrpc.RegisterAggregatedDiscoveryServiceServer(grpcServer, server)

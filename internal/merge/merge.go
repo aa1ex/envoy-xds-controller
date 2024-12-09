@@ -94,7 +94,7 @@ func mergeMaps(a, b map[string]any, opts *parsedOpts, currentPath string) map[st
 		}
 	}
 
-	for key, _ := range opts.delete {
+	for key := range opts.delete {
 		deleteKey(result, key)
 	}
 

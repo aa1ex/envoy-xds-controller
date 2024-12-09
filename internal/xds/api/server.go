@@ -2,8 +2,9 @@ package api
 
 import (
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/xds/api/v1/middlewares"
 	"time"
+
+	"github.com/kaasops/envoy-xds-controller/internal/xds/api/v1/middlewares"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"

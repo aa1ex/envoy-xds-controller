@@ -2,6 +2,7 @@ package updater
 
 import (
 	"context"
+
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"

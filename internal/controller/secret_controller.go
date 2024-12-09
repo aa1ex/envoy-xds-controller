@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+
 	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 	v1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/event"

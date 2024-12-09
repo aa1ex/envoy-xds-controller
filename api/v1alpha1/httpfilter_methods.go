@@ -2,9 +2,10 @@ package v1alpha1
 
 import (
 	"encoding/json"
+	"reflect"
+
 	hcmv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
-	"reflect"
 )
 
 func (h *HttpFilter) UnmarshalV3() ([]*hcmv3.HttpFilter, error) {

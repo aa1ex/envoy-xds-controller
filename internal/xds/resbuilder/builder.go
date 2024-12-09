@@ -3,6 +3,9 @@ package resbuilder
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
+	"strings"
+
 	accesslogv3 "github.com/envoyproxy/go-control-plane/envoy/config/accesslog/v3"
 	cluster "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	corev3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
@@ -21,8 +24,6 @@ import (
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	"slices"
-	"strings"
 )
 
 const (
@@ -213,7 +214,7 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 }
 
 func buildHTTPFilters(vs *v1alpha1.VirtualService, store *store.Store) ([]*hcmv3.HttpFilter, error) {
-	var httpFilters []*hcmv3.HttpFilter
+	httpFilters := make([]*hcmv3.HttpFilter, 0, len(vs.Spec.HTTPFilters)+len(vs.Spec.AdditionalHttpFilters))
 
 	rbacF, err := buildRBACFilter(vs, store)
 	if err != nil {
@@ -425,7 +426,7 @@ func buildFilterChain(params *FilterChainsParams) (*listenerv3.FilterChain, erro
 			TypedConfig: pbst,
 		},
 	}}
-	if len(params.Domains) > 0 && !!slices.Contains(params.Domains, "*") {
+	if len(params.Domains) > 0 && slices.Contains(params.Domains, "*") {
 		fc.FilterChainMatch = &listenerv3.FilterChainMatch{
 			ServerNames: params.Domains,
 		}
@@ -451,7 +452,7 @@ func buildFilterChain(params *FilterChainsParams) (*listenerv3.FilterChain, erro
 }
 
 func buildUpgradeConfigs(rawUpgradeConfigs []*runtime.RawExtension) ([]*hcmv3.HttpConnectionManager_UpgradeConfig, error) {
-	var upgradeConfigs []*hcmv3.HttpConnectionManager_UpgradeConfig
+	upgradeConfigs := make([]*hcmv3.HttpConnectionManager_UpgradeConfig, 0, len(rawUpgradeConfigs))
 	for _, upgradeConfig := range rawUpgradeConfigs {
 		uc := &hcmv3.HttpConnectionManager_UpgradeConfig{}
 		if err := protoutil.Unmarshaler.Unmarshal(upgradeConfig.Raw, uc); err != nil {
@@ -593,7 +594,7 @@ func buildSecrets(httpFilters []*hcmv3.HttpFilter, secretNameToDomains map[helpe
 	}
 
 	// Get Secrets from certificatesWithDomains
-	for secret, _ := range secretNameToDomains {
+	for secret := range secretNameToDomains {
 		v3Secret, err := getEnvoySecret(secret.Namespace, secret.Name)
 		if err != nil {
 			return nil, nil, fmt.Errorf("can't find envoy secret %s/%s", secret.Namespace, secret.Name)

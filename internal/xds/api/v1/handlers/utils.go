@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"net/url"
+
 	"github.com/gin-gonic/gin"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/api/v1/middlewares"
-	"net/url"
 
 	clusterv3 "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	listenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
@@ -193,7 +194,7 @@ func (h *handler) getSecretsAll(nodeID string) ([]*tlsv3.Secret, error) {
 		return nil, err
 	}
 
-	var secrets []*tlsv3.Secret
+	secrets := make([]*tlsv3.Secret, 0, len(resources))
 
 	for _, secret := range resources {
 		clearSecretData(secret)

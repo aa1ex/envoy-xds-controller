@@ -19,11 +19,13 @@ package controller
 import (
 	"context"
 	"fmt"
+
 	"github.com/pkg/errors"
+
+	"time"
 
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
-	"time"
 
 	"github.com/go-logr/logr"
 

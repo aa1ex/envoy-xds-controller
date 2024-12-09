@@ -2,6 +2,7 @@ package v1alpha1
 
 import (
 	"bytes"
+
 	cluster "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 )

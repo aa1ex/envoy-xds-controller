@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"sync"
+
 	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
 	"github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/resource/v3"
@@ -16,8 +19,6 @@ import (
 	"golang.org/x/exp/maps"
 	"google.golang.org/protobuf/proto"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strconv"
-	"sync"
 )
 
 type CacheUpdater struct {
@@ -182,8 +183,6 @@ func (c *CacheUpdater) GetUsedSecrets() map[helpers.NamespacedName]helpers.Names
 	defer c.mx.RUnlock()
 	return maps.Clone(c.usedSecrets)
 }
-
-/////////////////////
 
 func updateSnapshot(prevSnapshot cache.ResourceSnapshot, resources map[resource.Type][]types.Resource) (*cache.Snapshot, bool, error) {
 	if prevSnapshot == nil {

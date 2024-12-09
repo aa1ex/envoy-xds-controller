@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strconv"
+
 	accesslogv3 "github.com/envoyproxy/go-control-plane/envoy/config/accesslog/v3"
 	filev3 "github.com/envoyproxy/go-control-plane/envoy/extensions/access_loggers/file/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"google.golang.org/protobuf/types/known/anypb"
-	"strconv"
 )
 
 const (

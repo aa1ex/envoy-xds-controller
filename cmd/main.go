@@ -24,8 +24,9 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 	"strconv"
+
+	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -339,9 +340,6 @@ func main() {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Secret")
 			os.Exit(1)
 		}
-	}
-	// nolint:goconst
-	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
 		if err = webhookenvoyv1alpha1.SetupVirtualServiceTemplateWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "VirtualServiceTemplate")
 			os.Exit(1)
@@ -367,7 +365,8 @@ func main() {
 		}
 
 		go func() {
-			if err = xds.RunServer(server.NewServer(ctx, snapshotCache, &test.Callbacks{Debug: true}), cfg.XDS.Port); err != nil {
+			srv := server.NewServer(ctx, snapshotCache, &test.Callbacks{Debug: true})
+			if err = xds.RunServer(srv, cfg.XDS.Port); err != nil {
 				setupServers.Error(err, "cannot run xDS server")
 				os.Exit(1)
 			}

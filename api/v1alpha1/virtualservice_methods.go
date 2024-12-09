@@ -3,8 +3,9 @@ package v1alpha1
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/merge"
 	"strings"
+
+	"github.com/kaasops/envoy-xds-controller/internal/merge"
 )
 
 const (
@@ -13,7 +14,7 @@ const (
 
 func (vs *VirtualService) GetNodeIDs() []string {
 	annotations := vs.GetAnnotations()
-	nodeIDsAnnotation, _ := annotations[annotationKeyEnvoyKaaSopsIoNodeID]
+	nodeIDsAnnotation := annotations[annotationKeyEnvoyKaaSopsIoNodeID]
 	if nodeIDsAnnotation == "" {
 		return nil
 	}
