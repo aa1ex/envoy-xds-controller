@@ -81,6 +81,9 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 			RequestHeadersToAdd: virtualHost.RequestHeadersToAdd,
 		}},
 	}
+	if err = routeConfiguration.ValidateAll(); err != nil {
+		return nil, nil, err
+	}
 
 	// Clusters ---
 
@@ -234,6 +237,9 @@ func buildHTTPFilters(vs *v1alpha1.VirtualService, store *store.Store) ([]*hcmv3
 		if err := protoutil.Unmarshaler.Unmarshal(httpFilter.Raw, hf); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal http filter: %w", err)
 		}
+		if err := hf.ValidateAll(); err != nil {
+			return nil, fmt.Errorf("failed to validate http filter: %w", err)
+		}
 		httpFilters = append(httpFilters, hf)
 	}
 
@@ -247,6 +253,9 @@ func buildHTTPFilters(vs *v1alpha1.VirtualService, store *store.Store) ([]*hcmv3
 			for _, filter := range hf.Spec {
 				xdsHttpFilter := &hcmv3.HttpFilter{}
 				if err := protoutil.Unmarshaler.Unmarshal(filter.Raw, xdsHttpFilter); err != nil {
+					return nil, err
+				}
+				if err := xdsHttpFilter.ValidateAll(); err != nil {
 					return nil, err
 				}
 				httpFilters = append(httpFilters, xdsHttpFilter)
@@ -279,7 +288,7 @@ func buildClusters(vs *v1alpha1.VirtualService, virtualHost *routev3.VirtualHost
 			if cl == nil {
 				return nil, fmt.Errorf("cluster %s/%s not found", clusterNS, clusterName)
 			}
-			xdsCluster, err := cl.UnmarshalV3()
+			xdsCluster, err := cl.UnmarshalV3AndValidate()
 			if err != nil {
 				return nil, fmt.Errorf("failed to unmarshal cluster %s/%s: %w", clusterNS, clusterName, err)
 			}

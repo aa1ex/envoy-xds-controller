@@ -56,6 +56,7 @@ func (c *SnapshotCache) GetNodeIDsAsMap() map[string]struct{} {
 func (c *SnapshotCache) GetNodeIDs() []string {
 	res := make([]string, 0, len(c.nodeIDs))
 	c.mu.RLock()
+	defer c.mu.RUnlock()
 	for nodeID := range c.nodeIDs {
 		res = append(res, nodeID)
 	}
@@ -114,7 +115,7 @@ func (c *SnapshotCache) GetListeners(nodeID string) ([]*listenerv3.Listener, err
 	if err != nil {
 		return nil, err
 	}
-	data := snapshot.GetResources(resourcev3.RouteType)
+	data := snapshot.GetResources(resourcev3.ListenerType)
 	var listeners []*listenerv3.Listener
 	for _, listener := range data {
 		listeners = append(listeners, listener.(*listenerv3.Listener))
