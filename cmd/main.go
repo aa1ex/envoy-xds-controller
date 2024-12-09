@@ -395,6 +395,17 @@ func main() {
 
 		if devMode {
 			go func() {
+				dLog := log.FromContext(ctx).WithName("debug-server")
+
+				http.HandleFunc("/debug/store", func(w http.ResponseWriter, r *http.Request) {
+					data, err := cacheUpdater.GetMarshaledStore()
+					if err != nil {
+						dLog.Error(err, "failed to marshal store")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+					_, _ = w.Write(data)
+				})
 				http.HandleFunc("/debug/xds", func(w http.ResponseWriter, r *http.Request) {
 					keys := snapshotCache.GetNodeIDsAsMap()
 					dump := make(map[string]any)
@@ -404,6 +415,7 @@ func main() {
 					}
 					data, err := json.MarshalIndent(dump, "", "\t")
 					if err != nil {
+						dLog.Error(err, "failed to marshal xds")
 						w.WriteHeader(http.StatusInternalServerError)
 						return
 					}
@@ -417,6 +429,7 @@ func main() {
 					}
 					data, err := json.MarshalIndent(m, "", "\t")
 					if err != nil {
+						dLog.Error(err, "failed to marshal used secrets")
 						w.WriteHeader(http.StatusInternalServerError)
 						return
 					}

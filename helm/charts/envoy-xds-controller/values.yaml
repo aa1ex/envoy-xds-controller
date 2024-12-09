@@ -2,12 +2,13 @@ fullnameOverride: ""
 nameOverride: ""
 namespaceOverride: ""
 
+development: true
+
 xds:
   port: 9000
 
 cacheAPI:
   enabled: false
-  devMode: false
   port: 9999
   address: "localhost:9999"
   scheme: "http"
