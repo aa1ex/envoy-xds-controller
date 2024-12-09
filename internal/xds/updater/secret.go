@@ -2,6 +2,7 @@ package updater
 
 import (
 	"context"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"

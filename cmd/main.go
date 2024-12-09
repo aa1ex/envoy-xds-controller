@@ -87,6 +87,7 @@ type Config struct {
 	}
 }
 
+// nolint:gocyclo
 func main() {
 	var metricsAddr string
 	var enableLeaderElection bool
