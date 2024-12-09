@@ -74,7 +74,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 	}
 
 	routeConfiguration := &routev3.RouteConfiguration{
-		Name: vs.Name,
+		Name: nn.String(),
 		VirtualHosts: []*routev3.VirtualHost{{
 			Name:                nn.String(),
 			Domains:             []string{"*"},
@@ -170,7 +170,8 @@ func buildListener(vs *v1alpha1.VirtualService, store *store.Store) (*listenerv3
 		return nil, fmt.Errorf("listener is empty")
 	}
 	listenerNs := helpers.GetNamespace(vs.Spec.Listener.Namespace, vs.Namespace)
-	listener := store.Listeners[helpers.NamespacedName{Namespace: listenerNs, Name: vs.Spec.Listener.Name}]
+	listenerNN := helpers.NamespacedName{Namespace: listenerNs, Name: vs.Spec.Listener.Name}
+	listener := store.Listeners[listenerNN]
 	if listener == nil {
 		return nil, fmt.Errorf("listener %s/%s not found", listenerNs, vs.Spec.Listener.Name)
 	}
@@ -178,6 +179,7 @@ func buildListener(vs *v1alpha1.VirtualService, store *store.Store) (*listenerv3
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal listener %s/%s: %w", listenerNs, vs.Spec.Listener.Name, err)
 	}
+	xdsListener.Name = listenerNN.String()
 	return xdsListener, nil
 }
 
@@ -209,7 +211,6 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 	if err := virtualHost.ValidateAll(); err != nil {
 		return nil, fmt.Errorf("failed to validate virtual host: %w", err)
 	}
-
 	return virtualHost, nil
 }
 
@@ -426,7 +427,7 @@ func buildFilterChain(params *FilterChainsParams) (*listenerv3.FilterChain, erro
 			TypedConfig: pbst,
 		},
 	}}
-	if len(params.Domains) > 0 && slices.Contains(params.Domains, "*") {
+	if len(params.Domains) > 0 && !slices.Contains(params.Domains, "*") {
 		fc.FilterChainMatch = &listenerv3.FilterChainMatch{
 			ServerNames: params.Domains,
 		}

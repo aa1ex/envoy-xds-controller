@@ -2,6 +2,7 @@ package updater
 
 import (
 	"context"
+	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	v1 "k8s.io/api/core/v1"
@@ -53,6 +54,11 @@ func checkSecretsEqual(a, b *v1.Secret) bool {
 		if string(v) != string(b.Data[k]) {
 			return false
 		}
+	}
+	valA, okA := a.Annotations[v1alpha1.AnnotationSecretDomains]
+	valB, okB := b.Annotations[v1alpha1.AnnotationSecretDomains]
+	if okA != okB || valA != valB {
+		return false
 	}
 	return true
 }

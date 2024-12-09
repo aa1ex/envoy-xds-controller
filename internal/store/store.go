@@ -130,7 +130,7 @@ func (s *Store) UpdateDomainSecretsMap() {
 	m := make(map[string]v1.Secret)
 
 	for _, secret := range s.Secrets {
-		for _, domain := range strings.Split(secret.Annotations["envoy.kaasops.io/domains"], ",") {
+		for _, domain := range strings.Split(secret.Annotations[v1alpha1.AnnotationSecretDomains], ",") {
 			domain = strings.TrimSpace(domain)
 			if domain == "" {
 				continue
