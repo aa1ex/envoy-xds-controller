@@ -18,14 +18,13 @@ package controller
 
 import (
 	"context"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	envoyv1alpha1 "github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 )
@@ -40,20 +39,39 @@ var _ = Describe("AccessLogConfig Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
+
+		accessLogConfigSpec := []byte(`{
+  "name": "stdout",
+  "typed_config": {
+    "@type": "type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog",
+    "log_format": {
+      "json_format": {
+        "message": "%LOCAL_REPLY_BODY%",
+        "status": "%RESPONSE_CODE%",
+        "duration": "%DURATION%",
+        "remote_address": "%DOWNSTREAM_REMOTE_ADDRESS%",
+        "x_real_ip": "%REQ(X-Real-IP)%",
+        "request_start_time": "%START_TIME%",
+        "bytes_sent": "%BYTES_SENT%",
+        "http_referer": "%REQ(Referer)%",
+        "http_user_agent": "%REQ(User-Agent)%"
+      }
+    }
+  }
+}`)
+
 		accesslogconfig := &envoyv1alpha1.AccessLogConfig{}
+		accesslogconfig.Name = resourceName
+		accesslogconfig.Namespace = "default"
+		accesslogconfig.Spec = &runtime.RawExtension{}
+		err := accesslogconfig.Spec.UnmarshalJSON(accessLogConfigSpec)
+		Expect(err).NotTo(HaveOccurred())
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind AccessLogConfig")
 			err := k8sClient.Get(ctx, typeNamespacedName, accesslogconfig)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &envoyv1alpha1.AccessLogConfig{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: "default",
-					},
-					// TODO(user): Specify other spec details if needed.
-				}
-				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+				Expect(k8sClient.Create(ctx, accesslogconfig)).To(Succeed())
 			}
 		})
 

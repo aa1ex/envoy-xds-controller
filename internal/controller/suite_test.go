@@ -19,6 +19,9 @@ package controller
 import (
 	"context"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/helpers"
+	"github.com/kaasops/envoy-xds-controller/internal/store"
+	runtime2 "k8s.io/apimachinery/pkg/runtime"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -90,7 +93,11 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
-	cacheUpdater = updater.NewCacheUpdater(cache.NewSnapshotCache())
+	cacheStore, err := testStore()
+	Expect(err).NotTo(HaveOccurred())
+	Expect(cacheStore).NotTo(BeNil())
+
+	cacheUpdater = updater.NewCacheUpdater(cache.NewSnapshotCache(), cacheStore)
 	Expect(cacheUpdater).NotTo(BeNil())
 
 })
@@ -101,3 +108,35 @@ var _ = AfterSuite(func() {
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
 })
+
+func testStore() (*store.Store, error) {
+	cacheStore := store.New()
+
+	listener := &envoyv1alpha1.Listener{}
+	listener.Name = "https"
+	listener.Namespace = "default"
+	listener.Spec = &runtime2.RawExtension{}
+	err := listener.Spec.UnmarshalJSON([]byte(`{
+  "name": "https",
+  "address": {
+    "socket_address": {
+      "address": "0.0.0.0",
+      "port_value": 10443
+    }
+  },
+  "listener_filters": [
+    {
+      "name": "envoy.filters.listener.tls_inspector",
+      "typed_config": {
+        "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
+      }
+    }
+  ]
+}`))
+	if err != nil {
+		return nil, err
+	}
+
+	cacheStore.Listeners[helpers.NamespacedName{Name: "https", Namespace: "default"}] = listener
+	return cacheStore, nil
+}

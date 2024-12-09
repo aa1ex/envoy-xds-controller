@@ -18,14 +18,13 @@ package controller
 
 import (
 	"context"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	envoyv1alpha1 "github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 )
@@ -41,19 +40,24 @@ var _ = Describe("HttpFilter Controller", func() {
 			Namespace: "default", // TODO(user):Modify as needed
 		}
 		httpfilter := &envoyv1alpha1.HttpFilter{}
+		httpfilter.Name = resourceName
+		httpfilter.Namespace = "default"
+
+		spec := runtime.RawExtension{}
+		err := spec.UnmarshalJSON([]byte(`{
+    "name": "envoy.filters.http.router",
+    "typed_config": {
+      "@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"
+    }
+  }`))
+		Expect(err).NotTo(HaveOccurred())
+		httpfilter.Spec = []*runtime.RawExtension{&spec}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind HttpFilter")
 			err := k8sClient.Get(ctx, typeNamespacedName, httpfilter)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &envoyv1alpha1.HttpFilter{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: "default",
-					},
-					// TODO(user): Specify other spec details if needed.
-				}
-				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+				Expect(k8sClient.Create(ctx, httpfilter)).To(Succeed())
 			}
 		})
 

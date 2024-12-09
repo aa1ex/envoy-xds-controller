@@ -18,14 +18,13 @@ package controller
 
 import (
 	"context"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	envoyv1alpha1 "github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 )
@@ -40,20 +39,45 @@ var _ = Describe("Cluster Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
+
+		spec := []byte(`{
+  "name": "static",
+  "connect_timeout": "1s",
+  "lb_policy": "LEAST_REQUEST",
+  "type": "STATIC",
+  "load_assignment": {
+    "cluster_name": "static",
+    "endpoints": [
+      {
+        "lb_endpoints": [
+          {
+            "endpoint": {
+              "address": {
+                "socket_address": {
+                  "address": "127.0.0.1",
+                  "port_value": 8765
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}`)
+
 		cluster := &envoyv1alpha1.Cluster{}
+		cluster.Name = resourceName
+		cluster.Namespace = "default"
+		cluster.Spec = &runtime.RawExtension{}
+		err := cluster.Spec.UnmarshalJSON(spec)
+		Expect(err).NotTo(HaveOccurred())
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind Cluster")
 			err := k8sClient.Get(ctx, typeNamespacedName, cluster)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &envoyv1alpha1.Cluster{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: "default",
-					},
-					// TODO(user): Specify other spec details if needed.
-				}
-				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+				Expect(k8sClient.Create(ctx, cluster)).To(Succeed())
 			}
 		})
 

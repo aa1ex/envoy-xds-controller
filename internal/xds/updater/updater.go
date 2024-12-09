@@ -29,8 +29,8 @@ type CacheUpdater struct {
 	usedSecrets   map[helpers.NamespacedName]helpers.NamespacedName
 }
 
-func NewCacheUpdater(wsc *wrapped.SnapshotCache) *CacheUpdater {
-	return &CacheUpdater{snapshotCache: wsc, usedSecrets: make(map[helpers.NamespacedName]helpers.NamespacedName), store: store.New()}
+func NewCacheUpdater(wsc *wrapped.SnapshotCache, store *store.Store) *CacheUpdater {
+	return &CacheUpdater{snapshotCache: wsc, usedSecrets: make(map[helpers.NamespacedName]helpers.NamespacedName), store: store}
 }
 
 func (c *CacheUpdater) Init(ctx context.Context, cl client.Client) error {

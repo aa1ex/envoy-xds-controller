@@ -18,14 +18,13 @@ package controller
 
 import (
 	"context"
+	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	envoyv1alpha1 "github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 )
@@ -40,20 +39,46 @@ var _ = Describe("VirtualService Controller", func() {
 			Name:      resourceName,
 			Namespace: "default", // TODO(user):Modify as needed
 		}
+
+		virtualHost := &runtime.RawExtension{}
+		err := virtualHost.UnmarshalJSON([]byte(`{
+  "name": "test",
+  "domains": [
+    "*"
+  ],
+  "routes": [
+    {
+      "match": {
+        "prefix": "/common"
+      },
+      "direct_response": {
+        "status": 200,
+        "body": {
+          "inline_string": "{\"answer\":\"common\"}"
+        }
+      }
+    }
+  ]
+}`))
+		Expect(err).NotTo(HaveOccurred())
+
 		virtualservice := &envoyv1alpha1.VirtualService{}
+		virtualservice.Name = resourceName
+		virtualservice.Namespace = "default"
+		virtualservice.Spec = envoyv1alpha1.VirtualServiceSpec{
+			VirtualServiceCommonSpec: envoyv1alpha1.VirtualServiceCommonSpec{
+				VirtualHost: virtualHost,
+				Listener: &envoyv1alpha1.ResourceRef{
+					Name: "https",
+				},
+			},
+		}
 
 		BeforeEach(func() {
 			By("creating the custom resource for the Kind VirtualService")
 			err := k8sClient.Get(ctx, typeNamespacedName, virtualservice)
 			if err != nil && errors.IsNotFound(err) {
-				resource := &envoyv1alpha1.VirtualService{
-					ObjectMeta: metav1.ObjectMeta{
-						Name:      resourceName,
-						Namespace: "default",
-					},
-					// TODO(user): Specify other spec details if needed.
-				}
-				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+				Expect(k8sClient.Create(ctx, virtualservice)).To(Succeed())
 			}
 		})
 

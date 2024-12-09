@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/store"
 	"net/http"
 	"os"
 	"strconv"
@@ -196,7 +197,7 @@ func main() {
 	}
 
 	snapshotCache := cache.NewSnapshotCache()
-	cacheUpdater := updater.NewCacheUpdater(snapshotCache)
+	cacheUpdater := updater.NewCacheUpdater(snapshotCache, store.New())
 
 	if err = (&controller.ClusterReconciler{
 		Client:  mgr.GetClient(),
