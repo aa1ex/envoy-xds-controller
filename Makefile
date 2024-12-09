@@ -282,3 +282,11 @@ debug-local: set-local
 
 .PHONY: dev-local
 dev-local: set-local docker-build-all docker-push-all helm-deploy-local
+
+.PHONY: kr
+kr:
+	bash scripts/kind-with-registry.sh
+
+.PHONY: kd
+kd:
+	kind delete cluster
