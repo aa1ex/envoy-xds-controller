@@ -48,11 +48,22 @@ type SecretReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *SecretReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("secret-reconciler").WithValues("secret", req.NamespacedName)
+	rlog.Info("Reconciling Secret")
 
-	if err := r.Updater.UpdateCache(ctx, r.Client); err != nil {
+	var secret v1.Secret
+	if err := r.Get(ctx, req.NamespacedName, &secret); err != nil {
+		if client.IgnoreNotFound(err) != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, r.Updater.DeleteSecret(ctx, req.NamespacedName)
+	}
+
+	if err := r.Updater.UpsertSecret(ctx, &secret); err != nil {
 		return ctrl.Result{}, err
 	}
+
+	rlog.Info("Finished Reconciling Secret")
 
 	return ctrl.Result{}, nil
 }

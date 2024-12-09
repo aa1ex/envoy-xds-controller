@@ -49,7 +49,9 @@ type ClusterReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("cluster-reconciler").WithValues("cluster", req.NamespacedName)
+	rlog.Info("Reconciling Cluster")
+
 	var cluster envoyv1alpha1.Cluster
 	if err := r.Get(ctx, req.NamespacedName, &cluster); err != nil {
 		if client.IgnoreNotFound(err) != nil {
@@ -57,7 +59,13 @@ func (r *ClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 		return ctrl.Result{}, r.Updater.DeleteCluster(ctx, req.NamespacedName)
 	}
-	return ctrl.Result{}, r.Updater.UpsertCluster(ctx, &cluster)
+	if err := r.Updater.UpsertCluster(ctx, &cluster); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	rlog.Info("Finished Reconciling Cluster")
+
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

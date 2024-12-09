@@ -49,7 +49,9 @@ type ListenerReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *ListenerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("listener-reconciler").WithValues("listener", req.NamespacedName)
+	rlog.Info("Reconciling Listener")
+
 	var listener envoyv1alpha1.Listener
 	if err := r.Get(ctx, req.NamespacedName, &listener); err != nil {
 		if client.IgnoreNotFound(err) != nil {
@@ -57,7 +59,14 @@ func (r *ListenerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		}
 		return ctrl.Result{}, r.Updater.DeleteListener(ctx, req.NamespacedName)
 	}
-	return ctrl.Result{}, r.Updater.UpsertListener(ctx, &listener)
+
+	if err := r.Updater.UpsertListener(ctx, &listener); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	rlog.Info("Finished Reconciling Listener")
+
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

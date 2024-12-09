@@ -49,7 +49,9 @@ type RouteReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *RouteReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("route-reconciler").WithValues("route", req.NamespacedName)
+	rlog.Info("Reconciling Route")
+
 	var route envoyv1alpha1.Route
 	if err := r.Get(ctx, req.NamespacedName, &route); err != nil {
 		if client.IgnoreNotFound(err) != nil {
@@ -57,7 +59,13 @@ func (r *RouteReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 		}
 		return ctrl.Result{}, r.Updater.DeleteRoute(ctx, req.NamespacedName)
 	}
-	return ctrl.Result{}, r.Updater.UpsertRoute(ctx, &route)
+
+	if err := r.Updater.UpsertRoute(ctx, &route); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	rlog.Info("Finished Reconciling Route")
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

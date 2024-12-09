@@ -49,7 +49,9 @@ type AccessLogConfigReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *AccessLogConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("accessLogConfig-reconciler").WithValues("accessLogConfig", req.NamespacedName)
+	rlog.Info("Reconciling AccessLogConfig")
+
 	var accessLogConfig envoyv1alpha1.AccessLogConfig
 	if err := r.Get(ctx, req.NamespacedName, &accessLogConfig); err != nil {
 		if client.IgnoreNotFound(err) != nil {
@@ -57,7 +59,13 @@ func (r *AccessLogConfigReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		}
 		return ctrl.Result{}, r.Updater.DeleteAccessLogConfig(ctx, req.NamespacedName)
 	}
-	return ctrl.Result{}, r.Updater.UpsertAccessLogConfig(ctx, &accessLogConfig)
+	if err := r.Updater.UpsertAccessLogConfig(ctx, &accessLogConfig); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	rlog.Info("Finished Reconciling AccessLogConfig")
+
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

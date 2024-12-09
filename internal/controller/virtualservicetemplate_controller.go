@@ -50,7 +50,9 @@ type VirtualServiceTemplateReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *VirtualServiceTemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("virtualServiceTemplate-reconciler").WithValues("virtualServiceTemplate", req.NamespacedName)
+	rlog.Info("Reconciling VirtualServiceTemplate")
+
 	var vst envoyv1alpha1.VirtualServiceTemplate
 	if err := r.Get(ctx, req.NamespacedName, &vst); err != nil {
 		if client.IgnoreNotFound(err) != nil {
@@ -58,7 +60,14 @@ func (r *VirtualServiceTemplateReconciler) Reconcile(ctx context.Context, req ct
 		}
 		return ctrl.Result{}, r.Updater.DeleteVirtualServiceTemplate(ctx, req.NamespacedName)
 	}
-	return ctrl.Result{}, r.Updater.UpsertVirtualServiceTemplate(ctx, &vst)
+
+	if err := r.Updater.UpsertVirtualServiceTemplate(ctx, &vst); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	rlog.Info("Finished Reconciling VirtualServiceTemplate")
+
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

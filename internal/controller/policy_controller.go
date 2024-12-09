@@ -49,7 +49,9 @@ type PolicyReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *PolicyReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	rlog := log.FromContext(ctx).WithName("policy-reconciler").WithValues("policy", req.NamespacedName)
+	rlog.Info("Reconciling Policy")
+
 	var policy envoyv1alpha1.Policy
 	if err := r.Get(ctx, req.NamespacedName, &policy); err != nil {
 		if client.IgnoreNotFound(err) != nil {
@@ -57,7 +59,13 @@ func (r *PolicyReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		}
 		return ctrl.Result{}, r.Updater.DeletePolicy(ctx, req.NamespacedName)
 	}
-	return ctrl.Result{}, r.Updater.UpsertPolicy(ctx, &policy)
+	if err := r.Updater.UpsertPolicy(ctx, &policy); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	rlog.Info("Finished Reconciling Policy")
+
+	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
