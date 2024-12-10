@@ -112,7 +112,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		return nil, nil, err
 	}
 
-	filterChainParams.AccessLog, err = buildAccessLogConfig(vs, nn.String(), store)
+	filterChainParams.AccessLog, err = buildAccessLogConfig(vs, store)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -468,7 +468,7 @@ func buildUpgradeConfigs(rawUpgradeConfigs []*runtime.RawExtension) ([]*hcmv3.Ht
 	return upgradeConfigs, nil
 }
 
-func buildAccessLogConfig(vs *v1alpha1.VirtualService, resourceName string, store *store.Store) (*accesslogv3.AccessLog, error) {
+func buildAccessLogConfig(vs *v1alpha1.VirtualService, store *store.Store) (*accesslogv3.AccessLog, error) {
 	if vs.Spec.AccessLog == nil && vs.Spec.AccessLogConfig == nil {
 		return nil, nil
 	}
@@ -492,7 +492,7 @@ func buildAccessLogConfig(vs *v1alpha1.VirtualService, resourceName string, stor
 		return nil, fmt.Errorf("can't find accessLogConfig %s/%s", accessLogNs, vs.Spec.AccessLogConfig.Name)
 	}
 
-	accessLog, err := accessLogConfig.UnmarshalAndValidateV3(v1alpha1.WithAccessLogFileName(resourceName))
+	accessLog, err := accessLogConfig.UnmarshalAndValidateV3(v1alpha1.WithAccessLogFileName(vs.Name))
 	if err != nil {
 		return nil, err
 	}
