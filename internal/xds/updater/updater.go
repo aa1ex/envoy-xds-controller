@@ -56,19 +56,20 @@ func (c *CacheUpdater) UpdateCache(ctx context.Context, cl client.Client) error 
 
 func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	errs := make([]error, 0)
-	tmp := make(map[string]map[resource.Type][]types.Resource)
+
+	mixer := NewMixer()
 
 	// ---------------------------------------------
 
 	usedSecrets := make(map[helpers.NamespacedName]helpers.NamespacedName)
 
 	nodeIDsForCleanup := c.snapshotCache.GetNodeIDsAsMap()
-	var commonVirtualSerices []*v1alpha1.VirtualService
+	var commonVirtualServices []*v1alpha1.VirtualService
 
 	for _, vs := range c.store.VirtualServices {
 		vsNodeIDs := vs.GetNodeIDs()
 		if isCommonVirtualService(vsNodeIDs) {
-			commonVirtualSerices = append(commonVirtualSerices, vs)
+			commonVirtualServices = append(commonVirtualServices, vs)
 			continue
 		}
 
@@ -83,39 +84,19 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 		}
 
 		for _, nodeID := range vsNodeIDs {
-			resources, ok := tmp[nodeID]
-			if ok {
-				resources[resource.ListenerType] = append(resources[resource.ListenerType], vsRes.Listener)
-				resources[resource.RouteType] = append(resources[resource.RouteType], vsRes.RouteConfig)
-				for _, cl := range vsRes.Clusters {
-					resources[resource.ClusterType] = append(resources[resource.ClusterType], cl)
-				}
-				for _, secret := range vsRes.Secrets {
-					resources[resource.SecretType] = append(resources[resource.SecretType], secret)
-				}
-			} else {
-				tmp[nodeID] = map[resource.Type][]types.Resource{
-					resource.ListenerType: {vsRes.Listener},
-					resource.RouteType:    {vsRes.RouteConfig},
-				}
-				if len(vsRes.Clusters) > 0 {
-					tmp[nodeID][resource.ClusterType] = make([]types.Resource, len(vsRes.Clusters))
-					for i, cl := range vsRes.Clusters {
-						tmp[nodeID][resource.ClusterType][i] = cl
-					}
-				}
-				if len(vsRes.Secrets) > 0 {
-					tmp[nodeID][resource.SecretType] = make([]types.Resource, len(vsRes.Secrets))
-					for i, secret := range vsRes.Secrets {
-						tmp[nodeID][resource.SecretType][i] = secret
-					}
-				}
+			mixer.Add(nodeID, resource.RouteType, vsRes.RouteConfig)
+			for _, cl := range vsRes.Clusters {
+				mixer.Add(nodeID, resource.ClusterType, cl)
 			}
+			for _, secret := range vsRes.Secrets {
+				mixer.Add(nodeID, resource.SecretType, secret)
+			}
+			mixer.AddListenerParams(vsRes.Listener, vsRes.FilterChain, nodeID)
 		}
 	}
 
-	if len(commonVirtualSerices) > 0 {
-		for _, vs := range commonVirtualSerices {
+	if len(commonVirtualServices) > 0 {
+		for _, vs := range commonVirtualServices {
 			vsRes, vsUsedSecrets, err := resbuilder.BuildResources(vs, c.store)
 			if err != nil {
 				errs = append(errs, err)
@@ -124,20 +105,27 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 			for _, secret := range vsUsedSecrets {
 				usedSecrets[secret] = helpers.NamespacedName{Name: vs.Name, Namespace: vs.Namespace}
 			}
-			for _, resources := range tmp {
-				resources[resource.ListenerType] = append(resources[resource.ListenerType], vsRes.Listener)
-				resources[resource.RouteType] = append(resources[resource.RouteType], vsRes.RouteConfig)
+
+			for nodeID := range mixer.nodeIDs {
+				mixer.Add(nodeID, resource.RouteType, vsRes.RouteConfig)
 				for _, cl := range vsRes.Clusters {
-					resources[resource.ClusterType] = append(resources[resource.ClusterType], cl)
+					mixer.Add(nodeID, resource.ClusterType, cl)
 				}
 				for _, secret := range vsRes.Secrets {
-					resources[resource.SecretType] = append(resources[resource.SecretType], secret)
+					mixer.Add(nodeID, resource.SecretType, secret)
 				}
+				mixer.AddListenerParams(vsRes.Listener, vsRes.FilterChain, nodeID)
 			}
 		}
 	}
 
 	c.usedSecrets = usedSecrets
+
+	tmp, err := mixer.Mix(c.store)
+	if err != nil {
+		errs = append(errs, err)
+		return multierr.Combine(errs...)
+	}
 
 	for nodeID, resMap := range tmp {
 		var snapshot *cache.Snapshot

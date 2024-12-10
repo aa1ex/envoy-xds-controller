@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"strings"
 
 	"github.com/kaasops/envoy-xds-controller/internal/merge"
@@ -106,4 +107,14 @@ func (vs *VirtualService) IsEqual(other *VirtualService) bool {
 		}
 	}
 	return true
+}
+
+func (vs *VirtualService) GetListenerNamespacedName() (helpers.NamespacedName, error) {
+	if vs.Spec.Listener == nil {
+		return helpers.NamespacedName{}, fmt.Errorf("listener is nil")
+	}
+	return helpers.NamespacedName{
+		Namespace: vs.Namespace,
+		Name:      vs.Spec.Listener.Name,
+	}, nil
 }

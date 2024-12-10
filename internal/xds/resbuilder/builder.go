@@ -44,7 +44,8 @@ type FilterChainsParams struct {
 }
 
 type Resources struct {
-	Listener    *listenerv3.Listener
+	Listener    helpers.NamespacedName
+	FilterChain []*listenerv3.FilterChain
 	RouteConfig *routev3.RouteConfiguration
 	Clusters    []*cluster.Cluster
 	Secrets     []*tlsv3.Secret
@@ -64,6 +65,16 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		if err != nil {
 			return nil, nil, err
 		}
+	}
+
+	listenerNN, err := vs.GetListenerNamespacedName()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	xdsListener, err := buildListener(listenerNN, store)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	// Route config ---
@@ -141,13 +152,8 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		return nil, nil, err
 	}
 
-	xdsListener, err := buildListener(vs, store)
-	if err != nil {
-		return nil, nil, err
-	}
 	xdsListener.FilterChains = fcs
-
-	if err := xdsListener.ValidateAll(); err != nil {
+	if err := xdsListener.ValidateAll(); err != nil { // for validation
 		return nil, nil, err
 	}
 
@@ -158,26 +164,23 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 	}
 
 	return &Resources{
-		Listener:    xdsListener,
+		//Listener:    xdsListener,
+		Listener:    listenerNN,
+		FilterChain: fcs,
 		RouteConfig: routeConfiguration,
 		Clusters:    clusters,
 		Secrets:     secrets,
 	}, usedSecrets, nil
 }
 
-func buildListener(vs *v1alpha1.VirtualService, store *store.Store) (*listenerv3.Listener, error) {
-	if vs.Spec.Listener == nil {
-		return nil, fmt.Errorf("listener is empty")
-	}
-	listenerNs := helpers.GetNamespace(vs.Spec.Listener.Namespace, vs.Namespace)
-	listenerNN := helpers.NamespacedName{Namespace: listenerNs, Name: vs.Spec.Listener.Name}
+func buildListener(listenerNN helpers.NamespacedName, store *store.Store) (*listenerv3.Listener, error) {
 	listener := store.Listeners[listenerNN]
 	if listener == nil {
-		return nil, fmt.Errorf("listener %s/%s not found", listenerNs, vs.Spec.Listener.Name)
+		return nil, fmt.Errorf("listener %s not found", listenerNN.String())
 	}
 	xdsListener, err := listener.UnmarshalV3()
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal listener %s/%s: %w", listenerNs, vs.Spec.Listener.Name, err)
+		return nil, fmt.Errorf("failed to unmarshal listener %s: %w", listenerNN.String(), err)
 	}
 	xdsListener.Name = listenerNN.String()
 	return xdsListener, nil
