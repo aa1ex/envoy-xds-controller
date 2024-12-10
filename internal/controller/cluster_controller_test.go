@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+
 	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -37,7 +38,7 @@ var _ = Describe("Cluster Controller", func() {
 
 		typeNamespacedName := types.NamespacedName{
 			Name:      resourceName,
-			Namespace: "default", // TODO(user):Modify as needed
+			Namespace: defaultNamespace,
 		}
 
 		spec := []byte(`{
@@ -68,7 +69,7 @@ var _ = Describe("Cluster Controller", func() {
 
 		cluster := &envoyv1alpha1.Cluster{}
 		cluster.Name = resourceName
-		cluster.Namespace = "default"
+		cluster.Namespace = defaultNamespace
 		cluster.Spec = &runtime.RawExtension{}
 		err := cluster.Spec.UnmarshalJSON(spec)
 		Expect(err).NotTo(HaveOccurred())

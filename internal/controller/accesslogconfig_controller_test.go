@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+
 	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -29,6 +30,8 @@ import (
 	envoyv1alpha1 "github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 )
 
+const defaultNamespace = "default"
+
 var _ = Describe("AccessLogConfig Controller", func() {
 	Context("When reconciling a resource", func() {
 		const resourceName = "test-resource"
@@ -37,7 +40,7 @@ var _ = Describe("AccessLogConfig Controller", func() {
 
 		typeNamespacedName := types.NamespacedName{
 			Name:      resourceName,
-			Namespace: "default", // TODO(user):Modify as needed
+			Namespace: defaultNamespace,
 		}
 
 		accessLogConfigSpec := []byte(`{
@@ -62,7 +65,7 @@ var _ = Describe("AccessLogConfig Controller", func() {
 
 		accesslogconfig := &envoyv1alpha1.AccessLogConfig{}
 		accesslogconfig.Name = resourceName
-		accesslogconfig.Namespace = "default"
+		accesslogconfig.Namespace = defaultNamespace
 		accesslogconfig.Spec = &runtime.RawExtension{}
 		err := accesslogconfig.Spec.UnmarshalJSON(accessLogConfigSpec)
 		Expect(err).NotTo(HaveOccurred())

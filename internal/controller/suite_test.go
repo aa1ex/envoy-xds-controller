@@ -19,12 +19,13 @@ package controller
 import (
 	"context"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"github.com/kaasops/envoy-xds-controller/internal/store"
-	runtime2 "k8s.io/apimachinery/pkg/runtime"
 	"path/filepath"
 	"runtime"
 	"testing"
+
+	"github.com/kaasops/envoy-xds-controller/internal/helpers"
+	"github.com/kaasops/envoy-xds-controller/internal/store"
+	runtime2 "k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"

@@ -22,10 +22,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/store"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/kaasops/envoy-xds-controller/internal/store"
 
 	"sigs.k8s.io/controller-runtime/pkg/log"
 

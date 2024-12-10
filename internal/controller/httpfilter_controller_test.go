@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+
 	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -37,11 +38,11 @@ var _ = Describe("HttpFilter Controller", func() {
 
 		typeNamespacedName := types.NamespacedName{
 			Name:      resourceName,
-			Namespace: "default", // TODO(user):Modify as needed
+			Namespace: defaultNamespace,
 		}
 		httpfilter := &envoyv1alpha1.HttpFilter{}
 		httpfilter.Name = resourceName
-		httpfilter.Namespace = "default"
+		httpfilter.Namespace = defaultNamespace
 
 		spec := runtime.RawExtension{}
 		err := spec.UnmarshalJSON([]byte(`{
