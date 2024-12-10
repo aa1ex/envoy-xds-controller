@@ -14,12 +14,14 @@ func (c *CacheUpdater) UpsertCluster(ctx context.Context, cl *v1alpha1.Cluster) 
 	prevCluster := c.store.Clusters[helpers.NamespacedName{Namespace: cl.Namespace, Name: cl.Name}]
 	if prevCluster == nil {
 		c.store.Clusters[helpers.NamespacedName{Namespace: cl.Namespace, Name: cl.Name}] = cl
+		c.store.UpdateSpecClusters()
 		return c.buildCache(ctx)
 	}
 	if prevCluster.IsEqual(cl) {
 		return nil
 	}
 	c.store.Clusters[helpers.NamespacedName{Namespace: cl.Namespace, Name: cl.Name}] = cl
+	c.store.UpdateSpecClusters()
 	return c.buildCache(ctx)
 }
 
@@ -30,5 +32,12 @@ func (c *CacheUpdater) DeleteCluster(ctx context.Context, cl types.NamespacedNam
 		return nil
 	}
 	delete(c.store.Clusters, helpers.NamespacedName{Namespace: cl.Namespace, Name: cl.Name})
+	c.store.UpdateSpecClusters()
 	return c.buildCache(ctx)
+}
+
+func (c *CacheUpdater) GetSpecCluster(specCluster string) *v1alpha1.Cluster {
+	c.mx.RLock()
+	defer c.mx.RUnlock()
+	return c.store.SpecClusters[specCluster]
 }

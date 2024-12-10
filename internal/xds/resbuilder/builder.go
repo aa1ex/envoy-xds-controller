@@ -285,14 +285,13 @@ func buildClusters(vs *v1alpha1.VirtualService, virtualHost *routev3.VirtualHost
 		clusterNames := findClusterNames(data, "Cluster")
 
 		for _, clusterName := range clusterNames {
-			clusterNS := vs.Namespace
-			cl := store.Clusters[helpers.NamespacedName{Namespace: clusterNS, Name: clusterName}]
+			cl := store.SpecClusters[clusterName]
 			if cl == nil {
-				return nil, fmt.Errorf("cluster %s/%s not found", clusterNS, clusterName)
+				return nil, fmt.Errorf("cluster %s not found", clusterName)
 			}
 			xdsCluster, err := cl.UnmarshalV3AndValidate()
 			if err != nil {
-				return nil, fmt.Errorf("failed to unmarshal cluster %s/%s: %w", clusterNS, clusterName, err)
+				return nil, fmt.Errorf("failed to unmarshal cluster %s: %w", clusterName, err)
 			}
 			clusters = append(clusters, xdsCluster)
 		}

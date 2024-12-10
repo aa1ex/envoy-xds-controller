@@ -19,6 +19,7 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -36,9 +37,9 @@ import (
 var clusterlog = logf.Log.WithName("cluster-resource")
 
 // SetupClusterWebhookWithManager registers the webhook for Cluster in the manager.
-func SetupClusterWebhookWithManager(mgr ctrl.Manager) error {
+func SetupClusterWebhookWithManager(mgr ctrl.Manager, cacheUpdater *updater.CacheUpdater) error {
 	return ctrl.NewWebhookManagedBy(mgr).For(&envoyv1alpha1.Cluster{}).
-		WithValidator(&ClusterCustomValidator{Client: mgr.GetClient()}).
+		WithValidator(&ClusterCustomValidator{Client: mgr.GetClient(), cacheUpdater: cacheUpdater}).
 		Complete()
 }
 
@@ -55,7 +56,8 @@ func SetupClusterWebhookWithManager(mgr ctrl.Manager) error {
 // NOTE: The +kubebuilder:object:generate=false marker prevents controller-gen from generating DeepCopy methods,
 // as this struct is used only for temporary operations and does not need to be deeply copied.
 type ClusterCustomValidator struct {
-	Client client.Client
+	Client       client.Client
+	cacheUpdater *updater.CacheUpdater
 }
 
 var _ webhook.CustomValidator = &ClusterCustomValidator{}
@@ -68,8 +70,14 @@ func (v *ClusterCustomValidator) ValidateCreate(ctx context.Context, obj runtime
 	}
 	clusterlog.Info("Validation for Cluster upon creation", "name", cluster.GetName())
 
-	if _, err := cluster.UnmarshalV3AndValidate(); err != nil {
+	clusterV3, err := cluster.UnmarshalV3AndValidate()
+	if err != nil {
 		return nil, err
+	}
+
+	if val := v.cacheUpdater.GetSpecCluster(clusterV3.Name); val != nil &&
+		(val.Name != cluster.Name || val.Namespace != cluster.Namespace) {
+		return nil, fmt.Errorf("cluster %s already exists", clusterV3.Name)
 	}
 
 	return nil, nil

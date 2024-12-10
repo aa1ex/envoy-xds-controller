@@ -20,6 +20,9 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/store"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 	"net"
 	"path/filepath"
 	"runtime"
@@ -104,6 +107,12 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
+	cacheStore := store.New()
+	Expect(cacheStore).NotTo(BeNil())
+
+	cacheUpdater := updater.NewCacheUpdater(cache.NewSnapshotCache(), cacheStore)
+	Expect(cacheUpdater).NotTo(BeNil())
+
 	// start webhook server using Manager.
 	webhookInstallOptions := &testEnv.WebhookInstallOptions
 	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
@@ -124,7 +133,7 @@ var _ = BeforeSuite(func() {
 	err = SetupListenerWebhookWithManager(mgr)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = SetupClusterWebhookWithManager(mgr)
+	err = SetupClusterWebhookWithManager(mgr, cacheUpdater)
 	Expect(err).NotTo(HaveOccurred())
 
 	err = SetupRouteWebhookWithManager(mgr)

@@ -32,10 +32,6 @@ type opts struct {
 	filename string
 }
 
-func (a *AccessLogConfig) UnmarshalV3(options ...func(*opts)) (*accesslogv3.AccessLog, error) {
-	return a.unmarshalV3(options...)
-}
-
 func (a *AccessLogConfig) UnmarshalAndValidateV3(options ...func(*opts)) (*accesslogv3.AccessLog, error) {
 	accessLog, err := a.unmarshalV3(options...)
 	if err != nil {

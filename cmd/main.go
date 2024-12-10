@@ -319,7 +319,7 @@ func main() {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Listener")
 			os.Exit(1)
 		}
-		if err = webhookenvoyv1alpha1.SetupClusterWebhookWithManager(mgr); err != nil {
+		if err = webhookenvoyv1alpha1.SetupClusterWebhookWithManager(mgr, cacheUpdater); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Cluster")
 			os.Exit(1)
 		}

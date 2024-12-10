@@ -191,6 +191,7 @@ func (c *CacheUpdater) GetMarshaledStore() ([]byte, error) {
 	data := make(map[string]map[string]any)
 	data["virtualServices"] = make(map[string]any)
 	data["clusters"] = make(map[string]any)
+	data["specClusters"] = make(map[string]any)
 	data["secrets"] = make(map[string]any)
 	data["routes"] = make(map[string]any)
 	data["listeners"] = make(map[string]any)
@@ -229,6 +230,9 @@ func (c *CacheUpdater) GetMarshaledStore() ([]byte, error) {
 	}
 	for ds, s := range c.store.DomainToSecretMap {
 		data["domainToSecret"][ds] = s
+	}
+	for specCluster, cl := range c.store.SpecClusters {
+		data["specClusters"][specCluster] = cl
 	}
 	return json.MarshalIndent(data, "", "\t")
 }

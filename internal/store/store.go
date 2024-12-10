@@ -16,6 +16,7 @@ type Store struct {
 	VirtualServiceTemplates map[helpers.NamespacedName]*v1alpha1.VirtualServiceTemplate
 	Routes                  map[helpers.NamespacedName]*v1alpha1.Route
 	Clusters                map[helpers.NamespacedName]*v1alpha1.Cluster
+	SpecClusters            map[string]*v1alpha1.Cluster
 	HTTPFilters             map[helpers.NamespacedName]*v1alpha1.HttpFilter
 	Listeners               map[helpers.NamespacedName]*v1alpha1.Listener
 	AccessLogs              map[helpers.NamespacedName]*v1alpha1.AccessLogConfig
@@ -37,6 +38,7 @@ func New() *Store {
 		Secrets:                 make(map[helpers.NamespacedName]*v1.Secret),
 	}
 	store.UpdateDomainSecretsMap()
+	store.UpdateSpecClusters()
 	return store
 }
 
@@ -94,6 +96,7 @@ func (s *Store) Fill(ctx context.Context, cl client.Client) error {
 	s.Policies = make(map[helpers.NamespacedName]*v1alpha1.Policy, len(policies.Items))
 	s.Secrets = make(map[helpers.NamespacedName]*v1.Secret, len(secrets.Items))
 	s.DomainToSecretMap = make(map[string]v1.Secret, len(secrets.Items))
+	s.SpecClusters = make(map[string]*v1alpha1.Cluster, len(clusters.Items))
 
 	for _, vs := range virtualServices.Items {
 		s.VirtualServices[helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name}] = &vs
@@ -107,6 +110,7 @@ func (s *Store) Fill(ctx context.Context, cl client.Client) error {
 	for _, cluster := range clusters.Items {
 		s.Clusters[helpers.NamespacedName{Namespace: cluster.Namespace, Name: cluster.Name}] = &cluster
 	}
+	s.UpdateSpecClusters()
 	for _, httpFilter := range httpFilters.Items {
 		s.HTTPFilters[helpers.NamespacedName{Namespace: httpFilter.Namespace, Name: httpFilter.Name}] = &httpFilter
 	}
@@ -143,4 +147,15 @@ func (s *Store) UpdateDomainSecretsMap() {
 		}
 	}
 	s.DomainToSecretMap = m
+}
+
+func (s *Store) UpdateSpecClusters() {
+	m := make(map[string]*v1alpha1.Cluster)
+
+	for _, cluster := range s.Clusters {
+		clusterV3, _ := cluster.UnmarshalV3()
+		m[clusterV3.Name] = cluster
+	}
+
+	s.SpecClusters = m
 }
