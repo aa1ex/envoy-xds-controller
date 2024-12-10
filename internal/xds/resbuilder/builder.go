@@ -208,13 +208,22 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 		}
 	}
 
+	rootMatchIndexes := make([]int, 0, 1)
 	// reorder routes, root must be in the end
 	for index, route := range virtualHost.Routes {
 		if route.Match != nil && route.Match.GetPrefix() == "/" {
-			virtualHost.Routes = append(virtualHost.Routes[:index], virtualHost.Routes[index+1:]...)
-			virtualHost.Routes = append(virtualHost.Routes, route)
-			break
+			rootMatchIndexes = append(rootMatchIndexes, index)
 		}
+	}
+
+	switch {
+	case len(rootMatchIndexes) > 1:
+		return nil, fmt.Errorf("multiple root routes found")
+	case len(rootMatchIndexes) == 1 && rootMatchIndexes[0] != len(virtualHost.Routes)-1:
+		index := rootMatchIndexes[0]
+		route := virtualHost.Routes[index]
+		virtualHost.Routes = append(virtualHost.Routes[:index], virtualHost.Routes[index+1:]...)
+		virtualHost.Routes = append(virtualHost.Routes, route)
 	}
 
 	if err := virtualHost.ValidateAll(); err != nil {
