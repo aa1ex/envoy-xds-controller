@@ -208,6 +208,15 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 		}
 	}
 
+	// reorder routes, root must be in the end
+	for index, route := range virtualHost.Routes {
+		if route.Match != nil && route.Match.GetPrefix() == "/" {
+			virtualHost.Routes = append(virtualHost.Routes[:index], virtualHost.Routes[index+1:]...)
+			virtualHost.Routes = append(virtualHost.Routes, route)
+			break
+		}
+	}
+
 	if err := virtualHost.ValidateAll(); err != nil {
 		return nil, fmt.Errorf("failed to validate virtual host: %w", err)
 	}
