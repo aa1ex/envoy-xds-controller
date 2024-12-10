@@ -1,8 +1,12 @@
 package handlers
 
 import (
+	"crypto/x509"
+	"encoding/pem"
+	"fmt"
 	"net/url"
 	"slices"
+	"strings"
 
 	tlsv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	"github.com/gin-gonic/gin"
@@ -51,7 +55,7 @@ func (h *handler) getSecrets(ctx *gin.Context) {
 		return
 	}
 
-	secrets, err := h.getSecretsAll(params[nodeIDParamName][0])
+	secrets, err := h.getSecretsAll(params[nodeIDParamName][0], true)
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
@@ -80,4 +84,114 @@ func (h *handler) getParamsFoSecretRequests(queryValues url.Values) (map[string]
 	}
 
 	return params, nil
+}
+
+type secretResponse struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+	Certs     []struct {
+		SerialNumber string   `json:"serialNumber"`
+		Subject      string   `json:"subject"`
+		NotBefore    string   `json:"notBefore"`
+		NotAfter     string   `json:"notAfter"`
+		Issuer       string   `json:"issuer"`
+		Raw          string   `json:"raw"`
+		DNSNames     []string `json:"dnsNames"`
+	} `json:"data"`
+}
+
+func (h *handler) getSecretByNamespacedName(ctx *gin.Context) {
+	nodeIDs := h.getAvailableNodeIDs(ctx)
+	namespace := ctx.Param("namespace")
+	name := ctx.Param("name")
+
+	response := secretResponse{
+		Namespace: namespace,
+		Name:      name,
+	}
+
+	notFound := true
+
+	for _, nodeID := range nodeIDs {
+		secrets, err := h.getSecretsAll(nodeID, false)
+		if err != nil {
+			ctx.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+		for _, secret := range secrets {
+			parts := strings.Split(secret.Name, "/")
+			if len(parts) == 2 && parts[0] == namespace && parts[1] == name {
+				response.Name = parts[1]
+				response.Namespace = parts[0]
+				certs, err := GetSecretData(secret)
+				if err != nil {
+					ctx.JSON(500, gin.H{"error": err.Error()})
+					return
+				}
+				for _, cert := range certs {
+					response.Certs = append(response.Certs, struct {
+						SerialNumber string   `json:"serialNumber"`
+						Subject      string   `json:"subject"`
+						NotBefore    string   `json:"notBefore"`
+						NotAfter     string   `json:"notAfter"`
+						Issuer       string   `json:"issuer"`
+						Raw          string   `json:"raw"`
+						DNSNames     []string `json:"dnsNames"`
+					}{
+						SerialNumber: cert.SerialNumber.String(),
+						Subject:      cert.Subject.String(),
+						NotBefore:    cert.NotBefore.String(),
+						NotAfter:     cert.NotAfter.String(),
+						Issuer:       cert.Issuer.String(),
+						Raw:          string(pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: cert.Raw})),
+						DNSNames:     cert.DNSNames,
+					},
+					)
+				}
+				notFound = false
+				break
+			}
+		}
+	}
+
+	if notFound {
+		ctx.JSON(404, nil)
+		return
+	}
+
+	ctx.JSON(200, response)
+}
+
+func GetSecretData(secret *tlsv3.Secret) ([]*x509.Certificate, error) {
+	if secret == nil {
+		return nil, fmt.Errorf("secret is nil")
+	}
+	switch secret.Type.(type) {
+	case *tlsv3.Secret_TlsCertificate:
+		return parsePEM(secret.GetTlsCertificate().CertificateChain.GetInlineBytes())
+	}
+	return nil, fmt.Errorf("unknown secret type")
+}
+
+func parsePEM(data []byte) ([]*x509.Certificate, error) {
+	certs := make([]*x509.Certificate, 0)
+	for block, rest := pem.Decode(data); block != nil; block, rest = pem.Decode(rest) {
+		switch block.Type {
+		case "CERTIFICATE":
+			cert, err := x509.ParseCertificate(block.Bytes)
+			if err != nil {
+				return nil, err
+			}
+			certs = append(certs, cert)
+
+		case "PRIVATE KEY":
+			_, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+			if err != nil {
+				return nil, err
+			}
+		default:
+			return nil, fmt.Errorf("unknown block type %q", block.Type)
+		}
+	}
+	return certs, nil
 }

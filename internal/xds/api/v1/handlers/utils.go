@@ -188,7 +188,7 @@ func (h *handler) getSecretByName(nodeID, secretName string) (*tlsv3.Secret, err
 	return nil, fmt.Errorf("cluster %v not found", secretName)
 }
 
-func (h *handler) getSecretsAll(nodeID string) ([]*tlsv3.Secret, error) {
+func (h *handler) getSecretsAll(nodeID string, clearSecret bool) ([]*tlsv3.Secret, error) {
 	resources, err := h.cache.GetSecrets(nodeID)
 	if err != nil {
 		return nil, err
@@ -197,7 +197,9 @@ func (h *handler) getSecretsAll(nodeID string) ([]*tlsv3.Secret, error) {
 	secrets := make([]*tlsv3.Secret, 0, len(resources))
 
 	for _, secret := range resources {
-		clearSecretData(secret)
+		if clearSecret {
+			clearSecretData(secret)
+		}
 		secrets = append(secrets, secret)
 	}
 
