@@ -188,8 +188,10 @@ func (h *handler) getFilterChainForDomainByServerName(listener *listenerv3.Liste
 			continue
 		}
 
-		if filterChain.FilterChainMatch.GetServerNames() != nil {
-			findServerName := findServerNameForDomain(filterChain.FilterChainMatch.GetServerNames(), domain)
+		serversNames := filterChain.FilterChainMatch.GetServerNames()
+
+		if len(serversNames) > 0 {
+			findServerName := findServerNameForDomain(serversNames, domain)
 			if findServerName == "" {
 				continue
 			}

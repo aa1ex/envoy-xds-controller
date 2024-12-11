@@ -32,6 +32,7 @@ const (
 )
 
 type FilterChainsParams struct {
+	VSName               string
 	UseRemoteAddress     bool
 	RouteConfigName      string
 	StatPrefix           string
@@ -112,6 +113,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 	}
 
 	filterChainParams := &FilterChainsParams{
+		VSName:           nn.String(),
 		UseRemoteAddress: helpers.BoolFromPtr(vs.Spec.UseRemoteAddress),
 		RouteConfigName:  nn.String(),
 		StatPrefix:       strings.ReplaceAll(nn.String(), ".", "-"),
@@ -464,6 +466,7 @@ func buildFilterChain(params *FilterChainsParams) (*listenerv3.FilterChain, erro
 			},
 		}
 	}
+	fc.Name = params.VSName
 
 	if err := fc.ValidateAll(); err != nil {
 		return nil, err

@@ -3,5 +3,7 @@ kind: VirtualService
 metadata:
   name: virtual-service-used-route
 spec:
+  listener:
+    name: http
   virtualHost:
     foo: bar

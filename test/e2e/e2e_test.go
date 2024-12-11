@@ -370,7 +370,7 @@ var _ = Describe("Manager", Ordered, func() {
 				},
 				{
 					manifest:        "test/testdata/conformance/virtualservice-empty-virtualhost.yaml",
-					expectedErrText: "virtual host is empty",
+					expectedErrText: "listener is nil",
 				},
 				{
 					manifest:        "test/testdata/conformance/virtualservice-invalid-virtualhost.yaml",
