@@ -255,11 +255,25 @@ var _ = Describe("Manager", Ordered, func() {
 			Eventually(verifyCAInjection).Should(Succeed())
 		})
 
-		// ---
+		// +kubebuilder:scaffold:e2e-webhooks-checks
+
+		// TODO: Customize the e2e test suite with scenarios specific to your project.
+		// Consider applying sample/CR(s) and check their status and/or verifying
+		// the reconciliation by using the metrics, i.e.:
+		// metricsOutput := getMetricsOutput()
+		// Expect(metricsOutput).To(ContainSubstring(
+		//    fmt.Sprintf(`controller_runtime_reconcile_total{controller="%s",result="success"} 1`,
+		//    strings.ToLower(<Kind>),
+		// ))
+	})
+
+	Context("Envoy", func() {
+		var actualEnvoyConfigDump string
 
 		It("should ensure the envoy listeners config dump is empty", func() {
 			cfgDump := getEnvoyConfigDump("resource=dynamic_listeners")
 			Expect(strings.TrimSpace(cfgDump)).To(Equal("{}"))
+			actualEnvoyConfigDump = cfgDump
 		})
 
 		It("should applied only valid manifests", func() {
@@ -453,11 +467,15 @@ var _ = Describe("Manager", Ordered, func() {
 
 		It("should applied configs to envoy", func() {
 			By("waiting envoy applied config")
-			time.Sleep(60 * time.Second)
+			time.Sleep(time.Second * 30)
+			//Eventually(func(g Gomega) {
+			//	cfgDump := getEnvoyConfigDump("")
+			//	Expect(cfgDump).ShouldNot(Equal(actualEnvoyConfigDump))
+			//}, time.Minute).Should(Succeed())
 
 			verifyConfigUpdated := func(g Gomega) {
-				cfgDump := getEnvoyConfigDump("")
-				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
+				actualEnvoyConfigDump = getEnvoyConfigDump("")
+				_ = os.WriteFile("/tmp/dump.json", []byte(actualEnvoyConfigDump), 0644)
 				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                  "test",
@@ -473,13 +491,49 @@ var _ = Describe("Manager", Ordered, func() {
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.typed_config.@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router",
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                       "default/virtual-service",
 				} {
-					Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
+					Expect(value).To(Equal(gjson.Get(actualEnvoyConfigDump, path).String()))
 				}
 			}
 			Eventually(verifyConfigUpdated).Should(Succeed())
 		})
 
-		// ---
+		It("should ensure the envoy return expected response", func() {
+			podName := "curl-fetch-data"
+
+			By("resolve ip address of the envoy pod")
+			cmd := exec.Command("kubectl", "get", "pods", "-l", "app.kubernetes.io/name=envoy", "-o", "jsonpath='{.items[0].status.podIP}'")
+			output, err := utils.Run(cmd)
+			Expect(err).NotTo(HaveOccurred(), "Failed to resolve ip address of the envoy")
+			envoyIP := strings.Trim(strings.TrimSpace(output), "'")
+
+			By("creating the curl-config-dump pod to access config dump")
+			cmd = exec.Command("kubectl", "run", podName, "--restart=Never",
+				"--image=curlimages/curl:7.78.0",
+				"--", "/bin/sh", "-c", "curl -s -k https://exc.kaasops.io:10443/"+" --resolve exc.kaasops.io:10443:"+envoyIP)
+			_, err = utils.Run(cmd)
+			Expect(err).NotTo(HaveOccurred(), "Failed to create curl-fetch-data pod")
+
+			By("waiting for the curl-fetch-data pod to complete.")
+			verifyCurlUp := func(g Gomega) {
+				cmd := exec.Command("kubectl", "get", "pods", podName,
+					"-o", "jsonpath={.status.phase}")
+				output, err := utils.Run(cmd)
+				g.Expect(err).NotTo(HaveOccurred())
+				g.Expect(output).To(Equal("Succeeded"), "curl pod in wrong status")
+			}
+			Eventually(verifyCurlUp, 30*time.Second).Should(Succeed())
+
+			By("getting the curl-fetch-data")
+			cmd = exec.Command("kubectl", "logs", podName)
+			response, err := utils.Run(cmd)
+			Expect(err).NotTo(HaveOccurred(), "Failed to retrieve output from curl pod")
+
+			By("cleaning up the curl pod for getting envoy config dump")
+			cmd = exec.Command("kubectl", "delete", "pod", podName)
+			_, _ = utils.Run(cmd)
+
+			Expect(strings.TrimSpace(response)).To(Equal("{\"message\":\"Hello\"}"))
+		})
 
 		/*
 
@@ -622,16 +676,6 @@ var _ = Describe("Manager", Ordered, func() {
 				Eventually(verifyConfigUpdated).Should(Succeed())
 			})
 		*/
-		// +kubebuilder:scaffold:e2e-webhooks-checks
-
-		// TODO: Customize the e2e test suite with scenarios specific to your project.
-		// Consider applying sample/CR(s) and check their status and/or verifying
-		// the reconciliation by using the metrics, i.e.:
-		// metricsOutput := getMetricsOutput()
-		// Expect(metricsOutput).To(ContainSubstring(
-		//    fmt.Sprintf(`controller_runtime_reconcile_total{controller="%s",result="success"} 1`,
-		//    strings.ToLower(<Kind>),
-		// ))
 	})
 })
 

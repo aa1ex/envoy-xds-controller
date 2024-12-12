@@ -130,6 +130,15 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		return nil, nil, err
 	}
 
+	listenerIsTLS := isTLSListener(xdsListener)
+
+	if listenerIsTLS && vs.Spec.TlsConfig == nil {
+		return nil, nil, fmt.Errorf("tls listener not configured, virtual service has not tls config")
+	}
+	if !listenerIsTLS && vs.Spec.TlsConfig != nil {
+		return nil, nil, fmt.Errorf("listener is not tls, virtual service has tls config")
+	}
+
 	if vs.Spec.TlsConfig != nil {
 		tlsType, err := getTLSType(vs.Spec.TlsConfig)
 		if err != nil {
@@ -763,4 +772,21 @@ func makeEnvoyOpaqueSecret(kubeSecret *v1.Secret) ([]*tlsv3.Secret, error) {
 	}
 
 	return secrets, nil
+}
+
+func isTLSListener(xdsListener *listenerv3.Listener) bool {
+	if xdsListener == nil {
+		return false
+	}
+	if len(xdsListener.ListenerFilters) == 0 {
+		return false
+	}
+	for _, lFilter := range xdsListener.ListenerFilters {
+		if tc := lFilter.GetTypedConfig(); tc != nil {
+			if tc.TypeUrl == "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector" {
+				return true
+			}
+		}
+	}
+	return false
 }

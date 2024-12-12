@@ -78,7 +78,7 @@ type Config struct {
 	WatchNamespaces       string `default:""                     envconfig:"WATCH_NAMESPACES"`
 	InstallationNamespace string `default:"envoy-xds-controller" envconfig:"INSTALLATION_NAMESPACE"`
 	XDS                   struct {
-		Port int `default:"8888" envconfig:"XDS_PORT"`
+		Port int `default:"9000" envconfig:"XDS_PORT"`
 	}
 	Webhook struct {
 		TLSSecretName  string `default:"envoy-xds-controller-webhook-cert"           envconfig:"WEBHOOK_TLS_SECRET_NAME"`
