@@ -100,7 +100,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 
 	// Clusters ---
 
-	clusters, err := buildClusters(vs, virtualHost, store)
+	clusters, err := buildClusters(virtualHost, store)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -288,10 +288,30 @@ func buildHTTPFilters(vs *v1alpha1.VirtualService, store *store.Store) ([]*hcmv3
 		}
 	}
 
+	// filter with type type.googleapis.com/envoy.extensions.filters.http.router.v3.Router must be in the end
+	var routerIdxs []int
+	for i, f := range httpFilters {
+		if tc := f.GetTypedConfig(); tc != nil {
+			if tc.TypeUrl == "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router" {
+				routerIdxs = append(routerIdxs, i)
+			}
+		}
+	}
+
+	switch {
+	case len(routerIdxs) > 1:
+		return nil, fmt.Errorf("multiple root router http filters")
+	case len(routerIdxs) == 1 && routerIdxs[0] != len(httpFilters)-1:
+		index := routerIdxs[0]
+		route := httpFilters[index]
+		httpFilters = append(httpFilters[:index], httpFilters[index+1:]...)
+		httpFilters = append(httpFilters, route)
+	}
+
 	return httpFilters, nil
 }
 
-func buildClusters(vs *v1alpha1.VirtualService, virtualHost *routev3.VirtualHost, store *store.Store) ([]*cluster.Cluster, error) {
+func buildClusters(virtualHost *routev3.VirtualHost, store *store.Store) ([]*cluster.Cluster, error) {
 	var clusters []*cluster.Cluster
 
 	for _, route := range virtualHost.Routes {

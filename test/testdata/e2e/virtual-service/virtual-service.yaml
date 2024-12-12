@@ -6,7 +6,7 @@ metadata:
     envoy.kaasops.io/node-id: test
 spec:
   listener:
-    name: listener
+    name: https
   httpFilters:
     - name: envoy.filters.http.router
       typed_config:

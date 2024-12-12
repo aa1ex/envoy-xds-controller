@@ -1,7 +1,7 @@
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: Listener
 metadata:
-  name: listener
+  name: https
 spec:
   name: https
   address:

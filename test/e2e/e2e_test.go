@@ -457,14 +457,14 @@ var _ = Describe("Manager", Ordered, func() {
 
 			verifyConfigUpdated := func(g Gomega) {
 				cfgDump := getEnvoyConfigDump("")
-				//_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
+				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
 				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                  "test",
 					"configs.0.bootstrap.node.cluster":                                                                                             "e2e",
 					"configs.0.bootstrap.admin.address.socket_address.port_value":                                                                  "19000",
-					"configs.2.dynamic_listeners.0.name":                                                                                           "default/listener",
-					"configs.2.dynamic_listeners.0.active_state.listener.name":                                                                     "default/listener",
+					"configs.2.dynamic_listeners.0.name":                                                                                           "default/https",
+					"configs.2.dynamic_listeners.0.active_state.listener.name":                                                                     "default/https",
 					"configs.2.dynamic_listeners.0.active_state.listener.address.socket_address.port_value":                                        "10443",
 					"configs.2.dynamic_listeners.0.active_state.listener.listener_filters.0.name":                                                  "envoy.filters.listener.tls_inspector",
 					"configs.2.dynamic_listeners.0.active_state.listener.listener_filters.0.typed_config.@type":                                    "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector",
