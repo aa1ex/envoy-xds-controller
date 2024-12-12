@@ -1,4 +1,3 @@
-# Default setting for collect and send logs to cluster otelcol-logs (local instance Opentelemetry Collector)
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: AccessLogConfig
 metadata:

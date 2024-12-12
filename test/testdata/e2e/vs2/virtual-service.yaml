@@ -9,4 +9,4 @@ spec:
     name: virtual-service-template
   virtualHost:
     domains:
-      - exc2.kaasops.io
+      - exc.kaasops.io

@@ -268,12 +268,9 @@ var _ = Describe("Manager", Ordered, func() {
 	})
 
 	Context("Envoy", func() {
-		var actualEnvoyConfigDump string
-
 		It("should ensure the envoy listeners config dump is empty", func() {
 			cfgDump := getEnvoyConfigDump("resource=dynamic_listeners")
 			Expect(strings.TrimSpace(cfgDump)).To(Equal("{}"))
-			actualEnvoyConfigDump = cfgDump
 		})
 
 		It("should applied only valid manifests", func() {
@@ -454,9 +451,9 @@ var _ = Describe("Manager", Ordered, func() {
 			By("apply manifests")
 
 			manifests := []string{
-				"test/testdata/e2e/virtual-service/listener.yaml",
-				"test/testdata/e2e/virtual-service/tls-cert.yaml",
-				"test/testdata/e2e/virtual-service/virtual-service.yaml",
+				"test/testdata/e2e/vs1/listener.yaml",
+				"test/testdata/e2e/vs1/tls-cert.yaml",
+				"test/testdata/e2e/vs1/virtual-service.yaml",
 			}
 
 			for _, manifest := range manifests {
@@ -474,8 +471,8 @@ var _ = Describe("Manager", Ordered, func() {
 			//}, time.Minute).Should(Succeed())
 
 			verifyConfigUpdated := func(g Gomega) {
-				actualEnvoyConfigDump = getEnvoyConfigDump("")
-				_ = os.WriteFile("/tmp/dump.json", []byte(actualEnvoyConfigDump), 0644)
+				cfgDump := getEnvoyConfigDump("")
+				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
 				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                  "test",
@@ -491,191 +488,93 @@ var _ = Describe("Manager", Ordered, func() {
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.typed_config.@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router",
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                       "default/virtual-service",
 				} {
-					Expect(value).To(Equal(gjson.Get(actualEnvoyConfigDump, path).String()))
+					Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
 				}
 			}
 			Eventually(verifyConfigUpdated).Should(Succeed())
 		})
 
 		It("should ensure the envoy return expected response", func() {
-			podName := "curl-fetch-data"
-
-			By("resolve ip address of the envoy pod")
-			cmd := exec.Command("kubectl", "get", "pods", "-l", "app.kubernetes.io/name=envoy", "-o", "jsonpath='{.items[0].status.podIP}'")
-			output, err := utils.Run(cmd)
-			Expect(err).NotTo(HaveOccurred(), "Failed to resolve ip address of the envoy")
-			envoyIP := strings.Trim(strings.TrimSpace(output), "'")
-
-			By("creating the curl-config-dump pod to access config dump")
-			cmd = exec.Command("kubectl", "run", podName, "--restart=Never",
-				"--image=curlimages/curl:7.78.0",
-				"--", "/bin/sh", "-c", "curl -s -k https://exc.kaasops.io:10443/"+" --resolve exc.kaasops.io:10443:"+envoyIP)
-			_, err = utils.Run(cmd)
-			Expect(err).NotTo(HaveOccurred(), "Failed to create curl-fetch-data pod")
-
-			By("waiting for the curl-fetch-data pod to complete.")
-			verifyCurlUp := func(g Gomega) {
-				cmd := exec.Command("kubectl", "get", "pods", podName,
-					"-o", "jsonpath={.status.phase}")
-				output, err := utils.Run(cmd)
-				g.Expect(err).NotTo(HaveOccurred())
-				g.Expect(output).To(Equal("Succeeded"), "curl pod in wrong status")
-			}
-			Eventually(verifyCurlUp, 30*time.Second).Should(Succeed())
-
-			By("getting the curl-fetch-data")
-			cmd = exec.Command("kubectl", "logs", podName)
-			response, err := utils.Run(cmd)
-			Expect(err).NotTo(HaveOccurred(), "Failed to retrieve output from curl pod")
-
-			By("cleaning up the curl pod for getting envoy config dump")
-			cmd = exec.Command("kubectl", "delete", "pod", podName)
-			_, _ = utils.Run(cmd)
-
+			response := fetchDataFromEnvoy()
 			Expect(strings.TrimSpace(response)).To(Equal("{\"message\":\"Hello\"}"))
 		})
 
-		/*
+		It("should ensure the envoy config changed (templates)", func() {
+			By("apply manifests")
 
-			It("should applied virtual service", func() {
-				By("applying secret")
-				err := utils.ApplyManifests("test/testdata/e2e/vs1/exc-kaasops-io.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply secret")
+			manifests := []string{
+				"test/testdata/e2e/vs2/access-log-config.yaml",
+				"test/testdata/e2e/vs2/http-filter.yaml",
+				"test/testdata/e2e/vs2/virtual-service-template.yaml",
+				"test/testdata/e2e/vs2/virtual-service.yaml",
+			}
 
-				By("applying virtual service manifest")
-				err = utils.ApplyManifests("test/testdata/e2e/vs1/virtual-service.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply virtual service manifest")
+			for _, manifest := range manifests {
+				err := utils.ApplyManifests(manifest)
+				Expect(err).NotTo(HaveOccurred(), "Failed to apply manifest: "+manifest)
+			}
+		})
 
-				By("waiting for the virtual service to be ready (60 sec.)")
-				time.Sleep(time.Minute) // TODO: hack
+		It("should applied configs to envoy", func() {
+			By("waiting envoy applied config")
+			time.Sleep(time.Second * 30)
+			//Eventually(func(g Gomega) {
+			//	cfgDump := getEnvoyConfigDump("")
+			//	Expect(cfgDump).ShouldNot(Equal(actualEnvoyConfigDump))
+			//}, time.Minute).Should(Succeed())
 
-				verifyConfigUpdated := func(g Gomega) {
-					cfgDump := getEnvoyConfigDump()
-					_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
-					// nolint: lll
-					for path, value := range map[string]string{
-						"configs.0.bootstrap.node.id":                                                                                                "test",
-						"configs.0.bootstrap.node.cluster":                                                                                           "e2e",
-						"configs.0.bootstrap.admin.address.socket_address.port_value":                                                                "19000",
-						"configs.2.dynamic_listeners.0.name":                                                                                         "default/https",
-						"configs.2.dynamic_listeners.0.active_state.listener.address.socket_address.port_value":                                      "10443",
-						"configs.2.dynamic_listeners.0.active_state.listener.listener_filters.0.name":                                                "envoy.filters.listener.tls_inspector",
-						"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.name":             "envoy.filters.http.router",
-						"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                     "default/virtual-service-1",
-						"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type": "type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog",
-					} {
-						Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
-					}
+			verifyConfigUpdated := func(g Gomega) {
+				cfgDump := getEnvoyConfigDump("")
+				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
+				// nolint: lll
+				for path, value := range map[string]string{
+					"configs.0.bootstrap.node.id":                                                                                                  "test",
+					"configs.0.bootstrap.node.cluster":                                                                                             "e2e",
+					"configs.0.bootstrap.admin.address.socket_address.port_value":                                                                  "19000",
+					"configs.2.dynamic_listeners.0.name":                                                                                           "default/https",
+					"configs.2.dynamic_listeners.0.active_state.listener.name":                                                                     "default/https",
+					"configs.2.dynamic_listeners.0.active_state.listener.address.socket_address.port_value":                                        "10443",
+					"configs.2.dynamic_listeners.0.active_state.listener.listener_filters.0.name":                                                  "envoy.filters.listener.tls_inspector",
+					"configs.2.dynamic_listeners.0.active_state.listener.listener_filters.0.typed_config.@type":                                    "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector",
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filter_chain_match.server_names.0":                        "exc.kaasops.io",
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.name":               "envoy.filters.http.router",
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.typed_config.@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router",
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                       "default/virtual-service",
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type":   "type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog",
+				} {
+					Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
 				}
+			}
+			Eventually(verifyConfigUpdated).Should(Succeed())
+		})
 
-				By("cleanup virtual service")
-				err = utils.DeleteManifests("test/testdata/e2e/vs1/virtual-service.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete virtual service manifest")
+		It("should ensure the envoy return expected response", func() {
+			response := fetchDataFromEnvoy()
+			Expect(strings.TrimSpace(response)).To(Equal("{\"message\":\"Hello from template\"}"))
+		})
 
-				By("cleanup secret")
-				err = utils.DeleteManifests("test/testdata/e2e/vs1/exc-kaasops-io.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete secret")
+		It("should ensure that the resources in use cannot be deleted", func() {
+			By("try to delete linked secret")
+			err := utils.DeleteManifests("test/testdata/e2e/vs1/tls-cert.yaml")
+			Expect(err).To(HaveOccurred())
 
-				Eventually(verifyConfigUpdated).Should(Succeed())
-			})
+			By("try to delete linked virtual service template")
+			err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
+			Expect(err).To(HaveOccurred())
 
-			It("should applied virtual service", func() {
+			By("try to delete linked listener")
+			err = utils.DeleteManifests("test/testdata/e2e/vs1/listener.yaml")
+			Expect(err).To(HaveOccurred())
 
-				By("applying secret")
-				err := utils.ApplyManifests("test/testdata/e2e/vs2/exc2-kaasops-io.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply secret")
+			By("try to delete linked http-filter")
+			err = utils.DeleteManifests("test/testdata/e2e/vs2/http-filter.yaml")
+			Expect(err).To(HaveOccurred())
 
-				By("applying access log config")
-				err = utils.ApplyManifests("test/testdata/e2e/vs2/access-log-config.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply access log config")
+			By("try to delete linked access log config")
+			err = utils.DeleteManifests("test/testdata/e2e/vs2/access-log-config.yaml")
+			Expect(err).To(HaveOccurred())
+		})
 
-				By("applying listener")
-				err = utils.ApplyManifests("test/testdata/e2e/vs2/listener.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply listener")
-
-				By("applying http-filter")
-				err = utils.ApplyManifests("test/testdata/e2e/vs2/http-filter.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply http-filter")
-
-				By("applying virtual service template")
-				err = utils.ApplyManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply virtual service template")
-
-				By("applying virtual service manifest")
-				err = utils.ApplyManifests("test/testdata/e2e/vs2/virtual-service.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to apply virtual service manifest")
-
-				By("waiting for the virtual service to be ready (60 sec.)")
-				time.Sleep(time.Minute) // TODO: hack
-
-				verifyConfigUpdated := func(g Gomega) {
-					cfgDump := getEnvoyConfigDump()
-					_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
-					// nolint: lll
-					for path, value := range map[string]string{
-						"configs.0.bootstrap.node.id":                                                                                                "test",
-						"configs.0.bootstrap.node.cluster":                                                                                           "e2e",
-						"configs.0.bootstrap.admin.address.socket_address.port_value":                                                                "19000",
-						"configs.2.dynamic_listeners.0.name":                                                                                         "default/https",
-						"configs.2.dynamic_listeners.0.active_state.listener.address.socket_address.port_value":                                      "10443",
-						"configs.2.dynamic_listeners.0.active_state.listener.listener_filters.0.name":                                                "envoy.filters.listener.tls_inspector",
-						"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.name":             "envoy.filters.http.router",
-						"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                     "default/virtual-service-1",
-						"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type": "type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog",
-					} {
-						Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
-					}
-				}
-
-				By("try to delete linked secret")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/exc2-kaasops-io.yaml")
-				Expect(err).To(HaveOccurred())
-
-				By("try to delete linked virtual service template")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
-				Expect(err).To(HaveOccurred())
-
-				By("try to delete linked listener")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/listener.yaml")
-				Expect(err).To(HaveOccurred())
-
-				By("try to delete linked http-filter")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/http-filter.yaml")
-				Expect(err).To(HaveOccurred())
-
-				By("try to delete linked virtual service template")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
-				Expect(err).To(HaveOccurred())
-
-				// ---
-
-				By("cleanup virtual service")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete virtual service manifest")
-
-				By("cleanup virtual service template")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete virtual service template")
-
-				By("cleanup http-filter")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/http-filter.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete http-filter")
-
-				By("cleanup listener")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/listener.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete listener")
-
-				By("cleanup access log config")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/access-log-config.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete access log config")
-
-				By("cleanup secret")
-				err = utils.DeleteManifests("test/testdata/e2e/vs2/exc2-kaasops-io.yaml")
-				Expect(err).NotTo(HaveOccurred(), "Failed to delete secret")
-
-				Eventually(verifyConfigUpdated).Should(Succeed())
-			})
-		*/
 	})
 })
 
@@ -765,6 +664,43 @@ func getEnvoyConfigDump(queryParams string) string {
 	_, _ = utils.Run(cmd)
 
 	return configDump
+}
+
+func fetchDataFromEnvoy() string {
+	podName := "curl-fetch-data"
+
+	By("resolve ip address of the envoy pod")
+	cmd := exec.Command("kubectl", "get", "pods", "-l", "app.kubernetes.io/name=envoy", "-o", "jsonpath='{.items[0].status.podIP}'")
+	output, err := utils.Run(cmd)
+	Expect(err).NotTo(HaveOccurred(), "Failed to resolve ip address of the envoy")
+	envoyIP := strings.Trim(strings.TrimSpace(output), "'")
+
+	By("creating the curl-config-dump pod to access config dump")
+	cmd = exec.Command("kubectl", "run", podName, "--restart=Never",
+		"--image=curlimages/curl:7.78.0",
+		"--", "/bin/sh", "-c", "curl -s -k https://exc.kaasops.io:10443/"+" --resolve exc.kaasops.io:10443:"+envoyIP)
+	_, err = utils.Run(cmd)
+	Expect(err).NotTo(HaveOccurred(), "Failed to create curl-fetch-data pod")
+
+	By("waiting for the curl-fetch-data pod to complete.")
+	verifyCurlUp := func(g Gomega) {
+		cmd := exec.Command("kubectl", "get", "pods", podName,
+			"-o", "jsonpath={.status.phase}")
+		output, err := utils.Run(cmd)
+		g.Expect(err).NotTo(HaveOccurred())
+		g.Expect(output).To(Equal("Succeeded"), "curl pod in wrong status")
+	}
+	Eventually(verifyCurlUp, 30*time.Second).Should(Succeed())
+
+	By("getting the curl-fetch-data")
+	cmd = exec.Command("kubectl", "logs", podName)
+	response, err := utils.Run(cmd)
+	Expect(err).NotTo(HaveOccurred(), "Failed to retrieve output from curl pod")
+
+	By("cleaning up the curl pod for getting envoy config dump")
+	cmd = exec.Command("kubectl", "delete", "pod", podName)
+	_, _ = utils.Run(cmd)
+	return response
 }
 
 // tokenRequest is a simplified representation of the Kubernetes TokenRequest API response,
