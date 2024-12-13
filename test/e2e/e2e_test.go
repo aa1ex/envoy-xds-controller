@@ -17,6 +17,7 @@ limitations under the License.
 package e2e
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
@@ -268,9 +269,14 @@ var _ = Describe("Manager", Ordered, func() {
 	})
 
 	Context("Envoy", func() {
+
+		var actualCfgDump json.RawMessage
+
 		It("should ensure the envoy listeners config dump is empty", func() {
 			cfgDump := getEnvoyConfigDump("resource=dynamic_listeners")
-			Expect(strings.TrimSpace(cfgDump)).To(Equal("{}"))
+			str, _ := cfgDump.MarshalJSON()
+			Expect(strings.TrimSpace(string(str))).To(Equal("{}"))
+			actualCfgDump = getEnvoyConfigDump("")
 		})
 
 		It("should applied only valid manifests", func() {
@@ -463,16 +469,10 @@ var _ = Describe("Manager", Ordered, func() {
 		})
 
 		It("should applied configs to envoy", func() {
-			By("waiting envoy applied config")
-			time.Sleep(time.Second * 30)
-			//Eventually(func(g Gomega) {
-			//	cfgDump := getEnvoyConfigDump("")
-			//	Expect(cfgDump).ShouldNot(Equal(actualEnvoyConfigDump))
-			//}, time.Minute).Should(Succeed())
+			waitEnvoyConfigChanged(&actualCfgDump)
+			dump := string(actualCfgDump)
 
 			verifyConfigUpdated := func(g Gomega) {
-				cfgDump := getEnvoyConfigDump("")
-				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
 				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                  "test",
@@ -488,7 +488,7 @@ var _ = Describe("Manager", Ordered, func() {
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.http_filters.0.typed_config.@type": "type.googleapis.com/envoy.extensions.filters.http.router.v3.Router",
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                       "default/virtual-service",
 				} {
-					Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
+					Expect(value).To(Equal(gjson.Get(dump, path).String()))
 				}
 			}
 			Eventually(verifyConfigUpdated).Should(Succeed())
@@ -516,16 +516,10 @@ var _ = Describe("Manager", Ordered, func() {
 		})
 
 		It("should applied configs to envoy", func() {
-			By("waiting envoy applied config")
-			time.Sleep(time.Second * 30)
-			//Eventually(func(g Gomega) {
-			//	cfgDump := getEnvoyConfigDump("")
-			//	Expect(cfgDump).ShouldNot(Equal(actualEnvoyConfigDump))
-			//}, time.Minute).Should(Succeed())
+			waitEnvoyConfigChanged(&actualCfgDump)
 
 			verifyConfigUpdated := func(g Gomega) {
-				cfgDump := getEnvoyConfigDump("")
-				_ = os.WriteFile("/tmp/dump.json", []byte(cfgDump), 0644)
+				dump := string(actualCfgDump)
 				// nolint: lll
 				for path, value := range map[string]string{
 					"configs.0.bootstrap.node.id":                                                                                                  "test",
@@ -542,7 +536,7 @@ var _ = Describe("Manager", Ordered, func() {
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.stat_prefix":                       "default/virtual-service",
 					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type":   "type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog",
 				} {
-					Expect(value).To(Equal(gjson.Get(cfgDump, path).String()))
+					Expect(value).To(Equal(gjson.Get(dump, path).String()))
 				}
 			}
 			Eventually(verifyConfigUpdated).Should(Succeed())
@@ -573,6 +567,27 @@ var _ = Describe("Manager", Ordered, func() {
 			By("try to delete linked access log config")
 			err = utils.DeleteManifests("test/testdata/e2e/vs2/access-log-config.yaml")
 			Expect(err).To(HaveOccurred())
+		})
+
+		It("should apply access log config manifest", func() {
+			err := utils.ApplyManifests("test/testdata/e2e/vs3/access-log-config.yaml")
+			Expect(err).NotTo(HaveOccurred(), "Failed to apply manifest")
+		})
+
+		It("should applied access log config to envoy", func() {
+			waitEnvoyConfigChanged(&actualCfgDump)
+			dump := string(actualCfgDump)
+
+			verifyConfigUpdated := func(g Gomega) {
+				// nolint: lll
+				for path, value := range map[string]string{
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog",
+					"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.path":  "/tmp/virtual-service.log",
+				} {
+					Expect(value).To(Equal(gjson.Get(dump, path).String()))
+				}
+			}
+			Eventually(verifyConfigUpdated).Should(Succeed())
 		})
 
 	})
@@ -629,43 +644,40 @@ func getMetricsOutput() string {
 	return metricsOutput
 }
 
-// getEnvoyConfigDump retrieves and returns the logs from the curl pod used to access the config dump.
-func getEnvoyConfigDump(queryParams string) string {
+func getEnvoyConfigDump(queryParams string) json.RawMessage {
 	podName := "curl-config-dump"
+	defer func() {
+		cmd := exec.Command("kubectl", "delete", "pod", podName)
+		_, _ = utils.Run(cmd)
+	}()
+
 	url := "http://envoy.default.svc.cluster.local:19000/config_dump"
 	if queryParams != "" {
 		url += "?" + queryParams
 	}
-
-	By("creating the curl-config-dump pod to access config dump")
 	cmd := exec.Command("kubectl", "run", podName, "--restart=Never",
 		"--image=curlimages/curl:7.78.0",
 		"--", "/bin/sh", "-c", "curl -s "+url)
 	_, err := utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to create curl-config-dump pod")
 
-	By("waiting for the curl-config-dump pod to complete.")
-	verifyCurlUp := func(g Gomega) {
-		cmd := exec.Command("kubectl", "get", "pods", podName,
-			"-o", "jsonpath={.status.phase}")
+	Eventually(func() string {
+		cmd := exec.Command("kubectl", "get", "pods", podName, "-o", "jsonpath={.status.phase}")
 		output, err := utils.Run(cmd)
-		g.Expect(err).NotTo(HaveOccurred())
-		g.Expect(output).To(Equal("Succeeded"), "curl pod in wrong status")
-	}
-	Eventually(verifyCurlUp, 30*time.Second).Should(Succeed())
+		if err != nil {
+			return ""
+		}
+		return output
+	}, 30*time.Second).Should(Equal("Succeeded"))
 
-	By("getting the curl-config-dump")
 	cmd = exec.Command("kubectl", "logs", podName)
-	configDump, err := utils.Run(cmd)
+	data, err := utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to retrieve output from curl pod")
-
-	By("cleaning up the curl pod for getting envoy config dump")
-	cmd = exec.Command("kubectl", "delete", "pod", podName)
-	_, _ = utils.Run(cmd)
-
-	return configDump
+	dump := json.RawMessage{}
+	err = dump.UnmarshalJSON([]byte(data))
+	Expect(err).NotTo(HaveOccurred(), "Failed to unmarshal config dump")
+	return dump
 }
-
 func fetchDataFromEnvoy() string {
 	podName := "curl-fetch-data"
 
@@ -703,10 +715,40 @@ func fetchDataFromEnvoy() string {
 	return response
 }
 
+func waitEnvoyConfigChanged(actualCfgDump *json.RawMessage) {
+	By("waiting envoy config changed")
+	Eventually(func() bool {
+		cfgDump := getEnvoyConfigDump("")
+		if compareJSON(cfgDump, *actualCfgDump) {
+			return false
+		}
+		_ = os.WriteFile("/tmp/prev-dump.json", *actualCfgDump, 0644)
+		*actualCfgDump = cfgDump
+		_ = os.WriteFile("/tmp/actual-dump.json", *actualCfgDump, 0644)
+		return true
+	}, time.Minute).Should(BeTrue())
+}
+
 // tokenRequest is a simplified representation of the Kubernetes TokenRequest API response,
 // containing only the token field that we need to extract.
 type tokenRequest struct {
 	Status struct {
 		Token string `json:"token"`
 	} `json:"status"`
+}
+
+func compareJSON(raw1, raw2 json.RawMessage) bool {
+	var obj1, obj2 interface{}
+
+	if err := json.Unmarshal(raw1, &obj1); err != nil {
+		return false
+	}
+	if err := json.Unmarshal(raw2, &obj2); err != nil {
+		return false
+	}
+
+	norm1, _ := json.Marshal(obj1)
+	norm2, _ := json.Marshal(obj2)
+
+	return bytes.Equal(norm1, norm2)
 }
