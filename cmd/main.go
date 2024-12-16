@@ -26,6 +26,9 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/go-logr/zapr"
+	"go.uber.org/zap/zapcore"
+
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -123,7 +126,13 @@ func main() {
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+	zapLevel := zap.Level(zapcore.InfoLevel)
+	if devMode {
+		zapLevel = zap.Level(zapcore.DebugLevel)
+	}
+
+	zapLogger := zap.NewRaw(zap.UseFlagOptions(&opts), zapLevel)
+	ctrl.SetLogger(zapr.NewLogger(zapLogger))
 
 	var cfg Config
 	err := envconfig.Process("APP", &cfg)
@@ -389,7 +398,8 @@ func main() {
 						os.Exit(1)
 					}
 				}
-				if err := api.New(snapshotCache, xdsServerCfg).Run(cacheAPIPort, cacheAPIScheme, cacheAPIAddr); err != nil {
+				if err := api.New(snapshotCache, xdsServerCfg, zapLogger, devMode).
+					Run(cacheAPIPort, cacheAPIScheme, cacheAPIAddr); err != nil {
 					setupServers.Error(err, "cannot run http xDS server")
 					os.Exit(1)
 				}

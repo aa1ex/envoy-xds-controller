@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"time"
 
+	ginzap "github.com/gin-contrib/zap"
+	"go.uber.org/zap"
+
 	"github.com/kaasops/envoy-xds-controller/internal/xds/api/v1/middlewares"
 
 	"github.com/gin-contrib/cors"
@@ -28,19 +31,33 @@ type Config struct {
 }
 
 type Client struct {
-	Cache *xdscache.SnapshotCache
-	cfg   *Config
+	Cache   *xdscache.SnapshotCache
+	cfg     *Config
+	logger  *zap.Logger
+	devMode bool
 }
 
-func New(cache *xdscache.SnapshotCache, cfg *Config) *Client {
+func New(cache *xdscache.SnapshotCache, cfg *Config, logger *zap.Logger, devMode bool) *Client {
 	return &Client{
-		Cache: cache,
-		cfg:   cfg,
+		Cache:   cache,
+		cfg:     cfg,
+		logger:  logger,
+		devMode: devMode,
 	}
 }
 
 func (c *Client) Run(port int, cacheAPIScheme, cacheAPIAddr string) error {
-	server := gin.Default()
+	server := gin.New()
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, _ int) {
+		c.logger.Debug(fmt.Sprintf("endpoint %v %v %v", httpMethod, absolutePath, handlerName))
+	}
+	if c.devMode {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	server.Use(ginzap.Ginzap(c.logger, time.RFC3339, true))
+	server.Use(ginzap.RecoveryWithZap(c.logger, true))
 
 	// TODO: Fix CORS policy (don't enable for all origins)
 	server.Use(cors.New(cors.Config{
