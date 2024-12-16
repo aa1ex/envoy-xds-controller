@@ -2,7 +2,7 @@ fullnameOverride: ""
 nameOverride: ""
 namespaceOverride: ""
 
-development: true
+development: false
 
 xds:
   port: 9000
