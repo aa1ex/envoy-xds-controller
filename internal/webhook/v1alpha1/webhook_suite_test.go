@@ -20,14 +20,15 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/store"
-	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
-	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 	"net"
 	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/kaasops/envoy-xds-controller/internal/store"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

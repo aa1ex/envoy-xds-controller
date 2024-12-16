@@ -20,13 +20,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
-	"github.com/tidwall/gjson"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
+	"github.com/tidwall/gjson"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -686,6 +687,7 @@ func fetchDataFromEnvoy() string {
 	podName := "curl-fetch-data"
 
 	By("resolve ip address of the envoy pod")
+	// nolint: lll
 	cmd := exec.Command("kubectl", "get", "pods", "-l", "app.kubernetes.io/name=envoy", "-o", "jsonpath='{.items[0].status.podIP}'")
 	output, err := utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to resolve ip address of the envoy")

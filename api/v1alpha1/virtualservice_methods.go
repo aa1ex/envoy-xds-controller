@@ -3,9 +3,9 @@ package v1alpha1
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"strings"
 
+	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"github.com/kaasops/envoy-xds-controller/internal/merge"
 )
 

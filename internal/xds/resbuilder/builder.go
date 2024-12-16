@@ -175,7 +175,6 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 	}
 
 	return &Resources{
-		//Listener:    xdsListener,
 		Listener:    listenerNN,
 		FilterChain: fcs,
 		RouteConfig: routeConfiguration,
