@@ -351,6 +351,10 @@ var _ = Describe("Manager", Ordered, func() {
 					expectedErrText: `unknown field "foo"`,
 				},
 				{
+					manifest:        "test/testdata/conformance/virtualservice-empty-nodeids.yaml",
+					expectedErrText: "nodeIDs is required",
+				},
+				{
 					manifest:        "test/testdata/conformance/virtualservice-empty-domains.yaml",
 					expectedErrText: "invalid VirtualHost.Domains: value must contain at least 1 item(s)",
 				},

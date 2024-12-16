@@ -98,6 +98,9 @@ func (v *VirtualServiceCustomValidator) ValidateDelete(ctx context.Context, obj 
 }
 
 func (v *VirtualServiceCustomValidator) validateVirtualService(ctx context.Context, vs *envoyv1alpha1.VirtualService) error {
+	if len(vs.GetNodeIDs()) == 0 {
+		return fmt.Errorf("nodeIDs is required")
+	}
 	s := store.New()
 	if err := s.Fill(ctx, v.Client); err != nil {
 		return err
