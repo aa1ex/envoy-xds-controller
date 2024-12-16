@@ -68,6 +68,11 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 
 	for _, vs := range c.store.VirtualServices {
 		vsNodeIDs := vs.GetNodeIDs()
+		if len(vsNodeIDs) == 0 {
+			errs = append(errs, fmt.Errorf("virtual service %s/%s has no node IDs", vs.Namespace, vs.Name))
+			continue
+		}
+
 		if isCommonVirtualService(vsNodeIDs) {
 			commonVirtualServices = append(commonVirtualServices, vs)
 			continue

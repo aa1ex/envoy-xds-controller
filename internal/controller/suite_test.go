@@ -114,30 +114,22 @@ func testStore() (*store.Store, error) {
 	cacheStore := store.New()
 
 	listener := &envoyv1alpha1.Listener{}
-	listener.Name = "https"
+	listener.Name = "http"
 	listener.Namespace = "default"
 	listener.Spec = &runtime2.RawExtension{}
 	err := listener.Spec.UnmarshalJSON([]byte(`{
-  "name": "https",
+  "name": "http",
   "address": {
     "socket_address": {
       "address": "0.0.0.0",
       "port_value": 10443
     }
-  },
-  "listener_filters": [
-    {
-      "name": "envoy.filters.listener.tls_inspector",
-      "typed_config": {
-        "@type": "type.googleapis.com/envoy.extensions.filters.listener.tls_inspector.v3.TlsInspector"
-      }
-    }
-  ]
+  }
 }`))
 	if err != nil {
 		return nil, err
 	}
 
-	cacheStore.Listeners[helpers.NamespacedName{Name: "https", Namespace: "default"}] = listener
+	cacheStore.Listeners[helpers.NamespacedName{Name: "http", Namespace: "default"}] = listener
 	return cacheStore, nil
 }

@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-
 	"k8s.io/apimachinery/pkg/runtime"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -64,13 +63,16 @@ var _ = Describe("VirtualService Controller", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		virtualservice := &envoyv1alpha1.VirtualService{}
+		virtualservice.Annotations = map[string]string{
+			envoyv1alpha1.AnnotationKeyEnvoyKaaSopsIoNodeID: "test",
+		}
 		virtualservice.Name = resourceName
 		virtualservice.Namespace = "default"
 		virtualservice.Spec = envoyv1alpha1.VirtualServiceSpec{
 			VirtualServiceCommonSpec: envoyv1alpha1.VirtualServiceCommonSpec{
 				VirtualHost: virtualHost,
 				Listener: &envoyv1alpha1.ResourceRef{
-					Name: "https",
+					Name: "http",
 				},
 			},
 		}
