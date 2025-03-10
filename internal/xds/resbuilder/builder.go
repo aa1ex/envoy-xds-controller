@@ -64,8 +64,8 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 	nn := helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name}
 
 	if vs.Spec.Template != nil {
-		vst, ok := store.VirtualServiceTemplates[helpers.NamespacedName{Namespace: helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace), Name: vs.Spec.Template.Name}]
-		if !ok {
+		vst := store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace), Name: vs.Spec.Template.Name})
+		if vst == nil {
 			return nil, nil, fmt.Errorf("virtual service template %s/%s not found", helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace), vs.Spec.Template.Name)
 		}
 		vs = vs.DeepCopy()
@@ -143,7 +143,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 						return nil, nil, err
 					}
 					clusterName := tcpProxy.GetCluster()
-					cl := store.SpecClusters[clusterName]
+					cl := store.GetSpecCluster(clusterName)
 					if cl == nil {
 						return nil, nil, fmt.Errorf("cluster %s not found", clusterName)
 					}
@@ -247,7 +247,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		case SecretRefType:
 			filterChainParams.SecretNameToDomains = getSecretNameToDomainsViaSecretRef(vs.Spec.TlsConfig.SecretRef, vs.Namespace, virtualHost.Domains)
 		case AutoDiscoveryType:
-			filterChainParams.SecretNameToDomains, err = getSecretNameToDomainsViaAutoDiscovery(virtualHost.Domains, store.DomainToSecretMap)
+			filterChainParams.SecretNameToDomains, err = getSecretNameToDomainsViaAutoDiscovery(virtualHost.Domains, store.MapDomainSecrets())
 			if err != nil {
 				return nil, nil, err
 			}
@@ -287,7 +287,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 }
 
 func buildListener(listenerNN helpers.NamespacedName, store *store.Store) (*listenerv3.Listener, error) {
-	listener := store.Listeners[listenerNN]
+	listener := store.GetListener(listenerNN)
 	if listener == nil {
 		return nil, fmt.Errorf("listener %s not found", listenerNN.String())
 	}
@@ -311,7 +311,7 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 
 	for _, routeRef := range vs.Spec.AdditionalRoutes {
 		routeRefNs := helpers.GetNamespace(routeRef.Namespace, vs.Namespace)
-		route := store.Routes[helpers.NamespacedName{Namespace: routeRefNs, Name: routeRef.Name}]
+		route := store.GetRoute(helpers.NamespacedName{Namespace: routeRefNs, Name: routeRef.Name})
 		if route == nil {
 			return nil, fmt.Errorf("route %s/%s not found", routeRefNs, routeRef.Name)
 		}
@@ -382,7 +382,7 @@ func buildHTTPFilters(vs *v1alpha1.VirtualService, store *store.Store) ([]*hcmv3
 	if len(vs.Spec.AdditionalHttpFilters) > 0 {
 		for _, httpFilterRef := range vs.Spec.AdditionalHttpFilters {
 			httpFilterRefNs := helpers.GetNamespace(httpFilterRef.Namespace, vs.Namespace)
-			hf := store.HTTPFilters[helpers.NamespacedName{Namespace: httpFilterRefNs, Name: httpFilterRef.Name}]
+			hf := store.GetHTTPFilter(helpers.NamespacedName{Namespace: httpFilterRefNs, Name: httpFilterRef.Name})
 			if hf == nil {
 				return nil, fmt.Errorf("http filter %s/%s not found", httpFilterRefNs, httpFilterRef.Name)
 			}
@@ -458,7 +458,7 @@ func buildClusters(virtualHost *routev3.VirtualHost, httpFilters []*hcmv3.HttpFi
 		clusterNames := findClusterNames(data, "Cluster")
 
 		for _, clusterName := range clusterNames {
-			cl := store.SpecClusters[clusterName]
+			cl := store.GetSpecCluster(clusterName)
 			if cl == nil {
 				return nil, fmt.Errorf("cluster %s not found", clusterName)
 			}
@@ -490,7 +490,7 @@ func buildClusters(virtualHost *routev3.VirtualHost, httpFilters []*hcmv3.HttpFi
 				clusterNames := findClusterNames(data, "Cluster")
 
 				for _, clusterName := range clusterNames {
-					cl := store.SpecClusters[clusterName]
+					cl := store.GetSpecCluster(clusterName)
 					if cl == nil {
 						return nil, fmt.Errorf("cluster %s not found", clusterName)
 					}
@@ -539,8 +539,8 @@ func buildRBACFilter(vs *v1alpha1.VirtualService, store *store.Store) (*rbacFilt
 
 	for _, policyRef := range vs.Spec.RBAC.AdditionalPolicies {
 		ns := helpers.GetNamespace(policyRef.Namespace, vs.Namespace)
-		policy, ok := store.Policies[helpers.NamespacedName{Namespace: ns, Name: policyRef.Name}]
-		if !ok {
+		policy := store.GetPolicy(helpers.NamespacedName{Namespace: ns, Name: policyRef.Name})
+		if policy == nil {
 			return nil, fmt.Errorf("rbac policy %s/%s not found", ns, policyRef.Name)
 		}
 		if _, ok := rules.Policies[policy.Name]; ok {
@@ -694,8 +694,8 @@ func buildAccessLogConfig(vs *v1alpha1.VirtualService, store *store.Store) (*acc
 	}
 
 	accessLogNs := helpers.GetNamespace(vs.Spec.AccessLogConfig.Namespace, vs.Namespace)
-	accessLogConfig, ok := store.AccessLogs[helpers.NamespacedName{Namespace: accessLogNs, Name: vs.Spec.AccessLogConfig.Name}]
-	if !ok {
+	accessLogConfig := store.GetAccessLog(helpers.NamespacedName{Namespace: accessLogNs, Name: vs.Spec.AccessLogConfig.Name})
+	if accessLogConfig == nil {
 		return nil, fmt.Errorf("can't find accessLogConfig %s/%s", accessLogNs, vs.Spec.AccessLogConfig.Name)
 	}
 
@@ -793,8 +793,8 @@ func buildSecrets(httpFilters []*hcmv3.HttpFilter, secretNameToDomains map[helpe
 	var usedSecrets []helpers.NamespacedName // for validation
 
 	getEnvoySecret := func(namespace, name string) ([]*tlsv3.Secret, error) {
-		kubeSecret, ok := store.Secrets[helpers.NamespacedName{Namespace: namespace, Name: name}]
-		if !ok {
+		kubeSecret := store.GetSecret(helpers.NamespacedName{Namespace: namespace, Name: name})
+		if kubeSecret == nil {
 			return nil, fmt.Errorf("can't find secret %s/%s", namespace, name)
 		}
 		usedSecrets = append(usedSecrets, helpers.NamespacedName{Namespace: namespace, Name: name})

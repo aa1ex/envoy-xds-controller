@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package policy.v1;
+
+option go_package = "policyv1";
+
+message Policy {
+  string uid = 1;
+  string name = 2;
+  string namespace = 3;
+}

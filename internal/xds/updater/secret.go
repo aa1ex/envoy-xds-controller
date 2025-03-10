@@ -13,28 +13,25 @@ import (
 func (c *CacheUpdater) UpsertSecret(ctx context.Context, secret *v1.Secret) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
-	prevSecret := c.store.Secrets[helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name}]
+	prevSecret := c.store.GetSecret(helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name})
 	if prevSecret == nil {
-		c.store.Secrets[helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name}] = secret
-		c.store.UpdateDomainSecretsMap()
+		c.store.SetSecret(secret)
 		return c.buildCache(ctx)
 	}
 	if checkSecretsEqual(prevSecret, secret) {
 		return nil
 	}
-	c.store.Secrets[helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name}] = secret
-	c.store.UpdateDomainSecretsMap()
+	c.store.SetSecret(secret)
 	return c.buildCache(ctx)
 }
 
 func (c *CacheUpdater) DeleteSecret(ctx context.Context, nn types.NamespacedName) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
-	if c.store.Secrets[helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name}] == nil {
+	if !c.store.IsExistingSecret(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name}) {
 		return nil
 	}
-	delete(c.store.Secrets, helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
-	c.store.UpdateDomainSecretsMap()
+	c.store.DeleteSecret(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
 	return c.buildCache(ctx)
 }
 

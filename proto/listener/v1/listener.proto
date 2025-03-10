@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package listener.v1;
+
+option go_package = "listenerv1";
+
+message Listener {
+  string uid = 1;
+  string name = 2;
+  string namespace = 3;
+}
+
+service VirtualServiceStoreService {
+  rpc ListVirtualService(ListVirtualServiceRequest) returns (ListVirtualServiceResponse);
+}
+
+message ListVirtualServiceRequest {}
+
+message ListVirtualServiceResponse {
+  Listener items = 1;
+}

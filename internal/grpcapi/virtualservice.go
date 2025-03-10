@@ -1,0 +1,128 @@
+package grpcapi
+
+import (
+	"connectrpc.com/connect"
+	"context"
+	"fmt"
+	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
+	"github.com/kaasops/envoy-xds-controller/internal/store"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/resbuilder"
+	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"strings"
+)
+
+type VirtualServiceStore struct {
+	store  *store.Store
+	client client.Client
+	virtual_servicev1connect.UnimplementedVirtualServiceStoreServiceHandler
+}
+
+func NewVirtualServiceStore(s *store.Store, c client.Client) *VirtualServiceStore {
+	return &VirtualServiceStore{
+		store:  s,
+		client: c,
+	}
+}
+
+func (s *VirtualServiceStore) ListVirtualService(_ context.Context, _ *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
+	m := s.store.MapVirtualServices()
+	list := make([]*v1.VirtualServiceListItem, 0, len(m))
+	for _, v := range m {
+		vs := &v1.VirtualServiceListItem{
+			Uid:       string(v.UID),
+			Name:      v.Name,
+			NodeIds:   v.GetNodeIDs(),
+			ProjectId: "", // TODO:
+		}
+		list = append(list, vs)
+	}
+	return connect.NewResponse(&v1.ListVirtualServiceResponse{Items: list}), nil
+}
+
+func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *connect.Request[v1.CreateVirtualServiceRequest]) (*connect.Response[v1.CreateVirtualServiceResponse], error) {
+	if len(req.Msg.NodeIds) == 0 {
+		return nil, fmt.Errorf("nodeIDs is required")
+	}
+
+	vs := &v1alpha1.VirtualService{}
+	vs.Name = req.Msg.Name
+	vs.Labels = make(map[string]string)
+	vs.Annotations = make(map[string]string)
+	vs.Annotations[v1alpha1.AnnotationKeyEnvoyKaaSopsIoNodeIDs] = strings.Join(req.Msg.NodeIds, ",")
+
+	if req.Msg.ProjectId != "" {
+		vs.Labels[v1alpha1.LabelProjectID] = req.Msg.ProjectId // TODO: method vs.SetProjectID
+	}
+
+	if req.Msg.TemplateUid == "" {
+		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
+		if vst == nil {
+			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
+		}
+		vs.Spec.Template = &v1alpha1.ResourceRef{
+			Name:      vst.Name,
+			Namespace: &vst.Namespace,
+		}
+	}
+
+	if req.Msg.ListenerUid != "" {
+		listener := s.store.GetListenerByUID(req.Msg.ListenerUid)
+		if listener == nil {
+			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
+		}
+		vs.Spec.Listener = &v1alpha1.ResourceRef{
+			Name:      listener.Name,
+			Namespace: &listener.Namespace,
+		}
+	}
+
+	if req.Msg.AccessLogConfig != nil {
+		if alcUID := req.Msg.GetAccessLogConfigUid(); alcUID != "" {
+			alc := s.store.GetAccessLogByUID(alcUID)
+			if alc == nil {
+				return nil, fmt.Errorf("access log config uid '%s' not found", alcUID)
+			}
+			vs.Spec.AccessLogConfig = &v1alpha1.ResourceRef{
+				Name:      alc.Name,
+				Namespace: &alc.Namespace,
+			}
+		}
+	}
+
+	if len(req.Msg.AdditionalRouteUids) > 0 {
+		for _, uid := range req.Msg.AdditionalRouteUids {
+			route := s.store.GetRouteByUID(uid)
+			if route == nil {
+				return nil, fmt.Errorf("route uid '%s' not found", uid)
+			}
+			vs.Spec.AdditionalRoutes = append(vs.Spec.AdditionalRoutes, &v1alpha1.ResourceRef{
+				Name:      route.Name,
+				Namespace: &route.Namespace,
+			})
+		}
+	}
+
+	if len(req.Msg.AdditionalHttpFilterUids) > 0 {
+		for _, uid := range req.Msg.AdditionalHttpFilterUids {
+			filter := s.store.GetHTTPFilterByUID(uid)
+			if filter == nil {
+				return nil, fmt.Errorf("http filter uid '%s' not found", uid)
+			}
+			vs.Spec.AdditionalHttpFilters = append(vs.Spec.AdditionalHttpFilters, &v1alpha1.ResourceRef{
+				Name:      filter.Name,
+				Namespace: &filter.Namespace,
+			})
+		}
+	}
+
+	tmpStore := store.New()
+	if err := tmpStore.Fill(ctx, s.client); err != nil {
+		return nil, err
+	}
+	if _, _, err := resbuilder.BuildResources(vs, tmpStore); err != nil {
+		return nil, err
+	}
+	return nil, nil
+}

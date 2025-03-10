@@ -2,6 +2,16 @@ package api
 
 import (
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
+	"github.com/kaasops/envoy-xds-controller/internal/store"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1/virtual_service_templatev1connect"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
+	"net"
+	"net/http"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"strconv"
 	"time"
 
 	ginzap "github.com/gin-contrib/zap"
@@ -89,5 +99,23 @@ func (c *Client) Run(port int, cacheAPIScheme, cacheAPIAddr string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client) error {
+	mux := http.NewServeMux()
+
+	path, handler := virtual_servicev1connect.NewVirtualServiceStoreServiceHandler(grpcapi.NewVirtualServiceStore(s, mgrClient))
+	mux.Handle(path, handler)
+	path, handler = virtual_service_templatev1connect.NewVirtualServiceTemplateStoreServiceHandler(grpcapi.NewVirtualServiceTemplateStore(s))
+	mux.Handle(path, handler)
+
+	go func() {
+		_ = http.ListenAndServe(
+			net.JoinHostPort("", strconv.Itoa(port)),
+			// Use h2c so we can serve HTTP/2 without TLS.
+			h2c.NewHandler(mux, &http2.Server{}),
+		)
+	}()
 	return nil
 }

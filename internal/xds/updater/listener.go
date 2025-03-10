@@ -11,24 +11,24 @@ import (
 func (c *CacheUpdater) UpsertListener(ctx context.Context, listener *v1alpha1.Listener) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
-	prevListener := c.store.Listeners[helpers.NamespacedName{Namespace: listener.Namespace, Name: listener.Name}]
+	prevListener := c.store.GetListener(helpers.NamespacedName{Namespace: listener.Namespace, Name: listener.Name})
 	if prevListener == nil {
-		c.store.Listeners[helpers.NamespacedName{Namespace: listener.Namespace, Name: listener.Name}] = listener
+		c.store.SetListener(listener)
 		return c.buildCache(ctx)
 	}
 	if prevListener.IsEqual(listener) {
 		return nil
 	}
-	c.store.Listeners[helpers.NamespacedName{Namespace: listener.Namespace, Name: listener.Name}] = listener
+	c.store.SetListener(listener)
 	return c.buildCache(ctx)
 }
 
 func (c *CacheUpdater) DeleteListener(ctx context.Context, nn types.NamespacedName) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
-	if c.store.Listeners[helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name}] == nil {
+	if !c.store.IsExistingListener(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name}) {
 		return nil
 	}
-	delete(c.store.Listeners, helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
+	c.store.DeleteListener(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
 	return c.buildCache(ctx)
 }

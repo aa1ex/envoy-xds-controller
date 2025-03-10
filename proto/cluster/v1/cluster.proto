@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cluster.v1;
+
+option go_package = "clusterv1";
+
+message Cluster {
+  string uid = 1;
+  string name = 2;
+  string namespace = 3;
+}

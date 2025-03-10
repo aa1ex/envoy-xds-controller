@@ -66,7 +66,7 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	nodeIDsForCleanup := c.snapshotCache.GetNodeIDsAsMap()
 	var commonVirtualServices []*v1alpha1.VirtualService
 
-	for _, vs := range c.store.VirtualServices {
+	for _, vs := range c.store.MapVirtualServices() {
 		vsNodeIDs := vs.GetNodeIDs()
 		if len(vsNodeIDs) == 0 {
 			errs = append(errs, fmt.Errorf("virtual service %s/%s has no node IDs", vs.Namespace, vs.Name))
@@ -198,37 +198,37 @@ func (c *CacheUpdater) GetMarshaledStore() ([]byte, error) {
 	data["policies"] = make(map[string]any)
 	data["domainToSecret"] = make(map[string]any)
 
-	for key, vs := range c.store.VirtualServices {
+	for key, vs := range c.store.MapVirtualServices() {
 		data["virtualServices"][key.String()] = vs
 	}
-	for key, cl := range c.store.Clusters {
+	for key, cl := range c.store.MapClusters() {
 		data["clusters"][key.String()] = cl
 	}
-	for key, secret := range c.store.Secrets {
+	for key, secret := range c.store.MapSecrets() {
 		data["secrets"][key.String()] = secret
 	}
-	for key, route := range c.store.Routes {
+	for key, route := range c.store.MapRoutes() {
 		data["routes"][key.String()] = route
 	}
-	for key, listener := range c.store.Listeners {
+	for key, listener := range c.store.MapListeners() {
 		data["listeners"][key.String()] = listener
 	}
-	for key, vst := range c.store.VirtualServiceTemplates {
+	for key, vst := range c.store.MapVirtualServiceTemplates() {
 		data["virtualServiceTemplates"][key.String()] = vst
 	}
-	for key, alc := range c.store.AccessLogs {
+	for key, alc := range c.store.MapAccessLogs() {
 		data["accessLogConfigs"][key.String()] = alc
 	}
-	for key, httpFilter := range c.store.HTTPFilters {
+	for key, httpFilter := range c.store.MapHTTPFilters() {
 		data["httpFilters"][key.String()] = httpFilter
 	}
-	for key, policy := range c.store.Policies {
+	for key, policy := range c.store.MapPolicies() {
 		data["policies"][key.String()] = policy
 	}
-	for ds, s := range c.store.DomainToSecretMap {
+	for ds, s := range c.store.MapDomainSecrets() {
 		data["domainToSecret"][ds] = s
 	}
-	for specCluster, cl := range c.store.SpecClusters {
+	for specCluster, cl := range c.store.MapSpecClusters() {
 		data["specClusters"][specCluster] = cl
 	}
 	return json.MarshalIndent(data, "", "\t")

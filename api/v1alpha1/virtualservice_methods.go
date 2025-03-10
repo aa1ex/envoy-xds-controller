@@ -10,12 +10,13 @@ import (
 )
 
 const (
-	AnnotationKeyEnvoyKaaSopsIoNodeID = "envoy.kaasops.io/node-id"
+	AnnotationKeyEnvoyKaaSopsIoNodeIDs = "envoy.kaasops.io/node-id"
+	LabelProjectID                     = "project-id"
 )
 
 func (vs *VirtualService) GetNodeIDs() []string {
 	annotations := vs.GetAnnotations()
-	nodeIDsAnnotation := annotations[AnnotationKeyEnvoyKaaSopsIoNodeID]
+	nodeIDsAnnotation := annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs]
 	if nodeIDsAnnotation == "" {
 		return nil
 	}
@@ -82,7 +83,7 @@ func (vs *VirtualService) IsEqual(other *VirtualService) bool {
 	if vs.Annotations == nil || other.Annotations == nil {
 		return false
 	}
-	if vs.Annotations[AnnotationKeyEnvoyKaaSopsIoNodeID] != other.Annotations[AnnotationKeyEnvoyKaaSopsIoNodeID] {
+	if vs.Annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs] != other.Annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs] {
 		return false
 	}
 	if !vs.Spec.VirtualServiceCommonSpec.IsEqual(&other.Spec.VirtualServiceCommonSpec) {

@@ -214,8 +214,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	resStore := store.New()
 	snapshotCache := cache.NewSnapshotCache()
-	cacheUpdater := updater.NewCacheUpdater(snapshotCache, store.New())
+	cacheUpdater := updater.NewCacheUpdater(snapshotCache, resStore)
 
 	if err = (&controller.ClusterReconciler{
 		Client:  mgr.GetClient(),
@@ -406,7 +407,12 @@ func main() {
 						os.Exit(1)
 					}
 				}
-				if err := api.New(snapshotCache, xdsServerCfg, zapLogger, devMode).
+				apiServer := api.New(snapshotCache, xdsServerCfg, zapLogger, devMode)
+				if err := apiServer.RunGRPC(cacheAPIPort+1, resStore, mgr.GetClient()); err != nil {
+					setupServers.Error(err, "cannot run grpc xDS server")
+					os.Exit(1)
+				}
+				if err := apiServer.
 					Run(cacheAPIPort, cacheAPIScheme, cacheAPIAddr); err != nil {
 					setupServers.Error(err, "cannot run http xDS server")
 					os.Exit(1)

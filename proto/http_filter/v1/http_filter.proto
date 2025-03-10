@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package http_filter.v1;
+
+option go_package = "httpfilterv1";
+
+message HTTPFilter {
+  string uid = 1;
+  string name = 2;
+  string namespace = 3;
+}
