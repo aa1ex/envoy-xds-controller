@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_log_config/v1/access_log_configv1connect"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/http_filter/v1/http_filterv1connect"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/route/v1/routev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1/virtual_service_templatev1connect"
 	"golang.org/x/net/http2"
@@ -108,6 +111,12 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client) erro
 	path, handler := virtual_servicev1connect.NewVirtualServiceStoreServiceHandler(grpcapi.NewVirtualServiceStore(s, mgrClient))
 	mux.Handle(path, handler)
 	path, handler = virtual_service_templatev1connect.NewVirtualServiceTemplateStoreServiceHandler(grpcapi.NewVirtualServiceTemplateStore(s))
+	mux.Handle(path, handler)
+	path, handler = access_log_configv1connect.NewAccessLogConfigStoreServiceHandler(grpcapi.NewAccessLogConfigStore(s))
+	mux.Handle(path, handler)
+	path, handler = routev1connect.NewRouteStoreServiceHandler(grpcapi.NewRouteStore(s))
+	mux.Handle(path, handler)
+	path, handler = http_filterv1connect.NewHTTPFilterStoreServiceHandler(grpcapi.NewHTTPFilterStore(s))
 	mux.Handle(path, handler)
 
 	go func() {

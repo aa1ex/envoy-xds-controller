@@ -9,6 +9,7 @@ import (
 	"github.com/kaasops/envoy-xds-controller/internal/xds/resbuilder"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
+	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
 )
@@ -51,12 +52,13 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	vs.Labels = make(map[string]string)
 	vs.Annotations = make(map[string]string)
 	vs.Annotations[v1alpha1.AnnotationKeyEnvoyKaaSopsIoNodeIDs] = strings.Join(req.Msg.NodeIds, ",")
+	vs.Namespace = "default" // TODO: hardcode
 
 	if req.Msg.ProjectId != "" {
 		vs.Labels[v1alpha1.LabelProjectID] = req.Msg.ProjectId // TODO: method vs.SetProjectID
 	}
 
-	if req.Msg.TemplateUid == "" {
+	if req.Msg.TemplateUid != "" {
 		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
 		if vst == nil {
 			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
@@ -76,6 +78,14 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			Name:      listener.Name,
 			Namespace: &listener.Namespace,
 		}
+	}
+
+	if len(req.Msg.VirtualHost) > 0 {
+		var tmp runtime.RawExtension
+		if err := tmp.UnmarshalJSON(req.Msg.VirtualHost); err != nil {
+			return nil, fmt.Errorf("unmarshal virtual host failed: %v", err)
+		}
+		vs.Spec.VirtualHost = &tmp
 	}
 
 	if req.Msg.AccessLogConfig != nil {
@@ -124,5 +134,10 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	if _, _, err := resbuilder.BuildResources(vs, tmpStore); err != nil {
 		return nil, err
 	}
-	return nil, nil
+
+	if err := s.client.Create(ctx, vs); err != nil {
+		return nil, err
+	}
+
+	return connect.NewResponse(&v1.CreateVirtualServiceResponse{}), nil
 }

@@ -4,8 +4,17 @@ package http_filter.v1;
 
 option go_package = "httpfilterv1";
 
-message HTTPFilter {
+service HTTPFilterStoreService {
+  rpc ListHTTPFilter(ListHTTPFilterRequest) returns (ListHTTPFilterResponse);
+}
+
+message HTTPFilterListItem {
   string uid = 1;
   string name = 2;
-  string namespace = 3;
+}
+
+message ListHTTPFilterRequest {}
+
+message ListHTTPFilterResponse {
+  repeated HTTPFilterListItem items = 1;
 }

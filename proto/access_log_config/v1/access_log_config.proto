@@ -4,8 +4,17 @@ package access_log_config.v1;
 
 option go_package = "accesslogconfigv1";
 
-message AccessLogConfig {
+service AccessLogConfigStoreService {
+  rpc ListAccessLogConfig(ListAccessLogConfigRequest) returns (ListAccessLogConfigResponse);
+}
+
+message AccessLogConfigListItem {
   string uid = 1;
   string name = 2;
-  string namespace = 3;
+}
+
+message ListAccessLogConfigRequest {}
+
+message ListAccessLogConfigResponse {
+  repeated AccessLogConfigListItem items = 1;
 }

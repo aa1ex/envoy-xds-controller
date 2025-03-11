@@ -20,11 +20,12 @@ message CreateVirtualServiceRequest {
   string project_id = 3;
   string template_uid = 4;
   string listener_uid = 5;
+  bytes virtual_host = 6;
   oneof access_log_config {
-    string access_log_config_uid = 6;
+    string access_log_config_uid = 7;
   }
-  repeated string additional_http_filter_uids = 7;
-  repeated string additional_route_uids = 8;
+  repeated string additional_http_filter_uids = 8;
+  repeated string additional_route_uids = 9;
 }
 
 message CreateVirtualServiceResponse {
@@ -38,9 +39,12 @@ message UpdateVirtualServiceRequest {
   string project_id = 4;
   string template_uid = 5;
   string listener_uid = 6;
-  string access_log_config_uid = 7;
-  repeated string additional_http_filter_uids = 8;
-  repeated string additional_route_uids = 9;
+  bytes virtual_host = 7;
+  oneof access_log_config {
+    string access_log_config_uid = 8;
+  }
+  repeated string additional_http_filter_uids = 9;
+  repeated string additional_route_uids = 10;
 }
 
 message UpdateVirtualServiceResponse {}
@@ -61,12 +65,13 @@ message GetVirtualServiceResponse {
   string project_id = 3;
   common.v1.ResourceRef template = 4;
   common.v1.ResourceRef listener = 5;
+  bytes virtual_host = 6;
   oneof access_log_config {
-    common.v1.ResourceRef access_log_config_uid = 6;
-    bytes access_log_config_raw = 7;
+    common.v1.ResourceRef access_log_config_uid = 7;
+    bytes access_log_config_raw = 8;
   }
-  repeated common.v1.ResourceRef additional_http_filters = 8;
-  repeated common.v1.ResourceRef additional_routes = 9;
+  repeated common.v1.ResourceRef additional_http_filters = 9;
+  repeated common.v1.ResourceRef additional_routes = 10;
 }
 
 message ListVirtualServiceRequest {}

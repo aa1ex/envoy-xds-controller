@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package route.v1;
+
+option go_package = "routev1";
+
+service RouteStoreService {
+  rpc ListRoute(ListRouteRequest) returns (ListRouteResponse);
+}
+
+message RouteListItem {
+  string uid = 1;
+  string name = 2;
+}
+
+message ListRouteRequest {}
+
+message ListRouteResponse {
+  repeated RouteListItem items = 1;
+}
