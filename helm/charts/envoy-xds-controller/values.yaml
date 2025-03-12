@@ -10,6 +10,7 @@ xds:
 cacheAPI:
   enabled: false
   port: 9999
+  grpcPort: 10000
   address: "localhost:9999"
   scheme: "http"
   ingress:
@@ -25,7 +26,6 @@ cacheAPI:
     # - hosts:
     #   - envoy-xds-controller-api.<DOMAIN-ZONE>
 
-
 ui:
   enabled: false
   image:
@@ -35,6 +35,7 @@ ui:
   args: []
   envs: {}
   cacheAPI: "http://exc-envoy-xds-controller-cache-api:9999"
+  grpcAPI: "http://exc-envoy-xds-controller-grpc-api:10000"
   resources:
     limits:
       cpu: "1"

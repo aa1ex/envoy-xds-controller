@@ -26,6 +26,7 @@ message CreateVirtualServiceRequest {
   }
   repeated string additional_http_filter_uids = 8;
   repeated string additional_route_uids = 9;
+  optional bool use_remote_address = 10;
 }
 
 message CreateVirtualServiceResponse {
@@ -45,6 +46,7 @@ message UpdateVirtualServiceRequest {
   }
   repeated string additional_http_filter_uids = 9;
   repeated string additional_route_uids = 10;
+  optional bool use_remote_address = 11;
 }
 
 message UpdateVirtualServiceResponse {}
@@ -72,6 +74,7 @@ message GetVirtualServiceResponse {
   }
   repeated common.v1.ResourceRef additional_http_filters = 9;
   repeated common.v1.ResourceRef additional_routes = 10;
+  optional bool use_remote_address = 11;
 }
 
 message ListVirtualServiceRequest {}

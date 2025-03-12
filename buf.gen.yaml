@@ -11,13 +11,13 @@ plugins:
   - local: protoc-gen-connect-go
     out: pkg/api/grpc
     opt: paths=source_relative
-#  - local: protoc-gen-es
-#    include_imports: true
-#    opt: target=dts
-#    out: frontend/src/gen
-#  - local: protoc-gen-es
-#    include_imports: true
-#    opt: target=ts
-#    out: frontend/src/gen
+  - local: protoc-gen-es
+    include_imports: true
+    opt: target=dts
+    out: ui/src/gen
+  - local: protoc-gen-es
+    include_imports: true
+    opt: target=ts
+    out: ui/src/gen
 inputs:
   - directory: proto

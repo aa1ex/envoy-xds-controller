@@ -106,6 +106,7 @@ func main() {
 	var cacheAPIPort int
 	var cacheAPIScheme string
 	var cacheAPIAddr string
+	var grpcAPIPort int
 	var devMode bool
 	flag.StringVar(&metricsAddr, "metrics-bind-address", "0", "The address the metrics endpoint binds to. "+
 		"Use :8443 for HTTPS or :8080 for HTTP, or leave as 0 to disable the metrics service.")
@@ -121,6 +122,7 @@ func main() {
 	flag.IntVar(&cacheAPIPort, "cache-api-port", 9999, "Cache API port")
 	flag.StringVar(&cacheAPIScheme, "cache-api-scheme", "http", "Cache API scheme")
 	flag.StringVar(&cacheAPIAddr, "cache-api-addr", "localhost:9999", "Cache API address")
+	flag.IntVar(&grpcAPIPort, "grpc-api-port", 10000, "GRPC API port")
 	flag.BoolVar(&devMode, "development", false, "Enable dev mode")
 	opts := zap.Options{
 		Development: devMode,
@@ -408,7 +410,7 @@ func main() {
 					}
 				}
 				apiServer := api.New(snapshotCache, xdsServerCfg, zapLogger, devMode)
-				if err := apiServer.RunGRPC(cacheAPIPort+1, resStore, mgr.GetClient()); err != nil {
+				if err := apiServer.RunGRPC(grpcAPIPort, resStore, mgr.GetClient()); err != nil {
 					setupServers.Error(err, "cannot run grpc xDS server")
 					os.Exit(1)
 				}

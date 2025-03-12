@@ -11,7 +11,6 @@ import (
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
 )
 
 type VirtualServiceStore struct {
@@ -51,11 +50,11 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	vs.Name = req.Msg.Name
 	vs.Labels = make(map[string]string)
 	vs.Annotations = make(map[string]string)
-	vs.Annotations[v1alpha1.AnnotationKeyEnvoyKaaSopsIoNodeIDs] = strings.Join(req.Msg.NodeIds, ",")
+	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = "default" // TODO: hardcode
 
 	if req.Msg.ProjectId != "" {
-		vs.Labels[v1alpha1.LabelProjectID] = req.Msg.ProjectId // TODO: method vs.SetProjectID
+		vs.SetProjectID(req.Msg.ProjectId)
 	}
 
 	if req.Msg.TemplateUid != "" {
@@ -125,6 +124,10 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 				Namespace: &filter.Namespace,
 			})
 		}
+	}
+
+	if req.Msg.UseRemoteAddress != nil {
+		vs.Spec.UseRemoteAddress = req.Msg.UseRemoteAddress
 	}
 
 	tmpStore := store.New()

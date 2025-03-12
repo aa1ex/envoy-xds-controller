@@ -32,6 +32,29 @@ func (vs *VirtualService) GetNodeIDs() []string {
 	return list
 }
 
+func (vs *VirtualService) SetNodeIDs(nodeIDs []string) {
+	annotations := vs.GetAnnotations()
+	if len(nodeIDs) == 0 {
+		delete(annotations, AnnotationKeyEnvoyKaaSopsIoNodeIDs)
+	} else {
+		annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs] = strings.Join(nodeIDs, ",")
+	}
+	vs.SetAnnotations(annotations)
+}
+
+func (vs *VirtualService) GetProjectID() string {
+	return vs.GetLabels()[LabelProjectID]
+}
+
+func (vs *VirtualService) SetProjectID(projectID string) {
+	labels := vs.GetLabels()
+	if len(labels) == 0 {
+		labels = make(map[string]string)
+	}
+	labels[LabelProjectID] = projectID
+	vs.SetLabels(labels)
+}
+
 func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, templateOpts ...TemplateOpts) error {
 	baseData, err := json.Marshal(vst.Spec.VirtualServiceCommonSpec)
 	if err != nil {

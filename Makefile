@@ -290,3 +290,7 @@ kr:
 .PHONY: kd
 kd:
 	kind delete cluster
+
+.PHONY: dev-apply-resources
+dev-apply-resources:
+	kubectl apply -f test/testdata/dev
