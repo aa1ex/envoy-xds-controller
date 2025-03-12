@@ -237,54 +237,59 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
   name: string;
 
   /**
-   * @generated from field: string project_id = 3;
+   * @generated from field: repeated string node_ids = 3;
+   */
+  nodeIds: string[];
+
+  /**
+   * @generated from field: string project_id = 4;
    */
   projectId: string;
 
   /**
-   * @generated from field: common.v1.ResourceRef template = 4;
+   * @generated from field: common.v1.ResourceRef template = 5;
    */
   template?: ResourceRef;
 
   /**
-   * @generated from field: common.v1.ResourceRef listener = 5;
+   * @generated from field: common.v1.ResourceRef listener = 6;
    */
   listener?: ResourceRef;
 
   /**
-   * @generated from field: bytes virtual_host = 6;
+   * @generated from field: bytes virtual_host = 7;
    */
   virtualHost: Uint8Array;
 
   /**
-   * @generated from oneof virtual_service.v1.GetVirtualServiceResponse.access_log_config
+   * @generated from oneof virtual_service.v1.GetVirtualServiceResponse.access_log
    */
-  accessLogConfig: {
+  accessLog: {
     /**
-     * @generated from field: common.v1.ResourceRef access_log_config_uid = 7;
+     * @generated from field: common.v1.ResourceRef access_log_config = 8;
      */
     value: ResourceRef;
-    case: "accessLogConfigUid";
+    case: "accessLogConfig";
   } | {
     /**
-     * @generated from field: bytes access_log_config_raw = 8;
+     * @generated from field: bytes access_log_config_raw = 9;
      */
     value: Uint8Array;
     case: "accessLogConfigRaw";
   } | { case: undefined; value?: undefined };
 
   /**
-   * @generated from field: repeated common.v1.ResourceRef additional_http_filters = 9;
+   * @generated from field: repeated common.v1.ResourceRef additional_http_filters = 10;
    */
   additionalHttpFilters: ResourceRef[];
 
   /**
-   * @generated from field: repeated common.v1.ResourceRef additional_routes = 10;
+   * @generated from field: repeated common.v1.ResourceRef additional_routes = 11;
    */
   additionalRoutes: ResourceRef[];
 
   /**
-   * @generated from field: optional bool use_remote_address = 11;
+   * @generated from field: optional bool use_remote_address = 12;
    */
   useRemoteAddress?: boolean;
 };

@@ -37,3 +37,21 @@ func (s *Store) MapVirtualServices() map[helpers.NamespacedName]*v1alpha1.Virtua
 	defer s.mu.RUnlock()
 	return maps.Clone(s.virtualServices)
 }
+
+func (s *Store) updateVirtualServiceByUIDMap() {
+	if len(s.virtualServices) == 0 {
+		return
+	}
+	m := make(map[string]*v1alpha1.VirtualService, len(s.virtualServices))
+	for _, vs := range s.virtualServices {
+		m[string(vs.UID)] = vs
+	}
+	s.virtualServiceByUID = m
+}
+
+func (s *Store) GetVirtualServiceByUID(uid string) *v1alpha1.VirtualService {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	vs, _ := s.virtualServiceByUID[uid]
+	return vs
+}

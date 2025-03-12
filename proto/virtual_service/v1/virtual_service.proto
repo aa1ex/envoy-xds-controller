@@ -64,17 +64,18 @@ message GetVirtualServiceRequest {
 message GetVirtualServiceResponse {
   string uid = 1;
   string name = 2;
-  string project_id = 3;
-  common.v1.ResourceRef template = 4;
-  common.v1.ResourceRef listener = 5;
-  bytes virtual_host = 6;
-  oneof access_log_config {
-    common.v1.ResourceRef access_log_config_uid = 7;
-    bytes access_log_config_raw = 8;
+  repeated string node_ids = 3;
+  string project_id = 4;
+  common.v1.ResourceRef template = 5;
+  common.v1.ResourceRef listener = 6;
+  bytes virtual_host = 7;
+  oneof access_log {
+    common.v1.ResourceRef access_log_config = 8;
+    bytes access_log_config_raw = 9;
   }
-  repeated common.v1.ResourceRef additional_http_filters = 9;
-  repeated common.v1.ResourceRef additional_routes = 10;
-  optional bool use_remote_address = 11;
+  repeated common.v1.ResourceRef additional_http_filters = 10;
+  repeated common.v1.ResourceRef additional_routes = 11;
+  optional bool use_remote_address = 12;
 }
 
 message ListVirtualServiceRequest {}

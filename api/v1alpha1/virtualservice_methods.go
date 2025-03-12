@@ -10,13 +10,14 @@ import (
 )
 
 const (
-	AnnotationKeyEnvoyKaaSopsIoNodeIDs = "envoy.kaasops.io/node-id"
-	LabelProjectID                     = "project-id"
+	AnnotationNodeIDs  = "envoy.kaasops.io/node-id"
+	AnnotationEditable = "envoy.kaasops.io/editable"
+	LabelProjectID     = "project-id"
 )
 
 func (vs *VirtualService) GetNodeIDs() []string {
 	annotations := vs.GetAnnotations()
-	nodeIDsAnnotation := annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs]
+	nodeIDsAnnotation := annotations[AnnotationNodeIDs]
 	if nodeIDsAnnotation == "" {
 		return nil
 	}
@@ -35,9 +36,9 @@ func (vs *VirtualService) GetNodeIDs() []string {
 func (vs *VirtualService) SetNodeIDs(nodeIDs []string) {
 	annotations := vs.GetAnnotations()
 	if len(nodeIDs) == 0 {
-		delete(annotations, AnnotationKeyEnvoyKaaSopsIoNodeIDs)
+		delete(annotations, AnnotationNodeIDs)
 	} else {
-		annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs] = strings.Join(nodeIDs, ",")
+		annotations[AnnotationNodeIDs] = strings.Join(nodeIDs, ",")
 	}
 	vs.SetAnnotations(annotations)
 }
@@ -106,7 +107,7 @@ func (vs *VirtualService) IsEqual(other *VirtualService) bool {
 	if vs.Annotations == nil || other.Annotations == nil {
 		return false
 	}
-	if vs.Annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs] != other.Annotations[AnnotationKeyEnvoyKaaSopsIoNodeIDs] {
+	if vs.Annotations[AnnotationNodeIDs] != other.Annotations[AnnotationNodeIDs] {
 		return false
 	}
 	if !vs.Spec.VirtualServiceCommonSpec.IsEqual(&other.Spec.VirtualServiceCommonSpec) {
@@ -141,4 +142,15 @@ func (vs *VirtualService) GetListenerNamespacedName() (helpers.NamespacedName, e
 		Namespace: vs.Namespace,
 		Name:      vs.Spec.Listener.Name,
 	}, nil
+}
+
+func (vs *VirtualService) IsEditable() bool {
+	if vs.Annotations == nil {
+		return false
+	}
+	editable, ok := vs.Annotations[AnnotationEditable]
+	if !ok {
+		return false
+	}
+	return editable == "true"
 }

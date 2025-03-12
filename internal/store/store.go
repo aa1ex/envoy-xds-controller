@@ -14,6 +14,7 @@ import (
 type Store struct {
 	mu                          sync.RWMutex
 	virtualServices             map[helpers.NamespacedName]*v1alpha1.VirtualService
+	virtualServiceByUID         map[string]*v1alpha1.VirtualService
 	virtualServiceTemplates     map[helpers.NamespacedName]*v1alpha1.VirtualServiceTemplate
 	virtualServiceTemplateByUID map[string]*v1alpha1.VirtualServiceTemplate
 	routes                      map[helpers.NamespacedName]*v1alpha1.Route
