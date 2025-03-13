@@ -9,6 +9,7 @@ import (
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/route/v1/routev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1/virtual_service_templatev1connect"
+	"github.com/rs/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 	"net"
@@ -22,7 +23,7 @@ import (
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds/api/v1/middlewares"
 
-	"github.com/gin-contrib/cors"
+	gincors "github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	xdscache "github.com/kaasops/envoy-xds-controller/internal/xds/cache"
 
@@ -73,7 +74,7 @@ func (c *Client) Run(port int, cacheAPIScheme, cacheAPIAddr string) error {
 	server.Use(ginzap.RecoveryWithZap(c.logger, true))
 
 	// TODO: Fix CORS policy (don't enable for all origins)
-	server.Use(cors.New(cors.Config{
+	server.Use(gincors.New(gincors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET"},
 		AllowHeaders:     []string{"*"},
@@ -123,7 +124,7 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client) erro
 		_ = http.ListenAndServe(
 			net.JoinHostPort("", strconv.Itoa(port)),
 			// Use h2c so we can serve HTTP/2 without TLS.
-			h2c.NewHandler(mux, &http2.Server{}),
+			h2c.NewHandler(cors.AllowAll().Handler(mux), &http2.Server{}),
 		)
 	}()
 	return nil
