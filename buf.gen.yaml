@@ -15,6 +15,7 @@ plugins:
     include_imports: true
     opt: target=ts
     out: ui/src/gen
+  #TODO: вероятно уберем, тк и без этого пакета  protoc-gen-connect-query работает
   - local: protoc-gen-connect-query
     include_imports: true
     out: ui/src/gen
