@@ -10,6 +10,7 @@ func (s *Store) SetVirtualService(vs *v1alpha1.VirtualService) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.virtualServices[helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name}] = vs
+	s.updateVirtualServiceByUIDMap()
 }
 
 func (s *Store) GetVirtualService(name helpers.NamespacedName) *v1alpha1.VirtualService {
@@ -23,6 +24,7 @@ func (s *Store) DeleteVirtualService(name helpers.NamespacedName) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	delete(s.virtualServices, name)
+	s.updateVirtualServiceByUIDMap()
 }
 
 func (s *Store) IsExistingVirtualService(name helpers.NamespacedName) bool {

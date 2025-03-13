@@ -140,6 +140,7 @@ func (s *Store) Fill(ctx context.Context, cl client.Client) error {
 		s.secrets[helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name}] = &secret
 	}
 	s.updateListenerByUIDMap()
+	s.updateVirtualServiceByUIDMap()
 	s.updateVirtualServiceTemplateByUIDMap()
 	s.updateRouteByUIDMap()
 	s.updateClusterByUIDMap()
