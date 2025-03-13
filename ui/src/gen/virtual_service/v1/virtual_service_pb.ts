@@ -19,36 +19,50 @@ export const file_virtual_service_v1_virtual_service: GenFile = /*@__PURE__*/
  */
 export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirtualServiceRequest"> & {
   /**
+   * строка
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * список чипов, данные вводим сами, из головы
+   *
    * @generated from field: repeated string node_ids = 2;
    */
   nodeIds: string[];
 
   /**
+   * строка. сточные прописные, цифры и спец символы, 80 символов
+   *
    * @generated from field: string project_id = 3;
    */
   projectId: string;
 
   /**
+   * выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
+   *
    * @generated from field: string template_uid = 4;
    */
   templateUid: string;
 
   /**
+   * выбор из колекции listeners proto/listener/v1/listener.proto
+   *
    * @generated from field: string listener_uid = 5;
    */
   listenerUid: string;
 
   /**
+   * textAria инпут на YAML или JSON, но при отправке в JSON(BASE64)
+   *
    * @generated from field: bytes virtual_host = 6;
    */
   virtualHost: Uint8Array;
 
   /**
+   * выбор из колекции access_log_config proto/access_log_config/v1/access_log_config.proto:7
+   *
    * @generated from oneof virtual_service.v1.CreateVirtualServiceRequest.access_log_config
    */
   accessLogConfig: {
@@ -60,6 +74,8 @@ export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirt
   } | { case: undefined; value?: undefined };
 
   /**
+   * селектор из
+   *
    * @generated from field: repeated string additional_http_filter_uids = 8;
    */
   additionalHttpFilterUids: string[];
@@ -70,6 +86,8 @@ export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirt
   additionalRouteUids: string[];
 
   /**
+   * выбор из 3х значений ДА/НЕТ/NUll дефолт null
+   *
    * @generated from field: optional bool use_remote_address = 10;
    */
   useRemoteAddress?: boolean;

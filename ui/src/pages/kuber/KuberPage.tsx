@@ -1,11 +1,11 @@
-import client from '../../api/grpc/client'
+import { useQuery } from '@connectrpc/connect-query'
+import { listVirtualService } from '../../gen/virtual_service/v1/virtual_service-VirtualServiceStoreService_connectquery.ts'
 
 function KuberPage() {
-    ;(async function () {
-        const list = await client.virtualServiceClient.listVirtualService({})
-        console.log(list)
-    })()
-    return <div>KuberPage</div>
+	const { data } = useQuery(listVirtualService, {})
+	console.log(data)
+
+	return <div>KuberPage</div>
 }
 
 export default KuberPage

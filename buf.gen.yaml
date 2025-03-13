@@ -13,11 +13,15 @@ plugins:
     opt: paths=source_relative
   - local: protoc-gen-es
     include_imports: true
-    opt: target=dts
+    opt: target=ts
     out: ui/src/gen
+  - local: protoc-gen-connect-query
+    include_imports: true
+    out: ui/src/gen
+    opt: target=ts
   - local: protoc-gen-es
     include_imports: true
-    opt: target=ts
+    opt: target=dts
     out: ui/src/gen
 inputs:
   - directory: proto

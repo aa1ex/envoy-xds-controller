@@ -24,19 +24,19 @@ const (
 
 type CreateVirtualServiceRequest struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
-	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	NodeIds     []string               `protobuf:"bytes,2,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
-	ProjectId   string                 `protobuf:"bytes,3,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
-	TemplateUid string                 `protobuf:"bytes,4,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
-	ListenerUid string                 `protobuf:"bytes,5,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
-	VirtualHost []byte                 `protobuf:"bytes,6,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`                                  //строка
+	NodeIds     []string               `protobuf:"bytes,2,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`             //список чипов, данные вводим сами, из головы
+	ProjectId   string                 `protobuf:"bytes,3,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`       //строка. сточные прописные, цифры и спец символы, 80 символов
+	TemplateUid string                 `protobuf:"bytes,4,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"` //выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
+	ListenerUid string                 `protobuf:"bytes,5,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"` //выбор из колекции listeners proto/listener/v1/listener.proto
+	VirtualHost []byte                 `protobuf:"bytes,6,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"` // textAria инпут на YAML или JSON, но при отправке в JSON(BASE64)
 	// Types that are valid to be assigned to AccessLogConfig:
 	//
 	//	*CreateVirtualServiceRequest_AccessLogConfigUid
 	AccessLogConfig          isCreateVirtualServiceRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
-	AdditionalHttpFilterUids []string                                      `protobuf:"bytes,8,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
+	AdditionalHttpFilterUids []string                                      `protobuf:"bytes,8,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"` // селектор из
 	AdditionalRouteUids      []string                                      `protobuf:"bytes,9,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
-	UseRemoteAddress         *bool                                         `protobuf:"varint,10,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
+	UseRemoteAddress         *bool                                         `protobuf:"varint,10,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"` // выбор из 3х значений ДА/НЕТ/NUll дефолт null
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }

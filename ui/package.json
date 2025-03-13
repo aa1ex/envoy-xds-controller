@@ -10,7 +10,9 @@
     "preview": "vite preview --port 8080"
   },
   "dependencies": {
+    "@bufbuild/protobuf": "^2.2.3",
     "@connectrpc/connect": "^2.0.2",
+    "@connectrpc/connect-query": "^2.0.1",
     "@connectrpc/connect-web": "^2.0.2",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -18,7 +20,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@mui/icons-material": "^5.14.5",
     "@mui/material": "^5.15.5",
-    "@tanstack/react-query": "^5.17.15",
+    "@tanstack/react-query": "^5.67.3",
     "@types/js-yaml": "^4.0.9",
     "@types/react-window": "^1.8.8",
     "@uiw/react-json-view": "^2.0.0-alpha.12",
@@ -36,6 +38,8 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@bufbuild/protoc-gen-es": "^2.2.3",
+    "@connectrpc/protoc-gen-connect-query": "^2.0.1",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",

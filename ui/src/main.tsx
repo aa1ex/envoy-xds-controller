@@ -11,17 +11,21 @@ import '@fontsource/roboto/700.css'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from 'react-router-dom'
 import queryClient from './utils/queryClient/queryClient.ts'
+import { TransportProvider } from '@connectrpc/connect-query'
 import { env } from './env.ts'
+import { transport } from './api/grpc/client.ts'
 
 function createApp() {
 	const app = (
-		<QueryClientProvider client={queryClient}>
-			<BrowserRouter>
-				<React.StrictMode>
-					<App />
-				</React.StrictMode>
-			</BrowserRouter>
-		</QueryClientProvider>
+		<TransportProvider transport={transport}>
+			<QueryClientProvider client={queryClient}>
+				<BrowserRouter>
+					<React.StrictMode>
+						<App />
+					</React.StrictMode>
+				</BrowserRouter>
+			</QueryClientProvider>
+		</TransportProvider>
 	)
 	if (env.VITE_OIDC_ENABLED === 'true') {
 		const oidcConfig = {
