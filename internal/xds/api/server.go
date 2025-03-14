@@ -1,6 +1,7 @@
 package api
 
 import (
+	"connectrpc.com/grpcreflect"
 	"fmt"
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
@@ -119,6 +120,10 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client) erro
 	mux.Handle(path, handler)
 	path, handler = http_filterv1connect.NewHTTPFilterStoreServiceHandler(grpcapi.NewHTTPFilterStore(s))
 	mux.Handle(path, handler)
+
+	reflector := grpcreflect.NewStaticReflector()
+	mux.Handle(grpcreflect.NewHandlerV1(reflector))
+	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
 	go func() {
 		_ = http.ListenAndServe(

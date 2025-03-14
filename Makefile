@@ -294,3 +294,11 @@ kd:
 .PHONY: dev-apply-resources
 dev-apply-resources:
 	kubectl apply -f test/testdata/dev
+
+.PHONY: helm-deploy-backend-local
+helm-deploy-backend-local: manifests set-local## Install Envoy xDS Controller into the local Kubernetes cluster specified in ~/.kube/config.
+	@$(LOG_TARGET)
+	helm install exc --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set cacheAPI.enabled=true --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+
+.PHONY: dev-backend
+dev-backend: set-local docker-build docker-push helm-deploy-backend-local

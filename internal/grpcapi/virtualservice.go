@@ -51,7 +51,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	vs := &v1alpha1.VirtualService{}
 	vs.Name = req.Msg.Name
 	vs.Labels = make(map[string]string)
-	vs.Annotations = make(map[string]string)
+	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = "default" // TODO: hardcode
 
@@ -159,6 +159,7 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		return nil, fmt.Errorf("virtual service uid '%s' is not editable", req.Msg.Uid)
 	}
 
+	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = "default" // TODO: hardcode
 
