@@ -13,7 +13,7 @@ import { env } from './env.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
-const KuberPage = lazy(() => import('./pages/kuber/KuberPage'))
+const VirtualServicesPage = lazy(() => import('./pages/virtualServices/VirtualServices.tsx'))
 const Page404 = lazy(() => import('./pages/page404/page404'))
 
 function App() {
@@ -50,8 +50,8 @@ function App() {
 								<Route index element={<HomePage />} />
 								<Route path=':nodeID' element={<NodeInfoPage />} />
 							</Route>
-							<Route path='kuber' element={<Layout />}>
-								<Route index element={<KuberPage />} />
+							<Route path='virtualServices' element={<Layout />}>
+								<Route index element={<VirtualServicesPage />} />
 							</Route>
 							<Route path='callback' element={<Navigate to='/nodeIDs' replace />} />
 							<Route path='*' element={<Page404 />} />

@@ -6,10 +6,10 @@ import { ColorModeContext } from '../../theme/theme'
 function ThemeSwitcher() {
 	const theme = useTheme()
 	const colorMode: any = useContext(ColorModeContext)
-	console.log(theme.palette.mode)
+
 	const changeTheme = () => {
 		const color = theme.palette.mode
-		console.log(color)
+
 		if (color === 'dark') {
 			localStorage.setItem('themeMod', 'light')
 		} else {

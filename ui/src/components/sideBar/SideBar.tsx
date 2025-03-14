@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Logo from '../../assets/icons/envoy-logo.png'
 import useSideBarState from '../../store/sideBarStore'
-import useColors from '../../utils/hooks/useColors'
+import { useColors } from '../../utils/hooks/useColors'
 import navMenuItems from './navigateItems'
 import { DrawerHeader, DrawerLogo, ListItemButtonNav } from './style'
 
@@ -52,12 +52,12 @@ function SideBar({ isSmallScreen }: ISideBarProps) {
 					open={isOpenSideBar}
 					onClose={() => toggleSideBar(false)}
 					sx={{
-						width: '270px',
+						width: '240px',
 						'& .MuiDrawer-paper': {
 							color: theme.palette.secondary.main,
 							backgroundColor: colors.secondary.DEFAULT,
 							boxSizing: 'border-box',
-							width: '270px'
+							width: '240px'
 						}
 					}}
 				>

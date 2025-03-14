@@ -8,7 +8,7 @@ import DomainLocations from '../domainLocations/DomainLocations'
 import DomainsList from '../domainsList/DomainsList'
 import NotDomainsCard from '../notDomainsCard/NotDomainsCard'
 import { styleDomainSection } from './style'
-import useColors from '../../utils/hooks/useColors'
+import { useColors } from '../../utils/hooks/useColors'
 import { useEffect } from 'react'
 
 function DomainSection() {

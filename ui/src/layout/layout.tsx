@@ -13,7 +13,7 @@ function Layout(): JSX.Element {
 				display='flex'
 				justifyContent='center'
 				flexDirection='column'
-				width={`calc(100% - 270px)`}
+				width={`calc(100% - 240px)`}
 				flexGrow={1}
 				component='main'
 				marginTop='85px'

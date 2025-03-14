@@ -15,7 +15,7 @@ function TopBar() {
 		<AppBar
 			position='fixed'
 			sx={{
-				width: isOpenSideBar ? 'calc(100% - 270px)' : '100%',
+				width: isOpenSideBar ? 'calc(100% - 240px)' : '100%',
 				top: 0,
 				left: 'auto',
 				right: 0,

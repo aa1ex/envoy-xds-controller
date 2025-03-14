@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { useNodeIDs } from '../../api/hooks/useNodeIDsApi'
 import NodeCard from '../../components/nodeCard/nodeCard'
 import Spinner from '../../components/spinner/Spinner'
-import useColors from '../../utils/hooks/useColors'
+import { useColors } from '../../utils/hooks/useColors'
 import { styleRootBox, styleWrapperCards } from './style'
 
 const Home = () => {
