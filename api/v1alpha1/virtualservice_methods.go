@@ -3,6 +3,7 @@ package v1alpha1
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
@@ -54,6 +55,13 @@ func (vs *VirtualService) SetProjectID(projectID string) {
 	}
 	labels[LabelProjectID] = projectID
 	vs.SetLabels(labels)
+}
+
+func (vs *VirtualService) SetEditable(editable bool) {
+	if len(vs.GetAnnotations()) == 0 {
+		vs.SetAnnotations(make(map[string]string))
+	}
+	vs.Annotations[AnnotationEditable] = strconv.FormatBool(editable)
 }
 
 func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, templateOpts ...TemplateOpts) error {

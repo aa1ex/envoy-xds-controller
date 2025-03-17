@@ -29,9 +29,7 @@ message CreateVirtualServiceRequest {
   optional bool use_remote_address = 10; // выбор из 3х значений ДА/НЕТ/NUll дефолт null
 }
 
-message CreateVirtualServiceResponse {
-  string uid = 1;
-}
+message CreateVirtualServiceResponse {}
 
 message UpdateVirtualServiceRequest {
   string uid = 1;
