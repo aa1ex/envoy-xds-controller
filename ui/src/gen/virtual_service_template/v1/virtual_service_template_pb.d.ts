@@ -2,13 +2,34 @@
 // @generated from file virtual_service_template/v1/virtual_service_template.proto (package virtual_service_template.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file virtual_service_template/v1/virtual_service_template.proto.
  */
 export declare const file_virtual_service_template_v1_virtual_service_template: GenFile;
+
+/**
+ * @generated from message virtual_service_template.v1.TemplateOption
+ */
+export declare type TemplateOption = Message<"virtual_service_template.v1.TemplateOption"> & {
+  /**
+   * @generated from field: string field = 1;
+   */
+  field: string;
+
+  /**
+   * @generated from field: virtual_service_template.v1.TemplateOptionModifier modifier = 2;
+   */
+  modifier: TemplateOptionModifier;
+};
+
+/**
+ * Describes the message virtual_service_template.v1.TemplateOption.
+ * Use `create(TemplateOptionSchema)` to create a new message.
+ */
+export declare const TemplateOptionSchema: GenMessage<TemplateOption>;
 
 /**
  * @generated from message virtual_service_template.v1.ListVirtualServiceTemplateRequest
@@ -60,6 +81,104 @@ export declare type ListVirtualServiceTemplateResponse = Message<"virtual_servic
 export declare const ListVirtualServiceTemplateResponseSchema: GenMessage<ListVirtualServiceTemplateResponse>;
 
 /**
+ * @generated from message virtual_service_template.v1.FillTemplateRequest
+ */
+export declare type FillTemplateRequest = Message<"virtual_service_template.v1.FillTemplateRequest"> & {
+  /**
+   * @generated from field: string template_uid = 1;
+   */
+  templateUid: string;
+
+  /**
+   * @generated from field: string listener_uid = 2;
+   */
+  listenerUid: string;
+
+  /**
+   * @generated from field: bytes virtual_host = 3;
+   */
+  virtualHost: Uint8Array;
+
+  /**
+   * @generated from oneof virtual_service_template.v1.FillTemplateRequest.access_log_config
+   */
+  accessLogConfig: {
+    /**
+     * @generated from field: string access_log_config_uid = 4;
+     */
+    value: string;
+    case: "accessLogConfigUid";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * @generated from field: repeated string additional_http_filter_uids = 5;
+   */
+  additionalHttpFilterUids: string[];
+
+  /**
+   * @generated from field: repeated string additional_route_uids = 6;
+   */
+  additionalRouteUids: string[];
+
+  /**
+   * @generated from field: optional bool use_remote_address = 7;
+   */
+  useRemoteAddress?: boolean;
+};
+
+/**
+ * Describes the message virtual_service_template.v1.FillTemplateRequest.
+ * Use `create(FillTemplateRequestSchema)` to create a new message.
+ */
+export declare const FillTemplateRequestSchema: GenMessage<FillTemplateRequest>;
+
+/**
+ * @generated from message virtual_service_template.v1.FillTemplateResponse
+ */
+export declare type FillTemplateResponse = Message<"virtual_service_template.v1.FillTemplateResponse"> & {
+  /**
+   * @generated from field: string raw = 1;
+   */
+  raw: string;
+};
+
+/**
+ * Describes the message virtual_service_template.v1.FillTemplateResponse.
+ * Use `create(FillTemplateResponseSchema)` to create a new message.
+ */
+export declare const FillTemplateResponseSchema: GenMessage<FillTemplateResponse>;
+
+/**
+ * @generated from enum virtual_service_template.v1.TemplateOptionModifier
+ */
+export enum TemplateOptionModifier {
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_MERGE = 1;
+   */
+  MERGE = 1,
+
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_REPLACE = 2;
+   */
+  REPLACE = 2,
+
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_DELETE = 3;
+   */
+  DELETE = 3,
+}
+
+/**
+ * Describes the enum virtual_service_template.v1.TemplateOptionModifier.
+ */
+export declare const TemplateOptionModifierSchema: GenEnum<TemplateOptionModifier>;
+
+/**
  * @generated from service virtual_service_template.v1.VirtualServiceTemplateStoreService
  */
 export declare const VirtualServiceTemplateStoreService: GenService<{
@@ -70,6 +189,14 @@ export declare const VirtualServiceTemplateStoreService: GenService<{
     methodKind: "unary";
     input: typeof ListVirtualServiceTemplateRequestSchema;
     output: typeof ListVirtualServiceTemplateResponseSchema;
+  },
+  /**
+   * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate
+   */
+  fillTemplate: {
+    methodKind: "unary";
+    input: typeof FillTemplateRequestSchema;
+    output: typeof FillTemplateResponseSchema;
   },
 }>;
 

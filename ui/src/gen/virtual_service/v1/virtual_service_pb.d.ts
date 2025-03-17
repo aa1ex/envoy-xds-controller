@@ -4,6 +4,7 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
+import type { TemplateOption } from "../../virtual_service_template/v1/virtual_service_template_pb";
 import type { ResourceRef } from "../../common/v1/common_pb";
 
 /**
@@ -88,6 +89,11 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
    * @generated from field: optional bool use_remote_address = 10;
    */
   useRemoteAddress?: boolean;
+
+  /**
+   * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 11;
+   */
+  templateOptions: TemplateOption[];
 };
 
 /**
@@ -172,6 +178,11 @@ export declare type UpdateVirtualServiceRequest = Message<"virtual_service.v1.Up
    * @generated from field: optional bool use_remote_address = 11;
    */
   useRemoteAddress?: boolean;
+
+  /**
+   * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 12;
+   */
+  templateOptions: TemplateOption[];
 };
 
 /**
@@ -306,6 +317,11 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
    * @generated from field: optional bool use_remote_address = 12;
    */
   useRemoteAddress?: boolean;
+
+  /**
+   * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 13;
+   */
+  templateOptions: TemplateOption[];
 };
 
 /**
@@ -349,6 +365,11 @@ export declare type VirtualServiceListItem = Message<"virtual_service.v1.Virtual
    * @generated from field: string project_id = 4;
    */
   projectId: string;
+
+  /**
+   * @generated from field: common.v1.ResourceRef template = 5;
+   */
+  template?: ResourceRef;
 };
 
 /**

@@ -11,20 +11,23 @@ import (
 	commonv1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/common/v1"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
+	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 type VirtualServiceStore struct {
-	store  *store.Store
-	client client.Client
+	store    *store.Store
+	client   client.Client
+	targetNs string
 	virtual_servicev1connect.UnimplementedVirtualServiceStoreServiceHandler
 }
 
-func NewVirtualServiceStore(s *store.Store, c client.Client) *VirtualServiceStore {
+func NewVirtualServiceStore(s *store.Store, c client.Client, targetNs string) *VirtualServiceStore {
 	return &VirtualServiceStore{
-		store:  s,
-		client: c,
+		store:    s,
+		client:   c,
+		targetNs: targetNs,
 	}
 }
 
@@ -37,6 +40,14 @@ func (s *VirtualServiceStore) ListVirtualService(_ context.Context, _ *connect.R
 			Name:      v.Name,
 			NodeIds:   v.GetNodeIDs(),
 			ProjectId: v.GetProjectID(),
+		}
+		if v.Spec.Template != nil {
+			template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: v.Namespace, Name: v.Spec.Template.Name})
+			vs.Template = &commonv1.ResourceRef{
+				Uid:       string(template.UID),
+				Name:      template.Name,
+				Namespace: template.Namespace,
+			}
 		}
 		list = append(list, vs)
 	}
@@ -53,7 +64,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	vs.Labels = make(map[string]string)
 	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
-	vs.Namespace = "default" // TODO: hardcode
+	vs.Namespace = s.targetNs
 
 	if req.Msg.ProjectId != "" {
 		vs.SetProjectID(req.Msg.ProjectId)
@@ -67,6 +78,16 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 		vs.Spec.Template = &v1alpha1.ResourceRef{
 			Name:      vst.Name,
 			Namespace: &vst.Namespace,
+		}
+		if len(req.Msg.TemplateOptions) > 0 {
+			tOpts := make([]v1alpha1.TemplateOpts, 0, len(req.Msg.TemplateOptions))
+			for _, opt := range req.Msg.TemplateOptions {
+				tOpts = append(tOpts, v1alpha1.TemplateOpts{
+					Field:    opt.Field,
+					Modifier: parseTemplateOptionModifier(opt.Modifier),
+				})
+			}
+			vs.Spec.TemplateOptions = tOpts
 		}
 	}
 
@@ -161,7 +182,7 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 
 	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
-	vs.Namespace = "default" // TODO: hardcode
+	vs.Namespace = s.targetNs
 
 	if req.Msg.ProjectId != "" {
 		vs.SetProjectID(req.Msg.ProjectId)
@@ -175,6 +196,16 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		vs.Spec.Template = &v1alpha1.ResourceRef{
 			Name:      vst.Name,
 			Namespace: &vst.Namespace,
+		}
+		if len(req.Msg.TemplateOptions) > 0 {
+			tOpts := make([]v1alpha1.TemplateOpts, 0, len(req.Msg.TemplateOptions))
+			for _, opt := range req.Msg.TemplateOptions {
+				tOpts = append(tOpts, v1alpha1.TemplateOpts{
+					Field:    opt.Field,
+					Modifier: parseTemplateOptionModifier(opt.Modifier),
+				})
+			}
+			vs.Spec.TemplateOptions = tOpts
 		}
 	}
 
@@ -240,11 +271,7 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		vs.Spec.UseRemoteAddress = req.Msg.UseRemoteAddress
 	}
 
-	tmpStore := store.New()
-	if err := tmpStore.Fill(ctx, s.client); err != nil {
-		return nil, err
-	}
-	if _, _, err := resbuilder.BuildResources(vs, tmpStore); err != nil {
+	if _, _, err := resbuilder.BuildResources(vs, s.store); err != nil {
 		return nil, err
 	}
 
@@ -292,6 +319,15 @@ func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connec
 			Name:      template.Name,
 			Namespace: template.Namespace,
 		}
+		if len(vs.Spec.TemplateOptions) > 0 {
+			resp.TemplateOptions = make([]*virtual_service_templatev1.TemplateOption, 0, len(vs.Spec.TemplateOptions))
+			for _, opt := range vs.Spec.TemplateOptions {
+				resp.TemplateOptions = append(resp.TemplateOptions, &virtual_service_templatev1.TemplateOption{
+					Field:    opt.Field,
+					Modifier: parseModifierToTemplateOption(opt.Modifier),
+				})
+			}
+		}
 	}
 	if vs.Spec.Listener != nil {
 		listener := s.store.GetListener(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.Listener.Name})
@@ -338,4 +374,28 @@ func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connec
 		resp.UseRemoteAddress = vs.Spec.UseRemoteAddress
 	}
 	return connect.NewResponse(resp), nil
+}
+
+func parseTemplateOptionModifier(modifier virtual_service_templatev1.TemplateOptionModifier) v1alpha1.Modifier {
+	switch modifier {
+	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE:
+		return v1alpha1.ModifierMerge
+	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE:
+		return v1alpha1.ModifierReplace
+	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE:
+		return v1alpha1.ModifierDelete
+	}
+	return ""
+}
+
+func parseModifierToTemplateOption(modifier v1alpha1.Modifier) virtual_service_templatev1.TemplateOptionModifier {
+	switch modifier {
+	case v1alpha1.ModifierMerge:
+		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE
+	case v1alpha1.ModifierReplace:
+		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE
+	case v1alpha1.ModifierDelete:
+		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE
+	}
+	return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_UNSPECIFIED
 }

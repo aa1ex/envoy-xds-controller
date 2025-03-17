@@ -8,3 +8,8 @@ import { VirtualServiceTemplateStoreService } from "./virtual_service_template_p
  * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplate
  */
 export const listVirtualServiceTemplate = VirtualServiceTemplateStoreService.method.listVirtualServiceTemplate;
+
+/**
+ * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate
+ */
+export const fillTemplate = VirtualServiceTemplateStoreService.method.fillTemplate;

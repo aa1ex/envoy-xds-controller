@@ -2,15 +2,37 @@
 // @generated from file virtual_service_template/v1/virtual_service_template.proto (package virtual_service_template.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file virtual_service_template/v1/virtual_service_template.proto.
  */
 export const file_virtual_service_template_v1_virtual_service_template: GenFile = /*@__PURE__*/
-  fileDesc("Cjp2aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUvdjEvdmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnByb3RvEht2aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUudjEiIwohTGlzdFZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVSZXF1ZXN0IjsKHlZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCSJwCiJMaXN0VmlydHVhbFNlcnZpY2VUZW1wbGF0ZVJlc3BvbnNlEkoKBWl0ZW1zGAEgAygLMjsudmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnYxLlZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVMaXN0SXRlbTLEAQoiVmlydHVhbFNlcnZpY2VUZW1wbGF0ZVN0b3JlU2VydmljZRKdAQoaTGlzdFZpcnR1YWxTZXJ2aWNlVGVtcGxhdGUSPi52aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUudjEuTGlzdFZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVSZXF1ZXN0Gj8udmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnYxLkxpc3RWaXJ0dWFsU2VydmljZVRlbXBsYXRlUmVzcG9uc2VCsAIKH2NvbS52aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUudjFCG1ZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVQcm90b1ABWmtnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL3ZpcnR1YWxfc2VydmljZV90ZW1wbGF0ZS92MTt2aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGV2MaICA1ZYWKoCGVZpcnR1YWxTZXJ2aWNlVGVtcGxhdGUuVjHKAhlWaXJ0dWFsU2VydmljZVRlbXBsYXRlXFYx4gIlVmlydHVhbFNlcnZpY2VUZW1wbGF0ZVxWMVxHUEJNZXRhZGF0YeoCGlZpcnR1YWxTZXJ2aWNlVGVtcGxhdGU6OlYxYgZwcm90bzM");
+  fileDesc("Cjp2aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUvdjEvdmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnByb3RvEht2aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUudjEiZgoOVGVtcGxhdGVPcHRpb24SDQoFZmllbGQYASABKAkSRQoIbW9kaWZpZXIYAiABKA4yMy52aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUudjEuVGVtcGxhdGVPcHRpb25Nb2RpZmllciIjCiFMaXN0VmlydHVhbFNlcnZpY2VUZW1wbGF0ZVJlcXVlc3QiOwoeVmlydHVhbFNlcnZpY2VUZW1wbGF0ZUxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJInAKIkxpc3RWaXJ0dWFsU2VydmljZVRlbXBsYXRlUmVzcG9uc2USSgoFaXRlbXMYASADKAsyOy52aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUudjEuVmlydHVhbFNlcnZpY2VUZW1wbGF0ZUxpc3RJdGVtIokCChNGaWxsVGVtcGxhdGVSZXF1ZXN0EhQKDHRlbXBsYXRlX3VpZBgBIAEoCRIUCgxsaXN0ZW5lcl91aWQYAiABKAkSFAoMdmlydHVhbF9ob3N0GAMgASgMEh8KFWFjY2Vzc19sb2dfY29uZmlnX3VpZBgEIAEoCUgAEiMKG2FkZGl0aW9uYWxfaHR0cF9maWx0ZXJfdWlkcxgFIAMoCRIdChVhZGRpdGlvbmFsX3JvdXRlX3VpZHMYBiADKAkSHwoSdXNlX3JlbW90ZV9hZGRyZXNzGAcgASgISAGIAQFCEwoRYWNjZXNzX2xvZ19jb25maWdCFQoTX3VzZV9yZW1vdGVfYWRkcmVzcyIjChRGaWxsVGVtcGxhdGVSZXNwb25zZRILCgNyYXcYASABKAkqsQEKFlRlbXBsYXRlT3B0aW9uTW9kaWZpZXISKAokVEVNUExBVEVfT1BUSU9OX01PRElGSUVSX1VOU1BFQ0lGSUVEEAASIgoeVEVNUExBVEVfT1BUSU9OX01PRElGSUVSX01FUkdFEAESJAogVEVNUExBVEVfT1BUSU9OX01PRElGSUVSX1JFUExBQ0UQAhIjCh9URU1QTEFURV9PUFRJT05fTU9ESUZJRVJfREVMRVRFEAMyuQIKIlZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVTdG9yZVNlcnZpY2USnQEKGkxpc3RWaXJ0dWFsU2VydmljZVRlbXBsYXRlEj4udmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnYxLkxpc3RWaXJ0dWFsU2VydmljZVRlbXBsYXRlUmVxdWVzdBo/LnZpcnR1YWxfc2VydmljZV90ZW1wbGF0ZS52MS5MaXN0VmlydHVhbFNlcnZpY2VUZW1wbGF0ZVJlc3BvbnNlEnMKDEZpbGxUZW1wbGF0ZRIwLnZpcnR1YWxfc2VydmljZV90ZW1wbGF0ZS52MS5GaWxsVGVtcGxhdGVSZXF1ZXN0GjEudmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnYxLkZpbGxUZW1wbGF0ZVJlc3BvbnNlQrACCh9jb20udmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnYxQhtWaXJ0dWFsU2VydmljZVRlbXBsYXRlUHJvdG9QAVprZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy92aXJ0dWFsX3NlcnZpY2VfdGVtcGxhdGUvdjE7dmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRldjGiAgNWWFiqAhlWaXJ0dWFsU2VydmljZVRlbXBsYXRlLlYxygIZVmlydHVhbFNlcnZpY2VUZW1wbGF0ZVxWMeICJVZpcnR1YWxTZXJ2aWNlVGVtcGxhdGVcVjFcR1BCTWV0YWRhdGHqAhpWaXJ0dWFsU2VydmljZVRlbXBsYXRlOjpWMWIGcHJvdG8z");
+
+/**
+ * @generated from message virtual_service_template.v1.TemplateOption
+ */
+export type TemplateOption = Message<"virtual_service_template.v1.TemplateOption"> & {
+  /**
+   * @generated from field: string field = 1;
+   */
+  field: string;
+
+  /**
+   * @generated from field: virtual_service_template.v1.TemplateOptionModifier modifier = 2;
+   */
+  modifier: TemplateOptionModifier;
+};
+
+/**
+ * Describes the message virtual_service_template.v1.TemplateOption.
+ * Use `create(TemplateOptionSchema)` to create a new message.
+ */
+export const TemplateOptionSchema: GenMessage<TemplateOption> = /*@__PURE__*/
+  messageDesc(file_virtual_service_template_v1_virtual_service_template, 0);
 
 /**
  * @generated from message virtual_service_template.v1.ListVirtualServiceTemplateRequest
@@ -23,7 +45,7 @@ export type ListVirtualServiceTemplateRequest = Message<"virtual_service_templat
  * Use `create(ListVirtualServiceTemplateRequestSchema)` to create a new message.
  */
 export const ListVirtualServiceTemplateRequestSchema: GenMessage<ListVirtualServiceTemplateRequest> = /*@__PURE__*/
-  messageDesc(file_virtual_service_template_v1_virtual_service_template, 0);
+  messageDesc(file_virtual_service_template_v1_virtual_service_template, 1);
 
 /**
  * @generated from message virtual_service_template.v1.VirtualServiceTemplateListItem
@@ -45,7 +67,7 @@ export type VirtualServiceTemplateListItem = Message<"virtual_service_template.v
  * Use `create(VirtualServiceTemplateListItemSchema)` to create a new message.
  */
 export const VirtualServiceTemplateListItemSchema: GenMessage<VirtualServiceTemplateListItem> = /*@__PURE__*/
-  messageDesc(file_virtual_service_template_v1_virtual_service_template, 1);
+  messageDesc(file_virtual_service_template_v1_virtual_service_template, 2);
 
 /**
  * @generated from message virtual_service_template.v1.ListVirtualServiceTemplateResponse
@@ -62,7 +84,108 @@ export type ListVirtualServiceTemplateResponse = Message<"virtual_service_templa
  * Use `create(ListVirtualServiceTemplateResponseSchema)` to create a new message.
  */
 export const ListVirtualServiceTemplateResponseSchema: GenMessage<ListVirtualServiceTemplateResponse> = /*@__PURE__*/
-  messageDesc(file_virtual_service_template_v1_virtual_service_template, 2);
+  messageDesc(file_virtual_service_template_v1_virtual_service_template, 3);
+
+/**
+ * @generated from message virtual_service_template.v1.FillTemplateRequest
+ */
+export type FillTemplateRequest = Message<"virtual_service_template.v1.FillTemplateRequest"> & {
+  /**
+   * @generated from field: string template_uid = 1;
+   */
+  templateUid: string;
+
+  /**
+   * @generated from field: string listener_uid = 2;
+   */
+  listenerUid: string;
+
+  /**
+   * @generated from field: bytes virtual_host = 3;
+   */
+  virtualHost: Uint8Array;
+
+  /**
+   * @generated from oneof virtual_service_template.v1.FillTemplateRequest.access_log_config
+   */
+  accessLogConfig: {
+    /**
+     * @generated from field: string access_log_config_uid = 4;
+     */
+    value: string;
+    case: "accessLogConfigUid";
+  } | { case: undefined; value?: undefined };
+
+  /**
+   * @generated from field: repeated string additional_http_filter_uids = 5;
+   */
+  additionalHttpFilterUids: string[];
+
+  /**
+   * @generated from field: repeated string additional_route_uids = 6;
+   */
+  additionalRouteUids: string[];
+
+  /**
+   * @generated from field: optional bool use_remote_address = 7;
+   */
+  useRemoteAddress?: boolean;
+};
+
+/**
+ * Describes the message virtual_service_template.v1.FillTemplateRequest.
+ * Use `create(FillTemplateRequestSchema)` to create a new message.
+ */
+export const FillTemplateRequestSchema: GenMessage<FillTemplateRequest> = /*@__PURE__*/
+  messageDesc(file_virtual_service_template_v1_virtual_service_template, 4);
+
+/**
+ * @generated from message virtual_service_template.v1.FillTemplateResponse
+ */
+export type FillTemplateResponse = Message<"virtual_service_template.v1.FillTemplateResponse"> & {
+  /**
+   * @generated from field: string raw = 1;
+   */
+  raw: string;
+};
+
+/**
+ * Describes the message virtual_service_template.v1.FillTemplateResponse.
+ * Use `create(FillTemplateResponseSchema)` to create a new message.
+ */
+export const FillTemplateResponseSchema: GenMessage<FillTemplateResponse> = /*@__PURE__*/
+  messageDesc(file_virtual_service_template_v1_virtual_service_template, 5);
+
+/**
+ * @generated from enum virtual_service_template.v1.TemplateOptionModifier
+ */
+export enum TemplateOptionModifier {
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_MERGE = 1;
+   */
+  MERGE = 1,
+
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_REPLACE = 2;
+   */
+  REPLACE = 2,
+
+  /**
+   * @generated from enum value: TEMPLATE_OPTION_MODIFIER_DELETE = 3;
+   */
+  DELETE = 3,
+}
+
+/**
+ * Describes the enum virtual_service_template.v1.TemplateOptionModifier.
+ */
+export const TemplateOptionModifierSchema: GenEnum<TemplateOptionModifier> = /*@__PURE__*/
+  enumDesc(file_virtual_service_template_v1_virtual_service_template, 0);
 
 /**
  * @generated from service virtual_service_template.v1.VirtualServiceTemplateStoreService
@@ -75,6 +198,14 @@ export const VirtualServiceTemplateStoreService: GenService<{
     methodKind: "unary";
     input: typeof ListVirtualServiceTemplateRequestSchema;
     output: typeof ListVirtualServiceTemplateResponseSchema;
+  },
+  /**
+   * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate
+   */
+  fillTemplate: {
+    methodKind: "unary";
+    input: typeof FillTemplateRequestSchema;
+    output: typeof FillTemplateResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_virtual_service_template_v1_virtual_service_template, 0);

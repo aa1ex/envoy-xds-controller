@@ -6,6 +6,19 @@ option go_package = "virtualservicetemplatev1";
 
 service VirtualServiceTemplateStoreService {
   rpc ListVirtualServiceTemplate(ListVirtualServiceTemplateRequest) returns (ListVirtualServiceTemplateResponse);
+  rpc FillTemplate(FillTemplateRequest) returns (FillTemplateResponse);
+}
+
+enum TemplateOptionModifier {
+  TEMPLATE_OPTION_MODIFIER_UNSPECIFIED = 0;
+  TEMPLATE_OPTION_MODIFIER_MERGE = 1;
+  TEMPLATE_OPTION_MODIFIER_REPLACE = 2;
+  TEMPLATE_OPTION_MODIFIER_DELETE = 3;
+}
+
+message TemplateOption {
+  string field = 1;
+  TemplateOptionModifier modifier = 2;
 }
 
 message ListVirtualServiceTemplateRequest {}
@@ -17,4 +30,20 @@ message VirtualServiceTemplateListItem {
 
 message ListVirtualServiceTemplateResponse {
   repeated VirtualServiceTemplateListItem items = 1;
+}
+
+message FillTemplateRequest {
+  string template_uid = 1;
+  string listener_uid = 2;
+  bytes virtual_host = 3;
+  oneof access_log_config {
+    string access_log_config_uid = 4;
+  }
+  repeated string additional_http_filter_uids = 5;
+  repeated string additional_route_uids = 6;
+  optional bool use_remote_address = 7;
+}
+
+message FillTemplateResponse {
+  string raw = 1;
 }

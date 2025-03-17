@@ -82,6 +82,7 @@ func init() {
 type Config struct {
 	WatchNamespaces       []string `default:""                     envconfig:"WATCH_NAMESPACES"`
 	InstallationNamespace string   `default:"envoy-xds-controller" envconfig:"INSTALLATION_NAMESPACE"`
+	TargetNamespace       string   `default:"envoy-xds-controller" envconfig:"TARGET_NAMESPACE"` // ns for creating cr
 	XDS                   struct {
 		Port int `default:"9000" envconfig:"XDS_PORT"`
 	}
@@ -92,6 +93,16 @@ type Config struct {
 		Path           string `default:"/validate"                                   envconfig:"WEBHOOK_PATH"`
 		Port           int    `default:"9443"                                        envconfig:"WEBHOOK_PORT"`
 	}
+}
+
+func (c *Config) GetNamespaceForResourceCreation() string {
+	if c.TargetNamespace != "" {
+		return c.TargetNamespace
+	}
+	if c.InstallationNamespace != "" {
+		return c.InstallationNamespace
+	}
+	return "default"
 }
 
 // nolint:gocyclo
@@ -410,7 +421,7 @@ func main() {
 					}
 				}
 				apiServer := api.New(snapshotCache, xdsServerCfg, zapLogger, devMode)
-				if err := apiServer.RunGRPC(grpcAPIPort, resStore, mgr.GetClient()); err != nil {
+				if err := apiServer.RunGRPC(grpcAPIPort, resStore, mgr.GetClient(), cfg.GetNamespaceForResourceCreation()); err != nil {
 					setupServers.Error(err, "cannot run grpc xDS server")
 					os.Exit(1)
 				}
