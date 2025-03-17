@@ -11,9 +11,9 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_listener_v1_listener: GenFile;
 
 /**
- * @generated from message listener.v1.Listener
+ * @generated from message listener.v1.ListenerListItem
  */
-export declare type Listener = Message<"listener.v1.Listener"> & {
+export declare type ListenerListItem = Message<"listener.v1.ListenerListItem"> & {
   /**
    * @generated from field: string uid = 1;
    */
@@ -23,58 +23,53 @@ export declare type Listener = Message<"listener.v1.Listener"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**
- * Describes the message listener.v1.Listener.
- * Use `create(ListenerSchema)` to create a new message.
+ * Describes the message listener.v1.ListenerListItem.
+ * Use `create(ListenerListItemSchema)` to create a new message.
  */
-export declare const ListenerSchema: GenMessage<Listener>;
+export declare const ListenerListItemSchema: GenMessage<ListenerListItem>;
 
 /**
- * @generated from message listener.v1.ListVirtualServiceRequest
+ * @generated from message listener.v1.ListListenerRequest
  */
-export declare type ListVirtualServiceRequest = Message<"listener.v1.ListVirtualServiceRequest"> & {
+export declare type ListListenerRequest = Message<"listener.v1.ListListenerRequest"> & {
 };
 
 /**
- * Describes the message listener.v1.ListVirtualServiceRequest.
- * Use `create(ListVirtualServiceRequestSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenerRequest.
+ * Use `create(ListListenerRequestSchema)` to create a new message.
  */
-export declare const ListVirtualServiceRequestSchema: GenMessage<ListVirtualServiceRequest>;
+export declare const ListListenerRequestSchema: GenMessage<ListListenerRequest>;
 
 /**
- * @generated from message listener.v1.ListVirtualServiceResponse
+ * @generated from message listener.v1.ListListenerResponse
  */
-export declare type ListVirtualServiceResponse = Message<"listener.v1.ListVirtualServiceResponse"> & {
+export declare type ListListenerResponse = Message<"listener.v1.ListListenerResponse"> & {
   /**
-   * @generated from field: listener.v1.Listener items = 1;
+   * @generated from field: repeated listener.v1.ListenerListItem items = 1;
    */
-  items?: Listener;
+  items: ListenerListItem[];
 };
 
 /**
- * Describes the message listener.v1.ListVirtualServiceResponse.
- * Use `create(ListVirtualServiceResponseSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenerResponse.
+ * Use `create(ListListenerResponseSchema)` to create a new message.
  */
-export declare const ListVirtualServiceResponseSchema: GenMessage<ListVirtualServiceResponse>;
+export declare const ListListenerResponseSchema: GenMessage<ListListenerResponse>;
 
 /**
- * @generated from service listener.v1.VirtualServiceStoreService
+ * @generated from service listener.v1.ListenerStoreService
  */
-export declare const VirtualServiceStoreService: GenService<{
+export declare const ListenerStoreService: GenService<{
   /**
-   * @generated from rpc listener.v1.VirtualServiceStoreService.ListVirtualService
+   * @generated from rpc listener.v1.ListenerStoreService.ListListener
    */
-  listVirtualService: {
+  listListener: {
     methodKind: "unary";
-    input: typeof ListVirtualServiceRequestSchema;
-    output: typeof ListVirtualServiceResponseSchema;
+    input: typeof ListListenerRequestSchema;
+    output: typeof ListListenerResponseSchema;
   },
 }>;
 

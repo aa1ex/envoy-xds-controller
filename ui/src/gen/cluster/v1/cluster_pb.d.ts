@@ -2,7 +2,7 @@
 // @generated from file cluster/v1/cluster.proto (package cluster.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
@@ -11,9 +11,9 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_cluster_v1_cluster: GenFile;
 
 /**
- * @generated from message cluster.v1.Cluster
+ * @generated from message cluster.v1.ClusterListItem
  */
-export declare type Cluster = Message<"cluster.v1.Cluster"> & {
+export declare type ClusterListItem = Message<"cluster.v1.ClusterListItem"> & {
   /**
    * @generated from field: string uid = 1;
    */
@@ -23,16 +23,53 @@ export declare type Cluster = Message<"cluster.v1.Cluster"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**
- * Describes the message cluster.v1.Cluster.
- * Use `create(ClusterSchema)` to create a new message.
+ * Describes the message cluster.v1.ClusterListItem.
+ * Use `create(ClusterListItemSchema)` to create a new message.
  */
-export declare const ClusterSchema: GenMessage<Cluster>;
+export declare const ClusterListItemSchema: GenMessage<ClusterListItem>;
+
+/**
+ * @generated from message cluster.v1.ListClusterRequest
+ */
+export declare type ListClusterRequest = Message<"cluster.v1.ListClusterRequest"> & {
+};
+
+/**
+ * Describes the message cluster.v1.ListClusterRequest.
+ * Use `create(ListClusterRequestSchema)` to create a new message.
+ */
+export declare const ListClusterRequestSchema: GenMessage<ListClusterRequest>;
+
+/**
+ * @generated from message cluster.v1.ListClusterResponse
+ */
+export declare type ListClusterResponse = Message<"cluster.v1.ListClusterResponse"> & {
+  /**
+   * @generated from field: repeated cluster.v1.ClusterListItem items = 1;
+   */
+  items: ClusterListItem[];
+};
+
+/**
+ * Describes the message cluster.v1.ListClusterResponse.
+ * Use `create(ListClusterResponseSchema)` to create a new message.
+ */
+export declare const ListClusterResponseSchema: GenMessage<ListClusterResponse>;
+
+/**
+ * @generated from service cluster.v1.ClusterStoreService
+ */
+export declare const ClusterStoreService: GenService<{
+  /**
+   * @generated from rpc cluster.v1.ClusterStoreService.ListCluster
+   */
+  listCluster: {
+    methodKind: "unary";
+    input: typeof ListClusterRequestSchema;
+    output: typeof ListClusterResponseSchema;
+  },
+}>;
 

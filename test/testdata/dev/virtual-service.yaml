@@ -4,6 +4,8 @@ metadata:
   name: virtual-service
   annotations:
     envoy.kaasops.io/node-id: test
+  labels:
+    project-id: dev
 spec:
   listener:
     name: tcp-proxy

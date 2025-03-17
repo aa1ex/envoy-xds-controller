@@ -21,9 +21,8 @@ import (
 const _ = connect.IsAtLeastVersion1_13_0
 
 const (
-	// VirtualServiceStoreServiceName is the fully-qualified name of the VirtualServiceStoreService
-	// service.
-	VirtualServiceStoreServiceName = "listener.v1.VirtualServiceStoreService"
+	// ListenerStoreServiceName is the fully-qualified name of the ListenerStoreService service.
+	ListenerStoreServiceName = "listener.v1.ListenerStoreService"
 )
 
 // These constants are the fully-qualified names of the RPCs defined in this package. They're
@@ -34,79 +33,77 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// VirtualServiceStoreServiceListVirtualServiceProcedure is the fully-qualified name of the
-	// VirtualServiceStoreService's ListVirtualService RPC.
-	VirtualServiceStoreServiceListVirtualServiceProcedure = "/listener.v1.VirtualServiceStoreService/ListVirtualService"
+	// ListenerStoreServiceListListenerProcedure is the fully-qualified name of the
+	// ListenerStoreService's ListListener RPC.
+	ListenerStoreServiceListListenerProcedure = "/listener.v1.ListenerStoreService/ListListener"
 )
 
-// VirtualServiceStoreServiceClient is a client for the listener.v1.VirtualServiceStoreService
-// service.
-type VirtualServiceStoreServiceClient interface {
-	ListVirtualService(context.Context, *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error)
+// ListenerStoreServiceClient is a client for the listener.v1.ListenerStoreService service.
+type ListenerStoreServiceClient interface {
+	ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error)
 }
 
-// NewVirtualServiceStoreServiceClient constructs a client for the
-// listener.v1.VirtualServiceStoreService service. By default, it uses the Connect protocol with the
-// binary Protobuf Codec, asks for gzipped responses, and sends uncompressed requests. To use the
-// gRPC or gRPC-Web protocols, supply the connect.WithGRPC() or connect.WithGRPCWeb() options.
+// NewListenerStoreServiceClient constructs a client for the listener.v1.ListenerStoreService
+// service. By default, it uses the Connect protocol with the binary Protobuf Codec, asks for
+// gzipped responses, and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply
+// the connect.WithGRPC() or connect.WithGRPCWeb() options.
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewVirtualServiceStoreServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) VirtualServiceStoreServiceClient {
+func NewListenerStoreServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ListenerStoreServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
-	virtualServiceStoreServiceMethods := v1.File_listener_v1_listener_proto.Services().ByName("VirtualServiceStoreService").Methods()
-	return &virtualServiceStoreServiceClient{
-		listVirtualService: connect.NewClient[v1.ListVirtualServiceRequest, v1.ListVirtualServiceResponse](
+	listenerStoreServiceMethods := v1.File_listener_v1_listener_proto.Services().ByName("ListenerStoreService").Methods()
+	return &listenerStoreServiceClient{
+		listListener: connect.NewClient[v1.ListListenerRequest, v1.ListListenerResponse](
 			httpClient,
-			baseURL+VirtualServiceStoreServiceListVirtualServiceProcedure,
-			connect.WithSchema(virtualServiceStoreServiceMethods.ByName("ListVirtualService")),
+			baseURL+ListenerStoreServiceListListenerProcedure,
+			connect.WithSchema(listenerStoreServiceMethods.ByName("ListListener")),
 			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
-// virtualServiceStoreServiceClient implements VirtualServiceStoreServiceClient.
-type virtualServiceStoreServiceClient struct {
-	listVirtualService *connect.Client[v1.ListVirtualServiceRequest, v1.ListVirtualServiceResponse]
+// listenerStoreServiceClient implements ListenerStoreServiceClient.
+type listenerStoreServiceClient struct {
+	listListener *connect.Client[v1.ListListenerRequest, v1.ListListenerResponse]
 }
 
-// ListVirtualService calls listener.v1.VirtualServiceStoreService.ListVirtualService.
-func (c *virtualServiceStoreServiceClient) ListVirtualService(ctx context.Context, req *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
-	return c.listVirtualService.CallUnary(ctx, req)
+// ListListener calls listener.v1.ListenerStoreService.ListListener.
+func (c *listenerStoreServiceClient) ListListener(ctx context.Context, req *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
+	return c.listListener.CallUnary(ctx, req)
 }
 
-// VirtualServiceStoreServiceHandler is an implementation of the
-// listener.v1.VirtualServiceStoreService service.
-type VirtualServiceStoreServiceHandler interface {
-	ListVirtualService(context.Context, *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error)
+// ListenerStoreServiceHandler is an implementation of the listener.v1.ListenerStoreService service.
+type ListenerStoreServiceHandler interface {
+	ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error)
 }
 
-// NewVirtualServiceStoreServiceHandler builds an HTTP handler from the service implementation. It
-// returns the path on which to mount the handler and the handler itself.
+// NewListenerStoreServiceHandler builds an HTTP handler from the service implementation. It returns
+// the path on which to mount the handler and the handler itself.
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewVirtualServiceStoreServiceHandler(svc VirtualServiceStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	virtualServiceStoreServiceMethods := v1.File_listener_v1_listener_proto.Services().ByName("VirtualServiceStoreService").Methods()
-	virtualServiceStoreServiceListVirtualServiceHandler := connect.NewUnaryHandler(
-		VirtualServiceStoreServiceListVirtualServiceProcedure,
-		svc.ListVirtualService,
-		connect.WithSchema(virtualServiceStoreServiceMethods.ByName("ListVirtualService")),
+func NewListenerStoreServiceHandler(svc ListenerStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	listenerStoreServiceMethods := v1.File_listener_v1_listener_proto.Services().ByName("ListenerStoreService").Methods()
+	listenerStoreServiceListListenerHandler := connect.NewUnaryHandler(
+		ListenerStoreServiceListListenerProcedure,
+		svc.ListListener,
+		connect.WithSchema(listenerStoreServiceMethods.ByName("ListListener")),
 		connect.WithHandlerOptions(opts...),
 	)
-	return "/listener.v1.VirtualServiceStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return "/listener.v1.ListenerStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case VirtualServiceStoreServiceListVirtualServiceProcedure:
-			virtualServiceStoreServiceListVirtualServiceHandler.ServeHTTP(w, r)
+		case ListenerStoreServiceListListenerProcedure:
+			listenerStoreServiceListListenerHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
 	})
 }
 
-// UnimplementedVirtualServiceStoreServiceHandler returns CodeUnimplemented from all methods.
-type UnimplementedVirtualServiceStoreServiceHandler struct{}
+// UnimplementedListenerStoreServiceHandler returns CodeUnimplemented from all methods.
+type UnimplementedListenerStoreServiceHandler struct{}
 
-func (UnimplementedVirtualServiceStoreServiceHandler) ListVirtualService(context.Context, *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listener.v1.VirtualServiceStoreService.ListVirtualService is not implemented"))
+func (UnimplementedListenerStoreServiceHandler) ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listener.v1.ListenerStoreService.ListListener is not implemented"))
 }

@@ -4,8 +4,17 @@ package policy.v1;
 
 option go_package = "policyv1";
 
-message Policy {
+message PolicyListItem  {
   string uid = 1;
   string name = 2;
-  string namespace = 3;
+}
+
+service PolicyStoreService {
+  rpc ListPolicy(ListPolicyRequest) returns (ListPolicyResponse);
+}
+
+message ListPolicyRequest {}
+
+message ListPolicyResponse {
+  repeated PolicyListItem items = 1;
 }

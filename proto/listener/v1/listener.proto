@@ -4,18 +4,17 @@ package listener.v1;
 
 option go_package = "listenerv1";
 
-message Listener {
+message ListenerListItem  {
   string uid = 1;
   string name = 2;
-  string namespace = 3;
 }
 
-service VirtualServiceStoreService {
-  rpc ListVirtualService(ListVirtualServiceRequest) returns (ListVirtualServiceResponse);
+service ListenerStoreService {
+  rpc ListListener(ListListenerRequest) returns (ListListenerResponse);
 }
 
-message ListVirtualServiceRequest {}
+message ListListenerRequest {}
 
-message ListVirtualServiceResponse {
-  Listener items = 1;
+message ListListenerResponse {
+  repeated ListenerListItem items = 1;
 }

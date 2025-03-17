@@ -100,10 +100,6 @@ export declare const CreateVirtualServiceRequestSchema: GenMessage<CreateVirtual
  * @generated from message virtual_service.v1.CreateVirtualServiceResponse
  */
 export declare type CreateVirtualServiceResponse = Message<"virtual_service.v1.CreateVirtualServiceResponse"> & {
-  /**
-   * @generated from field: string uid = 1;
-   */
-  uid: string;
 };
 
 /**

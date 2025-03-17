@@ -10,12 +10,12 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file listener/v1/listener.proto.
  */
 export const file_listener_v1_listener: GenFile = /*@__PURE__*/
-  fileDesc("ChpsaXN0ZW5lci92MS9saXN0ZW5lci5wcm90bxILbGlzdGVuZXIudjEiOAoITGlzdGVuZXISCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkSEQoJbmFtZXNwYWNlGAMgASgJIhsKGUxpc3RWaXJ0dWFsU2VydmljZVJlcXVlc3QiQgoaTGlzdFZpcnR1YWxTZXJ2aWNlUmVzcG9uc2USJAoFaXRlbXMYASABKAsyFS5saXN0ZW5lci52MS5MaXN0ZW5lcjKDAQoaVmlydHVhbFNlcnZpY2VTdG9yZVNlcnZpY2USZQoSTGlzdFZpcnR1YWxTZXJ2aWNlEiYubGlzdGVuZXIudjEuTGlzdFZpcnR1YWxTZXJ2aWNlUmVxdWVzdBonLmxpc3RlbmVyLnYxLkxpc3RWaXJ0dWFsU2VydmljZVJlc3BvbnNlQroBCg9jb20ubGlzdGVuZXIudjFCDUxpc3RlbmVyUHJvdG9QAVpLZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9saXN0ZW5lci92MTtsaXN0ZW5lcnYxogIDTFhYqgILTGlzdGVuZXIuVjHKAgtMaXN0ZW5lclxWMeICF0xpc3RlbmVyXFYxXEdQQk1ldGFkYXRh6gIMTGlzdGVuZXI6OlYxYgZwcm90bzM");
+  fileDesc("ChpsaXN0ZW5lci92MS9saXN0ZW5lci5wcm90bxILbGlzdGVuZXIudjEiLQoQTGlzdGVuZXJMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCSIVChNMaXN0TGlzdGVuZXJSZXF1ZXN0IkQKFExpc3RMaXN0ZW5lclJlc3BvbnNlEiwKBWl0ZW1zGAEgAygLMh0ubGlzdGVuZXIudjEuTGlzdGVuZXJMaXN0SXRlbTJrChRMaXN0ZW5lclN0b3JlU2VydmljZRJTCgxMaXN0TGlzdGVuZXISIC5saXN0ZW5lci52MS5MaXN0TGlzdGVuZXJSZXF1ZXN0GiEubGlzdGVuZXIudjEuTGlzdExpc3RlbmVyUmVzcG9uc2VCugEKD2NvbS5saXN0ZW5lci52MUINTGlzdGVuZXJQcm90b1ABWktnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2xpc3RlbmVyL3YxO2xpc3RlbmVydjGiAgNMWFiqAgtMaXN0ZW5lci5WMcoCC0xpc3RlbmVyXFYx4gIXTGlzdGVuZXJcVjFcR1BCTWV0YWRhdGHqAgxMaXN0ZW5lcjo6VjFiBnByb3RvMw");
 
 /**
- * @generated from message listener.v1.Listener
+ * @generated from message listener.v1.ListenerListItem
  */
-export type Listener = Message<"listener.v1.Listener"> & {
+export type ListenerListItem = Message<"listener.v1.ListenerListItem"> & {
   /**
    * @generated from field: string uid = 1;
    */
@@ -25,61 +25,56 @@ export type Listener = Message<"listener.v1.Listener"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**
- * Describes the message listener.v1.Listener.
- * Use `create(ListenerSchema)` to create a new message.
+ * Describes the message listener.v1.ListenerListItem.
+ * Use `create(ListenerListItemSchema)` to create a new message.
  */
-export const ListenerSchema: GenMessage<Listener> = /*@__PURE__*/
+export const ListenerListItemSchema: GenMessage<ListenerListItem> = /*@__PURE__*/
   messageDesc(file_listener_v1_listener, 0);
 
 /**
- * @generated from message listener.v1.ListVirtualServiceRequest
+ * @generated from message listener.v1.ListListenerRequest
  */
-export type ListVirtualServiceRequest = Message<"listener.v1.ListVirtualServiceRequest"> & {
+export type ListListenerRequest = Message<"listener.v1.ListListenerRequest"> & {
 };
 
 /**
- * Describes the message listener.v1.ListVirtualServiceRequest.
- * Use `create(ListVirtualServiceRequestSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenerRequest.
+ * Use `create(ListListenerRequestSchema)` to create a new message.
  */
-export const ListVirtualServiceRequestSchema: GenMessage<ListVirtualServiceRequest> = /*@__PURE__*/
+export const ListListenerRequestSchema: GenMessage<ListListenerRequest> = /*@__PURE__*/
   messageDesc(file_listener_v1_listener, 1);
 
 /**
- * @generated from message listener.v1.ListVirtualServiceResponse
+ * @generated from message listener.v1.ListListenerResponse
  */
-export type ListVirtualServiceResponse = Message<"listener.v1.ListVirtualServiceResponse"> & {
+export type ListListenerResponse = Message<"listener.v1.ListListenerResponse"> & {
   /**
-   * @generated from field: listener.v1.Listener items = 1;
+   * @generated from field: repeated listener.v1.ListenerListItem items = 1;
    */
-  items?: Listener;
+  items: ListenerListItem[];
 };
 
 /**
- * Describes the message listener.v1.ListVirtualServiceResponse.
- * Use `create(ListVirtualServiceResponseSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenerResponse.
+ * Use `create(ListListenerResponseSchema)` to create a new message.
  */
-export const ListVirtualServiceResponseSchema: GenMessage<ListVirtualServiceResponse> = /*@__PURE__*/
+export const ListListenerResponseSchema: GenMessage<ListListenerResponse> = /*@__PURE__*/
   messageDesc(file_listener_v1_listener, 2);
 
 /**
- * @generated from service listener.v1.VirtualServiceStoreService
+ * @generated from service listener.v1.ListenerStoreService
  */
-export const VirtualServiceStoreService: GenService<{
+export const ListenerStoreService: GenService<{
   /**
-   * @generated from rpc listener.v1.VirtualServiceStoreService.ListVirtualService
+   * @generated from rpc listener.v1.ListenerStoreService.ListListener
    */
-  listVirtualService: {
+  listListener: {
     methodKind: "unary";
-    input: typeof ListVirtualServiceRequestSchema;
-    output: typeof ListVirtualServiceResponseSchema;
+    input: typeof ListListenerRequestSchema;
+    output: typeof ListListenerResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_listener_v1_listener, 0);

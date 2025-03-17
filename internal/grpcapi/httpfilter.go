@@ -24,11 +24,11 @@ func (s *HTTPFilterStore) ListHTTPFilter(context.Context, *connect.Request[v1.Li
 	list := make([]*v1.HTTPFilterListItem, 0, len(m))
 
 	for _, v := range m {
-		vs := &v1.HTTPFilterListItem{
+		item := &v1.HTTPFilterListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		list = append(list, vs)
+		list = append(list, item)
 	}
 	return connect.NewResponse(&v1.ListHTTPFilterResponse{Items: list}), nil
 }

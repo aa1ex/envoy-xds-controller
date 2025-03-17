@@ -23,11 +23,11 @@ func (s *RouteStore) ListRoute(context.Context, *connect.Request[v1.ListRouteReq
 	m := s.store.MapRoutes()
 	list := make([]*v1.RouteListItem, 0, len(m))
 	for _, v := range m {
-		vs := &v1.RouteListItem{
+		item := &v1.RouteListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		list = append(list, vs)
+		list = append(list, item)
 	}
 	return connect.NewResponse(&v1.ListRouteResponse{Items: list}), nil
 }

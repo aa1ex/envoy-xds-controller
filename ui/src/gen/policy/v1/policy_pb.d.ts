@@ -2,7 +2,7 @@
 // @generated from file policy/v1/policy.proto (package policy.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
@@ -11,9 +11,9 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_policy_v1_policy: GenFile;
 
 /**
- * @generated from message policy.v1.Policy
+ * @generated from message policy.v1.PolicyListItem
  */
-export declare type Policy = Message<"policy.v1.Policy"> & {
+export declare type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
   /**
    * @generated from field: string uid = 1;
    */
@@ -23,16 +23,53 @@ export declare type Policy = Message<"policy.v1.Policy"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**
- * Describes the message policy.v1.Policy.
- * Use `create(PolicySchema)` to create a new message.
+ * Describes the message policy.v1.PolicyListItem.
+ * Use `create(PolicyListItemSchema)` to create a new message.
  */
-export declare const PolicySchema: GenMessage<Policy>;
+export declare const PolicyListItemSchema: GenMessage<PolicyListItem>;
+
+/**
+ * @generated from message policy.v1.ListPolicyRequest
+ */
+export declare type ListPolicyRequest = Message<"policy.v1.ListPolicyRequest"> & {
+};
+
+/**
+ * Describes the message policy.v1.ListPolicyRequest.
+ * Use `create(ListPolicyRequestSchema)` to create a new message.
+ */
+export declare const ListPolicyRequestSchema: GenMessage<ListPolicyRequest>;
+
+/**
+ * @generated from message policy.v1.ListPolicyResponse
+ */
+export declare type ListPolicyResponse = Message<"policy.v1.ListPolicyResponse"> & {
+  /**
+   * @generated from field: repeated policy.v1.PolicyListItem items = 1;
+   */
+  items: PolicyListItem[];
+};
+
+/**
+ * Describes the message policy.v1.ListPolicyResponse.
+ * Use `create(ListPolicyResponseSchema)` to create a new message.
+ */
+export declare const ListPolicyResponseSchema: GenMessage<ListPolicyResponse>;
+
+/**
+ * @generated from service policy.v1.PolicyStoreService
+ */
+export declare const PolicyStoreService: GenService<{
+  /**
+   * @generated from rpc policy.v1.PolicyStoreService.ListPolicy
+   */
+  listPolicy: {
+    methodKind: "unary";
+    input: typeof ListPolicyRequestSchema;
+    output: typeof ListPolicyResponseSchema;
+  },
+}>;
 

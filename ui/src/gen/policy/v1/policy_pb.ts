@@ -2,20 +2,20 @@
 // @generated from file policy/v1/policy.proto (package policy.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file policy/v1/policy.proto.
  */
 export const file_policy_v1_policy: GenFile = /*@__PURE__*/
-  fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiNgoGUG9saWN5EgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhEKCW5hbWVzcGFjZRgDIAEoCUKqAQoNY29tLnBvbGljeS52MUILUG9saWN5UHJvdG9QAVpHZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9wb2xpY3kvdjE7cG9saWN5djGiAgNQWFiqAglQb2xpY3kuVjHKAglQb2xpY3lcVjHiAhVQb2xpY3lcVjFcR1BCTWV0YWRhdGHqAgpQb2xpY3k6OlYxYgZwcm90bzM");
+  fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiKwoOUG9saWN5TGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiEwoRTGlzdFBvbGljeVJlcXVlc3QiPgoSTGlzdFBvbGljeVJlc3BvbnNlEigKBWl0ZW1zGAEgAygLMhkucG9saWN5LnYxLlBvbGljeUxpc3RJdGVtMl8KElBvbGljeVN0b3JlU2VydmljZRJJCgpMaXN0UG9saWN5EhwucG9saWN5LnYxLkxpc3RQb2xpY3lSZXF1ZXN0Gh0ucG9saWN5LnYxLkxpc3RQb2xpY3lSZXNwb25zZUKqAQoNY29tLnBvbGljeS52MUILUG9saWN5UHJvdG9QAVpHZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9wb2xpY3kvdjE7cG9saWN5djGiAgNQWFiqAglQb2xpY3kuVjHKAglQb2xpY3lcVjHiAhVQb2xpY3lcVjFcR1BCTWV0YWRhdGHqAgpQb2xpY3k6OlYxYgZwcm90bzM");
 
 /**
- * @generated from message policy.v1.Policy
+ * @generated from message policy.v1.PolicyListItem
  */
-export type Policy = Message<"policy.v1.Policy"> & {
+export type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
   /**
    * @generated from field: string uid = 1;
    */
@@ -25,17 +25,57 @@ export type Policy = Message<"policy.v1.Policy"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**
- * Describes the message policy.v1.Policy.
- * Use `create(PolicySchema)` to create a new message.
+ * Describes the message policy.v1.PolicyListItem.
+ * Use `create(PolicyListItemSchema)` to create a new message.
  */
-export const PolicySchema: GenMessage<Policy> = /*@__PURE__*/
+export const PolicyListItemSchema: GenMessage<PolicyListItem> = /*@__PURE__*/
   messageDesc(file_policy_v1_policy, 0);
+
+/**
+ * @generated from message policy.v1.ListPolicyRequest
+ */
+export type ListPolicyRequest = Message<"policy.v1.ListPolicyRequest"> & {
+};
+
+/**
+ * Describes the message policy.v1.ListPolicyRequest.
+ * Use `create(ListPolicyRequestSchema)` to create a new message.
+ */
+export const ListPolicyRequestSchema: GenMessage<ListPolicyRequest> = /*@__PURE__*/
+  messageDesc(file_policy_v1_policy, 1);
+
+/**
+ * @generated from message policy.v1.ListPolicyResponse
+ */
+export type ListPolicyResponse = Message<"policy.v1.ListPolicyResponse"> & {
+  /**
+   * @generated from field: repeated policy.v1.PolicyListItem items = 1;
+   */
+  items: PolicyListItem[];
+};
+
+/**
+ * Describes the message policy.v1.ListPolicyResponse.
+ * Use `create(ListPolicyResponseSchema)` to create a new message.
+ */
+export const ListPolicyResponseSchema: GenMessage<ListPolicyResponse> = /*@__PURE__*/
+  messageDesc(file_policy_v1_policy, 2);
+
+/**
+ * @generated from service policy.v1.PolicyStoreService
+ */
+export const PolicyStoreService: GenService<{
+  /**
+   * @generated from rpc policy.v1.PolicyStoreService.ListPolicy
+   */
+  listPolicy: {
+    methodKind: "unary";
+    input: typeof ListPolicyRequestSchema;
+    output: typeof ListPolicyResponseSchema;
+  },
+}> = /*@__PURE__*/
+  serviceDesc(file_policy_v1_policy, 0);
 

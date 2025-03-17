@@ -23,11 +23,11 @@ func (s *AccessLogConfigStore) ListAccessLogConfig(context.Context, *connect.Req
 	m := s.store.MapAccessLogs()
 	list := make([]*v1.AccessLogConfigListItem, 0, len(m))
 	for _, v := range m {
-		vs := &v1.AccessLogConfigListItem{
+		item := &v1.AccessLogConfigListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		list = append(list, vs)
+		list = append(list, item)
 	}
 	return connect.NewResponse(&v1.ListAccessLogConfigResponse{Items: list}), nil
 }

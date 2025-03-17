@@ -4,8 +4,17 @@ package cluster.v1;
 
 option go_package = "clusterv1";
 
-message Cluster {
+message ClusterListItem  {
   string uid = 1;
   string name = 2;
-  string namespace = 3;
+}
+
+service ClusterStoreService {
+  rpc ListCluster(ListClusterRequest) returns (ListClusterResponse);
+}
+
+message ListClusterRequest {}
+
+message ListClusterResponse {
+  repeated ClusterListItem items = 1;
 }

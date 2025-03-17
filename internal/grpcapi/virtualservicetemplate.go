@@ -23,11 +23,11 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(_ context.Conte
 	m := s.store.MapVirtualServiceTemplates()
 	list := make([]*v1.VirtualServiceTemplateListItem, 0, len(m))
 	for _, v := range m {
-		vs := &v1.VirtualServiceTemplateListItem{
+		item := &v1.VirtualServiceTemplateListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		list = append(list, vs)
+		list = append(list, item)
 	}
 	return connect.NewResponse(&v1.ListVirtualServiceTemplateResponse{Items: list}), nil
 }
