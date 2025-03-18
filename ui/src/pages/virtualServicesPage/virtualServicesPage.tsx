@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 import { styleBox, styleRootBoxVirtualService } from './style.ts'
 import { useColors } from '../../utils/hooks/useColors.ts'
 
-function VirtualServices() {
+function VirtualServicesPage() {
 	const { colors } = useColors()
 
 	return (
@@ -19,4 +19,4 @@ function VirtualServices() {
 	)
 }
 
-export default VirtualServices
+export default VirtualServicesPage

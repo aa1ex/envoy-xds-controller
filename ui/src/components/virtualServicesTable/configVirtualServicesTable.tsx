@@ -7,6 +7,7 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import { Delete, Edit } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
 
 interface IConfigVirtualServicesTable {
 	virtualServices: ListVirtualServiceResponse | undefined
@@ -15,6 +16,7 @@ interface IConfigVirtualServicesTable {
 	isFetching: boolean
 	setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>
 	setNameForDialog: React.Dispatch<React.SetStateAction<string>>
+	setSelectedUid: React.Dispatch<React.SetStateAction<string>>
 }
 
 export const useConfigTable = ({
@@ -23,14 +25,25 @@ export const useConfigTable = ({
 	isFetching,
 	isError,
 	setOpenDialog,
-	setNameForDialog
+	setNameForDialog,
+	setSelectedUid
 }: IConfigVirtualServicesTable) => {
+	const navigate = useNavigate()
+
 	const handleDeleteVS = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
-			setNameForDialog(row.getValue('name'))
+			setNameForDialog(row.original.name)
 			setOpenDialog(true)
+			setSelectedUid(row.original.uid)
 		},
-		[setNameForDialog, setOpenDialog]
+		[setNameForDialog, setOpenDialog, setSelectedUid]
+	)
+
+	const openEditVsPage = useCallback(
+		(row: MRT_Row<VirtualServiceListItem>) => {
+			navigate(`/virtualServices/${row.original.uid}`)
+		},
+		[navigate]
 	)
 
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(
@@ -113,7 +126,7 @@ export const useConfigTable = ({
 		renderRowActions: ({ row }) => (
 			<Box display='flex' gap={1}>
 				<Tooltip placement='top-end' title='Edit Virtual Service'>
-					<IconButton onClick={() => console.log(row)}>
+					<IconButton onClick={() => openEditVsPage(row)}>
 						<Edit />
 					</IconButton>
 				</Tooltip>
@@ -136,7 +149,7 @@ export const useConfigTable = ({
 
 				<Button
 					color='primary'
-					onClick={() => alert('TODO Добавить новый VirtualService')}
+					onClick={() => navigate('createVs')}
 					variant='contained'
 					disabled={isFetching}
 					size='small'

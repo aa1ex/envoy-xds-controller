@@ -13,8 +13,10 @@ import { env } from './env.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
-const VirtualServicesPage = lazy(() => import('./pages/virtualServices/VirtualServices.tsx'))
+const VirtualServicesPage = lazy(() => import('./pages/virtualServicesPage/virtualServicesPage'))
 const Page404 = lazy(() => import('./pages/page404/page404'))
+const EditVsPage = lazy(() => import('./pages/editVsPage/editVsPage'))
+const CreateVsPage = lazy(() => import('./pages/createVsPage/createVsPage'))
 
 function App() {
 	const [theme, colorMode] = useThemeMode()
@@ -52,6 +54,8 @@ function App() {
 							</Route>
 							<Route path='virtualServices' element={<Layout />}>
 								<Route index element={<VirtualServicesPage />} />
+								<Route path=':uid' element={<EditVsPage />} />
+								<Route path='createVs' element={<CreateVsPage />} />
 							</Route>
 							<Route path='callback' element={<Navigate to='/nodeIDs' replace />} />
 							<Route path='*' element={<Page404 />} />

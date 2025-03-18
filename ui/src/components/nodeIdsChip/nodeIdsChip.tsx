@@ -1,7 +1,7 @@
 import Chip from '@mui/material/Chip'
 import Stack from '@mui/material/Stack'
 import React, { useState } from 'react'
-import { Box, IconButton, Menu, MenuItem } from '@mui/material'
+import { Box, Menu, MenuItem } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 interface INodeIdsChipProps {
@@ -13,8 +13,8 @@ export const NodeIdsChip: React.FC<INodeIdsChipProps> = ({ nodeIsData }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const open = Boolean(anchorEl)
 
-	const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget)
+	const handleToggle = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(anchorEl ? null : event.currentTarget)
 	}
 
 	const handleClose = () => {
@@ -36,21 +36,25 @@ export const NodeIdsChip: React.FC<INodeIdsChipProps> = ({ nodeIsData }) => {
 				{nodeIsData.slice(0, MAX_VISIBLE).map((item, index) => (
 					<Chip key={index} label={item} />
 				))}
+				{nodeIsData.length > MAX_VISIBLE && (
+					<Chip
+						label={`+${nodeIsData.length - MAX_VISIBLE} more`}
+						variant='outlined'
+						sx={{ cursor: 'pointer' }}
+						onClick={handleToggle}
+						icon={<ExpandMoreIcon />}
+					/>
+				)}
 			</Stack>
 
 			{nodeIsData.length > MAX_VISIBLE && (
-				<>
-					<IconButton size='small' onClick={handleOpen}>
-						<ExpandMoreIcon />
-					</IconButton>
-					<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-						{nodeIsData.slice(MAX_VISIBLE).map((item, index) => (
-							<MenuItem key={index} onClick={handleClose}>
-								<Chip key={index} label={item} />
-							</MenuItem>
-						))}
-					</Menu>
-				</>
+				<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+					{nodeIsData.slice(MAX_VISIBLE).map((item, index) => (
+						<MenuItem key={index} onClick={handleClose}>
+							<Chip key={index} label={item} />
+						</MenuItem>
+					))}
+				</Menu>
 			)}
 		</Box>
 	)

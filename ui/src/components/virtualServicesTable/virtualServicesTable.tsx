@@ -7,11 +7,22 @@ import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
 const VirtualServicesTable: React.FC = () => {
 	const { data: virtualServices, isError, isFetching, refetch } = useGetVirtualServices()
 
+	const isFirstRender = useRef(true)
+
 	const [openDialog, setOpenDialog] = useState(false)
 	const [nameForDialog, setNameForDialog] = useState('')
-	const isFirstRender = useRef(true)
+	const [selectedUid, setSelectedUid] = useState('')
 	const [columnVisibility, setColumnVisibility] = useState<MRT_VisibilityState>({})
-	const { table } = useConfigTable({ virtualServices, refetch, isError, isFetching, setOpenDialog, setNameForDialog })
+
+	const { table } = useConfigTable({
+		virtualServices,
+		refetch,
+		isError,
+		isFetching,
+		setOpenDialog,
+		setNameForDialog,
+		setSelectedUid
+	})
 
 	//Загрузка состояния таблицы
 	useEffect(() => {
@@ -38,6 +49,8 @@ const VirtualServicesTable: React.FC = () => {
 				serviceName={nameForDialog}
 				setOpenDialog={setOpenDialog}
 				refetchServices={refetch}
+				selectedUid={selectedUid}
+				setSelectedUid={setSelectedUid}
 			/>
 		</>
 	)
