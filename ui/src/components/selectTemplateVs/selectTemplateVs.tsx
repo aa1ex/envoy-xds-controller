@@ -32,14 +32,14 @@ const SelectTemplateVs: React.FC<ISelectTemplateVsProps> = ({
 				<FormControl fullWidth error={!!errors.template_uid || isErrorFetch} size='small'>
 					<InputLabel>
 						{errors.template_uid?.message ??
-							(isErrorFetch ? 'Ошибка загрузки данных темплейтов' : 'Select template VS')}
+							(isErrorFetch ? 'Error loading TemplateVs data' : 'Select template VS')}
 					</InputLabel>
 					<Select
 						fullWidth
 						error={!!errors.template_uid || isErrorFetch}
 						label={
 							errors.template_uid?.message ??
-							(isErrorFetch ? 'Ошибка загрузки данных темплейтов' : 'Select template VS')
+							(isErrorFetch ? 'Error loading TemplateVs data' : 'Select template VS')
 						}
 						value={field.value || ''}
 						onChange={e => field.onChange(e.target.value)}
@@ -50,7 +50,7 @@ const SelectTemplateVs: React.FC<ISelectTemplateVsProps> = ({
 					>
 						{isErrorFetch && (
 							<MenuItem disabled>
-								<span style={{ color: 'error' }}>Ошибка загрузки данных темплейтов</span>
+								<span style={{ color: 'error' }}>Error loading TemplateVs data</span>
 							</MenuItem>
 						)}
 
