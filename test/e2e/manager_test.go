@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-func managerContext(controllerPodName string) func() {
+func managerContext(controllerPodName *string) func() {
 	return func() {
 		It("should run successfully", func() {
 			By("validating that the controller-manager pod is running as expected")
 			verifyControllerUp := func(g Gomega) {
 				// Get the name of the controller-manager pod
 				cmd := exec.Command("kubectl", "get",
-					"pods", "-l", "control-plane=controller-manager",
+					"pods", "-l", "app.kubernetes.io/name=envoy-xds-controller",
 					"-o", "go-template={{ range .items }}"+
 						"{{ if not .metadata.deletionTimestamp }}"+
 						"{{ .metadata.name }}"+
@@ -28,12 +28,12 @@ func managerContext(controllerPodName string) func() {
 				g.Expect(err).NotTo(HaveOccurred(), "Failed to retrieve controller-manager pod information")
 				podNames := utils.GetNonEmptyLines(podOutput)
 				g.Expect(podNames).To(HaveLen(1), "expected 1 controller pod running")
-				controllerPodName = podNames[0]
-				g.Expect(controllerPodName).To(ContainSubstring("controller-manager"))
+				controllerPodName = &podNames[0]
+				g.Expect(*controllerPodName).To(ContainSubstring("envoy-xds-controller"))
 
 				// Validate the pod's status
 				cmd = exec.Command("kubectl", "get",
-					"pods", controllerPodName, "-o", "jsonpath={.status.phase}",
+					"pods", *controllerPodName, "-o", "jsonpath={.status.phase}",
 					"-n", namespace,
 				)
 				output, err := utils.Run(cmd)
@@ -46,7 +46,7 @@ func managerContext(controllerPodName string) func() {
 		It("should ensure the metrics endpoint is serving metrics", func() {
 			By("creating a ClusterRoleBinding for the service account to allow access to metrics")
 			cmd := exec.Command("kubectl", "create", "clusterrolebinding", metricsRoleBindingName,
-				"--clusterrole=envoy-xds-controller-metrics-reader",
+				"--clusterrole=exc-e2e-envoy-xds-controller-metrics-reader",
 				fmt.Sprintf("--serviceaccount=%s:%s", namespace, serviceAccountName),
 			)
 			_, err := utils.Run(cmd)
@@ -78,7 +78,7 @@ func managerContext(controllerPodName string) func() {
 
 			By("verifying that the controller manager is serving the metrics server")
 			verifyMetricsServerStarted := func(g Gomega) {
-				cmd := exec.Command("kubectl", "logs", controllerPodName, "-n", namespace)
+				cmd := exec.Command("kubectl", "logs", *controllerPodName, "-n", namespace)
 				output, err := utils.Run(cmd)
 				g.Expect(err).NotTo(HaveOccurred())
 				g.Expect(output).To(ContainSubstring("Serving metrics server"),

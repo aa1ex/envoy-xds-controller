@@ -45,6 +45,9 @@ spec:
         args:
           {{- toYaml .Values.args | nindent 10 }}
           {{- if .Values.cacheAPI.enabled }}
+          {{- if ne .Values.metrics.address "0" }}
+          - --metrics-bind-address={{ .Values.metrics.address }}
+          {{- end }}
           - --development={{ .Values.development }}
           - --enable-cache-api=true
           - --cache-api-port={{ .Values.cacheAPI.port }}
@@ -53,6 +56,9 @@ spec:
           {{- end }}
         {{- else if .Values.cacheAPI.enabled }}
         args:
+          {{- if ne .Values.metrics.address "0" }}
+          - --metrics-bind-address={{ .Values.metrics.address }}
+          {{- end }}
           - --development={{ .Values.development }}
           - --enable-cache-api=true
           - --cache-api-port={{ .Values.cacheAPI.port }}
@@ -112,6 +118,10 @@ spec:
         ports:
           - name: grpc
             containerPort: {{ .Values.xds.port }}
+            protocol: TCP
+            # TODO: hardcode
+          - name: webhook-server
+            containerPort: 9443
             protocol: TCP
         {{- with .Values.securityContext }}
         securityContext:

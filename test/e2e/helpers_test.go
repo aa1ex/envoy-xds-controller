@@ -61,6 +61,7 @@ func getMetricsOutput() string {
 	cmd := exec.Command("kubectl", "logs", "curl-metrics", "-n", namespace)
 	metricsOutput, err := utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to retrieve logs from curl pod")
+	fmt.Println(metricsOutput)
 	Expect(metricsOutput).To(ContainSubstring("< HTTP/1.1 200 OK"))
 	return metricsOutput
 }
