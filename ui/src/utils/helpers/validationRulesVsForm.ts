@@ -13,5 +13,16 @@ export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: st
 		const invalidNodeIds = value.filter(tag => !/^[a-zA-Z0-9_-]+$/.test(tag))
 		if (invalidNodeIds.length > 0) return 'NodeIds must contain only letters, numbers, hyphens, and underscores'
 		return true
+	},
+	project_id: value => {
+		if (typeof value !== 'string') return 'Invalid value'
+		if (value.length > 80) return 'Project ID must be at most 80 characters long'
+		if (!/^[a-zA-Z0-9_-]+$/.test(value))
+			return 'Project ID must contain only letters, numbers, hyphens, and underscores'
+		return true
+	},
+	template_uid: value => {
+		if (typeof value !== 'string') return 'The TemplateVS field is required'
+		return true
 	}
 }

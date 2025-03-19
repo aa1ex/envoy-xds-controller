@@ -72,8 +72,8 @@ export const InputWithChips: React.FC<IInputWithChipsProps> = ({
 	}
 
 	return (
-		<Box display='flex' flexDirection='column' mt={1}>
-			<Stack direction='row' spacing={1} flexWrap='wrap' mb={1.5}>
+		<Box display='flex' flexDirection='column'>
+			<Stack direction='row' spacing={1} flexWrap='wrap' mb={nodeIds.length > 0 ? 1.3 : 0}>
 				{nodeIds.map((nodeId, index) => (
 					<Chip key={index} label={nodeId} onDelete={() => handleDeleteChip(nodeId)} />
 				))}
