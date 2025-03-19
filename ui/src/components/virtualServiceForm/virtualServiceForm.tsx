@@ -1,11 +1,14 @@
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Box, Button, Divider, TextField } from '@mui/material'
+import { Box, Button, Divider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { InputWithChips } from '../inputWithChips/inputWithChips.tsx'
 import { useTemplatesVirtualService } from '../../api/grpc/hooks/useTemplatesVirtualService.ts'
 import SelectTemplateVs from '../selectTemplateVs/selectTemplateVs.tsx'
+import { useListenerVirtualService } from '../../api/grpc/hooks/useListenerVirtualService.ts'
+import { SelectListenersVs } from '../selectListenersVs/selectListenersVs.tsx'
+import { VirtualHostVs } from '../virtualHostVS/virtualHostVS.tsx'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -16,10 +19,19 @@ export interface IVirtualServiceForm {
 	node_ids: string[]
 	project_id: string
 	template_uid: string
+	listener_uid: string
+	vh_name: string
+	vh_domains: string[]
 }
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
-	const { data: templatesVs, isFetching, isError } = useTemplatesVirtualService()
+	const {
+		data: templatesVs,
+		isFetching: isFetchingTemplates,
+		isError: isErrorTemplates
+	} = useTemplatesVirtualService()
+
+	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVirtualService()
 
 	const {
 		register,
@@ -35,7 +47,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		defaultValues: {
 			name: '',
 			node_ids: [],
-			project_id: ''
+			project_id: '',
+			vh_name: '',
+			vh_domains: []
 		}
 	})
 
@@ -51,6 +65,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 					<Grid xs display='flex' flexDirection='column' gap={2}>
 						<TextFieldFormVs register={register} nameField='name' errors={errors} />
 						<InputWithChips
+							nameField='node_ids'
 							setValue={setValue}
 							watch={watch}
 							control={control}
@@ -63,10 +78,26 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							control={control}
 							templatesVs={templatesVs}
 							errors={errors}
-							isFetching={isFetching}
-							isErrorFetch={isError}
+							isFetching={isFetchingTemplates}
+							isErrorFetch={isErrorTemplates}
 						/>
-						<TextField fullWidth />
+						<SelectListenersVs
+							control={control}
+							listeners={listeners}
+							errors={errors}
+							isFetching={isFetchingListeners}
+							isErrorFetch={isErrorListeners}
+						/>
+						<VirtualHostVs
+							nameFields={['vh_name', 'vh_domains']}
+							register={register}
+							errors={errors}
+							setValue={setValue}
+							watch={watch}
+							control={control}
+							clearErrors={clearErrors}
+							setError={setError}
+						/>
 					</Grid>
 					<Divider orientation='vertical' flexItem />
 

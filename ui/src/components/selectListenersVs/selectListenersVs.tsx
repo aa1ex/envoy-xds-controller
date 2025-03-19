@@ -1,0 +1,67 @@
+import React from 'react'
+import { Control, Controller, FieldErrors } from 'react-hook-form'
+import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
+import { ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
+import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+
+interface ISelectListenersVsProps {
+	control: Control<IVirtualServiceForm, any>
+	listeners: ListListenerResponse | undefined
+	errors: FieldErrors<IVirtualServiceForm>
+	isFetching: boolean
+	isErrorFetch: boolean
+}
+
+export const SelectListenersVs: React.FC<ISelectListenersVsProps> = ({
+	control,
+	errors,
+	listeners,
+	isFetching,
+	isErrorFetch
+}) => {
+	return (
+		<Controller
+			name='listener_uid'
+			control={control}
+			rules={{
+				validate: validationRulesVsForm.listener_uid
+			}}
+			render={({ field }) => (
+				<FormControl fullWidth error={!!errors.listener_uid || isErrorFetch} size='small'>
+					<InputLabel>
+						{errors.listener_uid?.message ??
+							(isErrorFetch ? 'Error loading ListenersVs data' : 'Select Listener VS')}
+					</InputLabel>
+					<Select
+						fullWidth
+						error={!!errors.listener_uid || isErrorFetch}
+						label={
+							errors.listener_uid?.message ??
+							(isErrorFetch ? 'Error loading ListenersVs data' : 'Select Listener VS')
+						}
+						value={field.value || ''}
+						onChange={e => field.onChange(e.target.value)}
+						IconComponent={
+							isFetching ? () => <CircularProgress size={20} sx={{ marginRight: 2 }} /> : undefined
+						}
+						sx={{ '& .MuiSelect-icon': { width: '24px', height: '24px' } }}
+					>
+						{isErrorFetch && (
+							<MenuItem disabled>
+								<span style={{ color: 'error' }}>Error loading ListenersVs data</span>
+							</MenuItem>
+						)}
+
+						{listeners?.items?.map(listener => (
+							<MenuItem key={listener.uid} value={listener.uid}>
+								{listener.name}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+			)}
+		/>
+	)
+}

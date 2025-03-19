@@ -24,5 +24,9 @@ export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: st
 	template_uid: value => {
 		if (typeof value !== 'string') return 'The TemplateVS field is required'
 		return true
+	},
+	listener_uid: value => {
+		if (typeof value !== 'string') return 'The ListenerVS field is required'
+		return true
 	}
 }
