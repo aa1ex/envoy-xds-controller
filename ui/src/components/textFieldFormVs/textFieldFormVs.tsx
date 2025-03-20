@@ -12,18 +12,19 @@ interface ITextFieldFormVsProps {
 
 export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, nameField, errors }) => {
 	const validate = validationRulesVsForm[nameField]
+	const titleMessage = nameField === 'vh_name' ? 'Name Virtual Host' : nameField
 
 	return (
 		<TextField
 			{...register(nameField, {
-				required: `The ${nameField} field is required`,
+				required: `The ${titleMessage} field is required`,
 				validate: validate
 			})}
 			fullWidth
 			size='small'
-			placeholder={`Enter ${nameField}`}
+			placeholder={`Enter ${titleMessage}`}
 			error={!!errors[nameField]}
-			label={errors[nameField]?.message ?? `Enter ${nameField}`}
+			label={errors[nameField]?.message ?? `Enter ${titleMessage}`}
 		/>
 	)
 }

@@ -3,12 +3,12 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { Box, Button, Divider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
-import { InputWithChips } from '../inputWithChips/inputWithChips.tsx'
 import { useTemplatesVirtualService } from '../../api/grpc/hooks/useTemplatesVirtualService.ts'
 import SelectTemplateVs from '../selectTemplateVs/selectTemplateVs.tsx'
 import { useListenerVirtualService } from '../../api/grpc/hooks/useListenerVirtualService.ts'
 import { SelectListenersVs } from '../selectListenersVs/selectListenersVs.tsx'
 import { VirtualHostVs } from '../virtualHostVS/virtualHostVS.tsx'
+import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -37,7 +37,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
-		watch,
 		setValue,
 		control,
 		setError,
@@ -55,7 +54,16 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 
 	//TODO поменять IVirtualServiceForm на CreateVirtualServiceRequest
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
-		console.log(data)
+		console.log('Form Data:', data)
+
+		const formValues = {
+			name: data.vh_name,
+			domains: data.vh_domains
+		}
+		const jsonString = JSON.stringify(formValues)
+		const virtual_hostBase64 = btoa(jsonString)
+
+		console.log('Base64 String:', '\n', virtual_hostBase64)
 	}
 
 	return (
@@ -64,14 +72,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 				<Grid container spacing={3}>
 					<Grid xs display='flex' flexDirection='column' gap={2}>
 						<TextFieldFormVs register={register} nameField='name' errors={errors} />
-						<InputWithChips
-							nameField='node_ids'
-							setValue={setValue}
-							watch={watch}
+						<AutocompleteChipVs
+							nameField={'node_ids'}
 							control={control}
+							setValue={setValue}
 							errors={errors}
-							clearErrors={clearErrors}
 							setError={setError}
+							clearErrors={clearErrors}
 						/>
 						<TextFieldFormVs register={register} nameField='project_id' errors={errors} />
 						<SelectTemplateVs
@@ -93,7 +100,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							register={register}
 							errors={errors}
 							setValue={setValue}
-							watch={watch}
 							control={control}
 							clearErrors={clearErrors}
 							setError={setError}

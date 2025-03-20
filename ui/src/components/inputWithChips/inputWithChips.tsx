@@ -85,7 +85,7 @@ export const InputWithChips: React.FC<IInputWithChipsProps> = ({
 			</Stack>
 
 			<Controller
-				name='node_ids'
+				name={nameField}
 				control={control}
 				rules={{
 					validate: validationRulesVsForm[nameField]

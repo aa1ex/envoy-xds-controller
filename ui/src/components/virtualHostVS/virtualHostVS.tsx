@@ -6,19 +6,15 @@ import {
 	UseFormClearErrors,
 	UseFormRegister,
 	UseFormSetError,
-	UseFormSetValue,
-	UseFormWatch
+	UseFormSetValue
 } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
-import { InputWithChips } from '../inputWithChips/inputWithChips.tsx'
-
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'vh_name' | 'vh_domains'>
+import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
 
 interface IVirtualHostVsProps {
-	nameFields: nameFieldKeys[]
+	nameFields: ['vh_name', 'vh_domains']
 	register: UseFormRegister<IVirtualServiceForm>
-	watch: UseFormWatch<IVirtualServiceForm>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
@@ -33,8 +29,7 @@ export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 	setError,
 	clearErrors,
 	control,
-	setValue,
-	watch
+	setValue
 }) => {
 	const [vh_name, vh_domains] = nameFields
 	return (
@@ -54,14 +49,13 @@ export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 				Configure the virtual host
 			</Typography>
 			<TextFieldFormVs register={register} nameField={vh_name} errors={errors} />
-			<InputWithChips
+			<AutocompleteChipVs
 				nameField={vh_domains}
-				setValue={setValue}
-				watch={watch}
 				control={control}
+				setValue={setValue}
 				errors={errors}
-				clearErrors={clearErrors}
 				setError={setError}
+				clearErrors={clearErrors}
 			/>
 		</Box>
 	)
