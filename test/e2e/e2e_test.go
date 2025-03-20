@@ -143,5 +143,5 @@ var _ = Describe("Manager", Ordered, func() {
 
 	Context("Manager", managerContext(controllerPodName))
 	Context("Envoy", envoyContext)
-	//Context("GRPC_API", grpcAPIContext)
+	Context("GRPC_API", grpcAPIContext)
 })

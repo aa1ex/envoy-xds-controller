@@ -311,8 +311,12 @@ deploy-e2e: manifests
 
 .PHONY: undeploy-e2e
 undeploy-e2e:
-	helm uninstall exc-e2e
+	helm uninstall -n envoy-xds-controller exc-e2e
 
 .PHONY: install-prometheus
 install-prometheus:
 	kubectl create -f https://github.com/prometheus-operator/prometheus-operator/releases/download/$(PROM_OPERATOR_VERSION)/bundle.yaml
+
+.PHONY: uninstall-prometheus
+uninstall-prometheus:
+	kubectl delete -f https://github.com/prometheus-operator/prometheus-operator/releases/download/$(PROM_OPERATOR_VERSION)/bundle.yaml
