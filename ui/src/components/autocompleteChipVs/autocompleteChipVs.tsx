@@ -35,7 +35,6 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 			}}
 			render={({ field }) => (
 				<Autocomplete
-					size='small'
 					multiple
 					freeSolo
 					options={[]}

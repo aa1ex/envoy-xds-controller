@@ -29,7 +29,7 @@ export const SelectListenersVs: React.FC<ISelectListenersVsProps> = ({
 				validate: validationRulesVsForm.listener_uid
 			}}
 			render={({ field }) => (
-				<FormControl fullWidth error={!!errors.listener_uid || isErrorFetch} size='small'>
+				<FormControl fullWidth error={!!errors.listener_uid || isErrorFetch}>
 					<InputLabel>
 						{errors.listener_uid?.message ??
 							(isErrorFetch ? 'Error loading ListenersVs data' : 'Select Listener VS')}

@@ -5,26 +5,31 @@ import { TextField } from '@mui/material'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 
 interface ITextFieldFormVsProps {
-	nameField: keyof IVirtualServiceForm
+	fieldName: keyof IVirtualServiceForm
 	register: UseFormRegister<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
 }
 
-export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, nameField, errors }) => {
-	const validate = validationRulesVsForm[nameField]
-	const titleMessage = nameField === 'vh_name' ? 'Name Virtual Host' : nameField
+export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, fieldName, errors }) => {
+	const validate = validationRulesVsForm[fieldName]
+	const fieldTitles: Record<string, string> = {
+		name: 'Name Vs',
+		project_id: 'Project Id',
+		vh_name: 'Virtual Host Name'
+	}
+
+	const titleMessage = fieldTitles[fieldName] || fieldName
 
 	return (
 		<TextField
-			{...register(nameField, {
+			{...register(fieldName, {
 				required: `The ${titleMessage} field is required`,
 				validate: validate
 			})}
 			fullWidth
-			size='small'
 			placeholder={`Enter ${titleMessage}`}
-			error={!!errors[nameField]}
-			label={errors[nameField]?.message ?? `Enter ${titleMessage}`}
+			error={!!errors[fieldName]}
+			label={errors[fieldName]?.message ?? ` ${titleMessage}`}
 		/>
 	)
 }

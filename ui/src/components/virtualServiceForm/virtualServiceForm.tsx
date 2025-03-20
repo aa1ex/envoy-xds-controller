@@ -4,11 +4,11 @@ import { Box, Button, Divider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { useTemplatesVirtualService } from '../../api/grpc/hooks/useTemplatesVirtualService.ts'
-import SelectTemplateVs from '../selectTemplateVs/selectTemplateVs.tsx'
 import { useListenerVirtualService } from '../../api/grpc/hooks/useListenerVirtualService.ts'
-import { SelectListenersVs } from '../selectListenersVs/selectListenersVs.tsx'
 import { VirtualHostVs } from '../virtualHostVS/virtualHostVS.tsx'
 import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
+import { useAccessLogsVirtualService } from '../../api/grpc/hooks/useAccessLogsVirtualService.ts'
+import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -22,16 +22,17 @@ export interface IVirtualServiceForm {
 	listener_uid: string
 	vh_name: string
 	vh_domains: string[]
+	access_log_config: string
 }
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
-	const {
-		data: templatesVs,
-		isFetching: isFetchingTemplates,
-		isError: isErrorTemplates
-	} = useTemplatesVirtualService()
-
+	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVirtualService()
 	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVirtualService()
+	const {
+		data: accessLogs,
+		isFetching: isFetchingAccessLogs,
+		isError: isErrorAccessLogs
+	} = useAccessLogsVirtualService()
 
 	const {
 		register,
@@ -48,7 +49,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			node_ids: [],
 			project_id: '',
 			vh_name: '',
-			vh_domains: []
+			vh_domains: [],
+			access_log_config: ''
 		}
 	})
 
@@ -71,7 +73,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			<Box display='flex' flexDirection='column' justifyContent='space-between' height='100%' gap={2}>
 				<Grid container spacing={3}>
 					<Grid xs display='flex' flexDirection='column' gap={2}>
-						<TextFieldFormVs register={register} nameField='name' errors={errors} />
+						<TextFieldFormVs register={register} fieldName='name' errors={errors} />
 						<AutocompleteChipVs
 							nameField={'node_ids'}
 							control={control}
@@ -80,17 +82,19 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							setError={setError}
 							clearErrors={clearErrors}
 						/>
-						<TextFieldFormVs register={register} nameField='project_id' errors={errors} />
-						<SelectTemplateVs
+						<TextFieldFormVs register={register} fieldName='project_id' errors={errors} />
+						<SelectFormVs
+							fieldName={'template_uid'}
+							data={templates}
 							control={control}
-							templatesVs={templatesVs}
 							errors={errors}
 							isFetching={isFetchingTemplates}
 							isErrorFetch={isErrorTemplates}
 						/>
-						<SelectListenersVs
+						<SelectFormVs
+							fieldName={'listener_uid'}
+							data={listeners}
 							control={control}
-							listeners={listeners}
 							errors={errors}
 							isFetching={isFetchingListeners}
 							isErrorFetch={isErrorListeners}
@@ -103,6 +107,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							control={control}
 							clearErrors={clearErrors}
 							setError={setError}
+						/>
+						<SelectFormVs
+							fieldName={'access_log_config'}
+							data={accessLogs}
+							control={control}
+							errors={errors}
+							isErrorFetch={isErrorAccessLogs}
+							isFetching={isFetchingAccessLogs}
 						/>
 					</Grid>
 					<Divider orientation='vertical' flexItem />
