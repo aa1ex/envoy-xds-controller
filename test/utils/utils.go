@@ -20,12 +20,11 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	. "github.com/onsi/ginkgo/v2" //nolint:golint,revive
 	"os"
 	"os/exec"
 	"path"
 	"strings"
-
-	. "github.com/onsi/ginkgo/v2" //nolint:golint,revive
 )
 
 const (

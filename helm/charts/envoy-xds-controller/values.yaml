@@ -4,6 +4,9 @@ namespaceOverride: ""
 
 development: false
 
+metrics:
+  address: ":8443" # set "0" for disabling
+
 xds:
   port: 9000
 

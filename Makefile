@@ -10,6 +10,8 @@ UI_IMG ?= $(UI_IMG_WITHOUT_TAG):$(TAG)
 
 DEPLOY_TIMEOUT ?= 5m
 
+PROM_OPERATOR_VERSION ?= v0.77.1
+
 # REGISTRY is the image registry to use for build and push image targets.
 REGISTRY ?= docker.io/kaasops
 
@@ -298,7 +300,19 @@ dev-apply-resources:
 .PHONY: helm-deploy-backend-local
 helm-deploy-backend-local: manifests set-local## Install Envoy xDS Controller into the local Kubernetes cluster specified in ~/.kube/config.
 	@$(LOG_TARGET)
-	helm install exc --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set cacheAPI.enabled=true --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+	helm install exc --set metrics.enabled=true --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set cacheAPI.enabled=true --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
 
 .PHONY: dev-backend
-dev-backend: set-local docker-build docker-push helm-deploy-backend-local
+dev-backend: set-local docker-build docker-push install-prometheus helm-deploy-backend-local
+
+.PHONY: deploy-e2e
+deploy-e2e: manifests
+	helm install exc-e2e --set metrics.enabled=true --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set cacheAPI.enabled=true --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+
+.PHONY: undeploy-e2e
+undeploy-e2e:
+	helm uninstall exc-e2e
+
+.PHONY: install-prometheus
+install-prometheus:
+	kubectl create -f https://github.com/prometheus-operator/prometheus-operator/releases/download/$(PROM_OPERATOR_VERSION)/bundle.yaml
