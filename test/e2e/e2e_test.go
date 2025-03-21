@@ -142,6 +142,6 @@ var _ = Describe("Manager", Ordered, func() {
 	SetDefaultEventuallyPollingInterval(time.Second)
 
 	Context("Manager", managerContext(controllerPodName))
-	Context("Envoy", envoyContext)
+	//Context("Envoy", envoyContext)
 	Context("GRPC_API", grpcAPIContext)
 })

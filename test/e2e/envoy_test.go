@@ -539,4 +539,23 @@ func envoyContext() {
 		response := fetchDataFromEnvoy("http://test.kaasops.io:8080/", "test.kaasops.io:8080")
 		Expect(strings.TrimSpace(response)).To(Equal(`{"message":"test"}`))
 	})
+
+	It("should cleanup resources", func() {
+		for _, manifest := range []string{
+			"test/testdata/e2e/vs5/vs.yaml",
+			"test/testdata/e2e/vs5/http-listener.yaml",
+			"test/testdata/e2e/vs4/virtual-service.yaml",
+			"test/testdata/e2e/vs4/tcp-echo-server.yaml",
+			"test/testdata/e2e/vs4/listener.yaml",
+			"test/testdata/e2e/vs4/cluster.yaml",
+			"test/testdata/e2e/vs2/virtual-service-template.yaml",
+			"test/testdata/e2e/vs2/access-log-config.yaml",
+			"test/testdata/e2e/vs2/http-filter.yaml",
+			"test/testdata/e2e/vs1/listener.yaml",
+			"test/testdata/e2e/vs1/tls-cert.yaml",
+		} {
+			err := utils.DeleteManifests(manifest)
+			Expect(err).NotTo(HaveOccurred(), "Failed to delete manifest: "+manifest)
+		}
+	})
 }
