@@ -42,6 +42,7 @@ message FillTemplateRequest {
   repeated string additional_http_filter_uids = 5;
   repeated string additional_route_uids = 6;
   optional bool use_remote_address = 7;
+  repeated virtual_service_template.v1.TemplateOption template_options = 8;
 }
 
 message FillTemplateResponse {

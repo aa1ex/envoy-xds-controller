@@ -18,7 +18,7 @@ func grpcAPIContext() {
 		cmd := exec.Command("kubectl", "run", podName, "-n", namespace, "--restart=Never",
 			"--image=fullstorydev/grpcurl:v1.9.3-alpine",
 			"--", "-plaintext", "-d", "{}",
-			"envoy-xds-controller-controller-manager-grpc-api:10000",
+			"exc-e2e-envoy-xds-controller-grpc-api:10000",
 			"virtual_service.v1.VirtualServiceStoreService.ListVirtualService")
 		_, err := utils.Run(cmd)
 		Expect(err).NotTo(HaveOccurred(), "Failed to create grpcurl pod")
