@@ -9,6 +9,9 @@ import { VirtualHostVs } from '../virtualHostVS/virtualHostVS.tsx'
 import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
 import { useAccessLogsVirtualService } from '../../api/grpc/hooks/useAccessLogsVirtualService.ts'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
+import { useHttpFilterVirtualService } from '../../api/grpc/hooks/useHttpFilterVirtualService.ts'
+import { useRouteVirtualService } from '../../api/grpc/hooks/useRouteVirtualService.ts'
+import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -23,6 +26,29 @@ export interface IVirtualServiceForm {
 	vh_name: string
 	vh_domains: string[]
 	access_log_config: string
+	additional_http_filter_uids: string[]
+	additional_route_uids: string[]
+}
+
+const mockData = {
+	items: [
+		{
+			uid: '91344217',
+			name: 'http-filter'
+		},
+		{
+			uid: '91344218',
+			name: 'http-filter1'
+		},
+		{
+			uid: '91344219',
+			name: 'http-filter2'
+		},
+		{
+			uid: '91344210',
+			name: 'http-filter3'
+		}
+	]
 }
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
@@ -33,6 +59,12 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		isFetching: isFetchingAccessLogs,
 		isError: isErrorAccessLogs
 	} = useAccessLogsVirtualService()
+	const {
+		data: httpFilters,
+		isFetching: isFetchingHttpFilters,
+		isError: isErrorHttpFilters
+	} = useHttpFilterVirtualService()
+	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVirtualService()
 
 	const {
 		register,
@@ -41,7 +73,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		setValue,
 		control,
 		setError,
-		clearErrors
+		clearErrors,
+		watch
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
 		defaultValues: {
@@ -50,7 +83,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			project_id: '',
 			vh_name: '',
 			vh_domains: [],
-			access_log_config: ''
+			access_log_config: '',
+			additional_http_filter_uids: [],
+			additional_route_uids: []
 		}
 	})
 
@@ -115,6 +150,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							errors={errors}
 							isErrorFetch={isErrorAccessLogs}
 							isFetching={isFetchingAccessLogs}
+						/>
+						<DNdSelectFormVs
+							nameField={'additional_http_filter_uids'}
+							data={mockData}
+							control={control}
+							setValue={setValue}
+							watch={watch}
+							errors={errors}
 						/>
 					</Grid>
 					<Divider orientation='vertical' flexItem />

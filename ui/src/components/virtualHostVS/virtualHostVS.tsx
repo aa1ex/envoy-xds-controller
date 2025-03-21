@@ -45,10 +45,10 @@ export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 				gap: 2
 			}}
 		>
-			<Typography fontSize={15} color='gray'>
+			<Typography fontSize={15} color='gray' mt={1}>
 				Configure the virtual host
 			</Typography>
-			<TextFieldFormVs register={register} fieldName={vh_name} errors={errors} />
+			<TextFieldFormVs register={register} fieldName={vh_name} errors={errors} variant={'standard'} />
 			<AutocompleteChipVs
 				nameField={vh_domains}
 				control={control}
@@ -56,6 +56,7 @@ export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 				errors={errors}
 				setError={setError}
 				clearErrors={clearErrors}
+				variant={'standard'}
 			/>
 		</Box>
 	)

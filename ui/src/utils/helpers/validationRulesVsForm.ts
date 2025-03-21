@@ -49,5 +49,17 @@ export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: st
 			}
 		}
 		return true
+	},
+	access_log_config: value => {
+		if (typeof value !== 'string') return 'The AccessLogConfig field is required'
+		return true
+	},
+	additional_http_filter_uids: value => {
+		if (!Array.isArray(value) || value.length === 0) return 'The HTTPS_filters field is required'
+		return true
+	},
+	additional_route_uids: value => {
+		if (typeof value !== 'string') return 'The Routes field is required'
+		return true
 	}
 }

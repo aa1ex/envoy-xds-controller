@@ -8,9 +8,10 @@ interface ITextFieldFormVsProps {
 	fieldName: keyof IVirtualServiceForm
 	register: UseFormRegister<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
+	variant?: 'standard' | 'outlined'
 }
 
-export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, fieldName, errors }) => {
+export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, fieldName, errors, variant }) => {
 	const validate = validationRulesVsForm[fieldName]
 	const fieldTitles: Record<string, string> = {
 		name: 'Name Vs',
@@ -30,6 +31,7 @@ export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, fie
 			placeholder={`Enter ${titleMessage}`}
 			error={!!errors[fieldName]}
 			label={errors[fieldName]?.message ?? ` ${titleMessage}`}
+			variant={variant}
 		/>
 	)
 }

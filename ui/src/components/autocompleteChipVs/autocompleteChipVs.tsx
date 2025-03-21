@@ -14,6 +14,7 @@ interface IAutocompleteChipVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	setError: UseFormSetError<IVirtualServiceForm>
 	clearErrors: UseFormClearErrors<IVirtualServiceForm>
+	variant?: 'standard' | 'outlined'
 }
 
 export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
@@ -22,7 +23,8 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 	setValue,
 	errors,
 	setError,
-	clearErrors
+	clearErrors,
+	variant
 }) => {
 	const titleMessage = nameField === 'node_ids' ? 'NodeID' : 'Domains Virtual Host'
 
@@ -61,6 +63,7 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 							label={errors[nameField]?.message ?? `Enter the ${titleMessage} name and press enter`}
 							placeholder={`To add a ${titleMessage}, enter the ${titleMessage} name and press enter`}
 							error={!!errors[nameField]}
+							variant={variant}
 						/>
 					)}
 				/>
