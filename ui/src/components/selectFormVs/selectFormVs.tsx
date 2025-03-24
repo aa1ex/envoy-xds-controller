@@ -11,7 +11,7 @@ import { ListAccessLogConfigResponse } from '../../gen/access_log_config/v1/acce
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'template_uid' | 'listener_uid' | 'access_log_config'>
 
 interface ISelectFormVsProps {
-	fieldName: nameFieldKeys
+	nameField: nameFieldKeys
 	control: Control<IVirtualServiceForm, any>
 	data: ListListenerResponse | ListVirtualServiceTemplateResponse | ListAccessLogConfigResponse | undefined
 	errors: FieldErrors<IVirtualServiceForm>
@@ -20,7 +20,7 @@ interface ISelectFormVsProps {
 }
 
 export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
-	fieldName,
+	nameField,
 	data,
 	control,
 	errors,
@@ -33,26 +33,26 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 		access_log_config: 'AccessLogConfig'
 	}
 
-	const titleMessage = fieldTitles[fieldName] || fieldName
+	const titleMessage = fieldTitles[nameField] || nameField
 
 	return (
 		<Controller
-			name={fieldName}
+			name={nameField}
 			control={control}
 			rules={{
-				validate: validationRulesVsForm[fieldName]
+				validate: validationRulesVsForm[nameField]
 			}}
 			render={({ field }) => (
-				<FormControl fullWidth error={!!errors[fieldName] || isErrorFetch}>
+				<FormControl fullWidth error={!!errors[nameField] || isErrorFetch}>
 					<InputLabel>
-						{errors[fieldName]?.message ??
+						{errors[nameField]?.message ??
 							(isErrorFetch ? `Error loading ${titleMessage} data` : `Select ${titleMessage}`)}
 					</InputLabel>
 					<Select
 						fullWidth
-						error={!!errors[fieldName] || isErrorFetch}
+						error={!!errors[nameField] || isErrorFetch}
 						label={
-							errors[fieldName]?.message ??
+							errors[nameField]?.message ??
 							(isErrorFetch ? `Error loading ${titleMessage} data` : `Select ${titleMessage}`)
 						}
 						value={field.value || ''}

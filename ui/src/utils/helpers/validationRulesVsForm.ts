@@ -1,6 +1,9 @@
-import { IVirtualServiceForm } from '../../components/virtualServiceForm/virtualServiceForm.tsx'
+import { ITemplateOption, IVirtualServiceForm } from '../../components/virtualServiceForm/virtualServiceForm.tsx'
 
-export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: string | string[]) => string | true> = {
+export const validationRulesVsForm: Record<
+	keyof IVirtualServiceForm,
+	(value: string | string[] | boolean | null | ITemplateOption[]) => string | true
+> = {
 	name: value => {
 		if (typeof value !== 'string') return 'Invalid value'
 		if (value.length < 3) return 'Name must be at least 3 characters long'
@@ -9,11 +12,12 @@ export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: st
 		return true
 	},
 	node_ids: value => {
-		if (!Array.isArray(value) || value.length === 0) return 'The NodeIds field is required, enter at least one node'
+		if (!Array.isArray(value)) return 'Invalid value for NodeIds, expected an array'
+		if (value.length === 0) return 'The NodeIds field is required, enter at least one node'
 		for (const nodeId of value) {
-			if (!/^[a-zA-Z0-9_-]+$/.test(nodeId)) {
+			if (typeof nodeId !== 'string') return 'Each nodeId must be a string'
+			if (!/^[a-zA-Z0-9_-]+$/.test(nodeId))
 				return 'NodeIds must contain only letters, numbers, hyphens, and underscores'
-			}
 		}
 		return true
 	},
@@ -41,10 +45,11 @@ export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: st
 		return true
 	},
 	vh_domains: value => {
-		if (!Array.isArray(value) || value.length === 0)
-			return 'The Domains Virtual Host field is required, enter at least one node'
-		for (const nodeId of value) {
-			if (!/^[a-zA-Z0-9_-]+$/.test(nodeId)) {
+		if (!Array.isArray(value)) return 'Invalid value for Domains Virtual Host, expected an array'
+		if (value.length === 0) return 'The Domains Virtual Host field is required, enter at least one node'
+		for (const virtualHost of value) {
+			if (typeof virtualHost !== 'string') return 'Each Domains Virtual Host must be a string'
+			if (!/^[a-zA-Z0-9_-]+$/.test(virtualHost)) {
 				return 'Domains Virtual Host must contain only letters, numbers, hyphens, and underscores'
 			}
 		}
@@ -59,7 +64,37 @@ export const validationRulesVsForm: Record<keyof IVirtualServiceForm, (value: st
 		return true
 	},
 	additional_route_uids: value => {
-		if (typeof value !== 'string') return 'The Routes field is required'
+		if (!Array.isArray(value) || value.length === 0) return 'The Routes field is required'
+		return true
+	},
+	use_remote_address: value => {
+		if (value !== null && typeof value !== 'boolean') {
+			return 'Use Remote Address must be a boolean or null'
+		}
+		return true
+	},
+	template_options: value => {
+		// Проверка, что value - это массив ITemplateOption
+		console.log(value)
+		if (Array.isArray(value)) {
+			for (let i = 0; i < value.length; i++) {
+				const option = value[i]
+
+				// Убедимся, что option - это объект типа ITemplateOption, а не строка
+				if (typeof option !== 'string') {
+					// Проверка, если modifier есть, но нет field
+					if (option.modifier && !option.field) {
+						return 'Please specify field when modifier is selected'
+					}
+
+					// Проверка, если field есть, но нет modifier
+					if (option.field && !option.modifier) {
+						return 'Please select a modifier when field is specified'
+					}
+				}
+			}
+		}
+
 		return true
 	}
 }

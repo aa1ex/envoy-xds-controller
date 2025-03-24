@@ -3,13 +3,14 @@ import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.ts
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
 import { ListHTTPFilterResponse } from '../../gen/http_filter/v1/http_filter_pb.ts'
 import { ListRouteResponse } from '../../gen/route/v1/route_pb.ts'
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
-import { Autocomplete, Box, List, ListItem, TextField, Typography } from '@mui/material'
-import { CSS } from '@dnd-kit/utilities'
+import { Autocomplete, Box, List, TextField, Typography } from '@mui/material'
 import Chip from '@mui/material/Chip'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
-import { useColors } from '../../utils/hooks/useColors.ts'
+import CircularProgress from '@mui/material/CircularProgress'
+import { SortableItemDnd } from '../sortableItemDnd/sortableItemDnd.tsx'
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additional_http_filter_uids' | 'additional_route_uids'>
 
@@ -22,35 +23,13 @@ interface mockData {
 
 interface IdNdSelectFormVsProps {
 	nameField: nameFieldKeys
-	data: ListHTTPFilterResponse | ListRouteResponse | mockData
+	data: ListHTTPFilterResponse | ListRouteResponse | mockData | undefined
 	watch: UseFormWatch<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm, any>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
-}
-
-const SortableItem = ({ uid, name }: { uid: string; name: string }) => {
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: uid })
-	const { colors } = useColors()
-
-	return (
-		<ListItem
-			ref={setNodeRef}
-			{...attributes}
-			{...listeners}
-			sx={{
-				padding: '8px',
-				marginBottom: '4px',
-				backgroundColor: colors.primary[200],
-				borderRadius: '4px',
-				cursor: 'grab',
-				transform: CSS.Transform.toString(transform),
-				transition
-			}}
-		>
-			{name} {/* Отображаем имя, но передаём uid */}
-		</ListItem>
-	)
+	isError: boolean
+	isFetching: boolean
 }
 
 export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
@@ -59,7 +38,9 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	watch,
 	control,
 	setValue,
-	errors
+	errors,
+	isFetching,
+	isError
 }) => {
 	const titleMessage = nameField === 'additional_http_filter_uids' ? 'HTTP filters' : 'Routes'
 	const selectedUids = watch(nameField)
@@ -87,9 +68,8 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 			}}
 		>
 			<Typography fontSize={15} color='gray' mt={1}>
-				Configure filters
+				Configure {titleMessage}
 			</Typography>
-
 			<Controller
 				name={nameField}
 				control={control}
@@ -99,9 +79,9 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 				render={({ field }) => (
 					<Autocomplete
 						multiple
-						options={data.items}
+						options={data?.items || []}
 						getOptionLabel={option => option.name}
-						value={data.items.filter(item => field.value.includes(item.uid))}
+						value={(data?.items || []).filter(item => field.value.includes(item.uid))}
 						onChange={(_, newValue) => field.onChange(newValue.map(item => item.uid))}
 						renderTags={(value, getTagProps) =>
 							value.map((option, index) => {
@@ -109,30 +89,44 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 								return <Chip {...tagProps} label={option.name} />
 							})
 						}
+						loading={isFetching}
 						renderInput={params => (
 							<TextField
 								{...params}
 								label={
 									errors[nameField]?.message ??
-									`Select the required ${titleMessage} and then install them in the required order.`
+									(isError
+										? `Error loading ${titleMessage} data`
+										: `Select the required ${titleMessage} and then install them in the required order.`)
 								}
 								placeholder={`Select the required ${titleMessage} and then install them in the required order.`}
-								error={!!errors[nameField]}
+								error={!!errors[nameField] || isError}
 								variant='standard'
+								InputProps={{
+									...params.InputProps,
+									endAdornment: (
+										<>
+											{isFetching ? <CircularProgress color='inherit' size={20} /> : null}
+											{params.InputProps?.endAdornment}
+										</>
+									)
+								}}
 							/>
 						)}
 					/>
 				)}
 			/>
-
 			<DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
 				<SortableContext items={selectedUids} strategy={verticalListSortingStrategy}>
-					<List sx={{ padding: 1, borderRadius: '4px' }}>
-						{selectedUids.map(uid => {
-							const item = data.items.find(el => el.uid === uid)
-							return item ? <SortableItem key={uid} uid={uid} name={item.name} /> : null
-						})}
-					</List>
+					<Box sx={{ display: 'flex', alignItems: 'center' }}>
+						<ArrowDownwardIcon sx={{ fontSize: 19, color: 'gray' }} />
+						<List sx={{ padding: 1, borderRadius: '4px', width: '100%' }}>
+							{selectedUids.map(uid => {
+								const item = (data?.items || []).find(el => el.uid === uid)
+								return item ? <SortableItemDnd key={uid} uid={uid} name={item.name} /> : null
+							})}
+						</List>
+					</Box>
 				</SortableContext>
 			</DndContext>
 		</Box>

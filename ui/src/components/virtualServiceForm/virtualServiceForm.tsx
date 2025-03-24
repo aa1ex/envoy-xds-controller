@@ -12,9 +12,17 @@ import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { useHttpFilterVirtualService } from '../../api/grpc/hooks/useHttpFilterVirtualService.ts'
 import { useRouteVirtualService } from '../../api/grpc/hooks/useRouteVirtualService.ts'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
+import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
+import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
+import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 
 interface IVirtualServiceFormProps {
 	title?: string
+}
+
+export interface ITemplateOption {
+	field: string
+	modifier: string
 }
 
 export interface IVirtualServiceForm {
@@ -28,6 +36,8 @@ export interface IVirtualServiceForm {
 	access_log_config: string
 	additional_http_filter_uids: string[]
 	additional_route_uids: string[]
+	use_remote_address: boolean | null
+	template_options: ITemplateOption[]
 }
 
 const mockData = {
@@ -83,9 +93,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			project_id: '',
 			vh_name: '',
 			vh_domains: [],
-			access_log_config: '',
 			additional_http_filter_uids: [],
-			additional_route_uids: []
+			additional_route_uids: [],
+			use_remote_address: null,
+			template_options: [{ field: '', modifier: '' }]
 		}
 	})
 
@@ -105,10 +116,17 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
-			<Box display='flex' flexDirection='column' justifyContent='space-between' height='100%' gap={2}>
+			<Box
+				display='flex'
+				flexDirection='column'
+				justifyContent='space-between'
+				height='100%'
+				gap={2}
+				overflow='auto'
+			>
 				<Grid container spacing={3}>
 					<Grid xs display='flex' flexDirection='column' gap={2}>
-						<TextFieldFormVs register={register} fieldName='name' errors={errors} />
+						<TextFieldFormVs register={register} nameField='name' errors={errors} />
 						<AutocompleteChipVs
 							nameField={'node_ids'}
 							control={control}
@@ -117,9 +135,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							setError={setError}
 							clearErrors={clearErrors}
 						/>
-						<TextFieldFormVs register={register} fieldName='project_id' errors={errors} />
+						<TextFieldFormVs register={register} nameField='project_id' errors={errors} />
 						<SelectFormVs
-							fieldName={'template_uid'}
+							nameField={'template_uid'}
 							data={templates}
 							control={control}
 							errors={errors}
@@ -127,7 +145,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							isErrorFetch={isErrorTemplates}
 						/>
 						<SelectFormVs
-							fieldName={'listener_uid'}
+							nameField={'listener_uid'}
 							data={listeners}
 							control={control}
 							errors={errors}
@@ -144,7 +162,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							setError={setError}
 						/>
 						<SelectFormVs
-							fieldName={'access_log_config'}
+							nameField={'access_log_config'}
 							data={accessLogs}
 							control={control}
 							errors={errors}
@@ -153,18 +171,37 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 						/>
 						<DNdSelectFormVs
 							nameField={'additional_http_filter_uids'}
+							data={httpFilters}
+							control={control}
+							setValue={setValue}
+							watch={watch}
+							errors={errors}
+							isError={isErrorHttpFilters}
+							isFetching={isFetchingHttpFilters}
+						/>
+					</Grid>
+					<Divider orientation='vertical' flexItem />
+
+					<Grid xs display='flex' flexDirection='column' gap={2}>
+						<DNdSelectFormVs
+							nameField={'additional_route_uids'}
 							data={mockData}
 							control={control}
 							setValue={setValue}
 							watch={watch}
 							errors={errors}
+							isError={isErrorRoutes}
+							isFetching={isFetchingRoutes}
 						/>
-					</Grid>
-					<Divider orientation='vertical' flexItem />
-
-					<Grid xs>
-						next fragment
-						{/*<TextFieldFormVs register={register} nameField='node' errors={errors} />*/}
+						<RemoteAddrFormVs
+							nameField={'use_remote_address'}
+							control={control}
+							errors={errors}
+							setError={setError}
+							clearErrors={clearErrors}
+							setValue={setValue}
+						/>
+						<TemplateOptionsFormVs register={register} control={control} errors={errors} />
 					</Grid>
 					<Divider orientation='vertical' flexItem />
 					<Grid xs>
