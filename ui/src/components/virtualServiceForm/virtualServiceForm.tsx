@@ -13,7 +13,6 @@ import { useHttpFilterVirtualService } from '../../api/grpc/hooks/useHttpFilterV
 import { useRouteVirtualService } from '../../api/grpc/hooks/useRouteVirtualService.ts'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
-import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 
 interface IVirtualServiceFormProps {
@@ -84,7 +83,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		control,
 		setError,
 		clearErrors,
-		watch
+		watch,
+		getValues
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
 		defaultValues: {
@@ -110,8 +110,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		}
 		const jsonString = JSON.stringify(formValues)
 		const virtual_hostBase64 = btoa(jsonString)
+		const { vh_name, vh_domains, ...result } = data
+		const createVSData = {
+			...result,
+			virtual_host: virtual_hostBase64,
+			template_options: result.template_options[0].field ? result.template_options : []
+		}
 
-		console.log('Base64 String:', '\n', virtual_hostBase64)
+		console.log('data for create', createVSData)
 	}
 
 	return (
@@ -124,7 +130,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 				gap={2}
 				overflow='auto'
 			>
-				<Grid container spacing={3}>
+				<Grid container spacing={3} overflow='auto'>
 					<Grid xs display='flex' flexDirection='column' gap={2}>
 						<TextFieldFormVs register={register} nameField='name' errors={errors} />
 						<AutocompleteChipVs
@@ -201,7 +207,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 							clearErrors={clearErrors}
 							setValue={setValue}
 						/>
-						<TemplateOptionsFormVs register={register} control={control} errors={errors} />
+						<TemplateOptionsFormVs
+							register={register}
+							control={control}
+							errors={errors}
+							getValues={getValues}
+							clearErrors={clearErrors}
+						/>
 					</Grid>
 					<Divider orientation='vertical' flexItem />
 					<Grid xs>

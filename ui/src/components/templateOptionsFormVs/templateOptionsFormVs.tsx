@@ -1,17 +1,44 @@
 import React from 'react'
-import { Control, Controller, FieldErrors, useFieldArray, UseFormRegister } from 'react-hook-form'
+import {
+	Control,
+	Controller,
+	FieldErrors,
+	useFieldArray,
+	UseFormClearErrors,
+	UseFormGetValues,
+	UseFormRegister
+} from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
-import { Box, Button, FormControl, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material'
+import {
+	Box,
+	Button,
+	FormControl,
+	IconButton,
+	InputLabel,
+	MenuItem,
+	Select,
+	TextField,
+	Typography
+} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 
 interface ITemplateOptionsFormVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
+	getValues: UseFormGetValues<IVirtualServiceForm>
+	clearErrors: UseFormClearErrors<IVirtualServiceForm>
 }
 
-export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({ register, control, errors }) => {
+export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
+	register,
+	control,
+	errors,
+	getValues,
+	clearErrors
+}) => {
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'template_options'
@@ -23,6 +50,28 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({ r
 			label: `TEMPLATE_OPTION_MODIFIER_${key.toUpperCase()}`,
 			value: `TEMPLATE_OPTION_MODIFIER_${key.toUpperCase()}`
 		}))
+
+	const validateTemplateOption = (fieldName: 'field' | 'modifier', index: number, value: string) => {
+		const fieldValue = getValues(`template_options.${index}.field`)
+		const modifierValue = getValues(`template_options.${index}.modifier`)
+
+		const templateOption = {
+			field: fieldName === 'field' ? value : fieldValue,
+			modifier: fieldName === 'modifier' ? value : modifierValue
+		}
+
+		const result = validationRulesVsForm.template_options([templateOption])
+
+		if (fieldName === 'field' && modifierValue && result === true) {
+			clearErrors(`template_options.${index}.modifier`)
+		}
+
+		if (fieldName === 'modifier' && fieldValue && result === true) {
+			clearErrors(`template_options.${index}.field`)
+		}
+
+		return result
+	}
 
 	return (
 		<Box
@@ -45,18 +94,30 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({ r
 				{fields.map((field, index) => (
 					<Box key={field.id} display='flex' gap={2}>
 						<TextField
-							{...register(`template_options.${index}.field`)}
+							{...register(`template_options.${index}.field`, {
+								validate: value => validateTemplateOption('field', index, value)
+							})}
+							key={field.id}
 							fullWidth
 							placeholder='Enter path'
 							error={!!errors.template_options?.[index]?.field}
-							label={errors.template_options?.[index]?.field?.message || 'Enter path'}
+							label={errors.template_options?.[index]?.field?.message || 'Path'}
 						/>
 						<Controller
 							name={`template_options.${index}.modifier` as const}
 							control={control}
+							rules={{
+								validate: value => validateTemplateOption('modifier', index, value)
+							}}
 							render={({ field }) => (
 								<FormControl fullWidth error={!!errors.template_options?.[index]?.modifier}>
-									<Select {...field}>
+									<InputLabel>
+										{errors.template_options?.[index]?.modifier?.message || 'Select Modification'}
+									</InputLabel>
+									<Select
+										{...field}
+										label={errors.template_options?.[index]?.modifier?.message || 'Modifications'}
+									>
 										{enumOptionsModifier.map(option => (
 											<MenuItem key={option.value} value={option.value}>
 												{option.label}

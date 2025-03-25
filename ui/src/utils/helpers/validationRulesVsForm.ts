@@ -74,25 +74,28 @@ export const validationRulesVsForm: Record<
 		return true
 	},
 	template_options: value => {
-		// Проверка, что value - это массив ITemplateOption
-		console.log(value)
 		if (Array.isArray(value)) {
 			for (let i = 0; i < value.length; i++) {
 				const option = value[i]
 
-				// Убедимся, что option - это объект типа ITemplateOption, а не строка
-				if (typeof option !== 'string') {
-					// Проверка, если modifier есть, но нет field
-					if (option.modifier && !option.field) {
-						return 'Please specify field when modifier is selected'
-					}
+				if (typeof option !== 'object' || !option) {
+					return 'Invalid option structure'
+				}
 
-					// Проверка, если field есть, но нет modifier
-					if (option.field && !option.modifier) {
-						return 'Please select a modifier when field is specified'
-					}
+				if (option.field && !/^[a-zA-Z0-9_./-]+$/.test(option.field)) {
+					return 'Path must only contain letters, numbers, hyphens, underscores, slashes, and dots.'
+				}
+
+				if (option.modifier && !option.field) {
+					return 'You have selected a modification but have not specified the path.'
+				}
+
+				if (option.field && !option.modifier) {
+					return 'You specified the path but did not select the modification.'
 				}
 			}
+		} else {
+			return 'Template options must be an array'
 		}
 
 		return true
