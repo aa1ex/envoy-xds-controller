@@ -4,7 +4,7 @@ import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.ts
 import { TextField } from '@mui/material'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'name' | 'project_id' | 'vh_name'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'name' | 'projectId' | 'vh_name'>
 
 interface ITextFieldFormVsProps {
 	nameField: nameFieldKeys

@@ -14,6 +14,7 @@ import { useRouteVirtualService } from '../../api/grpc/hooks/useRouteVirtualServ
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
+import { useCreateVirtualService } from '../../api/grpc/hooks/useCreateVirtualService.ts'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -26,17 +27,17 @@ export interface ITemplateOption {
 
 export interface IVirtualServiceForm {
 	name: string
-	node_ids: string[]
-	project_id: string
-	template_uid: string
-	listener_uid: string
+	nodeIds: string[]
+	projectId: string
+	templateUid: string
+	listenerUid: string
 	vh_name: string
 	vh_domains: string[]
-	access_log_config: string
-	additional_http_filter_uids: string[]
-	additional_route_uids: string[]
-	use_remote_address: boolean | null
-	template_options: ITemplateOption[]
+	accessLogConfig: string
+	additionalHttpFilterUids: string[]
+	additionalRouteUids: string[]
+	useRemoteAddress: boolean | null
+	templateOptions: ITemplateOption[]
 }
 
 const mockData = {
@@ -75,6 +76,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		isError: isErrorHttpFilters
 	} = useHttpFilterVirtualService()
 	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVirtualService()
+	const { createVirtualService } = useCreateVirtualService()
 
 	const {
 		register,
@@ -90,14 +92,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		mode: 'onChange',
 		defaultValues: {
 			name: '',
-			node_ids: [],
-			project_id: '',
+			nodeIds: [],
+			projectId: '',
 			vh_name: '',
 			vh_domains: [],
-			additional_http_filter_uids: [],
-			additional_route_uids: [],
-			use_remote_address: null,
-			template_options: [{ field: '', modifier: '' }]
+			additionalHttpFilterUids: [],
+			additionalRouteUids: [],
+			useRemoteAddress: null,
+			templateOptions: [{ field: '', modifier: '' }]
 		}
 	})
 
@@ -109,125 +111,140 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			name: data.vh_name,
 			domains: data.vh_domains
 		}
+
+		// Шаг 1: Преобразуем объект в строку JSON
 		const jsonString = JSON.stringify(formValues)
+
+		// Шаг 2: Кодируем строку JSON в Base64
 		const virtual_hostBase64 = btoa(jsonString)
+
+		// Шаг 3: Декодируем Base64 строку обратно в обычную строку
+		const decodedBase64 = atob(virtual_hostBase64)
+
+		// Шаг 4: Преобразуем строку в Uint8Array
+		const virtualHostUint8Array = new TextEncoder().encode(decodedBase64)
+
 		const { vh_name, vh_domains, ...result } = data
+
 		const createVSData = {
 			...result,
-			virtual_host: virtual_hostBase64,
-			template_options: result.template_options[0].field ? result.template_options : []
+			virtualHost: virtualHostUint8Array,
+			templateOptions: result.templateOptions[0].field ? result.templateOptions : []
 		}
 
 		console.log('data for create', createVSData)
+		await createVirtualService(createVSData)
 	}
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
-			<Box
-				display='flex'
-				flexDirection='column'
-				justifyContent='space-between'
-				height='100%'
-				gap={2}
-				overflow='auto'
-			>
-				<Grid container spacing={3} overflow='auto'>
-					<Grid xs display='flex' flexDirection='column' gap={2}>
-						<TextFieldFormVs register={register} nameField='name' errors={errors} />
-						<AutocompleteChipVs
-							nameField={'node_ids'}
-							control={control}
-							setValue={setValue}
-							errors={errors}
-							setError={setError}
-							clearErrors={clearErrors}
-						/>
-						<TextFieldFormVs register={register} nameField='project_id' errors={errors} />
-						<SelectFormVs
-							nameField={'template_uid'}
-							data={templates}
-							control={control}
-							errors={errors}
-							isFetching={isFetchingTemplates}
-							isErrorFetch={isErrorTemplates}
-						/>
-						<SelectFormVs
-							nameField={'listener_uid'}
-							data={listeners}
-							control={control}
-							errors={errors}
-							isFetching={isFetchingListeners}
-							isErrorFetch={isErrorListeners}
-						/>
-						<VirtualHostVs
-							nameFields={['vh_name', 'vh_domains']}
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							control={control}
-							clearErrors={clearErrors}
-							setError={setError}
-						/>
-						<SelectFormVs
-							nameField={'access_log_config'}
-							data={accessLogs}
-							control={control}
-							errors={errors}
-							isErrorFetch={isErrorAccessLogs}
-							isFetching={isFetchingAccessLogs}
-						/>
-						<DNdSelectFormVs
-							nameField={'additional_http_filter_uids'}
-							data={httpFilters}
-							control={control}
-							setValue={setValue}
-							watch={watch}
-							errors={errors}
-							isError={isErrorHttpFilters}
-							isFetching={isFetchingHttpFilters}
-						/>
-					</Grid>
-					<Divider orientation='vertical' flexItem />
+		<>
+			<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
+				<Box
+					display='flex'
+					flexDirection='column'
+					justifyContent='space-between'
+					height='100%'
+					gap={2}
+					overflow='auto'
+				>
+					<Grid container spacing={3} overflow='auto'>
+						<Grid xs display='flex' flexDirection='column' gap={2}>
+							<TextFieldFormVs register={register} nameField='name' errors={errors} />
+							<AutocompleteChipVs
+								nameField={'nodeIds'}
+								control={control}
+								setValue={setValue}
+								errors={errors}
+								setError={setError}
+								clearErrors={clearErrors}
+							/>
+							<TextFieldFormVs register={register} nameField='projectId' errors={errors} />
+							<SelectFormVs
+								nameField={'templateUid'}
+								data={templates}
+								control={control}
+								errors={errors}
+								isFetching={isFetchingTemplates}
+								isErrorFetch={isErrorTemplates}
+							/>
+							<SelectFormVs
+								nameField={'listenerUid'}
+								data={listeners}
+								control={control}
+								errors={errors}
+								isFetching={isFetchingListeners}
+								isErrorFetch={isErrorListeners}
+							/>
+							<VirtualHostVs
+								nameFields={['vh_name', 'vh_domains']}
+								register={register}
+								errors={errors}
+								setValue={setValue}
+								control={control}
+								clearErrors={clearErrors}
+								setError={setError}
+							/>
+							<SelectFormVs
+								nameField={'accessLogConfig'}
+								data={accessLogs}
+								control={control}
+								errors={errors}
+								isErrorFetch={isErrorAccessLogs}
+								isFetching={isFetchingAccessLogs}
+							/>
+							<DNdSelectFormVs
+								nameField={'additionalHttpFilterUids'}
+								data={httpFilters}
+								control={control}
+								setValue={setValue}
+								watch={watch}
+								errors={errors}
+								isError={isErrorHttpFilters}
+								isFetching={isFetchingHttpFilters}
+							/>
+						</Grid>
+						<Divider orientation='vertical' flexItem />
 
-					<Grid xs display='flex' flexDirection='column' gap={2}>
-						<DNdSelectFormVs
-							nameField={'additional_route_uids'}
-							data={routes}
-							control={control}
-							setValue={setValue}
-							watch={watch}
-							errors={errors}
-							isError={isErrorRoutes}
-							isFetching={isFetchingRoutes}
-						/>
-						<RemoteAddrFormVs
-							nameField={'use_remote_address'}
-							control={control}
-							errors={errors}
-							setError={setError}
-							clearErrors={clearErrors}
-							setValue={setValue}
-						/>
-						<TemplateOptionsFormVs
-							register={register}
-							control={control}
-							errors={errors}
-							getValues={getValues}
-							clearErrors={clearErrors}
-						/>
+						<Grid xs display='flex' flexDirection='column' gap={2}>
+							<DNdSelectFormVs
+								nameField={'additionalRouteUids'}
+								data={routes}
+								control={control}
+								setValue={setValue}
+								watch={watch}
+								errors={errors}
+								isError={isErrorRoutes}
+								isFetching={isFetchingRoutes}
+							/>
+							<RemoteAddrFormVs
+								nameField={'useRemoteAddress'}
+								control={control}
+								errors={errors}
+								setError={setError}
+								clearErrors={clearErrors}
+								setValue={setValue}
+							/>
+							<TemplateOptionsFormVs
+								register={register}
+								control={control}
+								errors={errors}
+								getValues={getValues}
+								clearErrors={clearErrors}
+							/>
+						</Grid>
+						<Divider orientation='vertical' flexItem />
+						<Grid xs>
+							fragmenf for code
+							{/*<TextFieldFormVs register={register} nameField='some' errors={errors} />*/}
+						</Grid>
 					</Grid>
-					<Divider orientation='vertical' flexItem />
-					<Grid xs>
-						fragmenf for code
-						{/*<TextFieldFormVs register={register} nameField='some' errors={errors} />*/}
-					</Grid>
-				</Grid>
-				<Box display='flex' alignItems='center' justifyContent='center'>
-					<Button variant='contained' type='submit'>
-						Submit
-					</Button>
+					<Box display='flex' alignItems='center' justifyContent='center'>
+						<Button variant='contained' type='submit'>
+							Submit
+						</Button>
+					</Box>
 				</Box>
-			</Box>
-		</form>
+			</form>
+		</>
 	)
 }

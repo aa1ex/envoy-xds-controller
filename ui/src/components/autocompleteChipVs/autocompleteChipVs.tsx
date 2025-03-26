@@ -5,7 +5,7 @@ import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm
 import { Autocomplete, TextField } from '@mui/material'
 import Chip from '@mui/material/Chip'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'node_ids' | 'vh_domains'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vh_domains'>
 
 interface IAutocompleteChipVsProps {
 	nameField: nameFieldKeys
@@ -26,7 +26,7 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 	clearErrors,
 	variant
 }) => {
-	const titleMessage = nameField === 'node_ids' ? 'NodeID' : 'Domains Virtual Host'
+	const titleMessage = nameField === 'nodeIds' ? 'NodeID' : 'Domains Virtual Host'
 
 	return (
 		<Controller

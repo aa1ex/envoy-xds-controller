@@ -12,7 +12,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { SortableItemDnd } from '../sortableItemDnd/sortableItemDnd.tsx'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additional_http_filter_uids' | 'additional_route_uids'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
 interface mockData {
 	items: {
@@ -42,7 +42,7 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	isFetching,
 	isError
 }) => {
-	const titleMessage = nameField === 'additional_http_filter_uids' ? 'HTTP filters' : 'Routes'
+	const titleMessage = nameField === 'additionalHttpFilterUids' ? 'HTTP filters' : 'Routes'
 	const selectedUids = watch(nameField)
 
 	const onDragEnd = (e: DragEndEvent) => {

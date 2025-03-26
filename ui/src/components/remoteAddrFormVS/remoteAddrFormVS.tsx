@@ -4,7 +4,7 @@ import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.ts
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
 
 interface IRemoteAddrFormVsProps {
-	nameField: Extract<keyof IVirtualServiceForm, 'use_remote_address'>
+	nameField: Extract<keyof IVirtualServiceForm, 'useRemoteAddress'>
 	control: Control<IVirtualServiceForm>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>

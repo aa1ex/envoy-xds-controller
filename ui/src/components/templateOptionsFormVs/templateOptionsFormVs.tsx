@@ -41,7 +41,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 }) => {
 	const { fields, append, remove } = useFieldArray({
 		control,
-		name: 'template_options'
+		name: 'templateOptions'
 	})
 
 	const enumOptionsModifier = Object.entries(TemplateOptionModifier)
@@ -52,22 +52,22 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 		}))
 
 	const validateTemplateOption = (fieldName: 'field' | 'modifier', index: number, value: string) => {
-		const fieldValue = getValues(`template_options.${index}.field`)
-		const modifierValue = getValues(`template_options.${index}.modifier`)
+		const fieldValue = getValues(`templateOptions.${index}.field`)
+		const modifierValue = getValues(`templateOptions.${index}.modifier`)
 
 		const templateOption = {
 			field: fieldName === 'field' ? value : fieldValue,
 			modifier: fieldName === 'modifier' ? value : modifierValue
 		}
 
-		const result = validationRulesVsForm.template_options([templateOption])
+		const result = validationRulesVsForm.templateOptions([templateOption])
 
 		if (fieldName === 'field' && modifierValue && result === true) {
-			clearErrors(`template_options.${index}.modifier`)
+			clearErrors(`templateOptions.${index}.modifier`)
 		}
 
 		if (fieldName === 'modifier' && fieldValue && result === true) {
-			clearErrors(`template_options.${index}.field`)
+			clearErrors(`templateOptions.${index}.field`)
 		}
 
 		return result
@@ -94,29 +94,29 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 				{fields.map((field, index) => (
 					<Box key={field.id} display='flex' gap={2}>
 						<TextField
-							{...register(`template_options.${index}.field`, {
+							{...register(`templateOptions.${index}.field`, {
 								validate: value => validateTemplateOption('field', index, value)
 							})}
 							key={field.id}
 							fullWidth
 							placeholder='Enter path'
-							error={!!errors.template_options?.[index]?.field}
-							label={errors.template_options?.[index]?.field?.message || 'Path'}
+							error={!!errors.templateOptions?.[index]?.field}
+							label={errors.templateOptions?.[index]?.field?.message || 'Path'}
 						/>
 						<Controller
-							name={`template_options.${index}.modifier` as const}
+							name={`templateOptions.${index}.modifier` as const}
 							control={control}
 							rules={{
 								validate: value => validateTemplateOption('modifier', index, value)
 							}}
 							render={({ field }) => (
-								<FormControl fullWidth error={!!errors.template_options?.[index]?.modifier}>
+								<FormControl fullWidth error={!!errors.templateOptions?.[index]?.modifier}>
 									<InputLabel>
-										{errors.template_options?.[index]?.modifier?.message || 'Select Modification'}
+										{errors.templateOptions?.[index]?.modifier?.message || 'Select Modification'}
 									</InputLabel>
 									<Select
 										{...field}
-										label={errors.template_options?.[index]?.modifier?.message || 'Modifications'}
+										label={errors.templateOptions?.[index]?.modifier?.message || 'Modifications'}
 									>
 										{enumOptionsModifier.map(option => (
 											<MenuItem key={option.value} value={option.value}>
