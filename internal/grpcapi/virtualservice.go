@@ -4,8 +4,10 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"fmt"
+	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
+	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/resbuilder"
 	commonv1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/common/v1"
@@ -107,6 +109,18 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 		if err := tmp.UnmarshalJSON(req.Msg.VirtualHost); err != nil {
 			return nil, fmt.Errorf("unmarshal virtual host failed: %v", err)
 		}
+		virtualHost := &routev3.VirtualHost{}
+		if err := protoutil.Unmarshaler.Unmarshal(tmp.Raw, virtualHost); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
+		}
+		if virtualHost.Name == "" {
+			virtualHost.Name = vs.Name + "-virtual-host"
+		}
+		vhData, err := protoutil.Marshaler.Marshal(virtualHost)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal virtual host: %w", err)
+		}
+		tmp.Raw = vhData
 		vs.Spec.VirtualHost = &tmp
 	}
 
@@ -225,6 +239,18 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		if err := tmp.UnmarshalJSON(req.Msg.VirtualHost); err != nil {
 			return nil, fmt.Errorf("unmarshal virtual host failed: %v", err)
 		}
+		virtualHost := &routev3.VirtualHost{}
+		if err := protoutil.Unmarshaler.Unmarshal(tmp.Raw, virtualHost); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
+		}
+		if virtualHost.Name == "" {
+			virtualHost.Name = vs.Name + "-virtual-host"
+		}
+		vhData, err := protoutil.Marshaler.Marshal(virtualHost)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal virtual host: %w", err)
+		}
+		tmp.Raw = vhData
 		vs.Spec.VirtualHost = &tmp
 	}
 
