@@ -95,7 +95,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		const createVSData = {
 			...result,
 			virtualHost: virtualHostUint8Array,
-			templateOptions: result.templateOptions[0].field ? result.templateOptions : []
+			templateOptions: result.templateOptions[0].field ? result.templateOptions : [],
+			accessLogConfig: result.accessLogConfigUid
+				? { case: 'accessLogConfigUid', value: result.accessLogConfigUid }
+				: { case: undefined }
 		}
 
 		console.log('data for create', createVSData)
