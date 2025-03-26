@@ -23,22 +23,22 @@ const SelectTemplateVs: React.FC<ISelectTemplateVsProps> = ({
 }) => {
 	return (
 		<Controller
-			name='template_uid'
+			name='templateUid'
 			control={control}
 			rules={{
-				validate: validationRulesVsForm.template_uid
+				validate: validationRulesVsForm.templateUid
 			}}
 			render={({ field }) => (
-				<FormControl fullWidth error={!!errors.template_uid || isErrorFetch}>
+				<FormControl fullWidth error={!!errors.templateUid || isErrorFetch}>
 					<InputLabel>
-						{errors.template_uid?.message ??
+						{errors.templateUid?.message ??
 							(isErrorFetch ? 'Error loading TemplateVs data' : 'Select template VS')}
 					</InputLabel>
 					<Select
 						fullWidth
-						error={!!errors.template_uid || isErrorFetch}
+						error={!!errors.templateUid || isErrorFetch}
 						label={
-							errors.template_uid?.message ??
+							errors.templateUid?.message ??
 							(isErrorFetch ? 'Error loading TemplateVs data' : 'Select template VS')
 						}
 						value={field.value || ''}

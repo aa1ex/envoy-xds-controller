@@ -23,22 +23,22 @@ export const SelectListenersVs: React.FC<ISelectListenersVsProps> = ({
 }) => {
 	return (
 		<Controller
-			name='listener_uid'
+			name='listenerUid'
 			control={control}
 			rules={{
-				validate: validationRulesVsForm.listener_uid
+				validate: validationRulesVsForm.listenerUid
 			}}
 			render={({ field }) => (
-				<FormControl fullWidth error={!!errors.listener_uid || isErrorFetch}>
+				<FormControl fullWidth error={!!errors.listenerUid || isErrorFetch}>
 					<InputLabel>
-						{errors.listener_uid?.message ??
+						{errors.listenerUid?.message ??
 							(isErrorFetch ? 'Error loading ListenersVs data' : 'Select Listener VS')}
 					</InputLabel>
 					<Select
 						fullWidth
-						error={!!errors.listener_uid || isErrorFetch}
+						error={!!errors.listenerUid || isErrorFetch}
 						label={
-							errors.listener_uid?.message ??
+							errors.listenerUid?.message ??
 							(isErrorFetch ? 'Error loading ListenersVs data' : 'Select Listener VS')
 						}
 						value={field.value || ''}
