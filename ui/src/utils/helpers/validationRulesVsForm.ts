@@ -36,26 +36,18 @@ export const validationRulesVsForm: Record<
 		if (typeof value !== 'string') return 'The ListenerVS field is required'
 		return true
 	},
-	vh_name: value => {
-		if (typeof value !== 'string') return 'Invalid value'
-		if (value.length < 3) return 'Name Virtual Host must be at least 3 characters long'
-		if (value.length > 50) return 'Name Virtual Host must be at most 50 characters long'
-		if (!/^[a-zA-Z0-9_-]+$/.test(value))
-			return 'Name Virtual Host must contain only letters, numbers, hyphens, and underscores'
-		return true
-	},
-	vh_domains: value => {
+	vhDomains: value => {
 		if (!Array.isArray(value)) return 'Invalid value for Domains Virtual Host, expected an array'
 		if (value.length === 0) return 'The Domains Virtual Host field is required, enter at least one node'
 		for (const virtualHost of value) {
 			if (typeof virtualHost !== 'string') return 'Each Domains Virtual Host must be a string'
-			if (!/^[a-zA-Z0-9_-]+$/.test(virtualHost)) {
+			if (!/^[a-zA-Z0-9_.-]+$/.test(virtualHost)) {
 				return 'Domains Virtual Host must contain only letters, numbers, hyphens, and underscores'
 			}
 		}
 		return true
 	},
-	accessLogConfig: value => {
+	accessLogConfigUid: value => {
 		if (typeof value !== 'string') return 'The AccessLogConfig field is required'
 		return true
 	},
@@ -86,11 +78,15 @@ export const validationRulesVsForm: Record<
 					return 'Path must only contain letters, numbers, hyphens, underscores, slashes, and dots.'
 				}
 
+				if (option.modifier && typeof option.modifier !== 'number') {
+					return 'Modifier must be a number.'
+				}
+
 				if (option.modifier && !option.field) {
 					return 'You have selected a modification but have not specified the path.'
 				}
 
-				if (option.field && !option.modifier) {
+				if (option.field && option.modifier == null) {
 					return 'You specified the path but did not select the modification.'
 				}
 			}

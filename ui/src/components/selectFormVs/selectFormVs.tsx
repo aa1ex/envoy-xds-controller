@@ -8,7 +8,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { ListAccessLogConfigResponse } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'templateUid' | 'listenerUid' | 'accessLogConfig'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'templateUid' | 'listenerUid' | 'accessLogConfigUid'>
 
 interface ISelectFormVsProps {
 	nameField: nameFieldKeys
@@ -30,7 +30,7 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 	const fieldTitles: Record<string, string> = {
 		templateUid: 'TemplateVs',
 		listenerUid: 'ListenersVs',
-		accessLogConfig: 'AccessLogConfig'
+		accessLogConfigUid: 'AccessLogConfig'
 	}
 
 	const titleMessage = fieldTitles[nameField] || nameField

@@ -5,7 +5,7 @@ import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm
 import { Autocomplete, TextField } from '@mui/material'
 import Chip from '@mui/material/Chip'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vh_domains'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
 
 interface IAutocompleteChipVsProps {
 	nameField: nameFieldKeys

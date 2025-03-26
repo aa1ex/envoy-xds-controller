@@ -22,7 +22,7 @@ interface IVirtualServiceFormProps {
 
 export interface ITemplateOption {
 	field: string
-	modifier: string
+	modifier: number
 }
 
 export interface IVirtualServiceForm {
@@ -31,36 +31,13 @@ export interface IVirtualServiceForm {
 	projectId: string
 	templateUid: string
 	listenerUid: string
-	vh_name: string
-	vh_domains: string[]
-	accessLogConfig: string
+	vhDomains: string[]
+	accessLogConfigUid: string
 	additionalHttpFilterUids: string[]
 	additionalRouteUids: string[]
 	useRemoteAddress: boolean | null
 	templateOptions: ITemplateOption[]
 }
-
-const mockData = {
-	items: [
-		{
-			uid: '91344217',
-			name: 'http-filter'
-		},
-		{
-			uid: '91344218',
-			name: 'http-filter1'
-		},
-		{
-			uid: '91344219',
-			name: 'http-filter2'
-		},
-		{
-			uid: '91344210',
-			name: 'http-filter3'
-		}
-	]
-}
-console.log(mockData)
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVirtualService()
@@ -94,12 +71,12 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			name: '',
 			nodeIds: [],
 			projectId: '',
-			vh_name: '',
-			vh_domains: [],
+			vhDomains: [],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: null,
-			templateOptions: [{ field: '', modifier: '' }]
+			accessLogConfigUid: '',
+			templateOptions: [{ field: '', modifier: 0 }]
 		}
 	})
 
@@ -108,23 +85,12 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		console.log('Form Data:', data)
 
 		const formValues = {
-			name: data.vh_name,
-			domains: data.vh_domains
+			domains: data.vhDomains
 		}
-
-		// Шаг 1: Преобразуем объект в строку JSON
 		const jsonString = JSON.stringify(formValues)
+		const virtualHostUint8Array = new TextEncoder().encode(jsonString)
 
-		// Шаг 2: Кодируем строку JSON в Base64
-		const virtual_hostBase64 = btoa(jsonString)
-
-		// Шаг 3: Декодируем Base64 строку обратно в обычную строку
-		const decodedBase64 = atob(virtual_hostBase64)
-
-		// Шаг 4: Преобразуем строку в Uint8Array
-		const virtualHostUint8Array = new TextEncoder().encode(decodedBase64)
-
-		const { vh_name, vh_domains, ...result } = data
+		const { vhDomains, ...result } = data
 
 		const createVSData = {
 			...result,
@@ -147,7 +113,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 					gap={2}
 					overflow='auto'
 				>
-					<Grid container spacing={3} overflow='auto'>
+					<Grid container spacing={3} overflow='auto' padding={1}>
 						<Grid xs display='flex' flexDirection='column' gap={2}>
 							<TextFieldFormVs register={register} nameField='name' errors={errors} />
 							<AutocompleteChipVs
@@ -176,8 +142,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 								isErrorFetch={isErrorListeners}
 							/>
 							<VirtualHostVs
-								nameFields={['vh_name', 'vh_domains']}
-								register={register}
+								nameFields={'vhDomains'}
 								errors={errors}
 								setValue={setValue}
 								control={control}
@@ -185,7 +150,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 								setError={setError}
 							/>
 							<SelectFormVs
-								nameField={'accessLogConfig'}
+								nameField={'accessLogConfigUid'}
 								data={accessLogs}
 								control={control}
 								errors={errors}

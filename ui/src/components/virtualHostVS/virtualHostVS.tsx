@@ -1,20 +1,11 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import {
-	Control,
-	FieldErrors,
-	UseFormClearErrors,
-	UseFormRegister,
-	UseFormSetError,
-	UseFormSetValue
-} from 'react-hook-form'
+import { Control, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
-import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
 
 interface IVirtualHostVsProps {
-	nameFields: ['vh_name', 'vh_domains']
-	register: UseFormRegister<IVirtualServiceForm>
+	nameFields: 'vhDomains'
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
@@ -24,14 +15,12 @@ interface IVirtualHostVsProps {
 
 export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 	nameFields,
-	register,
 	errors,
 	setError,
 	clearErrors,
 	control,
 	setValue
 }) => {
-	const [vh_name, vh_domains] = nameFields
 	return (
 		<Box
 			sx={{
@@ -48,9 +37,8 @@ export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 			<Typography fontSize={15} color='gray' mt={1}>
 				Configure the virtual host
 			</Typography>
-			<TextFieldFormVs register={register} nameField={vh_name} errors={errors} variant={'standard'} />
 			<AutocompleteChipVs
-				nameField={vh_domains}
+				nameField={nameFields}
 				control={control}
 				setValue={setValue}
 				errors={errors}

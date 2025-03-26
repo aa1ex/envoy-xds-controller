@@ -46,18 +46,18 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 
 	const enumOptionsModifier = Object.entries(TemplateOptionModifier)
 		.filter(([_, value]) => typeof value === 'number')
-		.map(([key]) => ({
+		.map(([key, value]) => ({
 			label: `TEMPLATE_OPTION_MODIFIER_${key.toUpperCase()}`,
-			value: `TEMPLATE_OPTION_MODIFIER_${key.toUpperCase()}`
+			value: value
 		}))
 
-	const validateTemplateOption = (fieldName: 'field' | 'modifier', index: number, value: string) => {
+	const validateTemplateOption = (fieldName: 'field' | 'modifier', index: number, value: string | number) => {
 		const fieldValue = getValues(`templateOptions.${index}.field`)
 		const modifierValue = getValues(`templateOptions.${index}.modifier`)
 
 		const templateOption = {
-			field: fieldName === 'field' ? value : fieldValue,
-			modifier: fieldName === 'modifier' ? value : modifierValue
+			field: fieldName === 'field' ? String(value) : String(fieldValue), // Приводим к строке
+			modifier: fieldName === 'modifier' ? Number(value) : Number(modifierValue) // Приводим к числу
 		}
 
 		const result = validationRulesVsForm.templateOptions([templateOption])
@@ -118,11 +118,13 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 										{...field}
 										label={errors.templateOptions?.[index]?.modifier?.message || 'Modifications'}
 									>
-										{enumOptionsModifier.map(option => (
-											<MenuItem key={option.value} value={option.value}>
-												{option.label}
-											</MenuItem>
-										))}
+										{enumOptionsModifier
+											.filter(option => option.value !== 0)
+											.map(option => (
+												<MenuItem key={option.value} value={option.value}>
+													{option.label}
+												</MenuItem>
+											))}
 									</Select>
 								</FormControl>
 							)}
@@ -133,7 +135,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 					</Box>
 				))}
 			</Box>
-			<Button onClick={() => append({ field: '', modifier: '' })} variant='contained'>
+			<Button onClick={() => append({ field: '', modifier: 0 })} variant='contained'>
 				Add Template Modifier
 			</Button>
 		</Box>
