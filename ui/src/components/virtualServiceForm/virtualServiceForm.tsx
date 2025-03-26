@@ -59,6 +59,7 @@ const mockData = {
 		}
 	]
 }
+console.log(mockData)
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVirtualService()
@@ -191,7 +192,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 					<Grid xs display='flex' flexDirection='column' gap={2}>
 						<DNdSelectFormVs
 							nameField={'additional_route_uids'}
-							data={mockData}
+							data={routes}
 							control={control}
 							setValue={setValue}
 							watch={watch}
