@@ -41,7 +41,7 @@ func (s *Store) MapAccessLogs() map[helpers.NamespacedName]*v1alpha1.AccessLogCo
 }
 
 func (s *Store) updateAccessLogByUIDMap() {
-	if len(s.accessLogByUID) == 0 {
+	if len(s.accessLogs) == 0 {
 		return
 	}
 	m := make(map[string]*v1alpha1.AccessLogConfig, len(s.accessLogs))

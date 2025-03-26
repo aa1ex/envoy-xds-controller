@@ -41,7 +41,7 @@ func (s *Store) MapRoutes() map[helpers.NamespacedName]*v1alpha1.Route {
 }
 
 func (s *Store) updateRouteByUIDMap() {
-	if len(s.routeByUID) == 0 {
+	if len(s.routes) == 0 {
 		return
 	}
 	m := make(map[string]*v1alpha1.Route, len(s.routes))
