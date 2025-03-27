@@ -42,6 +42,9 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 					options={[]}
 					value={field.value}
 					onChange={(_, newValue) => {
+						field.onChange(newValue)
+						setValue(nameField, newValue)
+
 						const errorMessage = validationRulesVsForm[nameField](newValue)
 						if (errorMessage !== true) {
 							setError(nameField, { type: 'manual', message: errorMessage })
@@ -49,7 +52,6 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 						}
 
 						clearErrors(nameField)
-						setValue(nameField, newValue)
 					}}
 					renderTags={(value: readonly string[], getTagProps) =>
 						value.map((option: string, index: number) => {
