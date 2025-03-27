@@ -15,6 +15,7 @@ import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 import { useCreateVirtualService } from '../../api/grpc/hooks/useCreateVirtualService.ts'
+import { CreateVirtualServiceRequest } from '../../gen/virtual_service/v1/virtual_service_pb'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -35,7 +36,7 @@ export interface IVirtualServiceForm {
 	accessLogConfigUid: string
 	additionalHttpFilterUids: string[]
 	additionalRouteUids: string[]
-	useRemoteAddress: boolean | null
+	useRemoteAddress: boolean | undefined
 	templateOptions: ITemplateOption[]
 }
 
@@ -74,7 +75,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 			vhDomains: [],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
-			useRemoteAddress: null,
+			useRemoteAddress: undefined,
 			accessLogConfigUid: '',
 			templateOptions: [{ field: '', modifier: 0 }]
 		}
@@ -92,13 +93,19 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 
 		const { vhDomains, ...result } = data
 
-		const createVSData = {
+		const createVSData: CreateVirtualServiceRequest = {
 			...result,
 			virtualHost: virtualHostUint8Array,
-			templateOptions: result.templateOptions[0].field ? result.templateOptions : [],
+			templateOptions:
+				result.templateOptions?.map(option => ({
+					...option,
+					$typeName: 'virtual_service_template.v1.TemplateOption' as const
+				})) ?? [],
 			accessLogConfig: result.accessLogConfigUid
 				? { case: 'accessLogConfigUid', value: result.accessLogConfigUid }
-				: { case: undefined }
+				: { case: undefined },
+
+			$typeName: 'virtual_service.v1.CreateVirtualServiceRequest' as const
 		}
 
 		console.log('data for create', createVSData)

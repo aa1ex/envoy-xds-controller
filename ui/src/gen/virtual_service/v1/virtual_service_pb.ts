@@ -71,7 +71,7 @@ export type CreateVirtualServiceRequest = Message<'virtual_service.v1.CreateVirt
 	 *
 	 * @generated from oneof virtual_service.v1.CreateVirtualServiceRequest.access_log_config
 	 */
-	accessLogConfigUid:
+	accessLogConfig:
 		| {
 				/**
 				 * @generated from field: string access_log_config_uid = 7;
