@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { accessLogServiceClient } from '../client.ts'
 
-export const useAccessLogsVirtualService = () => {
+export const useAccessLogsVs = () => {
 	return useQuery({
-		queryKey: ['accessLogsVirtualService'],
+		queryKey: ['accessLogsVs'],
 		queryFn: () => accessLogServiceClient.listAccessLogConfig({})
 	})
 }

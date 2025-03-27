@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { routeServiceClient } from '../client.ts'
 
-export const useRouteVirtualService = () => {
+export const useRouteVs = () => {
 	return useQuery({
-		queryKey: ['routeVirtualService'],
+		queryKey: ['routeVs'],
 		queryFn: () => routeServiceClient.listRoute({})
 	})
 }

@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { templateServiceClient } from '../client.ts'
 
-export const useTemplatesVirtualService = () => {
+export const useTemplatesVs = () => {
 	return useQuery({
-		queryKey: ['templatesVirtualService'],
+		queryKey: ['templatesVs'],
 		queryFn: () => templateServiceClient.listVirtualServiceTemplate({})
 	})
 }

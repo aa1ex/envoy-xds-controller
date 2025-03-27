@@ -2,11 +2,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { virtualServiceClient } from '../client.ts'
 
-// export const useGetVirtualServices = () => {
+// export const useGetVs = () => {
 // 	return useQuery(listVirtualService, {})
 // }
 
-export const useGetVirtualServices = () => {
+export const useGetVs = () => {
 	return useQuery({
 		queryKey: ['virtualServices'],
 		queryFn: () => virtualServiceClient.listVirtualService({})

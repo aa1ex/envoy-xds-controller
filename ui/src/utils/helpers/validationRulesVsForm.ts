@@ -21,19 +21,16 @@ export const validationRulesVsForm: Record<
 		}
 		return true
 	},
-	projectId: value => {
-		if (typeof value !== 'string') return 'Invalid value'
-		if (value.length > 80) return 'Project ID must be at most 80 characters long'
-		if (!/^[a-zA-Z0-9_-]+$/.test(value))
-			return 'Project ID must contain only letters, numbers, hyphens, and underscores'
+	accessGroup: value => {
+		if (typeof value !== 'string') return 'The Acceess Group field is required'
 		return true
 	},
 	templateUid: value => {
-		if (typeof value !== 'string') return 'The TemplateVS field is required'
+		if (typeof value !== 'string') return 'The Template field is required'
 		return true
 	},
 	listenerUid: value => {
-		if (typeof value !== 'string') return 'The ListenerVS field is required'
+		if (typeof value !== 'string') return 'The Listener field is required'
 		return true
 	},
 	vhDomains: value => {

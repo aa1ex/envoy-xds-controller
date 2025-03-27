@@ -3,19 +3,20 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { Box, Button, Divider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
-import { useTemplatesVirtualService } from '../../api/grpc/hooks/useTemplatesVirtualService.ts'
-import { useListenerVirtualService } from '../../api/grpc/hooks/useListenerVirtualService.ts'
+import { useTemplatesVs } from '../../api/grpc/hooks/useTemplatesVs.ts'
+import { useListenerVs } from '../../api/grpc/hooks/useListenerVs.ts'
 import { VirtualHostVs } from '../virtualHostVS/virtualHostVS.tsx'
 import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
-import { useAccessLogsVirtualService } from '../../api/grpc/hooks/useAccessLogsVirtualService.ts'
+import { useAccessLogsVs } from '../../api/grpc/hooks/useAccessLogsVs.ts'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
-import { useHttpFilterVirtualService } from '../../api/grpc/hooks/useHttpFilterVirtualService.ts'
-import { useRouteVirtualService } from '../../api/grpc/hooks/useRouteVirtualService.ts'
+import { useHttpFilterVs } from '../../api/grpc/hooks/useHttpFilterVs.ts'
+import { useRouteVs } from '../../api/grpc/hooks/useRouteVs.ts'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
-import { useCreateVirtualService } from '../../api/grpc/hooks/useCreateVirtualService.ts'
+import { useCreateVs } from '../../api/grpc/hooks/useCreateVs.ts'
 import { CreateVirtualServiceRequest } from '../../gen/virtual_service/v1/virtual_service_pb'
+import { useAccessGroupsVs } from '../../api/grpc/hooks/useAccessGroupsVs.ts'
 
 interface IVirtualServiceFormProps {
 	title?: string
@@ -29,7 +30,7 @@ export interface ITemplateOption {
 export interface IVirtualServiceForm {
 	name: string
 	nodeIds: string[]
-	projectId: string
+	accessGroup: string
 	templateUid: string
 	listenerUid: string
 	vhDomains: string[]
@@ -41,20 +42,13 @@ export interface IVirtualServiceForm {
 }
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
-	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVirtualService()
-	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVirtualService()
-	const {
-		data: accessLogs,
-		isFetching: isFetchingAccessLogs,
-		isError: isErrorAccessLogs
-	} = useAccessLogsVirtualService()
-	const {
-		data: httpFilters,
-		isFetching: isFetchingHttpFilters,
-		isError: isErrorHttpFilters
-	} = useHttpFilterVirtualService()
-	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVirtualService()
-	const { createVirtualService } = useCreateVirtualService()
+	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs()
+	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVs()
+	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs()
+	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs()
+	const { data: accessGroups, isFetching: isFetchingAccessGroups, isError: isErrorAccessGroups } = useAccessGroupsVs()
+	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
+	const { createVirtualService } = useCreateVs()
 
 	const {
 		register,
@@ -71,7 +65,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		defaultValues: {
 			name: '',
 			nodeIds: [],
-			projectId: '',
+			accessGroup: '',
 			vhDomains: [],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
@@ -134,7 +128,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 								setError={setError}
 								clearErrors={clearErrors}
 							/>
-							<TextFieldFormVs register={register} nameField='projectId' errors={errors} />
+							<SelectFormVs
+								nameField={'accessGroup'}
+								data={accessGroups}
+								control={control}
+								errors={errors}
+								isFetching={isFetchingAccessGroups}
+								isErrorFetch={isErrorAccessGroups}
+							/>
 							<SelectFormVs
 								nameField={'templateUid'}
 								data={templates}

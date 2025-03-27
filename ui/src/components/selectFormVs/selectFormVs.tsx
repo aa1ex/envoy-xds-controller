@@ -1,19 +1,36 @@
 import React from 'react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
-import { ListVirtualServiceTemplateResponse } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
-import { ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
+import {
+	ListVirtualServiceTemplateResponse,
+	VirtualServiceTemplateListItem
+} from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
+import { ListenerListItem, ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
-import { ListAccessLogConfigResponse } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
+import {
+	AccessLogConfigListItem,
+	ListAccessLogConfigResponse
+} from '../../gen/access_log_config/v1/access_log_config_pb.ts'
+import { AccessGroupListItem, ListAccessGroupResponse } from '../../gen/access_group/v1/access_group_pb'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'templateUid' | 'listenerUid' | 'accessLogConfigUid'>
+type nameFieldKeys = Extract<
+	keyof IVirtualServiceForm,
+	'templateUid' | 'listenerUid' | 'accessLogConfigUid' | 'accessGroup'
+>
+
+type Item = ListenerListItem | VirtualServiceTemplateListItem | AccessLogConfigListItem | AccessGroupListItem
 
 interface ISelectFormVsProps {
 	nameField: nameFieldKeys
 	control: Control<IVirtualServiceForm, any>
-	data: ListListenerResponse | ListVirtualServiceTemplateResponse | ListAccessLogConfigResponse | undefined
+	data:
+		| ListListenerResponse
+		| ListVirtualServiceTemplateResponse
+		| ListAccessLogConfigResponse
+		| ListAccessGroupResponse
+		| undefined
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean
@@ -28,12 +45,24 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 	isFetching
 }) => {
 	const fieldTitles: Record<string, string> = {
-		templateUid: 'TemplateVs',
-		listenerUid: 'ListenersVs',
-		accessLogConfigUid: 'AccessLogConfig'
+		templateUid: 'Template',
+		listenerUid: 'Listeners',
+		accessLogConfigUid: 'AccessLogConfig',
+		accessGroup: 'AccessGroup'
 	}
 
 	const titleMessage = fieldTitles[nameField] || nameField
+
+	const renderMenuItem = (item: Item) => {
+		const key = 'uid' in item ? item.uid : item.name
+		const value = 'uid' in item ? item.uid : item.name
+
+		return (
+			<MenuItem key={key} value={value}>
+				{item.name}
+			</MenuItem>
+		)
+	}
 
 	return (
 		<Controller
@@ -68,11 +97,7 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 							</MenuItem>
 						)}
 
-						{data?.items?.map(item => (
-							<MenuItem key={item.uid} value={item.uid}>
-								{item.name}
-							</MenuItem>
-						))}
+						{data?.items?.map(item => renderMenuItem(item))}
 					</Select>
 				</FormControl>
 			)}

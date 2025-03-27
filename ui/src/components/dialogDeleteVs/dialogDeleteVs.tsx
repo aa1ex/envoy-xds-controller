@@ -4,7 +4,7 @@ import Dialog from '@mui/material/Dialog'
 import { Button, DialogActions, DialogTitle } from '@mui/material'
 import DialogContent from '@mui/material/DialogContent'
 import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
-import { useDeleteVirtualService } from '../../api/grpc/hooks/useDeleteVirtualService.ts'
+import { useDeleteVs } from '../../api/grpc/hooks/useDeleteVs.ts'
 
 interface IDialogDeleteVSProps {
 	serviceName: string
@@ -26,7 +26,7 @@ const DialogDeleteVS: React.FC<IDialogDeleteVSProps> = ({
 	setSelectedUid
 }) => {
 	//TODO тут хук удаления
-	const { deleteVirtualService } = useDeleteVirtualService()
+	const { deleteVirtualService } = useDeleteVs()
 
 	const handleConfirmDelete = async () => {
 		if (!selectedUid.trim()) return

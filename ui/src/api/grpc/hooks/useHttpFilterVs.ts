@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { httpFilterServiceClient } from '../client.ts'
 
-export const useHttpFilterVirtualService = () => {
+export const useHttpFilterVs = () => {
 	return useQuery({
-		queryKey: ['httpFilterVirtualService'],
+		queryKey: ['httpFilterVs'],
 		queryFn: () => httpFilterServiceClient.listHTTPFilter({})
 	})
 }

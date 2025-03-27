@@ -1,10 +1,10 @@
 import React from 'react'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
-import { TextField } from '@mui/material'
+import { TextField, Tooltip } from '@mui/material'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'name' | 'projectId' | 'vh_name'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'name' | 'projectId'>
 
 interface ITextFieldFormVsProps {
 	nameField: nameFieldKeys
@@ -14,26 +14,21 @@ interface ITextFieldFormVsProps {
 }
 
 export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, nameField, errors, variant }) => {
-	const validate = validationRulesVsForm[nameField]
-	const fieldTitles: Record<string, string> = {
-		name: 'Name Vs',
-		project_id: 'Project Id',
-		vh_name: 'Virtual Host Name'
-	}
-
-	const titleMessage = fieldTitles[nameField] || nameField
+	const titleMessage = nameField === 'name' ? 'Name' : 'Project Id'
 
 	return (
-		<TextField
-			{...register(nameField, {
-				required: `The ${titleMessage} field is required`,
-				validate: validate
-			})}
-			fullWidth
-			placeholder={`Enter ${titleMessage}`}
-			error={!!errors[nameField]}
-			label={errors[nameField]?.message ?? ` ${titleMessage}`}
-			variant={variant}
-		/>
+		<Tooltip title={`Enter ${titleMessage}`} placement='bottom-start' arrow>
+			<TextField
+				{...register(nameField, {
+					required: `The ${titleMessage} field is required`,
+					validate: validationRulesVsForm[nameField]
+				})}
+				fullWidth
+				error={!!errors[nameField]}
+				label={titleMessage}
+				helperText={errors[nameField]?.message}
+				variant={variant}
+			/>
+		</Tooltip>
 	)
 }
