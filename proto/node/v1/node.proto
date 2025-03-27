@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package node.v1;
+
+option go_package = "nodev1";
+
+service NodeStoreService {
+  rpc ListNode(ListNodeRequest) returns (ListNodeResponse);
+}
+
+message NodeListItem {
+  string id = 1;
+}
+
+message ListNodeRequest {}
+
+message ListNodeResponse {
+  repeated NodeListItem items = 1;
+}

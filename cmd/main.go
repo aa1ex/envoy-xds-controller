@@ -113,7 +113,7 @@ func main() {
 	var secureMetrics bool
 	var enableHTTP2 bool
 	var tlsOpts []func(*tls.Config)
-	var enableCacheAPI bool
+	var enableCacheAPI bool // TODO: rename enable-api
 	var cacheAPIPort int
 	var cacheAPIScheme string
 	var cacheAPIAddr string
@@ -408,20 +408,32 @@ func main() {
 
 		if enableCacheAPI {
 			go func() {
-				xdsServerCfg := &api.Config{}
-				xdsServerCfg.EnableDevMode = devMode
-				xdsServerCfg.Auth.Enabled, _ = strconv.ParseBool(os.Getenv("OIDC_ENABLED"))
-				xdsServerCfg.Auth.IssuerURL = os.Getenv("OIDC_ISSUER_URL")
-				xdsServerCfg.Auth.ClientID = os.Getenv("OIDC_CLIENT_ID")
+				apiServerCfg := &api.Config{}
+				apiServerCfg.EnableDevMode = devMode
+				apiServerCfg.Auth.Enabled, _ = strconv.ParseBool(os.Getenv("OIDC_ENABLED"))
+				apiServerCfg.Auth.IssuerURL = os.Getenv("OIDC_ISSUER_URL")
+				apiServerCfg.Auth.ClientID = os.Getenv("OIDC_CLIENT_ID")
 				if acl := os.Getenv("ACL_CONFIG"); acl != "" {
-					err = json.Unmarshal([]byte(acl), &xdsServerCfg.Auth.ACL)
+					err = json.Unmarshal([]byte(acl), &apiServerCfg.Auth.ACL)
 					if err != nil {
 						setupServers.Error(err, "failed to parse ACL config")
 						os.Exit(1)
 					}
 				}
-				apiServer := api.New(snapshotCache, xdsServerCfg, zapLogger, devMode)
-				if err := apiServer.RunGRPC(grpcAPIPort, resStore, mgr.GetClient(), cfg.GetNamespaceForResourceCreation()); err != nil {
+				if config := os.Getenv("CONFIG"); config != "" {
+					err = json.Unmarshal([]byte(config), &apiServerCfg.StaticResources)
+					if err != nil {
+						setupServers.Error(err, "failed to parse static resources config")
+						os.Exit(1)
+					}
+				}
+				apiServer := api.New(snapshotCache, apiServerCfg, zapLogger, devMode)
+				if err := apiServer.RunGRPC(
+					grpcAPIPort,
+					resStore,
+					mgr.GetClient(),
+					cfg.GetNamespaceForResourceCreation(),
+				); err != nil {
 					setupServers.Error(err, "cannot run grpc xDS server")
 					os.Exit(1)
 				}

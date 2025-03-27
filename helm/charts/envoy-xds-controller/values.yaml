@@ -182,3 +182,14 @@ auth:
       users:
         - "node1"
         - "node2"
+
+config:
+  nodeIds:
+    - "node1"
+    - "node2"
+    - "node3"
+    - "node4"
+  excAccessGroups:
+    - "group1"
+    - "group2"
+    - "group3"

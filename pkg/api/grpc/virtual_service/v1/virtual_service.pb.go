@@ -35,10 +35,10 @@ type CreateVirtualServiceRequest struct {
 	//
 	//	*CreateVirtualServiceRequest_AccessLogConfigUid
 	AccessLogConfig          isCreateVirtualServiceRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
-	AdditionalHttpFilterUids []string                                      `protobuf:"bytes,8,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"` // селектор из
-	AdditionalRouteUids      []string                                      `protobuf:"bytes,9,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
-	UseRemoteAddress         *bool                                         `protobuf:"varint,10,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"` // выбор из 3х значений ДА/НЕТ/NUll дефолт null
-	TemplateOptions          []*v1.TemplateOption                          `protobuf:"bytes,11,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
+	AdditionalHttpFilterUids []string                                      `protobuf:"bytes,8,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"` // селектор множества фильтров порядок важен, сначала добавляем из списка, а после двигаем
+	AdditionalRouteUids      []string                                      `protobuf:"bytes,9,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`                  // примерно так же как и http filter
+	UseRemoteAddress         *bool                                         `protobuf:"varint,10,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`                   // выбор из 3х значений ДА/НЕТ/NUll дефолт null
+	TemplateOptions          []*v1.TemplateOption                          `protobuf:"bytes,11,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`                               // набор опций пе
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -164,7 +164,7 @@ type isCreateVirtualServiceRequest_AccessLogConfig interface {
 }
 
 type CreateVirtualServiceRequest_AccessLogConfigUid struct {
-	AccessLogConfigUid string `protobuf:"bytes,7,opt,name=access_log_config_uid,json=accessLogConfigUid,proto3,oneof"`
+	AccessLogConfigUid string `protobuf:"bytes,7,opt,name=access_log_config_uid,json=accessLogConfigUid,proto3,oneof"` // select
 }
 
 func (*CreateVirtualServiceRequest_AccessLogConfigUid) isCreateVirtualServiceRequest_AccessLogConfig() {

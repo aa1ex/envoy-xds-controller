@@ -94,6 +94,13 @@ spec:
                 name: acl
                 key: ACL_CONFIG
         {{- end }}
+        {{- if .Values.config }}
+          - name: CONFIG # TODO: rename
+            valueFrom:
+              configMapKeyRef:
+                name: config
+                key: CONFIG
+        {{- end }}
         {{- with .Values.envs }}
           {{- tpl . $ | nindent 10 }}
         {{- end }}

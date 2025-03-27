@@ -124,6 +124,11 @@ export declare type FillTemplateRequest = Message<"virtual_service_template.v1.F
    * @generated from field: optional bool use_remote_address = 7;
    */
   useRemoteAddress?: boolean;
+
+  /**
+   * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 8;
+   */
+  templateOptions: TemplateOption[];
 };
 
 /**

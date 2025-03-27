@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package access_group.v1;
+
+option go_package = "accessgroupv1";
+
+service AccessGroupStoreService {
+  rpc ListAccessGroup(ListAccessGroupRequest) returns (ListAccessGroupResponse);
+}
+
+message AccessGroupListItem {
+  string name = 1;
+}
+
+message ListAccessGroupRequest {}
+
+message ListAccessGroupResponse {
+  repeated AccessGroupListItem items = 1;
+}

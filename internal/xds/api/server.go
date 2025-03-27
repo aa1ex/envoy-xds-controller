@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_group/v1/access_groupv1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_log_config/v1/access_log_configv1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/cluster/v1/clusterv1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/http_filter/v1/http_filterv1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/listener/v1/listenerv1connect"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/node/v1/nodev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/policy/v1/policyv1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/route/v1/routev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
@@ -45,6 +47,10 @@ type Config struct {
 		IssuerURL string
 		ClientID  string
 		ACL       map[string][]string
+	}
+	StaticResources struct {
+		AccessGroups []string `json:"excAccessGroups"`
+		NodeIDs      []string `json:"nodeIds"`
 	}
 }
 
@@ -128,6 +134,10 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	path, handler = policyv1connect.NewPolicyStoreServiceHandler(grpcapi.NewPolicyStore(s))
 	mux.Handle(path, handler)
 	path, handler = clusterv1connect.NewClusterStoreServiceHandler(grpcapi.NewClusterStore(s))
+	mux.Handle(path, handler)
+	path, handler = nodev1connect.NewNodeStoreServiceHandler(grpcapi.NewNodeStore(c.cfg.StaticResources.NodeIDs))
+	mux.Handle(path, handler)
+	path, handler = access_groupv1connect.NewAccessGroupStoreServiceHandler(grpcapi.NewAccessGroupStore(c.cfg.StaticResources.AccessGroups))
 	mux.Handle(path, handler)
 
 	reflector := grpcreflect.NewStaticReflector()

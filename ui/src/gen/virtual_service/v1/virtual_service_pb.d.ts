@@ -65,6 +65,8 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
    */
   accessLogConfig: {
     /**
+     * select
+     *
      * @generated from field: string access_log_config_uid = 7;
      */
     value: string;
@@ -72,13 +74,15 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
   } | { case: undefined; value?: undefined };
 
   /**
-   * селектор из
+   * селектор множества фильтров порядок важен, сначала добавляем из списка, а после двигаем
    *
    * @generated from field: repeated string additional_http_filter_uids = 8;
    */
   additionalHttpFilterUids: string[];
 
   /**
+   * примерно так же как и http filter
+   *
    * @generated from field: repeated string additional_route_uids = 9;
    */
   additionalRouteUids: string[];
@@ -91,6 +95,8 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
   useRemoteAddress?: boolean;
 
   /**
+   * набор опций пе
+   *
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 11;
    */
   templateOptions: TemplateOption[];
