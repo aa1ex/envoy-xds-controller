@@ -4,6 +4,8 @@ metadata:
   name: virtual-service
   annotations:
     envoy.kaasops.io/node-id: test
+  labels:
+    exc-access-group: dev
 spec:
   listener:
     name: https

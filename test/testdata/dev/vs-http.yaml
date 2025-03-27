@@ -5,7 +5,7 @@ metadata:
   annotations:
     envoy.kaasops.io/node-id: test
   labels:
-    project-id: dev
+    exc-access-group: dev
 spec:
   listener:
     name: http

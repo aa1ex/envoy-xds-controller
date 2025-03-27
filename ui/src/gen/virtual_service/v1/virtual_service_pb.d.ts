@@ -33,9 +33,9 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
   /**
    * строка. сточные прописные, цифры и спец символы, 80 символов
    *
-   * @generated from field: string project_id = 3;
+   * @generated from field: string access_group = 3;
    */
-  projectId: string;
+  accessGroup: string;
 
   /**
    * выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
@@ -140,9 +140,9 @@ export declare type UpdateVirtualServiceRequest = Message<"virtual_service.v1.Up
   name: string;
 
   /**
-   * @generated from field: string project_id = 4;
+   * @generated from field: string access_group = 4;
    */
-  projectId: string;
+  accessGroup: string;
 
   /**
    * @generated from field: string template_uid = 5;
@@ -273,9 +273,9 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
   nodeIds: string[];
 
   /**
-   * @generated from field: string project_id = 4;
+   * @generated from field: string access_group = 4;
    */
-  projectId: string;
+  accessGroup: string;
 
   /**
    * @generated from field: common.v1.ResourceRef template = 5;
@@ -368,9 +368,9 @@ export declare type VirtualServiceListItem = Message<"virtual_service.v1.Virtual
   nodeIds: string[];
 
   /**
-   * @generated from field: string project_id = 4;
+   * @generated from field: string access_group = 4;
    */
-  projectId: string;
+  accessGroup: string;
 
   /**
    * @generated from field: common.v1.ResourceRef template = 5;

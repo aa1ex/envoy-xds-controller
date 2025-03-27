@@ -18,7 +18,7 @@ service VirtualServiceStoreService {
 message CreateVirtualServiceRequest {
   string name = 1; //строка
   repeated string node_ids = 2; //список чипов, данные вводим сами, из головы
-  string project_id = 3; //строка. сточные прописные, цифры и спец символы, 80 символов
+  string access_group = 3; //строка. сточные прописные, цифры и спец символы, 80 символов
   string template_uid = 4; //выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
   string listener_uid = 5; //выбор из колекции listeners proto/listener/v1/listener.proto
   bytes virtual_host = 6; // textAria инпут на YAML или JSON, но при отправке в JSON(BASE64)
@@ -37,7 +37,7 @@ message UpdateVirtualServiceRequest {
   string uid = 1;
   repeated string node_ids = 2;
   string name = 3;
-  string project_id = 4;
+  string access_group = 4;
   string template_uid = 5;
   string listener_uid = 6;
   bytes virtual_host = 7;
@@ -66,7 +66,7 @@ message GetVirtualServiceResponse {
   string uid = 1;
   string name = 2;
   repeated string node_ids = 3;
-  string project_id = 4;
+  string access_group = 4;
   common.v1.ResourceRef template = 5;
   common.v1.ResourceRef listener = 6;
   bytes virtual_host = 7;
@@ -86,7 +86,7 @@ message VirtualServiceListItem {
   string uid = 1;
   string name = 2;
   repeated string node_ids = 3;
-  string project_id = 4;
+  string access_group = 4;
   common.v1.ResourceRef template = 5;
 }
 

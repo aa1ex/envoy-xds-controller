@@ -38,10 +38,10 @@ func (s *VirtualServiceStore) ListVirtualService(_ context.Context, _ *connect.R
 	list := make([]*v1.VirtualServiceListItem, 0, len(m))
 	for _, v := range m {
 		vs := &v1.VirtualServiceListItem{
-			Uid:       string(v.UID),
-			Name:      v.Name,
-			NodeIds:   v.GetNodeIDs(),
-			ProjectId: v.GetProjectID(),
+			Uid:         string(v.UID),
+			Name:        v.Name,
+			NodeIds:     v.GetNodeIDs(),
+			AccessGroup: v.GetAccessGroup(),
 		}
 		if v.Spec.Template != nil {
 			template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: v.Namespace, Name: v.Spec.Template.Name})
@@ -68,8 +68,8 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
 
-	if req.Msg.ProjectId != "" {
-		vs.SetProjectID(req.Msg.ProjectId)
+	if req.Msg.AccessGroup != "" {
+		vs.SetAccessGroup(req.Msg.AccessGroup)
 	}
 
 	if req.Msg.TemplateUid != "" {
@@ -198,8 +198,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
 
-	if req.Msg.ProjectId != "" {
-		vs.SetProjectID(req.Msg.ProjectId)
+	if req.Msg.AccessGroup != "" {
+		vs.SetAccessGroup(req.Msg.AccessGroup)
 	}
 
 	if req.Msg.TemplateUid != "" {
@@ -333,10 +333,10 @@ func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connec
 		return nil, fmt.Errorf("virtual service uid '%s' not found", req.Msg.Uid)
 	}
 	resp := &v1.GetVirtualServiceResponse{
-		Uid:       string(vs.UID),
-		Name:      vs.Name,
-		NodeIds:   vs.GetNodeIDs(),
-		ProjectId: vs.GetProjectID(),
+		Uid:         string(vs.UID),
+		Name:        vs.Name,
+		NodeIds:     vs.GetNodeIDs(),
+		AccessGroup: vs.GetAccessGroup(),
 	}
 	if vs.Spec.Template != nil {
 		template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.Template.Name})

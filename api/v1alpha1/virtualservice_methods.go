@@ -13,7 +13,7 @@ import (
 const (
 	AnnotationNodeIDs  = "envoy.kaasops.io/node-id"
 	AnnotationEditable = "envoy.kaasops.io/editable"
-	LabelProjectID     = "project-id"
+	LabelAccessGroup   = "exc-access-group"
 )
 
 func (vs *VirtualService) GetNodeIDs() []string {
@@ -44,16 +44,16 @@ func (vs *VirtualService) SetNodeIDs(nodeIDs []string) {
 	vs.SetAnnotations(annotations)
 }
 
-func (vs *VirtualService) GetProjectID() string {
-	return vs.GetLabels()[LabelProjectID]
+func (vs *VirtualService) GetAccessGroup() string {
+	return vs.GetLabels()[LabelAccessGroup]
 }
 
-func (vs *VirtualService) SetProjectID(projectID string) {
+func (vs *VirtualService) SetAccessGroup(accessGroup string) {
 	labels := vs.GetLabels()
 	if len(labels) == 0 {
 		labels = make(map[string]string)
 	}
-	labels[LabelProjectID] = projectID
+	labels[LabelAccessGroup] = accessGroup
 	vs.SetLabels(labels)
 }
 
