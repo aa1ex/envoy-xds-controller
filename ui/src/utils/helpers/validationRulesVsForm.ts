@@ -22,7 +22,7 @@ export const validationRulesVsForm: Record<
 		return true
 	},
 	accessGroup: value => {
-		if (typeof value !== 'string') return 'The Acceess Group field is required'
+		if (typeof value !== 'string') return 'The Access Group field is required'
 		return true
 	},
 	templateUid: value => {
@@ -75,16 +75,15 @@ export const validationRulesVsForm: Record<
 					return 'Path must only contain letters, numbers, hyphens, underscores, slashes, and dots.'
 				}
 
-				if (option.modifier && typeof option.modifier !== 'number') {
-					return 'Modifier must be a number.'
-				}
+				// if (option.modifier && typeof option.modifier !== 'number') {
+				// 	return 'Modifier must be a number.'
+				// }
 
+				if (option.field && option.modifier === 0) {
+					return 'You specified the path but did not select the modification.'
+				}
 				if (option.modifier && !option.field) {
 					return 'You have selected a modification but have not specified the path.'
-				}
-
-				if (option.field && option.modifier == null) {
-					return 'You specified the path but did not select the modification.'
 				}
 			}
 		} else {

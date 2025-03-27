@@ -14,15 +14,18 @@ import {
 	Box,
 	Button,
 	FormControl,
+	FormHelperText,
 	IconButton,
 	InputLabel,
 	MenuItem,
 	Select,
 	TextField,
+	Tooltip,
 	Typography
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
+import { styleBox, styleTooltip } from './style.ts'
 
 interface ITemplateOptionsFormVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -74,21 +77,17 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 	}
 
 	return (
-		<Box
-			sx={{
-				width: '100%',
-				border: '1px solid gray',
-				borderRadius: 1,
-				p: 2,
-				pt: 0.5,
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 2
-			}}
-		>
-			<Typography fontSize={15} color='gray' mt={1}>
-				Template Modifier
-			</Typography>
+		<Box sx={{ ...styleBox }}>
+			<Tooltip
+				title='Specify the property and select the modification parameter.'
+				placement='bottom-start'
+				enterDelay={500}
+				slotProps={{ ...styleTooltip }}
+			>
+				<Typography fontSize={15} color='gray' mt={1}>
+					Template Modifier
+				</Typography>
+			</Tooltip>
 
 			<Box display='flex' flexDirection='column' gap={2}>
 				{fields.map((field, index) => (
@@ -99,9 +98,9 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 							})}
 							key={field.id}
 							fullWidth
-							placeholder='Enter path'
 							error={!!errors.templateOptions?.[index]?.field}
-							label={errors.templateOptions?.[index]?.field?.message || 'Path'}
+							label='Path'
+							helperText={errors.templateOptions?.[index]?.field?.message}
 						/>
 						<Controller
 							name={`templateOptions.${index}.modifier` as const}
@@ -111,12 +110,13 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 							}}
 							render={({ field }) => (
 								<FormControl fullWidth error={!!errors.templateOptions?.[index]?.modifier}>
-									<InputLabel>
-										{errors.templateOptions?.[index]?.modifier?.message || 'Select Modification'}
-									</InputLabel>
+									<InputLabel>Modification</InputLabel>
 									<Select
 										{...field}
-										label={errors.templateOptions?.[index]?.modifier?.message || 'Modifications'}
+										value={field.value === 0 ? '' : field.value}
+										error={!!errors.templateOptions?.[index]?.modifier}
+										fullWidth
+										label='Modification'
 									>
 										{enumOptionsModifier
 											.filter(option => option.value !== 0)
@@ -126,6 +126,9 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 												</MenuItem>
 											))}
 									</Select>
+									<FormHelperText>
+										{errors.templateOptions?.[index]?.modifier?.message}
+									</FormHelperText>
 								</FormControl>
 							)}
 						/>

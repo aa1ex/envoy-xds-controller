@@ -26,7 +26,7 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 	clearErrors,
 	variant
 }) => {
-	const titleMessage = nameField === 'nodeIds' ? 'NodeIDs' : 'Domains Virtual Host'
+	const titleMessage = nameField === 'nodeIds' ? 'NodeIDs' : 'Domains'
 
 	return (
 		<Controller
@@ -63,6 +63,8 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 							title={`Enter ${titleMessage.slice(0, -1)}. Press Enter to add it to the list.`}
 							placement='bottom-start'
 							arrow
+							enterDelay={800}
+							disableInteractive
 						>
 							<TextField
 								{...params}

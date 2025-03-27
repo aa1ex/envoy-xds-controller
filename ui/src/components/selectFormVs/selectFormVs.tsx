@@ -7,7 +7,7 @@ import {
 } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import { ListenerListItem, ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import {
 	AccessLogConfigListItem,
@@ -45,10 +45,10 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 	isFetching
 }) => {
 	const fieldTitles: Record<string, string> = {
+		accessGroup: 'AccessGroup',
 		templateUid: 'Template',
 		listenerUid: 'Listeners',
-		accessLogConfigUid: 'AccessLogConfig',
-		accessGroup: 'AccessGroup'
+		accessLogConfigUid: 'AccessLogConfig'
 	}
 
 	const titleMessage = fieldTitles[nameField] || nameField
@@ -73,17 +73,11 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 			}}
 			render={({ field }) => (
 				<FormControl fullWidth error={!!errors[nameField] || isErrorFetch}>
-					<InputLabel>
-						{errors[nameField]?.message ??
-							(isErrorFetch ? `Error loading ${titleMessage} data` : `Select ${titleMessage}`)}
-					</InputLabel>
+					<InputLabel>{titleMessage}</InputLabel>
 					<Select
 						fullWidth
 						error={!!errors[nameField] || isErrorFetch}
-						label={
-							errors[nameField]?.message ??
-							(isErrorFetch ? `Error loading ${titleMessage} data` : `Select ${titleMessage}`)
-						}
+						label={titleMessage}
 						value={field.value || ''}
 						onChange={e => field.onChange(e.target.value)}
 						IconComponent={
@@ -99,6 +93,9 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 
 						{data?.items?.map(item => renderMenuItem(item))}
 					</Select>
+					<FormHelperText>
+						{errors[nameField]?.message || (isErrorFetch && `Error loading ${titleMessage} data`)}
+					</FormHelperText>
 				</FormControl>
 			)}
 		/>

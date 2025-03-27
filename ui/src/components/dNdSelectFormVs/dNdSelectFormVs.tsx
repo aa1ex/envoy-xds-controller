@@ -5,12 +5,13 @@ import { ListHTTPFilterResponse } from '../../gen/http_filter/v1/http_filter_pb.
 import { ListRouteResponse } from '../../gen/route/v1/route_pb.ts'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
-import { Autocomplete, Box, List, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, List, TextField, Tooltip, Typography } from '@mui/material'
 import Chip from '@mui/material/Chip'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import CircularProgress from '@mui/material/CircularProgress'
 import { SortableItemDnd } from '../sortableItemDnd/sortableItemDnd.tsx'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
+import { styleBox, styleTooltip } from './style.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
@@ -28,7 +29,7 @@ interface IdNdSelectFormVsProps {
 	control: Control<IVirtualServiceForm, any>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
-	isError: boolean
+	isErrorFetch: boolean
 	isFetching: boolean
 }
 
@@ -40,9 +41,9 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	setValue,
 	errors,
 	isFetching,
-	isError
+	isErrorFetch
 }) => {
-	const titleMessage = nameField === 'additionalHttpFilterUids' ? 'HTTP filters' : 'Routes'
+	const titleMessage = nameField === 'additionalHttpFilterUids' ? 'HTTP filter' : 'Route'
 	const selectedUids = watch(nameField)
 
 	const onDragEnd = (e: DragEndEvent) => {
@@ -55,21 +56,17 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 		setValue(nameField, arrayMove(selectedUids, oldIndex, newIndex))
 	}
 	return (
-		<Box
-			sx={{
-				width: '100%',
-				border: '1px solid gray',
-				borderRadius: 1,
-				p: 2,
-				pt: 0.5,
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 2
-			}}
-		>
-			<Typography fontSize={15} color='gray' mt={1}>
-				Configure {titleMessage}
-			</Typography>
+		<Box sx={{ ...styleBox }}>
+			<Tooltip
+				title={`Select ${titleMessage}s and arrange them in the desired order.`}
+				placement='bottom-start'
+				enterDelay={500}
+				slotProps={{ ...styleTooltip }}
+			>
+				<Typography fontSize={15} color='gray' mt={1}>
+					Configure {titleMessage}
+				</Typography>
+			</Tooltip>
 			<Controller
 				name={nameField}
 				control={control}
@@ -93,15 +90,12 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 						renderInput={params => (
 							<TextField
 								{...params}
-								label={
-									errors[nameField]?.message ??
-									(isError
-										? `Error loading ${titleMessage} data`
-										: `Select the required ${titleMessage} and then install them in the required order.`)
-								}
-								placeholder={`Select the required ${titleMessage} and then install them in the required order.`}
-								error={!!errors[nameField] || isError}
+								label={titleMessage}
+								error={!!errors[nameField] || isErrorFetch}
 								variant='standard'
+								helperText={
+									errors[nameField]?.message || (isErrorFetch && `Error loading ${titleMessage} data`)
+								}
 								InputProps={{
 									...params.InputProps,
 									endAdornment: (

@@ -63,14 +63,11 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
 		defaultValues: {
-			name: '',
 			nodeIds: [],
-			accessGroup: '',
 			vhDomains: [],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
-			accessLogConfigUid: '',
 			templateOptions: [{ field: '', modifier: 0 }]
 		}
 	})
@@ -175,7 +172,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 								setValue={setValue}
 								watch={watch}
 								errors={errors}
-								isError={isErrorHttpFilters}
+								isErrorFetch={isErrorHttpFilters}
 								isFetching={isFetchingHttpFilters}
 							/>
 						</Grid>
@@ -189,7 +186,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 								setValue={setValue}
 								watch={watch}
 								errors={errors}
-								isError={isErrorRoutes}
+								isErrorFetch={isErrorRoutes}
 								isFetching={isFetchingRoutes}
 							/>
 							<RemoteAddrFormVs
@@ -210,7 +207,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 						</Grid>
 						<Divider orientation='vertical' flexItem />
 						<Grid xs>
-							fragmenf for code
+							fragment for code
 							{/*<TextFieldFormVs register={register} nameField='some' errors={errors} />*/}
 						</Grid>
 					</Grid>
