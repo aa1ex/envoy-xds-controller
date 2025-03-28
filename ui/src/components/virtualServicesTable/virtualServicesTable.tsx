@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useGetVs } from '../../api/grpc/hooks/useGetVs.ts'
+import { useListVs } from '../../api/grpc/hooks/useListVs.ts'
 import { MaterialReactTable, MRT_VisibilityState } from 'material-react-table'
 import { useConfigTable } from './configVirtualServicesTable.tsx'
 import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
 
 const VirtualServicesTable: React.FC = () => {
-	const { data: virtualServices, isError, isFetching, refetch } = useGetVs()
+	const { data: virtualServices, isError, isFetching, refetch } = useListVs()
 
 	const isFirstRender = useRef(true)
 

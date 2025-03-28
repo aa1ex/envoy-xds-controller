@@ -4,7 +4,8 @@ import Dialog from '@mui/material/Dialog'
 import { Button, DialogActions, DialogTitle } from '@mui/material'
 import DialogContent from '@mui/material/DialogContent'
 import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
-import { useDeleteVs } from '../../api/grpc/hooks/useDeleteVs.ts'
+
+import { useDeleteVs } from '../../api/grpc/hooks/useListVs.ts'
 
 interface IDialogDeleteVSProps {
 	serviceName: string

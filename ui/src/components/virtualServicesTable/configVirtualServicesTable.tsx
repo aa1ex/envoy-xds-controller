@@ -8,6 +8,7 @@ import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import { Delete, Edit } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
+import { useVirtualServiceStore } from '../../store/setVsStore.ts'
 
 interface IConfigVirtualServicesTable {
 	virtualServices: ListVirtualServiceResponse | undefined
@@ -29,6 +30,7 @@ export const useConfigTable = ({
 	setSelectedUid
 }: IConfigVirtualServicesTable) => {
 	const navigate = useNavigate()
+	const setVirtualServices = useVirtualServiceStore(state => state.setVirtualService)
 
 	const handleDeleteVS = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
@@ -41,9 +43,10 @@ export const useConfigTable = ({
 
 	const openEditVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
+			setVirtualServices(row.original.uid, row.original.name)
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
-		[navigate]
+		[navigate, setVirtualServices]
 	)
 
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(

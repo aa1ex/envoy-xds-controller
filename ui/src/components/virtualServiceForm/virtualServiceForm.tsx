@@ -1,24 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Box, Button, Divider } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
-import { useTemplatesVs } from '../../api/grpc/hooks/useTemplatesVs.ts'
-import { useListenerVs } from '../../api/grpc/hooks/useListenerVs.ts'
 import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
-import { useAccessLogsVs } from '../../api/grpc/hooks/useAccessLogsVs.ts'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
-import { useHttpFilterVs } from '../../api/grpc/hooks/useHttpFilterVs.ts'
-import { useRouteVs } from '../../api/grpc/hooks/useRouteVs.ts'
-import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
-import { useCreateVs } from '../../api/grpc/hooks/useCreateVs.ts'
-import { CreateVirtualServiceRequest } from '../../gen/virtual_service/v1/virtual_service_pb'
-import { useAccessGroupsVs } from '../../api/grpc/hooks/useAccessGroupsVs.ts'
+import { CreateVirtualServiceRequest, GetVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb'
+import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
+
+import {
+	useAccessGroupsVs,
+	useAccessLogsVs,
+	useCreateVs,
+	useHttpFilterVs,
+	useListenerVs,
+	useRouteVs,
+	useTemplatesVs
+} from '../../api/grpc/hooks/useListVs.ts'
+import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 
 interface IVirtualServiceFormProps {
-	title?: string
+	virtualServiceInfo?: GetVirtualServiceResponse
+	isEdit?: boolean
 }
 
 export interface ITemplateOption {
@@ -40,7 +45,7 @@ export interface IVirtualServiceForm {
 	templateOptions: ITemplateOption[]
 }
 
-export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
+export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs()
 	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVs()
 	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs()
@@ -58,18 +63,41 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 		setError,
 		clearErrors,
 		watch,
-		getValues
+		getValues,
+		reset
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
 		defaultValues: {
 			nodeIds: [],
-			vhDomains: [],
+			vhDomains: ['test'],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
 			templateOptions: [{ field: '', modifier: 0 }]
 		}
 	})
+
+	useEffect(() => {
+		if (isEdit && virtualServiceInfo) {
+			const vhDomains = virtualServiceInfo?.virtualHost
+				? JSON.parse(new TextDecoder().decode(virtualServiceInfo.virtualHost)).domains
+				: []
+
+			reset({
+				name: virtualServiceInfo.name,
+				nodeIds: virtualServiceInfo.nodeIds || [],
+				accessGroup: virtualServiceInfo.accessGroup,
+				templateUid: virtualServiceInfo.template?.uid,
+				listenerUid: virtualServiceInfo.listener?.uid,
+				accessLogConfigUid: (virtualServiceInfo.accessLog?.value as ResourceRef)?.uid || '',
+				useRemoteAddress: virtualServiceInfo.useRemoteAddress,
+				templateOptions: virtualServiceInfo.templateOptions,
+				vhDomains,
+				additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
+				additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || []
+			})
+		}
+	}, [isEdit, virtualServiceInfo, reset])
 
 	//TODO поменять IVirtualServiceForm на CreateVirtualServiceRequest
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
