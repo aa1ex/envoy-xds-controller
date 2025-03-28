@@ -69,7 +69,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		mode: 'onChange',
 		defaultValues: {
 			nodeIds: [],
-			vhDomains: ['test'],
+			vhDomains: [],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
