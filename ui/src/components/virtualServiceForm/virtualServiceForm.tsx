@@ -79,9 +79,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 	useEffect(() => {
 		if (isEdit && virtualServiceInfo) {
-			const vhDomains = virtualServiceInfo?.virtualHost
-				? JSON.parse(new TextDecoder().decode(virtualServiceInfo.virtualHost)).domains
-				: []
+			const vhDomains =
+				virtualServiceInfo?.virtualHost && virtualServiceInfo.virtualHost.length > 0
+					? JSON.parse(new TextDecoder().decode(virtualServiceInfo.virtualHost)).domains
+					: []
 
 			reset({
 				name: virtualServiceInfo.name,
