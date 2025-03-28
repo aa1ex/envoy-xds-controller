@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useGetVs } from '../../api/grpc/hooks/useListVs.ts'
+import { useGetVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { useVirtualServiceStore } from '../../store/setVsStore.ts'
 import { Box } from '@mui/material'
 import { VirtualServiceForm } from '../../components/virtualServiceForm/virtualServiceForm.tsx'

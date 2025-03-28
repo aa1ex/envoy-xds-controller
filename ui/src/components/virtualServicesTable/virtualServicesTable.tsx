@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useListVs } from '../../api/grpc/hooks/useListVs.ts'
+import { useListVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { MaterialReactTable, MRT_VisibilityState } from 'material-react-table'
 import { useConfigTable } from './configVirtualServicesTable.tsx'
 import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
