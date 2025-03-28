@@ -5,8 +5,7 @@ import Grid from '@mui/material/Unstable_Grid2'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { useTemplatesVs } from '../../api/grpc/hooks/useTemplatesVs.ts'
 import { useListenerVs } from '../../api/grpc/hooks/useListenerVs.ts'
-import { VirtualHostVs } from '../virtualHostVS/virtualHostVS.tsx'
-import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
+import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
 import { useAccessLogsVs } from '../../api/grpc/hooks/useAccessLogsVs.ts'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { useHttpFilterVs } from '../../api/grpc/hooks/useHttpFilterVs.ts'
@@ -117,13 +116,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 					<Grid container spacing={3} overflow='auto' padding={1}>
 						<Grid xs display='flex' flexDirection='column' gap={2}>
 							<TextFieldFormVs register={register} nameField='name' errors={errors} />
-							<AutocompleteChipVs
-								nameField={'nodeIds'}
-								control={control}
-								setValue={setValue}
+							<MultiChipFormVS
+								nameFields={'nodeIds'}
 								errors={errors}
-								setError={setError}
+								setValue={setValue}
+								control={control}
 								clearErrors={clearErrors}
+								setError={setError}
 							/>
 							<SelectFormVs
 								nameField={'accessGroup'}
@@ -149,7 +148,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = () => {
 								isFetching={isFetchingListeners}
 								isErrorFetch={isErrorListeners}
 							/>
-							<VirtualHostVs
+							<MultiChipFormVS
 								nameFields={'vhDomains'}
 								errors={errors}
 								setValue={setValue}

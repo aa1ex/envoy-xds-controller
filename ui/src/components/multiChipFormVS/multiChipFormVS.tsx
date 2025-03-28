@@ -1,11 +1,14 @@
 import React from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 import { Control, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
+import { styleBox, styleTooltip } from './style.ts'
 
-interface IVirtualHostVsProps {
-	nameFields: 'vhDomains'
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
+
+interface IMultiChipFormVSProps {
+	nameFields: nameFieldKeys
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
@@ -13,7 +16,7 @@ interface IVirtualHostVsProps {
 	clearErrors: UseFormClearErrors<IVirtualServiceForm>
 }
 
-export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
+export const MultiChipFormVS: React.FC<IMultiChipFormVSProps> = ({
 	nameFields,
 	errors,
 	setError,
@@ -21,22 +24,21 @@ export const VirtualHostVs: React.FC<IVirtualHostVsProps> = ({
 	control,
 	setValue
 }) => {
+	const titleMessage = nameFields === 'nodeIds' ? 'NodeIDs' : 'Domains'
+
 	return (
-		<Box
-			sx={{
-				width: '100%',
-				border: '1px solid gray',
-				borderRadius: 1,
-				p: 2,
-				pt: 0.5,
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 2
-			}}
-		>
-			<Typography fontSize={15} color='gray' mt={1}>
-				Configure the virtual host
-			</Typography>
+		<Box sx={{ ...styleBox }}>
+			<Tooltip
+				title={`Enter ${titleMessage.slice(0, -1)}. Press Enter to add it to the list.`}
+				placement='bottom-start'
+				enterDelay={800}
+				disableInteractive
+				slotProps={{ ...styleTooltip }}
+			>
+				<Typography fontSize={15} color='gray' mt={1}>
+					Configure the {titleMessage}
+				</Typography>
+			</Tooltip>
 			<AutocompleteChipVs
 				nameField={nameFields}
 				control={control}

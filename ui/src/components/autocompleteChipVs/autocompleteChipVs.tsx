@@ -2,7 +2,7 @@ import React from 'react'
 import { Control, Controller, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
-import { Autocomplete, TextField, Tooltip } from '@mui/material'
+import { Autocomplete, TextField } from '@mui/material'
 import Chip from '@mui/material/Chip'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
@@ -26,8 +26,6 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 	clearErrors,
 	variant
 }) => {
-	const titleMessage = nameField === 'nodeIds' ? 'NodeIDs' : 'Domains'
-
 	return (
 		<Controller
 			name={nameField}
@@ -59,21 +57,12 @@ export const AutocompleteChipVs: React.FC<IAutocompleteChipVsProps> = ({
 						})
 					}
 					renderInput={params => (
-						<Tooltip
-							title={`Enter ${titleMessage.slice(0, -1)}. Press Enter to add it to the list.`}
-							placement='bottom-start'
-							arrow
-							enterDelay={800}
-							disableInteractive
-						>
-							<TextField
-								{...params}
-								error={!!errors[nameField]}
-								helperText={errors[nameField]?.message}
-								label={titleMessage}
-								variant={variant}
-							/>
-						</Tooltip>
+						<TextField
+							{...params}
+							error={!!errors[nameField]}
+							helperText={errors[nameField]?.message}
+							variant={variant}
+						/>
 					)}
 				/>
 			)}

@@ -113,7 +113,14 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 			<DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
 				<SortableContext items={selectedUids} strategy={verticalListSortingStrategy}>
 					<Box sx={{ display: 'flex', alignItems: 'center' }}>
-						<ArrowDownwardIcon sx={{ fontSize: 19, color: 'gray' }} />
+						<Tooltip
+							title={`Arrange the ${titleMessage} from top to bottom..`}
+							placement='bottom-start'
+							enterDelay={500}
+							slotProps={{ ...styleTooltip }}
+						>
+							<ArrowDownwardIcon sx={{ fontSize: 19, color: 'gray' }} />
+						</Tooltip>
 						<List sx={{ padding: 1, borderRadius: '4px', width: '100%' }}>
 							{selectedUids.map(uid => {
 								const item = (data?.items || []).find(el => el.uid === uid)
