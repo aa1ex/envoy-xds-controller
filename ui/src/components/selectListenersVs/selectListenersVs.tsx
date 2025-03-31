@@ -1,10 +1,10 @@
 import React from 'react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 interface ISelectListenersVsProps {
 	control: Control<IVirtualServiceForm, any>

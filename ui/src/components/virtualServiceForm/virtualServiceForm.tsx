@@ -9,7 +9,6 @@ import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 import {
 	CreateVirtualServiceRequest,
-	GetVirtualServiceResponse,
 	UpdateVirtualServiceRequest
 } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
@@ -26,30 +25,7 @@ import {
 } from '../../api/grpc/hooks/useVirtualService.ts'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { useNavigate } from 'react-router-dom'
-
-interface IVirtualServiceFormProps {
-	virtualServiceInfo?: GetVirtualServiceResponse
-	isEdit?: boolean
-}
-
-export interface ITemplateOption {
-	field: string
-	modifier: number
-}
-
-export interface IVirtualServiceForm {
-	name: string
-	nodeIds: string[]
-	accessGroup: string
-	templateUid: string
-	listenerUid: string
-	vhDomains: string[]
-	accessLogConfigUid: string
-	additionalHttpFilterUids: string[]
-	additionalRouteUids: string[]
-	useRemoteAddress: boolean | undefined
-	templateOptions: ITemplateOption[]
-}
+import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const navigate = useNavigate()
@@ -118,48 +94,40 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 		const { vhDomains, ...result } = data
 
+		const baseVSData = {
+			...result,
+			virtualHost: virtualHostUint8Array,
+			templateOptions: result.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
+				? result.templateOptions.map(option => ({
+						...option,
+						$typeName: 'virtual_service_template.v1.TemplateOption' as const
+					}))
+				: [],
+			accessLogConfig: result.accessLogConfigUid
+				? { case: 'accessLogConfigUid' as const, value: result.accessLogConfigUid }
+				: { case: undefined }
+		}
+
 		if (!isEdit) {
 			const createVSData: CreateVirtualServiceRequest = {
-				...result,
-				virtualHost: virtualHostUint8Array,
-				templateOptions: result.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
-					? result.templateOptions.map(option => ({
-							...option,
-							$typeName: 'virtual_service_template.v1.TemplateOption' as const
-						}))
-					: [],
-				accessLogConfig: result.accessLogConfigUid
-					? { case: 'accessLogConfigUid', value: result.accessLogConfigUid }
-					: { case: undefined },
-
+				...baseVSData,
 				$typeName: 'virtual_service.v1.CreateVirtualServiceRequest' as const
 			}
 
 			console.log('data for create', createVSData)
 			await createVirtualService(createVSData)
-			navigate('/virtualServices')
 		}
 		if (isEdit && virtualServiceInfo) {
 			const updateVSData: UpdateVirtualServiceRequest = {
-				...result,
+				...baseVSData,
 				uid: virtualServiceInfo?.uid,
-				virtualHost: virtualHostUint8Array,
-				templateOptions:
-					result.templateOptions?.map(option => ({
-						...option,
-						$typeName: 'virtual_service_template.v1.TemplateOption' as const
-					})) ?? [],
-				accessLogConfig: result.accessLogConfigUid
-					? { case: 'accessLogConfigUid', value: result.accessLogConfigUid }
-					: { case: undefined },
-
 				$typeName: 'virtual_service.v1.UpdateVirtualServiceRequest' as const
 			}
 
 			console.log('data for Update', updateVSData)
 			await updateVS(updateVSData)
-			navigate('/virtualServices')
 		}
+		navigate('/virtualServices')
 	}
 
 	return (

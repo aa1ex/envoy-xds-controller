@@ -1,9 +1,9 @@
 import React from 'react'
 import { Control, Controller, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { Autocomplete, TextField } from '@mui/material'
 import Chip from '@mui/material/Chip'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
 

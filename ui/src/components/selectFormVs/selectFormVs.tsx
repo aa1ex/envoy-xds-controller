@@ -1,6 +1,5 @@
 import React from 'react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import {
 	ListVirtualServiceTemplateResponse,
 	VirtualServiceTemplateListItem
@@ -14,6 +13,7 @@ import {
 	ListAccessLogConfigResponse
 } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
 import { AccessGroupListItem, ListAccessGroupResponse } from '../../gen/access_group/v1/access_group_pb'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 type nameFieldKeys = Extract<
 	keyof IVirtualServiceForm,

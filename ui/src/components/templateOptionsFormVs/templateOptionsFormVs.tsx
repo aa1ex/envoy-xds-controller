@@ -8,7 +8,6 @@ import {
 	UseFormGetValues,
 	UseFormRegister
 } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import {
 	Box,
@@ -26,6 +25,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { styleBox, styleTooltip } from './style.ts'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 interface ITemplateOptionsFormVsProps {
 	register: UseFormRegister<IVirtualServiceForm>

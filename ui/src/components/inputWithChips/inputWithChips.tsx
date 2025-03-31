@@ -8,11 +8,11 @@ import {
 	UseFormSetValue,
 	UseFormWatch
 } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { Box, TextField } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import Chip from '@mui/material/Chip'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vh_domains'>
 

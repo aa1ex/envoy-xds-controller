@@ -1,7 +1,7 @@
 import React from 'react'
 import { Control, Controller, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 interface IRemoteAddrFormVsProps {
 	nameField: Extract<keyof IVirtualServiceForm, 'useRemoteAddress'>

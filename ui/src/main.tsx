@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { AuthProvider } from 'react-oidc-context'
 import App from './App.tsx'
 import './index.css'
+import './utils/monacoEditorSettings/loaderConfig.ts'
 
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'

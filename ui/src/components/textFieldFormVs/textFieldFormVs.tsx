@@ -1,8 +1,8 @@
 import React from 'react'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { TextField } from '@mui/material'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'name'>
 

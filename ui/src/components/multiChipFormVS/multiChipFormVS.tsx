@@ -1,9 +1,9 @@
 import React from 'react'
 import { Box, Tooltip, Typography } from '@mui/material'
 import { Control, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/virtualServiceForm.tsx'
 import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx'
 import { styleBox, styleTooltip } from './style.ts'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
 

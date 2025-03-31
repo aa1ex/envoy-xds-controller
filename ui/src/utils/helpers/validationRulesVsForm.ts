@@ -1,4 +1,4 @@
-import { ITemplateOption, IVirtualServiceForm } from '../../components/virtualServiceForm/virtualServiceForm.tsx'
+import { ITemplateOption, IVirtualServiceForm } from '../../components/virtualServiceForm/types.ts'
 
 export const validationRulesVsForm: Record<
 	keyof IVirtualServiceForm,

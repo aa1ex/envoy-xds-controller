@@ -12,26 +12,26 @@ function LinkRouter(props: LinkRouterProps) {
 	return <Link {...props} component={RouterLink as any} />
 }
 
-function RouterBreadcrumbs({ location }: any): JSX.Element {
-	const pathNames = location.pathname.split('/').filter((notEmptyString: string) => notEmptyString)
+function RouterBreadcrumbs({ location }: { location: { pathname: string } }) {
+	const pathNames = location.pathname.split('/').filter(Boolean)
 	const virtualServiceMap = useVirtualServiceStore(state => state.virtualServiceMap)
 
 	return (
-		<Breadcrumbs aria-label='breadcrumb' separator=''>
-			<LinkRouter underline='hover' color='text.secondary' to={`/${pathNames.slice(0, 1)}`} variant='h3'>
-				{pathNames.slice(0, 1)}
-			</LinkRouter>
-
-			{pathNames.map((segment: any, index: number) => {
+		<Breadcrumbs aria-label='breadcrumb' separator='›'>
+			{pathNames.map((segment: string, index: number) => {
 				const last = index === pathNames.length - 1
-				const to = `${pathNames.slice(1, index + 1).join(' > ')}`
+				const to = `/${pathNames.slice(0, index + 1).join('/')}`
 				const displayName = virtualServiceMap.get(segment) || segment
 
 				return last ? (
 					<Typography color='text.primary' key={to} variant='h3'>
 						{displayName}
 					</Typography>
-				) : null
+				) : (
+					<LinkRouter underline='hover' color='text.secondary' to={to} key={to} variant='h3'>
+						{displayName}
+					</LinkRouter>
+				)
 			})}
 		</Breadcrumbs>
 	)
