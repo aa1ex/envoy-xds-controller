@@ -36,18 +36,17 @@ message CreateVirtualServiceResponse {}
 message UpdateVirtualServiceRequest {
   string uid = 1;
   repeated string node_ids = 2;
-  string name = 3;
-  string access_group = 4;
-  string template_uid = 5;
-  string listener_uid = 6;
-  bytes virtual_host = 7;
+  string access_group = 3;
+  string template_uid = 4;
+  string listener_uid = 5;
+  bytes virtual_host = 6;
   oneof access_log_config {
-    string access_log_config_uid = 8;
+    string access_log_config_uid = 7;
   }
-  repeated string additional_http_filter_uids = 9;
-  repeated string additional_route_uids = 10;
-  optional bool use_remote_address = 11;
-  repeated virtual_service_template.v1.TemplateOption template_options = 12;
+  repeated string additional_http_filter_uids = 8;
+  repeated string additional_route_uids = 9;
+  optional bool use_remote_address = 10;
+  repeated virtual_service_template.v1.TemplateOption template_options = 11;
 }
 
 message UpdateVirtualServiceResponse {}

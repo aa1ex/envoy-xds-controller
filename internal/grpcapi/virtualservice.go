@@ -268,6 +268,7 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 	}
 
 	if len(req.Msg.AdditionalRouteUids) > 0 {
+		vs.Spec.AdditionalRoutes = vs.Spec.AdditionalRoutes[:0]
 		for _, uid := range req.Msg.AdditionalRouteUids {
 			route := s.store.GetRouteByUID(uid)
 			if route == nil {
@@ -281,6 +282,7 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 	}
 
 	if len(req.Msg.AdditionalHttpFilterUids) > 0 {
+		vs.Spec.AdditionalHttpFilters = vs.Spec.AdditionalHttpFilters[:0]
 		for _, uid := range req.Msg.AdditionalHttpFilterUids {
 			filter := s.store.GetHTTPFilterByUID(uid)
 			if filter == nil {
