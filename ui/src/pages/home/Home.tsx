@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { useNodeIDs } from '../../api/hooks/useNodeIDsApi'
 import NodeCard from '../../components/nodeCard/nodeCard'
 import Spinner from '../../components/spinner/Spinner'

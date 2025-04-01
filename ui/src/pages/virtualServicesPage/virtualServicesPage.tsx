@@ -1,5 +1,5 @@
 import VirtualServicesTable from '../../components/virtualServicesTable/virtualServicesTable.tsx'
-import { Box } from '@mui/material'
+import Box from '@mui/material/Box'
 import { styleBox, styleRootBoxVirtualService } from './style.ts'
 import { useColors } from '../../utils/hooks/useColors.ts'
 

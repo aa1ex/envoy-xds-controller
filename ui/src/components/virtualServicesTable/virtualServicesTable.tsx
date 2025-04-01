@@ -5,7 +5,7 @@ import { useConfigTable } from './configVirtualServicesTable.tsx'
 import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
 
 const VirtualServicesTable: React.FC = () => {
-	const { data: virtualServices, isError, isFetching, refetch } = useListVs()
+	const { data: virtualServices, isError, isFetching, refetch } = useListVs(true)
 
 	const isFirstRender = useRef(true)
 

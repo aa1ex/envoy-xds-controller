@@ -1,4 +1,8 @@
-import { Card, CardActionArea, CardContent, Typography } from '@mui/material'
+import Card from '@mui/material/Card'
+import CardActionArea from '@mui/material/CardActionArea'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 

@@ -49,11 +49,11 @@ export const validationRulesVsForm: Record<
 		return true
 	},
 	additionalHttpFilterUids: value => {
-		if (!Array.isArray(value) || value.length === 0) return 'The HTTPS_filters field is required'
+		if (!Array.isArray(value)) return 'HTTPS_filters must be an array'
 		return true
 	},
 	additionalRouteUids: value => {
-		if (!Array.isArray(value) || value.length === 0) return 'The Routes field is required'
+		if (!Array.isArray(value)) return 'Routes must be an array'
 		return true
 	},
 	useRemoteAddress: value => {

@@ -6,7 +6,11 @@ import {
 } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import { ListenerListItem, ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 import CircularProgress from '@mui/material/CircularProgress'
 import {
 	AccessLogConfigListItem,

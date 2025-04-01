@@ -1,6 +1,6 @@
 import React from 'react'
 import { FieldErrors, UseFormRegister } from 'react-hook-form'
-import { TextField } from '@mui/material'
+import TextField from '@mui/material/TextField'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
@@ -11,9 +11,16 @@ interface ITextFieldFormVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
 	variant?: 'standard' | 'outlined'
+	isDisabled?: boolean | undefined
 }
 
-export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, nameField, errors, variant }) => {
+export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({
+	register,
+	nameField,
+	errors,
+	variant,
+	isDisabled
+}) => {
 	const titleMessage = 'Name'
 
 	return (
@@ -23,6 +30,7 @@ export const TextFieldFormVs: React.FC<ITextFieldFormVsProps> = ({ register, nam
 				validate: validationRulesVsForm[nameField]
 			})}
 			fullWidth
+			disabled={isDisabled}
 			error={!!errors[nameField]}
 			label={titleMessage}
 			helperText={errors[nameField]?.message}

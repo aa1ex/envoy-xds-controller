@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Box, Button, Divider } from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'
+import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
+import Grid from '@mui/material/Grid2'
+import Button from '@mui/material/Button'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
@@ -19,6 +21,7 @@ import {
 	useCreateVs,
 	useHttpFilterVs,
 	useListenerVs,
+	useListVs,
 	useRouteVs,
 	useTemplatesVs,
 	useUpdateVs
@@ -35,8 +38,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs()
 	const { data: accessGroups, isFetching: isFetchingAccessGroups, isError: isErrorAccessGroups } = useAccessGroupsVs()
 	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
-	const { createVirtualService } = useCreateVs()
-	const { updateVS } = useUpdateVs()
+	const { refetch } = useListVs(false)
+	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
+	const { updateVS, isFetchingUpdateVs } = useUpdateVs()
 
 	const {
 		register,
@@ -84,7 +88,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		}
 	}, [isEdit, virtualServiceInfo, reset])
 
-	//TODO поменять IVirtualServiceForm на CreateVirtualServiceRequest
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const formValues = {
 			domains: data.vhDomains
@@ -118,8 +121,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			await createVirtualService(createVSData)
 		}
 		if (isEdit && virtualServiceInfo) {
+			const { name, ...baseVSDataWithoutName } = baseVSData
+
 			const updateVSData: UpdateVirtualServiceRequest = {
-				...baseVSData,
+				...baseVSDataWithoutName,
 				uid: virtualServiceInfo?.uid,
 				$typeName: 'virtual_service.v1.UpdateVirtualServiceRequest' as const
 			}
@@ -128,6 +133,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			await updateVS(updateVSData)
 		}
 		navigate('/virtualServices')
+		await refetch()
 	}
 
 	return (
@@ -141,9 +147,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					gap={2}
 					overflow='auto'
 				>
-					<Grid container spacing={3} overflow='auto' padding={1}>
-						<Grid xs display='flex' flexDirection='column' gap={2}>
-							<TextFieldFormVs register={register} nameField='name' errors={errors} />
+					<Grid container spacing={3} sx={{ overflow: 'auto', p: 1 }}>
+						<Grid size={{ xs: 4 }} display='flex' flexDirection='column' gap={2}>
+							<TextFieldFormVs register={register} nameField='name' errors={errors} isDisabled={isEdit} />
 							<MultiChipFormVS
 								nameFields={'nodeIds'}
 								errors={errors}
@@ -205,7 +211,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						</Grid>
 						<Divider orientation='vertical' flexItem />
 
-						<Grid xs display='flex' flexDirection='column' gap={2}>
+						<Grid size={{ xs: 4 }} display='flex' flexDirection='column' gap={2}>
 							<DNdSelectFormVs
 								nameField={'additionalRouteUids'}
 								data={routes}
@@ -233,13 +239,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 							/>
 						</Grid>
 						<Divider orientation='vertical' flexItem />
-						<Grid xs>
+						<Grid size={{ xs: 4 }}>
 							fragment for code
 							{/*<TextFieldFormVs register={register} nameField='some' errors={errors} />*/}
 						</Grid>
 					</Grid>
 					<Box display='flex' alignItems='center' justifyContent='center'>
-						<Button variant='contained' type='submit'>
+						<Button variant='contained' type='submit' loading={isFetchingCreateVs || isFetchingUpdateVs}>
 							{isEdit ? 'Update Virtual Service' : 'Create Virtual Service'}
 						</Button>
 					</Box>

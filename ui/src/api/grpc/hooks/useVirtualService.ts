@@ -13,10 +13,11 @@ import {
 	UpdateVirtualServiceRequest
 } from '../../../gen/virtual_service/v1/virtual_service_pb.ts'
 
-export const useListVs = () => {
+export const useListVs = (flag: boolean) => {
 	return useQuery({
 		queryKey: ['listVs'],
-		queryFn: () => virtualServiceClient.listVirtualService({})
+		queryFn: () => virtualServiceClient.listVirtualService({}),
+		enabled: flag
 	})
 }
 
@@ -36,7 +37,9 @@ export const useCreateVs = () => {
 	})
 
 	return {
-		createVirtualService: createVirtualServiceMutation.mutateAsync
+		createVirtualService: createVirtualServiceMutation.mutate,
+		errorCreateVs: createVirtualServiceMutation.error,
+		isFetchingCreateVs: createVirtualServiceMutation.isPending
 	}
 }
 
@@ -48,7 +51,9 @@ export const useUpdateVs = () => {
 	})
 
 	return {
-		updateVS: updateVsMutations.mutateAsync
+		updateVS: updateVsMutations.mutate,
+		errorUpdateVs: updateVsMutations.error,
+		isFetchingUpdateVs: updateVsMutations.isPending
 	}
 }
 

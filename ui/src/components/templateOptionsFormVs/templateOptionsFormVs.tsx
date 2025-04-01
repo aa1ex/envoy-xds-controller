@@ -9,19 +9,18 @@ import {
 	UseFormRegister
 } from 'react-hook-form'
 import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
-import {
-	Box,
-	Button,
-	FormControl,
-	FormHelperText,
-	IconButton,
-	InputLabel,
-	MenuItem,
-	Select,
-	TextField,
-	Tooltip,
-	Typography
-} from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import IconButton from '@mui/material/IconButton'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
+
 import DeleteIcon from '@mui/icons-material/Delete'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { styleBox, styleTooltip } from './style.ts'
