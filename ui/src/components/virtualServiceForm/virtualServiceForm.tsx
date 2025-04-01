@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
-import Grid from '@mui/material/Grid2'
 import Button from '@mui/material/Button'
-import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
-import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
-import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
-import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
-import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
+import Grid from '@mui/material/Grid2'
+import Divider from '@mui/material/Divider'
 import {
 	CreateVirtualServiceRequest,
 	UpdateVirtualServiceRequest
@@ -26,9 +21,14 @@ import {
 	useTemplatesVs,
 	useUpdateVs
 } from '../../api/grpc/hooks/useVirtualService.ts'
-import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { useNavigate } from 'react-router-dom'
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
+import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
+import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
+import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
+import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
+import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
+import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const navigate = useNavigate()
@@ -118,7 +118,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			}
 
 			console.log('data for create', createVSData)
-			await createVirtualService(createVSData)
+			createVirtualService(createVSData)
 		}
 		if (isEdit && virtualServiceInfo) {
 			const { name, ...baseVSDataWithoutName } = baseVSData
@@ -130,12 +130,11 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			}
 
 			console.log('data for Update', updateVSData)
-			await updateVS(updateVSData)
+			updateVS(updateVSData)
 		}
 		navigate('/virtualServices')
 		await refetch()
 	}
-
 	return (
 		<>
 			<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
@@ -146,9 +145,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					height='100%'
 					gap={2}
 					overflow='auto'
+					flexGrow={1}
 				>
-					<Grid container spacing={3} sx={{ overflow: 'auto', p: 1 }}>
-						<Grid size={{ xs: 4 }} display='flex' flexDirection='column' gap={2}>
+					<Grid container spacing={3} padding={1}>
+						<Grid size={4} display='flex' flexDirection='column' gap={2}>
 							<TextFieldFormVs register={register} nameField='name' errors={errors} isDisabled={isEdit} />
 							<MultiChipFormVS
 								nameFields={'nodeIds'}
@@ -198,6 +198,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								isErrorFetch={isErrorAccessLogs}
 								isFetching={isFetchingAccessLogs}
 							/>
+						</Grid>
+						<Divider orientation='vertical' flexItem />
+
+						<Grid size={4} display='flex' flexDirection='column' gap={2}>
 							<DNdSelectFormVs
 								nameField={'additionalHttpFilterUids'}
 								data={httpFilters}
@@ -208,10 +212,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								isErrorFetch={isErrorHttpFilters}
 								isFetching={isFetchingHttpFilters}
 							/>
-						</Grid>
-						<Divider orientation='vertical' flexItem />
-
-						<Grid size={{ xs: 4 }} display='flex' flexDirection='column' gap={2}>
 							<DNdSelectFormVs
 								nameField={'additionalRouteUids'}
 								data={routes}
@@ -239,10 +239,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 							/>
 						</Grid>
 						<Divider orientation='vertical' flexItem />
-						<Grid size={{ xs: 4 }}>
-							fragment for code
-							{/*<TextFieldFormVs register={register} nameField='some' errors={errors} />*/}
-						</Grid>
+						<Grid size={'grow'} display='flex' flexDirection='column' gap={2}></Grid>
 					</Grid>
 					<Box display='flex' alignItems='center' justifyContent='center'>
 						<Button variant='contained' type='submit' loading={isFetchingCreateVs || isFetchingUpdateVs}>
