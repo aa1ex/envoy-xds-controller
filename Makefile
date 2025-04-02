@@ -320,3 +320,7 @@ install-prometheus:
 .PHONY: uninstall-prometheus
 uninstall-prometheus:
 	kubectl delete -f https://github.com/prometheus-operator/prometheus-operator/releases/download/$(PROM_OPERATOR_VERSION)/bundle.yaml
+
+.PHONY: bufgen
+bufgen:
+	buf generate

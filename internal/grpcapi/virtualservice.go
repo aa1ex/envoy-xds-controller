@@ -104,24 +104,15 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 		}
 	}
 
-	if len(req.Msg.VirtualHost) > 0 {
-		var tmp runtime.RawExtension
-		if err := tmp.UnmarshalJSON(req.Msg.VirtualHost); err != nil {
-			return nil, fmt.Errorf("unmarshal virtual host failed: %v", err)
-		}
+	if req.Msg.VirtualHost != nil {
 		virtualHost := &routev3.VirtualHost{}
-		if err := protoutil.Unmarshaler.Unmarshal(tmp.Raw, virtualHost); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
-		}
-		if virtualHost.Name == "" {
-			virtualHost.Name = vs.Name + "-virtual-host"
-		}
+		virtualHost.Name = vs.Name + "-virtual-host"
+		virtualHost.Domains = req.Msg.VirtualHost.Domains
 		vhData, err := protoutil.Marshaler.Marshal(virtualHost)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal virtual host: %w", err)
 		}
-		tmp.Raw = vhData
-		vs.Spec.VirtualHost = &tmp
+		vs.Spec.VirtualHost = &runtime.RawExtension{Raw: vhData}
 	}
 
 	if req.Msg.AccessLogConfig != nil {
@@ -234,24 +225,15 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		}
 	}
 
-	if len(req.Msg.VirtualHost) > 0 {
-		var tmp runtime.RawExtension
-		if err := tmp.UnmarshalJSON(req.Msg.VirtualHost); err != nil {
-			return nil, fmt.Errorf("unmarshal virtual host failed: %v", err)
-		}
+	if req.Msg.VirtualHost != nil {
 		virtualHost := &routev3.VirtualHost{}
-		if err := protoutil.Unmarshaler.Unmarshal(tmp.Raw, virtualHost); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
-		}
-		if virtualHost.Name == "" {
-			virtualHost.Name = vs.Name + "-virtual-host"
-		}
+		virtualHost.Name = vs.Name + "-virtual-host"
+		virtualHost.Domains = req.Msg.VirtualHost.Domains
 		vhData, err := protoutil.Marshaler.Marshal(virtualHost)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal virtual host: %w", err)
 		}
-		tmp.Raw = vhData
-		vs.Spec.VirtualHost = &tmp
+		vs.Spec.VirtualHost = &runtime.RawExtension{Raw: vhData}
 	}
 
 	if req.Msg.AccessLogConfig != nil {
@@ -366,7 +348,12 @@ func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connec
 		}
 	}
 	if vs.Spec.VirtualHost != nil {
-		resp.VirtualHost = vs.Spec.VirtualHost.Raw
+		virtualHost := &routev3.VirtualHost{}
+		err := protoutil.Unmarshaler.Unmarshal(vs.Spec.VirtualHost.Raw, virtualHost)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
+		}
+		resp.VirtualHost = &v1.VirtualHost{Domains: virtualHost.Domains}
 	}
 	if vs.Spec.AccessLogConfig != nil {
 		alc := s.store.GetAccessLog(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.AccessLogConfig.Name})
