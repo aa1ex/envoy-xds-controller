@@ -5,7 +5,7 @@ import { Autocomplete, TextField } from '@mui/material'
 import Chip from '@mui/material/Chip'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'virtualHostDomains'>
 
 interface IAutocompleteChipVsProps {
 	nameField: nameFieldKeys

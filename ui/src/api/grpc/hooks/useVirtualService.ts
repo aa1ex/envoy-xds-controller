@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import {
-	accessGroupsClient,
+	accessGroupsServiceClient,
 	accessLogServiceClient,
 	httpFilterServiceClient,
 	listenerServiceClient,
+	nodeServiceClient,
 	routeServiceClient,
 	templateServiceClient,
 	virtualServiceClient
@@ -37,7 +38,7 @@ export const useCreateVs = () => {
 	})
 
 	return {
-		createVirtualService: createVirtualServiceMutation.mutate,
+		createVirtualService: createVirtualServiceMutation.mutateAsync,
 		errorCreateVs: createVirtualServiceMutation.error,
 		isFetchingCreateVs: createVirtualServiceMutation.isPending
 	}
@@ -51,7 +52,7 @@ export const useUpdateVs = () => {
 	})
 
 	return {
-		updateVS: updateVsMutations.mutate,
+		updateVS: updateVsMutations.mutateAsync,
 		errorUpdateVs: updateVsMutations.error,
 		isFetchingUpdateVs: updateVsMutations.isPending
 	}
@@ -71,7 +72,7 @@ export const useDeleteVs = () => {
 export const useAccessGroupsVs = () => {
 	return useQuery({
 		queryKey: ['accessGroupsVs'],
-		queryFn: () => accessGroupsClient.listAccessGroup({})
+		queryFn: () => accessGroupsServiceClient.listAccessGroup({})
 	})
 }
 
@@ -107,5 +108,12 @@ export const useTemplatesVs = () => {
 	return useQuery({
 		queryKey: ['templatesVs'],
 		queryFn: () => templateServiceClient.listVirtualServiceTemplate({})
+	})
+}
+
+export const useNodeListVs = () => {
+	return useQuery({
+		queryKey: ['nodeListVs'],
+		queryFn: () => nodeServiceClient.listNode({})
 	})
 }

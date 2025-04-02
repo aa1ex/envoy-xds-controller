@@ -8,7 +8,7 @@ import { AutocompleteChipVs } from '../autocompleteChipVs/autocompleteChipVs.tsx
 import { styleBox, styleTooltip } from './style.ts'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vhDomains'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'virtualHostDomains'>
 
 interface IMultiChipFormVSProps {
 	nameFields: nameFieldKeys

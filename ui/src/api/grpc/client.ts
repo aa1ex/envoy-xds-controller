@@ -8,6 +8,7 @@ import { AccessLogConfigStoreService } from '../../gen/access_log_config/v1/acce
 import { HTTPFilterStoreService } from '../../gen/http_filter/v1/http_filter_pb.ts'
 import { RouteStoreService } from '../../gen/route/v1/route_pb.ts'
 import { AccessGroupStoreService } from '../../gen/access_group/v1/access_group_pb.ts'
+import { NodeStoreService } from '../../gen/node/v1/node_pb.ts'
 
 export const transport = createConnectTransport({
 	baseUrl: env.VITE_GRPC_API_URL || '/grpc-api'
@@ -25,4 +26,6 @@ export const httpFilterServiceClient = createClient(HTTPFilterStoreService, tran
 
 export const routeServiceClient = createClient(RouteStoreService, transport)
 
-export const accessGroupsClient = createClient(AccessGroupStoreService, transport)
+export const accessGroupsServiceClient = createClient(AccessGroupStoreService, transport)
+
+export const nodeServiceClient = createClient(NodeStoreService, transport)

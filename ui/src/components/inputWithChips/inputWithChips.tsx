@@ -14,7 +14,7 @@ import Chip from '@mui/material/Chip'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'nodeIds' | 'vh_domains'>
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'virtualHostDomains'>
 
 interface IInputWithChipsProps {
 	nameField: nameFieldKeys
@@ -37,7 +37,7 @@ export const InputWithChips: React.FC<IInputWithChipsProps> = ({
 }) => {
 	const [inputValue, setInputValue] = useState('')
 	const watchFiled = watch(nameField)
-	const titleMessage = nameField === 'nodeIds' ? 'Node IDs' : 'Domains'
+	const titleMessage = 'Domains'
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setInputValue(e.target.value)

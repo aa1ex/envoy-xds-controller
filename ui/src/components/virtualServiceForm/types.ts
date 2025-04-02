@@ -16,7 +16,7 @@ export interface IVirtualServiceForm {
 	accessGroup: string
 	templateUid: string
 	listenerUid: string
-	vhDomains: string[]
+	virtualHostDomains: string[]
 	accessLogConfigUid: string
 	additionalHttpFilterUids: string[]
 	additionalRouteUids: string[]

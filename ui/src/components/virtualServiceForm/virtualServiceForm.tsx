@@ -6,7 +6,8 @@ import Grid from '@mui/material/Grid2'
 import Divider from '@mui/material/Divider'
 import {
 	CreateVirtualServiceRequest,
-	UpdateVirtualServiceRequest
+	UpdateVirtualServiceRequest,
+	VirtualHost
 } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
 
@@ -17,6 +18,7 @@ import {
 	useHttpFilterVs,
 	useListenerVs,
 	useListVs,
+	useNodeListVs,
 	useRouteVs,
 	useTemplatesVs,
 	useUpdateVs
@@ -29,6 +31,7 @@ import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
+import { SelectNodeVs } from '../selectNodeVs/selectNodeVs.tsx'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const navigate = useNavigate()
@@ -38,6 +41,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs()
 	const { data: accessGroups, isFetching: isFetchingAccessGroups, isError: isErrorAccessGroups } = useAccessGroupsVs()
 	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
+	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs()
 	const { refetch } = useListVs(false)
 	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
 	const { updateVS, isFetchingUpdateVs } = useUpdateVs()
@@ -57,7 +61,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		mode: 'onChange',
 		defaultValues: {
 			nodeIds: [],
-			vhDomains: [],
+			virtualHostDomains: [],
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
@@ -67,10 +71,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 	useEffect(() => {
 		if (isEdit && virtualServiceInfo) {
-			const vhDomains =
-				virtualServiceInfo?.virtualHost && virtualServiceInfo.virtualHost.length > 0
-					? JSON.parse(new TextDecoder().decode(virtualServiceInfo.virtualHost)).domains
-					: []
+			const vhDomains = virtualServiceInfo?.virtualHost?.domains || []
 
 			reset({
 				name: virtualServiceInfo.name,
@@ -81,7 +82,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				accessLogConfigUid: (virtualServiceInfo.accessLog?.value as ResourceRef)?.uid || '',
 				useRemoteAddress: virtualServiceInfo.useRemoteAddress,
 				templateOptions: virtualServiceInfo.templateOptions,
-				vhDomains,
+				virtualHostDomains: vhDomains,
 				additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
 				additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || []
 			})
@@ -89,25 +90,22 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	}, [isEdit, virtualServiceInfo, reset])
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
-		const formValues = {
-			domains: data.vhDomains
+		const virtualHostData: VirtualHost = {
+			$typeName: 'virtual_service.v1.VirtualHost',
+			domains: data.virtualHostDomains || []
 		}
-		const jsonString = JSON.stringify(formValues)
-		const virtualHostUint8Array = new TextEncoder().encode(jsonString)
-
-		const { vhDomains, ...result } = data
 
 		const baseVSData = {
-			...result,
-			virtualHost: virtualHostUint8Array,
-			templateOptions: result.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
-				? result.templateOptions.map(option => ({
+			...data,
+			virtualHost: virtualHostData,
+			templateOptions: data.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
+				? data.templateOptions.map(option => ({
 						...option,
 						$typeName: 'virtual_service_template.v1.TemplateOption' as const
 					}))
 				: [],
-			accessLogConfig: result.accessLogConfigUid
-				? { case: 'accessLogConfigUid' as const, value: result.accessLogConfigUid }
+			accessLogConfig: data.accessLogConfigUid
+				? { case: 'accessLogConfigUid' as const, value: data.accessLogConfigUid }
 				: { case: undefined }
 		}
 
@@ -118,7 +116,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			}
 
 			console.log('data for create', createVSData)
-			createVirtualService(createVSData)
+			await createVirtualService(createVSData)
 		}
 		if (isEdit && virtualServiceInfo) {
 			const { name, ...baseVSDataWithoutName } = baseVSData
@@ -130,7 +128,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			}
 
 			console.log('data for Update', updateVSData)
-			updateVS(updateVSData)
+			await updateVS(updateVSData)
 		}
 		navigate('/virtualServices')
 		await refetch()
@@ -150,13 +148,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					<Grid container spacing={3} padding={1}>
 						<Grid size={4} display='flex' flexDirection='column' gap={2}>
 							<TextFieldFormVs register={register} nameField='name' errors={errors} isDisabled={isEdit} />
-							<MultiChipFormVS
-								nameFields={'nodeIds'}
-								errors={errors}
-								setValue={setValue}
+							<SelectNodeVs
+								nameField={'nodeIds'}
+								dataNodes={nodeList}
 								control={control}
-								clearErrors={clearErrors}
-								setError={setError}
+								errors={errors}
+								isFetching={isFetchingNodeList}
+								isErrorFetch={isErrorNodeList}
 							/>
 							<SelectFormVs
 								nameField={'accessGroup'}
@@ -183,7 +181,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								isErrorFetch={isErrorListeners}
 							/>
 							<MultiChipFormVS
-								nameFields={'vhDomains'}
+								nameFields={'virtualHostDomains'}
 								errors={errors}
 								setValue={setValue}
 								control={control}
@@ -237,6 +235,15 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								getValues={getValues}
 								clearErrors={clearErrors}
 							/>
+							{/*<InputWithChips*/}
+							{/*	nameField='virtualHostDomains'*/}
+							{/*	watch={watch}*/}
+							{/*	setValue={setValue}*/}
+							{/*	setError={setError}*/}
+							{/*	errors={errors}*/}
+							{/*	control={control}*/}
+							{/*	clearErrors={clearErrors}*/}
+							{/*/>*/}
 						</Grid>
 						<Divider orientation='vertical' flexItem />
 						<Grid size={'grow'} display='flex' flexDirection='column' gap={2}></Grid>

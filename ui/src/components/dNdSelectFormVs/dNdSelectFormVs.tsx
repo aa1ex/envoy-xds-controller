@@ -101,14 +101,16 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 								helperText={
 									errors[nameField]?.message || (isErrorFetch && `Error loading ${titleMessage} data`)
 								}
-								InputProps={{
-									...params.InputProps,
-									endAdornment: (
-										<>
-											{isFetching ? <CircularProgress color='inherit' size={20} /> : null}
-											{params.InputProps?.endAdornment}
-										</>
-									)
+								slotProps={{
+									input: {
+										...params.InputProps,
+										endAdornment: (
+											<>
+												{isFetching ? <CircularProgress color='inherit' size={20} /> : null}
+												{params.InputProps?.endAdornment}
+											</>
+										)
+									}
 								}}
 							/>
 						)}
