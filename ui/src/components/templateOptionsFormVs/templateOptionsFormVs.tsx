@@ -25,6 +25,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { styleBox, styleTooltip } from './style.ts'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 
 interface ITemplateOptionsFormVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -77,16 +78,17 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 
 	return (
 		<Box sx={{ ...styleBox }}>
-			<Tooltip
-				title='Specify the property and select the modification parameter.'
-				placement='bottom-start'
-				enterDelay={500}
-				slotProps={{ ...styleTooltip }}
-			>
-				<Typography fontSize={15} color='gray' mt={1}>
-					Template Modifier
-				</Typography>
-			</Tooltip>
+			<Typography fontSize={15} color='gray' mt={1} display='flex' alignItems='center' gap={0.5}>
+				Template Modifier
+				<Tooltip
+					title='Specify the property and select the modification parameter.'
+					placement='bottom-start'
+					enterDelay={500}
+					slotProps={{ ...styleTooltip }}
+				>
+					<InfoOutlinedIcon fontSize='inherit' sx={{ cursor: 'pointer', fontSize: '14px' }} />
+				</Tooltip>
+			</Typography>
 
 			<Box display='flex' flexDirection='column' gap={2}>
 				{fields.map((field, index) => (

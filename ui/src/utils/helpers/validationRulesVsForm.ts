@@ -40,7 +40,8 @@ export const validationRulesVsForm: Record<
 		return true
 	},
 	accessLogConfigUid: value => {
-		if (typeof value !== 'string') return 'The AccessLogConfig field is required'
+		// if (typeof value !== 'string') return 'The AccessLogConfig field is required'
+		if (!value) return true
 		return true
 	},
 	additionalHttpFilterUids: value => {

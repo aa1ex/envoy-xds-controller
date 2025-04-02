@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import List from '@mui/material/List'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
@@ -62,16 +63,17 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	}
 	return (
 		<Box sx={{ ...styleBox }}>
-			<Tooltip
-				title={`Select ${titleMessage}s and arrange them in the desired order.`}
-				placement='bottom-start'
-				enterDelay={500}
-				slotProps={{ ...styleTooltip }}
-			>
-				<Typography fontSize={15} color='gray' mt={1}>
-					Configure {titleMessage}
-				</Typography>
-			</Tooltip>
+			<Typography fontSize={15} color='gray' mt={1} display='flex' alignItems='center' gap={0.5}>
+				Configure {titleMessage}
+				<Tooltip
+					title={`Select ${titleMessage}s and arrange them in the desired order.`}
+					placement='bottom-start'
+					enterDelay={500}
+					slotProps={{ ...styleTooltip }}
+				>
+					<InfoOutlinedIcon fontSize='inherit' sx={{ cursor: 'pointer', fontSize: '14px' }} />
+				</Tooltip>
+			</Typography>
 			<Controller
 				name={nameField}
 				control={control}
@@ -95,7 +97,7 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 						renderInput={params => (
 							<TextField
 								{...params}
-								label={titleMessage}
+								// label={titleMessage}
 								error={!!errors[nameField] || isErrorFetch}
 								variant='standard'
 								helperText={

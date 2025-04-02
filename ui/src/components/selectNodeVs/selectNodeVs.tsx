@@ -14,6 +14,7 @@ import MenuItem from '@mui/material/MenuItem'
 import CircularProgress from '@mui/material/CircularProgress'
 import Chip from '@mui/material/Chip'
 import FormHelperText from '@mui/material/FormHelperText'
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 
 interface ISelectNodeVsProps {
 	nameField: Extract<keyof IVirtualServiceForm, 'nodeIds'>
@@ -36,17 +37,18 @@ export const SelectNodeVs: React.FC<ISelectNodeVsProps> = ({
 
 	return (
 		<Box sx={{ ...styleBox }}>
-			<Tooltip
-				title={`Select ${titleMessage.slice(0, -1)}.`}
-				placement='bottom-start'
-				enterDelay={800}
-				disableInteractive
-				slotProps={{ ...styleTooltip }}
-			>
-				<Typography fontSize={15} color='gray' mt={1}>
-					{titleMessage}
-				</Typography>
-			</Tooltip>
+			<Typography fontSize={15} color='gray' mt={1} display='flex' alignItems='center' gap={0.5}>
+				{titleMessage}
+				<Tooltip
+					title={`Select ${titleMessage.slice(0, -1)}.`}
+					placement='bottom-start'
+					enterDelay={800}
+					disableInteractive
+					slotProps={{ ...styleTooltip }}
+				>
+					<InfoOutlinedIcon fontSize='inherit' sx={{ cursor: 'pointer', fontSize: '14px' }} />
+				</Tooltip>
+			</Typography>
 			<Controller
 				name={nameField}
 				control={control}
