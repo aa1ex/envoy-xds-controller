@@ -66,8 +66,8 @@ export const useConfigTable = ({
 				minSize: 200
 			},
 			{
-				accessorKey: 'projectId',
-				header: 'Project ID',
+				accessorKey: 'accessGroup',
+				header: 'Access Group',
 				minSize: 200
 			},
 			{
