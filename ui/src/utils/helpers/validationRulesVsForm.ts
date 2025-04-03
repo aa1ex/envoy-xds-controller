@@ -30,7 +30,8 @@ export const validationRulesVsForm: Record<
 	},
 	virtualHostDomains: value => {
 		if (!Array.isArray(value)) return 'Invalid value for Domains Virtual Host, expected an array'
-		if (value.length === 0) return 'The Domains Virtual Host field is required, enter at least one node'
+		// if (value.length === 0) return 'The Domains Virtual Host field is required, enter at least one node'
+		if (value === undefined || value.length === 0) return true
 		for (const virtualHost of value) {
 			if (typeof virtualHost !== 'string') return 'Each Domains Virtual Host must be a string'
 			if (!/^[a-zA-Z0-9_.-]+$/.test(virtualHost)) {

@@ -1,6 +1,6 @@
-export function a11yProps(index: number) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
+export function a11yProps(index: number, variant: string = 'simple') {
+	return {
+		id: `${variant}-tab-${index}`,
+		'aria-controls': `${variant}-tabpanel-${index}`
+	}
 }

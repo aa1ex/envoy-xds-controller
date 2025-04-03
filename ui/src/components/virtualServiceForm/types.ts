@@ -3,6 +3,7 @@ import { GetVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_
 export interface IVirtualServiceFormProps {
 	virtualServiceInfo?: GetVirtualServiceResponse
 	isEdit?: boolean
+	iseEditDomain?: boolean
 }
 
 export interface ITemplateOption {

@@ -9,6 +9,8 @@ import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import { Delete, Edit } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useVirtualServiceStore } from '../../store/setVsStore.ts'
+import { useSetEditDomainVsStore } from '../../store/setEditDomainVsStore.ts'
+import TravelExploreIcon from '@mui/icons-material/TravelExplore'
 
 interface IConfigVirtualServicesTable {
 	virtualServices: ListVirtualServiceResponse | undefined
@@ -31,6 +33,7 @@ export const useConfigTable = ({
 }: IConfigVirtualServicesTable) => {
 	const navigate = useNavigate()
 	const setVirtualServices = useVirtualServiceStore(state => state.setVirtualService)
+	const setEditDomainVS = useSetEditDomainVsStore(state => state.setIsEditDomain)
 
 	const handleDeleteVS = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
@@ -47,6 +50,15 @@ export const useConfigTable = ({
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
 		[navigate, setVirtualServices]
+	)
+
+	const openEditDomainVsPage = useCallback(
+		(row: MRT_Row<VirtualServiceListItem>) => {
+			setEditDomainVS(true)
+			setVirtualServices(row.original.uid, row.original.name)
+			navigate(`/virtualServices/${row.original.uid}`)
+		},
+		[navigate, setVirtualServices, setEditDomainVS]
 	)
 
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(
@@ -121,7 +133,7 @@ export const useConfigTable = ({
 		},
 		displayColumnDefOptions: {
 			'mrt-row-actions': {
-				size: 100
+				size: 150
 				// grow: false
 			}
 		},
@@ -131,6 +143,12 @@ export const useConfigTable = ({
 				<Tooltip placement='top-end' title='Edit Virtual Service'>
 					<IconButton onClick={() => openEditVsPage(row)}>
 						<Edit />
+					</IconButton>
+				</Tooltip>
+
+				<Tooltip placement='top-end' title='Edit Domain Virtual Service'>
+					<IconButton onClick={() => openEditDomainVsPage(row)}>
+						<TravelExploreIcon color='warning' />
 					</IconButton>
 				</Tooltip>
 

@@ -2,8 +2,6 @@ import React, { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Grid from '@mui/material/Grid2'
-import Divider from '@mui/material/Divider'
 import {
 	CreateVirtualServiceRequest,
 	UpdateVirtualServiceRequest,
@@ -11,37 +9,26 @@ import {
 } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
 
-import {
-	useAccessGroupsVs,
-	useAccessLogsVs,
-	useCreateVs,
-	useHttpFilterVs,
-	useListenerVs,
-	useListVs,
-	useNodeListVs,
-	useRouteVs,
-	useTemplatesVs,
-	useUpdateVs
-} from '../../api/grpc/hooks/useVirtualService.ts'
+import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { useNavigate } from 'react-router-dom'
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
-import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import { a11yProps } from '../customTabPanel/style.ts'
+import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
+import Divider from '@mui/material/Divider'
 import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
-import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
-import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
-import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
-import { SelectNodeVs } from '../selectNodeVs/selectNodeVs.tsx'
+import { useSetEditDomainVsStore } from '../../store/setEditDomainVsStore.ts'
+import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
+import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
+import VirtualHostDomains from '../virtualHostDomains/virtualHostDomains.tsx'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const navigate = useNavigate()
-	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs()
-	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVs()
-	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs()
-	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs()
-	const { data: accessGroups, isFetching: isFetchingAccessGroups, isError: isErrorAccessGroups } = useAccessGroupsVs()
-	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
-	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs()
+	const isEditDomain = useSetEditDomainVsStore(state => state.isEditDomain)
+	const setEditDomainVS = useSetEditDomainVsStore(state => state.setIsEditDomain)
+
 	const { refetch } = useListVs(false)
 	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
 	const { updateVS, isFetchingUpdateVs } = useUpdateVs()
@@ -88,6 +75,18 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			})
 		}
 	}, [isEdit, virtualServiceInfo, reset])
+
+	const [tabIndex, setTabIndex] = React.useState(0)
+	const handleChangeTabIndex = (_e: React.SyntheticEvent, newTabIndex: number) => {
+		setTabIndex(newTabIndex)
+	}
+
+	useEffect(() => {
+		if (isEditDomain && isEdit) {
+			setTabIndex(1)
+			setEditDomainVS(false)
+		}
+	}, [isEdit, isEditDomain, setEditDomainVS])
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const virtualHostData: VirtualHost = {
@@ -136,122 +135,94 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	return (
 		<>
 			<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
-				<Box
-					display='flex'
-					flexDirection='column'
-					justifyContent='space-between'
-					height='100%'
-					gap={2}
-					overflow='auto'
-					flexGrow={1}
-				>
-					<Grid container spacing={3} padding={1}>
-						<Grid size={4} display='flex' flexDirection='column' gap={2}>
-							<TextFieldFormVs register={register} nameField='name' errors={errors} isDisabled={isEdit} />
-							<SelectNodeVs
-								nameField={'nodeIds'}
-								dataNodes={nodeList}
-								control={control}
-								errors={errors}
-								isFetching={isFetchingNodeList}
-								isErrorFetch={isErrorNodeList}
-							/>
-							<SelectFormVs
-								nameField={'accessGroup'}
-								data={accessGroups}
-								control={control}
-								errors={errors}
-								isFetching={isFetchingAccessGroups}
-								isErrorFetch={isErrorAccessGroups}
-							/>
-							<SelectFormVs
-								nameField={'templateUid'}
-								data={templates}
-								control={control}
-								errors={errors}
-								isFetching={isFetchingTemplates}
-								isErrorFetch={isErrorTemplates}
-							/>
-							<SelectFormVs
-								nameField={'listenerUid'}
-								data={listeners}
-								control={control}
-								errors={errors}
-								isFetching={isFetchingListeners}
-								isErrorFetch={isErrorListeners}
-							/>
-							<MultiChipFormVS
-								nameFields={'virtualHostDomains'}
-								errors={errors}
-								setValue={setValue}
-								control={control}
-								clearErrors={clearErrors}
-								setError={setError}
-							/>
-							<SelectFormVs
-								nameField={'accessLogConfigUid'}
-								data={accessLogs}
-								control={control}
-								errors={errors}
-								isErrorFetch={isErrorAccessLogs}
-								isFetching={isFetchingAccessLogs}
-							/>
-						</Grid>
-						<Divider orientation='vertical' flexItem />
+				<Box display='flex' height='100%' overflow='auto' flexGrow={1} className='vsForm'>
+					<Tabs
+						orientation='vertical'
+						value={tabIndex}
+						onChange={handleChangeTabIndex}
+						aria-label='formTabMEnu'
+						sx={{ borderRight: 1, borderColor: 'divider' }}
+					>
+						<Tab label='General' {...a11yProps(0, 'vertical')} />
+						<Tab label='Domains' {...a11yProps(1, 'vertical')} />
+						<Tab label='Settings' {...a11yProps(2, 'vertical')} />
+						<Tab label='Template' {...a11yProps(3, 'vertical')} />
+					</Tabs>
+					<Box
+						display='flex'
+						flexDirection='column'
+						flexGrow={1}
+						justifyContent='space-between'
+						className='vsFormWrapper'
+					>
+						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
+							<Box display='flex' className='vsLeftColumn' width='65%'>
+								<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
+									<GeneralTabVs
+										register={register}
+										control={control}
+										errors={errors}
+										isEdit={isEdit}
+									/>
+								</CustomTabPanel>
 
-						<Grid size={4} display='flex' flexDirection='column' gap={2}>
-							<DNdSelectFormVs
-								nameField={'additionalHttpFilterUids'}
-								data={httpFilters}
-								control={control}
-								setValue={setValue}
-								watch={watch}
-								errors={errors}
-								isErrorFetch={isErrorHttpFilters}
-								isFetching={isFetchingHttpFilters}
-							/>
-							<DNdSelectFormVs
-								nameField={'additionalRouteUids'}
-								data={routes}
-								control={control}
-								setValue={setValue}
-								watch={watch}
-								errors={errors}
-								isErrorFetch={isErrorRoutes}
-								isFetching={isFetchingRoutes}
-							/>
-							<RemoteAddrFormVs
-								nameField={'useRemoteAddress'}
-								control={control}
-								errors={errors}
-								setError={setError}
-								clearErrors={clearErrors}
-								setValue={setValue}
-							/>
-							<TemplateOptionsFormVs
-								register={register}
-								control={control}
-								errors={errors}
-								getValues={getValues}
-								clearErrors={clearErrors}
-							/>
-							{/*<InputWithChips*/}
-							{/*	nameField='virtualHostDomains'*/}
-							{/*	watch={watch}*/}
-							{/*	setValue={setValue}*/}
-							{/*	setError={setError}*/}
-							{/*	errors={errors}*/}
-							{/*	control={control}*/}
-							{/*	clearErrors={clearErrors}*/}
-							{/*/>*/}
-						</Grid>
-						<Divider orientation='vertical' flexItem />
-						<Grid size={'grow'} display='flex' flexDirection='column' gap={2}></Grid>
-					</Grid>
-					<Box display='flex' alignItems='center' justifyContent='center'>
-						<Button variant='contained' type='submit' loading={isFetchingCreateVs || isFetchingUpdateVs}>
-							{isEdit ? 'Update Virtual Service' : 'Create Virtual Service'}
-						</Button>
+								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
+									<MultiChipFormVS
+										nameFields={'virtualHostDomains'}
+										errors={errors}
+										setValue={setValue}
+										control={control}
+										clearErrors={clearErrors}
+										setError={setError}
+									/>
+									<VirtualHostDomains
+										control={control}
+										setValue={setValue}
+										errors={errors}
+										setError={setError}
+										clearErrors={clearErrors}
+										watch={watch}
+									/>
+								</CustomTabPanel>
+
+								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
+									<SettingsTabVs
+										control={control}
+										setValue={setValue}
+										errors={errors}
+										watch={watch}
+										setError={setError}
+										clearErrors={clearErrors}
+									/>
+								</CustomTabPanel>
+
+								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
+									<TemplateOptionsFormVs
+										register={register}
+										control={control}
+										errors={errors}
+										getValues={getValues}
+										clearErrors={clearErrors}
+									/>
+								</CustomTabPanel>
+							</Box>
+							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
+							<Box display='flex' className='vsLeftLeft' width='35%'>
+								<Box border='1px solid gray' borderRadius={1} p={2} height='100%' width='100%' mr={1}>
+									для наглядности
+								</Box>
+							</Box>
+						</Box>
+
+						<Box display='flex' alignItems='center' justifyContent='center'>
+							<Button
+								variant='contained'
+								type='submit'
+								loading={isFetchingCreateVs || isFetchingUpdateVs}
+							>
+								{isEdit ? 'Update Virtual Service' : 'Create Virtual Service'}
+							</Button>
+						</Box>
 					</Box>
 				</Box>
 			</form>
