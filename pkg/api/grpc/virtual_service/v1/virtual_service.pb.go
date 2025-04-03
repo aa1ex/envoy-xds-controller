@@ -74,7 +74,7 @@ type CreateVirtualServiceRequest struct {
 	AccessGroup string                 `protobuf:"bytes,3,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"` //Селектор выбора группы
 	TemplateUid string                 `protobuf:"bytes,4,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"` //выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
 	ListenerUid string                 `protobuf:"bytes,5,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"` //выбор из колекции listeners proto/listener/v1/listener.proto
-	VirtualHost *VirtualHost           `protobuf:"bytes,6,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"` // textAria инпут на YAML или JSON, но при отправке в JSON(BASE64)
+	VirtualHost *VirtualHost           `protobuf:"bytes,6,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"` // объект {domains: ["список", "доменов"]}
 	// Types that are valid to be assigned to AccessLogConfig:
 	//
 	//	*CreateVirtualServiceRequest_AccessLogConfigUid

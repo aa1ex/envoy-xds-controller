@@ -2,7 +2,7 @@
 // @generated from file listener/v1/listener.proto (package listener.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
@@ -23,6 +23,11 @@ export declare type ListenerListItem = Message<"listener.v1.ListenerListItem"> &
    * @generated from field: string name = 2;
    */
   name: string;
+
+  /**
+   * @generated from field: listener.v1.ListenerType type = 3;
+   */
+  type: ListenerType;
 };
 
 /**
@@ -58,6 +63,36 @@ export declare type ListListenerResponse = Message<"listener.v1.ListListenerResp
  * Use `create(ListListenerResponseSchema)` to create a new message.
  */
 export declare const ListListenerResponseSchema: GenMessage<ListListenerResponse>;
+
+/**
+ * @generated from enum listener.v1.ListenerType
+ */
+export enum ListenerType {
+  /**
+   * @generated from enum value: LISTENER_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: LISTENER_TYPE_HTTP = 1;
+   */
+  HTTP = 1,
+
+  /**
+   * @generated from enum value: LISTENER_TYPE_HTTPS = 2;
+   */
+  HTTPS = 2,
+
+  /**
+   * @generated from enum value: LISTENER_TYPE_TCP = 3;
+   */
+  TCP = 3,
+}
+
+/**
+ * Describes the enum listener.v1.ListenerType.
+ */
+export declare const ListenerTypeSchema: GenEnum<ListenerType>;
 
 /**
  * @generated from service listener.v1.ListenerStoreService

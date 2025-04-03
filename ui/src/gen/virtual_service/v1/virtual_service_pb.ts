@@ -73,7 +73,7 @@ export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirt
   listenerUid: string;
 
   /**
-   * textAria инпут на YAML или JSON, но при отправке в JSON(BASE64)
+   * объект {domains: ["список", "доменов"]}
    *
    * @generated from field: virtual_service.v1.VirtualHost virtual_host = 6;
    */

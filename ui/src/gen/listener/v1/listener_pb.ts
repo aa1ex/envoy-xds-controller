@@ -2,15 +2,15 @@
 // @generated from file listener/v1/listener.proto (package listener.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file listener/v1/listener.proto.
  */
 export const file_listener_v1_listener: GenFile = /*@__PURE__*/
-  fileDesc("ChpsaXN0ZW5lci92MS9saXN0ZW5lci5wcm90bxILbGlzdGVuZXIudjEiLQoQTGlzdGVuZXJMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCSIVChNMaXN0TGlzdGVuZXJSZXF1ZXN0IkQKFExpc3RMaXN0ZW5lclJlc3BvbnNlEiwKBWl0ZW1zGAEgAygLMh0ubGlzdGVuZXIudjEuTGlzdGVuZXJMaXN0SXRlbTJrChRMaXN0ZW5lclN0b3JlU2VydmljZRJTCgxMaXN0TGlzdGVuZXISIC5saXN0ZW5lci52MS5MaXN0TGlzdGVuZXJSZXF1ZXN0GiEubGlzdGVuZXIudjEuTGlzdExpc3RlbmVyUmVzcG9uc2VCugEKD2NvbS5saXN0ZW5lci52MUINTGlzdGVuZXJQcm90b1ABWktnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2xpc3RlbmVyL3YxO2xpc3RlbmVydjGiAgNMWFiqAgtMaXN0ZW5lci5WMcoCC0xpc3RlbmVyXFYx4gIXTGlzdGVuZXJcVjFcR1BCTWV0YWRhdGHqAgxMaXN0ZW5lcjo6VjFiBnByb3RvMw");
+  fileDesc("ChpsaXN0ZW5lci92MS9saXN0ZW5lci5wcm90bxILbGlzdGVuZXIudjEiVgoQTGlzdGVuZXJMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCRInCgR0eXBlGAMgASgOMhkubGlzdGVuZXIudjEuTGlzdGVuZXJUeXBlIhUKE0xpc3RMaXN0ZW5lclJlcXVlc3QiRAoUTGlzdExpc3RlbmVyUmVzcG9uc2USLAoFaXRlbXMYASADKAsyHS5saXN0ZW5lci52MS5MaXN0ZW5lckxpc3RJdGVtKnUKDExpc3RlbmVyVHlwZRIdChlMSVNURU5FUl9UWVBFX1VOU1BFQ0lGSUVEEAASFgoSTElTVEVORVJfVFlQRV9IVFRQEAESFwoTTElTVEVORVJfVFlQRV9IVFRQUxACEhUKEUxJU1RFTkVSX1RZUEVfVENQEAMyawoUTGlzdGVuZXJTdG9yZVNlcnZpY2USUwoMTGlzdExpc3RlbmVyEiAubGlzdGVuZXIudjEuTGlzdExpc3RlbmVyUmVxdWVzdBohLmxpc3RlbmVyLnYxLkxpc3RMaXN0ZW5lclJlc3BvbnNlQroBCg9jb20ubGlzdGVuZXIudjFCDUxpc3RlbmVyUHJvdG9QAVpLZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9saXN0ZW5lci92MTtsaXN0ZW5lcnYxogIDTFhYqgILTGlzdGVuZXIuVjHKAgtMaXN0ZW5lclxWMeICF0xpc3RlbmVyXFYxXEdQQk1ldGFkYXRh6gIMTGlzdGVuZXI6OlYxYgZwcm90bzM");
 
 /**
  * @generated from message listener.v1.ListenerListItem
@@ -25,6 +25,11 @@ export type ListenerListItem = Message<"listener.v1.ListenerListItem"> & {
    * @generated from field: string name = 2;
    */
   name: string;
+
+  /**
+   * @generated from field: listener.v1.ListenerType type = 3;
+   */
+  type: ListenerType;
 };
 
 /**
@@ -63,6 +68,37 @@ export type ListListenerResponse = Message<"listener.v1.ListListenerResponse"> &
  */
 export const ListListenerResponseSchema: GenMessage<ListListenerResponse> = /*@__PURE__*/
   messageDesc(file_listener_v1_listener, 2);
+
+/**
+ * @generated from enum listener.v1.ListenerType
+ */
+export enum ListenerType {
+  /**
+   * @generated from enum value: LISTENER_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: LISTENER_TYPE_HTTP = 1;
+   */
+  HTTP = 1,
+
+  /**
+   * @generated from enum value: LISTENER_TYPE_HTTPS = 2;
+   */
+  HTTPS = 2,
+
+  /**
+   * @generated from enum value: LISTENER_TYPE_TCP = 3;
+   */
+  TCP = 3,
+}
+
+/**
+ * Describes the enum listener.v1.ListenerType.
+ */
+export const ListenerTypeSchema: GenEnum<ListenerType> = /*@__PURE__*/
+  enumDesc(file_listener_v1_listener, 0);
 
 /**
  * @generated from service listener.v1.ListenerStoreService

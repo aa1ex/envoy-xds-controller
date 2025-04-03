@@ -4,9 +4,17 @@ package listener.v1;
 
 option go_package = "listenerv1";
 
+enum ListenerType {
+  LISTENER_TYPE_UNSPECIFIED = 0;
+  LISTENER_TYPE_HTTP = 1;
+  LISTENER_TYPE_HTTPS = 2;
+  LISTENER_TYPE_TCP = 3;
+}
+
 message ListenerListItem  {
   string uid = 1;
   string name = 2;
+  ListenerType type = 3;
 }
 
 service ListenerStoreService {
