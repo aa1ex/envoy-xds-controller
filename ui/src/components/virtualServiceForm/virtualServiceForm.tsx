@@ -18,15 +18,17 @@ import { a11yProps } from '../customTabPanel/style.ts'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
 import Divider from '@mui/material/Divider'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
-import { useSetEditDomainVsStore } from '../../store/setEditDomainVsStore.ts'
+import { useSetEditVsStore } from '../../store/setEditVsStore.ts'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains/virtualHostDomains.tsx'
+import { useSetIsReadOnlyVsStore } from '../../store/setIsReadOnlyVs.ts'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const navigate = useNavigate()
-	const isEditDomain = useSetEditDomainVsStore(state => state.isEditDomain)
-	const setEditDomainVS = useSetEditDomainVsStore(state => state.setIsEditDomain)
+	const isEditVs = useSetEditVsStore(state => state.isEditVs)
+	const setEditVS = useSetEditVsStore(state => state.setIsEditVs)
+	const isReadOnly = useSetIsReadOnlyVsStore(state => state.isReadOnlyVs)
 
 	const { refetch } = useListVs(false)
 	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
@@ -80,12 +82,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		setTabIndex(newTabIndex)
 	}
 
+	//*Для изменения только домена
 	useEffect(() => {
-		if (isEditDomain && isEdit) {
+		if (isEditVs && isEdit) {
 			setTabIndex(1)
-			setEditDomainVS(false)
+			setEditVS(false)
 		}
-	}, [isEdit, isEditDomain, setEditDomainVS])
+	}, [isEdit, isEditVs, setEditVS])
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const virtualHostData: VirtualHost = {
@@ -212,7 +215,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								variant='contained'
 								type='submit'
 								loading={isFetchingCreateVs || isFetchingUpdateVs}
-								disabled={isEdit && virtualServiceInfo?.isEditable === false}
+								disabled={virtualServiceInfo?.isEditable === false || isReadOnly}
 							>
 								{isEdit ? 'Update Virtual Service' : 'Create Virtual Service'}
 							</Button>

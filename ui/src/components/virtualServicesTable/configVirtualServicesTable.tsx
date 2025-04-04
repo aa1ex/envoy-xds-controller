@@ -9,8 +9,10 @@ import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import { Delete, Edit } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useVirtualServiceStore } from '../../store/setVsStore.ts'
-import { useSetEditDomainVsStore } from '../../store/setEditDomainVsStore.ts'
+import { useSetEditVsStore } from '../../store/setEditVsStore.ts'
 import TravelExploreIcon from '@mui/icons-material/TravelExplore'
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
+import { useSetIsReadOnlyVsStore } from '../../store/setIsReadOnlyVs.ts'
 
 interface IConfigVirtualServicesTable {
 	virtualServices: ListVirtualServiceResponse | undefined
@@ -32,8 +34,9 @@ export const useConfigTable = ({
 	setSelectedUid
 }: IConfigVirtualServicesTable) => {
 	const navigate = useNavigate()
-	const setVirtualServices = useVirtualServiceStore(state => state.setVirtualService)
-	const setEditDomainVS = useSetEditDomainVsStore(state => state.setIsEditDomain)
+	const setVsInfo = useVirtualServiceStore(state => state.setVirtualService)
+	const setEditVS = useSetEditVsStore(state => state.setIsEditVs)
+	const setReadOnlyVs = useSetIsReadOnlyVsStore(state => state.setIsReadOnly)
 
 	const handleDeleteVS = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
@@ -46,19 +49,28 @@ export const useConfigTable = ({
 
 	const openEditVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
-			setVirtualServices(row.original.uid, row.original.name)
+			setVsInfo(row.original.uid, row.original.name)
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVirtualServices]
+		[navigate, setVsInfo]
 	)
 
 	const openEditDomainVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
-			setEditDomainVS(true)
-			setVirtualServices(row.original.uid, row.original.name)
+			setEditVS(true)
+			setVsInfo(row.original.uid, row.original.name)
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVirtualServices, setEditDomainVS]
+		[navigate, setVsInfo, setEditVS]
+	)
+
+	const openReadOnlyVsPage = useCallback(
+		(row: MRT_Row<VirtualServiceListItem>) => {
+			setVsInfo(row.original.uid, row.original.name)
+			setReadOnlyVs(true)
+			navigate(`/virtualServices/${row.original.uid}`)
+		},
+		[navigate, setVsInfo, setReadOnlyVs]
 	)
 
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(
@@ -133,30 +145,45 @@ export const useConfigTable = ({
 		},
 		displayColumnDefOptions: {
 			'mrt-row-actions': {
-				size: 150
+				size: 210
 				// grow: false
 			}
 		},
 
 		renderRowActions: ({ row }) => (
 			<Box display='flex' gap={1}>
-				<Tooltip placement='top-end' title='Edit Virtual Service'>
-					<IconButton onClick={() => openEditVsPage(row)} disabled={!row.original.isEditable}>
-						<Edit color={row.original.isEditable ? 'primary' : 'disabled'} />
-					</IconButton>
-				</Tooltip>
+				{row.original.isEditable ? (
+					<>
+						<Tooltip placement='top-end' title='View Virtual Service'>
+							<IconButton onClick={() => openReadOnlyVsPage(row)}>
+								<RemoveRedEyeIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip placement='top-end' title='Edit Virtual Service'>
+							<IconButton onClick={() => openEditVsPage(row)}>
+								<Edit />
+							</IconButton>
+						</Tooltip>
 
-				<Tooltip placement='top-end' title='Edit Domain Virtual Service'>
-					<IconButton onClick={() => openEditDomainVsPage(row)}>
-						<TravelExploreIcon color='warning' />
-					</IconButton>
-				</Tooltip>
+						<Tooltip placement='top-end' title='Edit Domain Virtual Service'>
+							<IconButton onClick={() => openEditDomainVsPage(row)}>
+								<TravelExploreIcon color='warning' />
+							</IconButton>
+						</Tooltip>
 
-				<Tooltip placement='top-end' title='Remove Virtual Service'>
-					<IconButton onClick={() => handleDeleteVS(row)}>
-						<Delete color='error' />
-					</IconButton>
-				</Tooltip>
+						<Tooltip placement='top-end' title='Remove Virtual Service'>
+							<IconButton onClick={() => handleDeleteVS(row)}>
+								<Delete color='error' />
+							</IconButton>
+						</Tooltip>
+					</>
+				) : (
+					<Tooltip placement='top-end' title='View Virtual Service'>
+						<IconButton onClick={() => openReadOnlyVsPage(row)}>
+							<RemoveRedEyeIcon />
+						</IconButton>
+					</Tooltip>
+				)}
 			</Box>
 		),
 
