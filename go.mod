@@ -35,6 +35,7 @@ require (
 
 require (
 	cel.dev/expr v0.15.0 // indirect
+	connectrpc.com/authn v0.2.0 // indirect
 	connectrpc.com/grpcreflect v1.3.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect

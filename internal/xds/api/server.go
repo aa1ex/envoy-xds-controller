@@ -144,11 +144,21 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	mux.Handle(grpcreflect.NewHandlerV1(reflector))
 	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
+	handler = mux
+
+	if c.cfg.Auth.Enabled {
+		middleware, err := grpcapi.NewAuthMiddleware(c.cfg.Auth.IssuerURL, c.cfg.Auth.ClientID)
+		if err != nil {
+			return err
+		}
+		handler = middleware.Wrap(mux)
+	}
+
 	go func() {
 		_ = http.ListenAndServe(
 			net.JoinHostPort("", strconv.Itoa(port)),
 			// Use h2c so we can serve HTTP/2 without TLS.
-			h2c.NewHandler(cors.AllowAll().Handler(mux), &http2.Server{}),
+			h2c.NewHandler(cors.AllowAll().Handler(handler), &http2.Server{}),
 		)
 	}()
 	return nil

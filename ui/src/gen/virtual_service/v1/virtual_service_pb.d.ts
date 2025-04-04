@@ -339,6 +339,11 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 13;
    */
   templateOptions: TemplateOption[];
+
+  /**
+   * @generated from field: bool is_editable = 14;
+   */
+  isEditable: boolean;
 };
 
 /**
@@ -387,6 +392,11 @@ export declare type VirtualServiceListItem = Message<"virtual_service.v1.Virtual
    * @generated from field: common.v1.ResourceRef template = 5;
    */
   template?: ResourceRef;
+
+  /**
+   * @generated from field: bool is_editable = 6;
+   */
+  isEditable: boolean;
 };
 
 /**

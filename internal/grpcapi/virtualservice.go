@@ -51,6 +51,7 @@ func (s *VirtualServiceStore) ListVirtualService(_ context.Context, _ *connect.R
 				Namespace: template.Namespace,
 			}
 		}
+		vs.IsEditable = v.IsEditable()
 		list = append(list, vs)
 	}
 	return connect.NewResponse(&v1.ListVirtualServiceResponse{Items: list}), nil
@@ -321,6 +322,7 @@ func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connec
 		Name:        vs.Name,
 		NodeIds:     vs.GetNodeIDs(),
 		AccessGroup: vs.GetAccessGroup(),
+		IsEditable:  vs.IsEditable(),
 	}
 	if vs.Spec.Template != nil {
 		template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.Template.Name})
