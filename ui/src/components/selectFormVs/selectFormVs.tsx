@@ -38,6 +38,7 @@ interface ISelectFormVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean
+	isDisabledEdit: boolean
 }
 
 export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
@@ -46,7 +47,8 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 	control,
 	errors,
 	isErrorFetch,
-	isFetching
+	isFetching,
+	isDisabledEdit
 }) => {
 	const fieldTitles: Record<string, string> = {
 		accessGroup: 'AccessGroup',
@@ -84,6 +86,7 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 						label={titleMessage}
 						value={field.value || ''}
 						onChange={e => field.onChange(e.target.value)}
+						disabled={!isDisabledEdit}
 						IconComponent={
 							isFetching ? () => <CircularProgress size={20} sx={{ marginRight: 2 }} /> : undefined
 						}

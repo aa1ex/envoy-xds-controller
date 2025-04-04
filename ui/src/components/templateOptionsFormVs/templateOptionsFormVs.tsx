@@ -33,6 +33,7 @@ interface ITemplateOptionsFormVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	getValues: UseFormGetValues<IVirtualServiceForm>
 	clearErrors: UseFormClearErrors<IVirtualServiceForm>
+	isDisabledEdit: boolean
 }
 
 export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
@@ -40,7 +41,8 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 	control,
 	errors,
 	getValues,
-	clearErrors
+	clearErrors,
+	isDisabledEdit
 }) => {
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -139,7 +141,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 					</Box>
 				))}
 			</Box>
-			<Button onClick={() => append({ field: '', modifier: 0 })} variant='contained'>
+			<Button onClick={() => append({ field: '', modifier: 0 })} variant='contained' disabled={!isDisabledEdit}>
 				Add Template Modifier
 			</Button>
 		</Box>

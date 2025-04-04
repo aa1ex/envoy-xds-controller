@@ -141,8 +141,8 @@ export const useConfigTable = ({
 		renderRowActions: ({ row }) => (
 			<Box display='flex' gap={1}>
 				<Tooltip placement='top-end' title='Edit Virtual Service'>
-					<IconButton onClick={() => openEditVsPage(row)}>
-						<Edit />
+					<IconButton onClick={() => openEditVsPage(row)} disabled={!row.original.isEditable}>
+						<Edit color={row.original.isEditable ? 'primary' : 'disabled'} />
 					</IconButton>
 				</Tooltip>
 

@@ -162,6 +162,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										control={control}
 										errors={errors}
 										isEdit={isEdit}
+										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 
@@ -173,6 +174,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										setError={setError}
 										clearErrors={clearErrors}
 										watch={watch}
+										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 
@@ -182,8 +184,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										setValue={setValue}
 										errors={errors}
 										watch={watch}
-										setError={setError}
-										clearErrors={clearErrors}
+										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 
@@ -194,6 +195,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										errors={errors}
 										getValues={getValues}
 										clearErrors={clearErrors}
+										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 							</Box>
@@ -210,6 +212,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								variant='contained'
 								type='submit'
 								loading={isFetchingCreateVs || isFetchingUpdateVs}
+								disabled={isEdit && virtualServiceInfo?.isEditable === false}
 							>
 								{isEdit ? 'Update Virtual Service' : 'Create Virtual Service'}
 							</Button>

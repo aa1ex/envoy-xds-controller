@@ -16,9 +16,10 @@ interface IGeneralTabVsProps {
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
 	isEdit?: boolean | undefined
+	isDisabledEdit: boolean
 }
 
-export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, errors, isEdit }) => {
+export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, errors, isEdit, isDisabledEdit }) => {
 	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs()
 	const { data: accessGroups, isFetching: isFetchingAccessGroups, isError: isErrorAccessGroups } = useAccessGroupsVs()
 	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs()
@@ -42,6 +43,7 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				errors={errors}
 				isFetching={isFetchingAccessGroups}
 				isErrorFetch={isErrorAccessGroups}
+				isDisabledEdit={isDisabledEdit}
 			/>
 			<SelectFormVs
 				nameField={'templateUid'}
@@ -50,6 +52,7 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				errors={errors}
 				isFetching={isFetchingTemplates}
 				isErrorFetch={isErrorTemplates}
+				isDisabledEdit={isDisabledEdit}
 			/>
 			<SelectFormVs
 				nameField={'listenerUid'}
@@ -58,6 +61,7 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				errors={errors}
 				isFetching={isFetchingListeners}
 				isErrorFetch={isErrorListeners}
+				isDisabledEdit={isDisabledEdit}
 			/>
 		</>
 	)

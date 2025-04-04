@@ -37,6 +37,7 @@ interface IdNdSelectFormVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	isErrorFetch: boolean
 	isFetching: boolean
+	isDisabledEdit: boolean
 }
 
 export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
@@ -47,7 +48,8 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	setValue,
 	errors,
 	isFetching,
-	isErrorFetch
+	isErrorFetch,
+	isDisabledEdit
 }) => {
 	const titleMessage = nameField === 'additionalHttpFilterUids' ? 'HTTP filter' : 'Route'
 	const selectedUids = watch(nameField)
@@ -94,6 +96,7 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 							})
 						}
 						loading={isFetching}
+						disabled={!isDisabledEdit}
 						renderInput={params => (
 							<TextField
 								{...params}

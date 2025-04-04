@@ -31,6 +31,7 @@ interface IVirtualHostDomainsProps {
 	setError: UseFormSetError<IVirtualServiceForm>
 	clearErrors: UseFormClearErrors<IVirtualServiceForm>
 	watch: UseFormWatch<IVirtualServiceForm>
+	isDisabledEdit: boolean
 }
 
 export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
@@ -39,7 +40,8 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 	setError,
 	clearErrors,
 	setValue,
-	watch
+	watch,
+	isDisabledEdit
 }) => {
 	const nameField = 'virtualHostDomains'
 	const [newDomain, setNewDomain] = useState('')
@@ -126,6 +128,7 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 								variant='standard'
 								onKeyDown={handleKeyPress}
 								error={!!errors.virtualHostDomains}
+								disabled={!isDisabledEdit}
 							/>
 							<FormHelperText error={!!errors.virtualHostDomains} sx={{ ml: 0 }}>
 								{errors.virtualHostDomains?.message}
@@ -136,11 +139,12 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 				<Button
 					variant='contained'
 					onClick={addDomain}
+					disabled={!isDisabledEdit}
 					sx={{ flexShrink: 0, marginLeft: '10px', marginRight: '10px' }}
 				>
 					Add Domain
 				</Button>
-				<Button variant='outlined' component='label' sx={{ flexShrink: 0 }}>
+				<Button variant='outlined' component='label' sx={{ flexShrink: 0 }} disabled={!isDisabledEdit}>
 					Upload Domains
 					<input type='file' accept='.txt' style={{ display: 'none' }} onChange={handleFileUpload} />
 				</Button>

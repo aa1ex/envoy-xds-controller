@@ -1,5 +1,5 @@
 import React from 'react'
-import { Control, Controller, FieldErrors, UseFormClearErrors, UseFormSetError, UseFormSetValue } from 'react-hook-form'
+import { Control, Controller, FieldErrors } from 'react-hook-form'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -11,13 +11,11 @@ import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 interface IRemoteAddrFormVsProps {
 	nameField: Extract<keyof IVirtualServiceForm, 'useRemoteAddress'>
 	control: Control<IVirtualServiceForm>
-	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
-	setError: UseFormSetError<IVirtualServiceForm>
-	clearErrors: UseFormClearErrors<IVirtualServiceForm>
+	isDisabledEdit: boolean
 }
 
-export const RemoteAddrFormVs: React.FC<IRemoteAddrFormVsProps> = ({ nameField, control, errors }) => {
+export const RemoteAddrFormVs: React.FC<IRemoteAddrFormVsProps> = ({ nameField, control, errors, isDisabledEdit }) => {
 	return (
 		<Box
 			display='flex'
@@ -40,7 +38,7 @@ export const RemoteAddrFormVs: React.FC<IRemoteAddrFormVsProps> = ({ nameField, 
 				name={nameField}
 				control={control}
 				render={({ field }) => (
-					<FormControl error={!!errors[nameField]} sx={{ alignItems: 'center' }}>
+					<FormControl error={!!errors[nameField]} sx={{ alignItems: 'center' }} disabled={!isDisabledEdit}>
 						<RadioGroup
 							value={field.value ?? ''}
 							onChange={e => {
