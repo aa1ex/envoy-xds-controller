@@ -33,10 +33,13 @@ func NewVirtualServiceStore(s *store.Store, c client.Client, targetNs string) *V
 	}
 }
 
-func (s *VirtualServiceStore) ListVirtualService(_ context.Context, _ *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
+func (s *VirtualServiceStore) ListVirtualService(_ context.Context, r *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
 	m := s.store.MapVirtualServices()
 	list := make([]*v1.VirtualServiceListItem, 0, len(m))
 	for _, v := range m {
+		if r.Msg.AccessGroup != "" && r.Msg.AccessGroup != v.GetAccessGroup() {
+			continue
+		}
 		vs := &v1.VirtualServiceListItem{
 			Uid:         string(v.UID),
 			Name:        v.Name,
