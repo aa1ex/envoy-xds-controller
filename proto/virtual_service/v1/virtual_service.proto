@@ -84,7 +84,9 @@ message GetVirtualServiceResponse {
   bool is_editable = 14;
 }
 
-message ListVirtualServiceRequest {}
+message ListVirtualServiceRequest {
+  string access_group = 1;
+}
 
 message VirtualServiceListItem {
   string uid = 1;

@@ -356,6 +356,10 @@ export declare const GetVirtualServiceResponseSchema: GenMessage<GetVirtualServi
  * @generated from message virtual_service.v1.ListVirtualServiceRequest
  */
 export declare type ListVirtualServiceRequest = Message<"virtual_service.v1.ListVirtualServiceRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**
