@@ -81,6 +81,7 @@ message GetVirtualServiceResponse {
   repeated common.v1.ResourceRef additional_routes = 11;
   optional bool use_remote_address = 12;
   repeated virtual_service_template.v1.TemplateOption template_options = 13;
+  bool is_editable = 14;
 }
 
 message ListVirtualServiceRequest {}
@@ -91,6 +92,7 @@ message VirtualServiceListItem {
   repeated string node_ids = 3;
   string access_group = 4;
   common.v1.ResourceRef template = 5;
+  bool is_editable = 6;
 }
 
 message ListVirtualServiceResponse {
