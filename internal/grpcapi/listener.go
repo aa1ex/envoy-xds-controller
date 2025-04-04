@@ -31,6 +31,9 @@ func (s *ListenerStore) ListListener(context.Context, *connect.Request[v1.ListLi
 			Name: v.Name,
 			Type: listenerType(v),
 		}
+		if item.Type == v1.ListenerType_LISTENER_TYPE_TCP {
+			continue
+		}
 		list = append(list, item)
 	}
 	return connect.NewResponse(&v1.ListListenerResponse{Items: list}), nil
