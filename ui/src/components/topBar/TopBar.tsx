@@ -1,5 +1,7 @@
-import { MenuOutlined } from '@mui/icons-material'
-import { AppBar, Box, Grid } from '@mui/material'
+import MenuOutlined from '@mui/icons-material/MenuOutlined'
+import AppBar from '@mui/material/AppBar'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid2'
 import { useLocation } from 'react-router-dom'
 import useSideBarState from '../../store/sideBarStore'
 import RouterBreadcrumbs from '../routerBreadcrumbs/RouterBreadcrumbs'
@@ -23,8 +25,8 @@ function TopBar() {
 			}}
 		>
 			<CustomToolBar>
-				<Grid container justifyContent='space-between' alignItems='center'>
-					<Grid item sm={2} lg={2}>
+				<Grid container justifyContent='space-between' alignItems='center' width='100%'>
+					<Grid size={{ sm: 2, lg: 2 }}>
 						<Box display='flex' justifyContent='flex-start' alignItems='center' gap='15px'>
 							<MenuOutlined
 								onClick={() => toggleSideBar(!isOpenSideBar)}
@@ -32,10 +34,10 @@ function TopBar() {
 							/>
 						</Box>
 					</Grid>
-					<Grid item sm={8} lg={8} display='flex' justifyContent='center'>
+					<Grid size={{ sm: 8, lg: 8 }} display='flex' justifyContent='center'>
 						<RouterBreadcrumbs location={location} />
 					</Grid>
-					<Grid item sm={2} lg={2} display='flex' justifyContent='flex-end' alignItems='center'>
+					<Grid size={{ sm: 2, lg: 2 }} display='flex' justifyContent='flex-end' alignItems='center'>
 						<ThemeSwitcher />
 					</Grid>
 				</Grid>
