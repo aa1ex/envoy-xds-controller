@@ -1,9 +1,10 @@
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualService
 metadata:
-  name: virtual-service
+  name: dev-virtual-service
   annotations:
-    envoy.kaasops.io/node-id: test
+    envoy.kaasops.io/node-id: dev
+    envoy.kaasops.io/editable: "true"
   labels:
     exc-access-group: dev
 spec:

@@ -80,9 +80,9 @@ spec:
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualService
 metadata:
-  name: vs-tcp-proxy
+  name: dev-vs-tcp-proxy
   annotations:
-    envoy.kaasops.io/node-id: test
+    envoy.kaasops.io/node-id: dev
   labels:
     exc-access-group: dev
 spec:

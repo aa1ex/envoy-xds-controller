@@ -190,8 +190,10 @@ config:
     - "node3"
     - "node4"
     - "test"
+    - "dev"
   excAccessGroups:
     - "group1"
     - "group2"
     - "group3"
     - "dev"
+    - "test"

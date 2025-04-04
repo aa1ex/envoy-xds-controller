@@ -1,11 +1,12 @@
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualService
 metadata:
-  name: vs-http
+  name: test-vs-http
   annotations:
     envoy.kaasops.io/node-id: test
+    envoy.kaasops.io/editable: "true"
   labels:
-    exc-access-group: dev
+    exc-access-group: test
 spec:
   listener:
     name: http
@@ -18,7 +19,7 @@ spec:
   virtualHost:
     name: vs-http-virtual-host
     domains:
-      - demo.kaasops.io
+      - test.kaasops.io
     routes:
       - match:
           prefix: "/"
