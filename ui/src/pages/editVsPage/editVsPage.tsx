@@ -24,8 +24,6 @@ const EditVsPage: React.FC<IEditVsPageProps> = () => {
 		}
 	}, [setVirtualServices, virtualService])
 
-	if (!isLoading) console.log(virtualService)
-
 	if (isLoading) return <div>Loading...</div>
 	if (error) return <div>Error loading virtual service</div>
 

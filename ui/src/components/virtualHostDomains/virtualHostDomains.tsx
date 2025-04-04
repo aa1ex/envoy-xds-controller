@@ -9,7 +9,6 @@ import {
 	UseFormWatch
 } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
-import { styleBox, styleTooltip } from '../multiChipFormVS/style.ts'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
@@ -20,8 +19,10 @@ import TextField from '@mui/material/TextField'
 
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { CustomCardContent, styleBox, styleTooltip } from './style.ts'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
 
 interface IVirtualHostDomainsProps {
 	control: Control<IVirtualServiceForm>
@@ -40,26 +41,28 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 	setValue,
 	watch
 }) => {
+	const nameField = 'virtualHostDomains'
 	const [newDomain, setNewDomain] = useState('')
 
 	const addDomain = () => {
+		if (newDomain.trim() === '') return
 		const errorMessage = validationRulesVsForm.virtualHostDomains([newDomain])
 
 		if (errorMessage === true) {
-			const currentDomains = watch('virtualHostDomains')
-			setValue('virtualHostDomains', [...currentDomains, newDomain])
+			const currentDomains = watch(nameField)
+			setValue(nameField, [...currentDomains, newDomain])
 			setNewDomain('')
-			clearErrors('virtualHostDomains')
+			clearErrors(nameField)
 		} else {
-			setError('virtualHostDomains', { type: 'manual', message: errorMessage })
+			setError(nameField, { type: 'manual', message: errorMessage })
 			setNewDomain('')
 		}
 	}
 
 	const removeDomain = (index: number) => {
-		const domains = watch('virtualHostDomains')
+		const domains = watch(nameField)
 		domains.splice(index, 1)
-		setValue('virtualHostDomains', [...domains])
+		setValue(nameField, [...domains])
 	}
 
 	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -69,73 +72,102 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 		}
 	}
 
+	const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0]
+		if (!file) return
+		e.target.value = ''
+
+		const reader = new FileReader()
+		reader.onload = () => {
+			const content = reader.result as string
+
+			const domainsFromFile = content
+				.split('\n')
+				.map(domain => domain.trim())
+				.filter(Boolean)
+
+			const currentDomains = watch(nameField)
+
+			const newDomains = [
+				...currentDomains,
+				...domainsFromFile.filter(domain => !currentDomains.includes(domain))
+			]
+
+			clearErrors(nameField)
+			setValue(nameField, newDomains)
+		}
+		reader.readAsText(file)
+	}
+
 	return (
 		<Box sx={{ ...styleBox }}>
 			<Typography fontSize={15} color='gray' mt={1} display='flex' alignItems='center' gap={0.5}>
 				Configure the Domains
 				<Tooltip
-					title={`Enter Domain. Press Enter to add it to the list.`}
+					title='Enter Domain. Press Enter to add it to the list or use key Add Domain.'
 					placement='bottom-start'
-					enterDelay={800}
-					disableInteractive
+					enterDelay={300}
 					slotProps={{ ...styleTooltip }}
 				>
 					<InfoOutlinedIcon fontSize='inherit' sx={{ cursor: 'pointer', fontSize: '14px' }} />
 				</Tooltip>
 			</Typography>
 
-			<Box display='flex' width='100%' alignItems='center'>
+			<Box display='flex' width='100%' alignItems='flex-start'>
 				<Controller
-					name='virtualHostDomains'
+					name={nameField}
 					control={control}
 					render={({ field }) => (
-						<TextField
-							{...field}
-							value={newDomain}
-							onChange={e => setNewDomain(e.target.value)}
-							variant='standard'
-							onKeyDown={handleKeyPress}
-							style={{ flex: 1 }}
-							error={!!errors.virtualHostDomains}
-							helperText={errors.virtualHostDomains?.message}
-						/>
+						<FormControl style={{ flex: 1 }}>
+							<TextField
+								{...field}
+								value={newDomain}
+								onChange={e => setNewDomain(e.target.value)}
+								variant='standard'
+								onKeyDown={handleKeyPress}
+								error={!!errors.virtualHostDomains}
+							/>
+							<FormHelperText error={!!errors.virtualHostDomains} sx={{ ml: 0 }}>
+								{errors.virtualHostDomains?.message}
+							</FormHelperText>
+						</FormControl>
 					)}
 				/>
 				<Button
 					variant='contained'
 					onClick={addDomain}
-					style={{ flexShrink: 0, marginLeft: '10px', marginRight: '10px' }}
+					sx={{ flexShrink: 0, marginLeft: '10px', marginRight: '10px' }}
 				>
 					Add Domain
 				</Button>
-				<Button variant='outlined' style={{ flexShrink: 0 }}>
-					Another Button
+				<Button variant='outlined' component='label' sx={{ flexShrink: 0 }}>
+					Upload Domains
+					<input type='file' accept='.txt' style={{ display: 'none' }} onChange={handleFileUpload} />
 				</Button>
 			</Box>
 
-			<Box mt={1}>
+			<Box
+				mt={1}
+				display='flex'
+				flexDirection='column'
+				gap={0.7}
+				sx={{
+					maxHeight: '100%', // Ограничиваем высоту контейнера
+					overflowY: 'auto', // Добавляем вертикальную прокрутку
+					paddingRight: '10px' // Немного отступа справа для прокрутки
+				}}
+			>
 				{watch('virtualHostDomains').map((domain, index) => (
-					<Card key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-						<CardContent
-							style={{
-								display: 'flex',
-								justifyContent: 'space-between',
-								width: '100%',
-								alignItems: 'center',
-								height: '100%',
-								padding: '8px'
-							}}
-						>
-							<Typography>{domain}</Typography>
+					<Card key={index} sx={{ flexShrink: 0 }}>
+						<CustomCardContent>
+							<Typography padding={1.2}>{domain}</Typography>
 							<IconButton onClick={() => removeDomain(index)} color='secondary'>
 								<DeleteIcon />
 							</IconButton>
-						</CardContent>
+						</CustomCardContent>
 					</Card>
 				))}
 			</Box>
 		</Box>
 	)
 }
-
-export default VirtualHostDomains

@@ -29,7 +29,8 @@ function CustomTabPanel(props: ICustomTabPanelProps) {
 								display: 'flex',
 								flexDirection: 'column',
 								gap: 2,
-								pl: 1
+								pl: 1,
+								height: '100%'
 							})
 						}}
 					>

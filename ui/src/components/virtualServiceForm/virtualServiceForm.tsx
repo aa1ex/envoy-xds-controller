@@ -17,12 +17,11 @@ import Tab from '@mui/material/Tab'
 import { a11yProps } from '../customTabPanel/style.ts'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
 import Divider from '@mui/material/Divider'
-import { MultiChipFormVS } from '../multiChipFormVS/multiChipFormVS.tsx'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 import { useSetEditDomainVsStore } from '../../store/setEditDomainVsStore.ts'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
-import VirtualHostDomains from '../virtualHostDomains/virtualHostDomains.tsx'
+import { VirtualHostDomains } from '../virtualHostDomains/virtualHostDomains.tsx'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
 	const navigate = useNavigate()
@@ -155,8 +154,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						justifyContent='space-between'
 						className='vsFormWrapper'
 					>
-						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
-							<Box display='flex' className='vsLeftColumn' width='65%'>
+						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='93%'>
+							<Box display='flex' className='vsLeftColumn' width='60%'>
 								<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
 									<GeneralTabVs
 										register={register}
@@ -167,14 +166,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								</CustomTabPanel>
 
 								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
-									<MultiChipFormVS
-										nameFields={'virtualHostDomains'}
-										errors={errors}
-										setValue={setValue}
-										control={control}
-										clearErrors={clearErrors}
-										setError={setError}
-									/>
 									<VirtualHostDomains
 										control={control}
 										setValue={setValue}
@@ -207,7 +198,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								</CustomTabPanel>
 							</Box>
 							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
-							<Box display='flex' className='vsLeftLeft' width='35%'>
+							<Box display='flex' className='vsLeftLeft' width='40%' p={1}>
 								<Box border='1px solid gray' borderRadius={1} p={2} height='100%' width='100%' mr={1}>
 									для наглядности
 								</Box>
