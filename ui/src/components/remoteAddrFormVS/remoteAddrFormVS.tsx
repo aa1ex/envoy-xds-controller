@@ -7,15 +7,17 @@ import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import Typography from '@mui/material/Typography'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 interface IRemoteAddrFormVsProps {
 	nameField: Extract<keyof IVirtualServiceForm, 'useRemoteAddress'>
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
-	isDisabledEdit: boolean
 }
 
-export const RemoteAddrFormVs: React.FC<IRemoteAddrFormVsProps> = ({ nameField, control, errors, isDisabledEdit }) => {
+export const RemoteAddrFormVs: React.FC<IRemoteAddrFormVsProps> = ({ nameField, control, errors }) => {
+	const readMode = useViewModeStore(state => state.viewMode) === 'read'
+
 	return (
 		<Box
 			display='flex'
@@ -38,7 +40,7 @@ export const RemoteAddrFormVs: React.FC<IRemoteAddrFormVsProps> = ({ nameField, 
 				name={nameField}
 				control={control}
 				render={({ field }) => (
-					<FormControl error={!!errors[nameField]} sx={{ alignItems: 'center' }} disabled={!isDisabledEdit}>
+					<FormControl error={!!errors[nameField]} sx={{ alignItems: 'center' }} disabled={readMode}>
 						<RadioGroup
 							value={field.value ?? ''}
 							onChange={e => {

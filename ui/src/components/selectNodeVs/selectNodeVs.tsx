@@ -15,6 +15,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Chip from '@mui/material/Chip'
 import FormHelperText from '@mui/material/FormHelperText'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 interface ISelectNodeVsProps {
 	nameField: Extract<keyof IVirtualServiceForm, 'nodeIds'>
@@ -34,6 +35,7 @@ export const SelectNodeVs: React.FC<ISelectNodeVsProps> = ({
 	isErrorFetch
 }) => {
 	const titleMessage = 'NodeIDs'
+	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	return (
 		<Box sx={{ ...styleBox }}>
@@ -59,6 +61,7 @@ export const SelectNodeVs: React.FC<ISelectNodeVsProps> = ({
 					<FormControl fullWidth error={!!errors[nameField] || isErrorFetch}>
 						<Select
 							multiple
+							disabled={readMode}
 							label={titleMessage}
 							value={field.value || []}
 							onChange={event => {

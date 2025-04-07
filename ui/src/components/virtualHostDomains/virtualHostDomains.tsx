@@ -23,6 +23,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { CustomCardContent, styleBox, styleTooltip } from './style.ts'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 interface IVirtualHostDomainsProps {
 	control: Control<IVirtualServiceForm>
@@ -31,7 +32,6 @@ interface IVirtualHostDomainsProps {
 	setError: UseFormSetError<IVirtualServiceForm>
 	clearErrors: UseFormClearErrors<IVirtualServiceForm>
 	watch: UseFormWatch<IVirtualServiceForm>
-	isDisabledEdit: boolean
 }
 
 export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
@@ -40,11 +40,11 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 	setError,
 	clearErrors,
 	setValue,
-	watch,
-	isDisabledEdit
+	watch
 }) => {
 	const nameField = 'virtualHostDomains'
 	const [newDomain, setNewDomain] = useState('')
+	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const addDomain = () => {
 		if (newDomain.trim() === '') return
@@ -128,7 +128,7 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 								variant='standard'
 								onKeyDown={handleKeyPress}
 								error={!!errors.virtualHostDomains}
-								disabled={!isDisabledEdit}
+								disabled={readMode}
 							/>
 							<FormHelperText error={!!errors.virtualHostDomains} sx={{ ml: 0 }}>
 								{errors.virtualHostDomains?.message}
@@ -139,12 +139,12 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 				<Button
 					variant='contained'
 					onClick={addDomain}
-					disabled={!isDisabledEdit}
+					disabled={readMode}
 					sx={{ flexShrink: 0, marginLeft: '10px', marginRight: '10px' }}
 				>
 					Add Domain
 				</Button>
-				<Button variant='outlined' component='label' sx={{ flexShrink: 0 }} disabled={!isDisabledEdit}>
+				<Button variant='outlined' component='label' sx={{ flexShrink: 0 }} disabled={readMode}>
 					Upload Domains
 					<input type='file' accept='.txt' style={{ display: 'none' }} onChange={handleFileUpload} />
 				</Button>
@@ -156,9 +156,9 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 				flexDirection='column'
 				gap={0.7}
 				sx={{
-					maxHeight: '100%', // Ограничиваем высоту контейнера
-					overflowY: 'auto', // Добавляем вертикальную прокрутку
-					paddingRight: '10px' // Немного отступа справа для прокрутки
+					maxHeight: '100%',
+					overflowY: 'auto',
+					paddingRight: '10px'
 				}}
 			>
 				{watch('virtualHostDomains').map((domain, index) => (

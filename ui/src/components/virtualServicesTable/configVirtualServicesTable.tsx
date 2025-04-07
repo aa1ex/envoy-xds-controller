@@ -2,17 +2,20 @@ import React, { useCallback, useMemo } from 'react'
 import { MRT_ColumnDef, MRT_Row, useMaterialReactTable } from 'material-react-table'
 import { VirtualServiceListItem } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
 import { NodeIdsChip } from '../nodeIdsChip/nodeIdsChip.tsx'
-import { Box, Button, IconButton, Tooltip } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import { Delete, Edit } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useVirtualServiceStore } from '../../store/setVsStore.ts'
-import { useSetEditVsStore } from '../../store/setEditVsStore.ts'
 import TravelExploreIcon from '@mui/icons-material/TravelExplore'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
-import { useSetIsReadOnlyVsStore } from '../../store/setIsReadOnlyVs.ts'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+import { useTabStore } from '../../store/tabIndexStore.ts'
 
 interface IConfigVirtualServicesTable {
 	virtualServices: ListVirtualServiceResponse | undefined
@@ -35,8 +38,8 @@ export const useConfigTable = ({
 }: IConfigVirtualServicesTable) => {
 	const navigate = useNavigate()
 	const setVsInfo = useVirtualServiceStore(state => state.setVirtualService)
-	const setEditVS = useSetEditVsStore(state => state.setIsEditVs)
-	const setReadOnlyVs = useSetIsReadOnlyVsStore(state => state.setIsReadOnly)
+	const setViewMode = useViewModeStore(state => state.setViewMode)
+	const setTabIndex = useTabStore(state => state.setTabIndex)
 
 	const handleDeleteVS = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
@@ -47,30 +50,40 @@ export const useConfigTable = ({
 		[setNameForDialog, setOpenDialog, setSelectedUid]
 	)
 
+	const handeCreateVs = useCallback(() => {
+		setViewMode('edit')
+		setTabIndex(0)
+		navigate('createVs')
+	}, [navigate, setViewMode, setTabIndex])
+
 	const openEditVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
 			setVsInfo(row.original.uid, row.original.name)
+			setViewMode('edit')
+			setTabIndex(0)
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVsInfo]
+		[navigate, setVsInfo, setViewMode, setTabIndex]
 	)
 
 	const openEditDomainVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
-			setEditVS(true)
 			setVsInfo(row.original.uid, row.original.name)
+			setViewMode('edit')
+			setTabIndex(1)
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVsInfo, setEditVS]
+		[navigate, setVsInfo, setViewMode, setTabIndex]
 	)
 
 	const openReadOnlyVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
 			setVsInfo(row.original.uid, row.original.name)
-			setReadOnlyVs(true)
+			setViewMode('read')
+			setTabIndex(0)
 			navigate(`/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVsInfo, setReadOnlyVs]
+		[navigate, setVsInfo, setViewMode, setTabIndex]
 	)
 
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(
@@ -197,7 +210,7 @@ export const useConfigTable = ({
 
 				<Button
 					color='primary'
-					onClick={() => navigate('createVs')}
+					onClick={handeCreateVs}
 					variant='contained'
 					disabled={isFetching}
 					size='small'

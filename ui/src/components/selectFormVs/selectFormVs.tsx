@@ -18,6 +18,7 @@ import {
 } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
 import { AccessGroupListItem, ListAccessGroupResponse } from '../../gen/access_group/v1/access_group_pb'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 type nameFieldKeys = Extract<
 	keyof IVirtualServiceForm,
@@ -38,7 +39,6 @@ interface ISelectFormVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean
-	isDisabledEdit: boolean
 }
 
 export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
@@ -47,8 +47,7 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 	control,
 	errors,
 	isErrorFetch,
-	isFetching,
-	isDisabledEdit
+	isFetching
 }) => {
 	const fieldTitles: Record<string, string> = {
 		accessGroup: 'AccessGroup',
@@ -58,6 +57,7 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 	}
 
 	const titleMessage = fieldTitles[nameField] || nameField
+	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const renderMenuItem = (item: Item) => {
 		const key = 'uid' in item ? item.uid : item.name
@@ -82,11 +82,11 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 					<InputLabel>{titleMessage}</InputLabel>
 					<Select
 						fullWidth
+						disabled={readMode}
 						error={!!errors[nameField] || isErrorFetch}
 						label={titleMessage}
 						value={field.value || ''}
 						onChange={e => field.onChange(e.target.value)}
-						disabled={!isDisabledEdit}
 						IconComponent={
 							isFetching ? () => <CircularProgress size={20} sx={{ marginRight: 2 }} /> : undefined
 						}

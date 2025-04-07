@@ -26,6 +26,7 @@ import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm
 import { styleBox, styleTooltip } from './style.ts'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 interface ITemplateOptionsFormVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -33,7 +34,6 @@ interface ITemplateOptionsFormVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	getValues: UseFormGetValues<IVirtualServiceForm>
 	clearErrors: UseFormClearErrors<IVirtualServiceForm>
-	isDisabledEdit: boolean
 }
 
 export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
@@ -41,13 +41,14 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 	control,
 	errors,
 	getValues,
-	clearErrors,
-	isDisabledEdit
+	clearErrors
 }) => {
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'templateOptions'
 	})
+
+	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const enumOptionsModifier = Object.entries(TemplateOptionModifier)
 		.filter(([_, value]) => typeof value === 'number')
@@ -101,6 +102,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 							})}
 							key={field.id}
 							fullWidth
+							disabled={readMode}
 							error={!!errors.templateOptions?.[index]?.field}
 							label='Path'
 							helperText={errors.templateOptions?.[index]?.field?.message}
@@ -119,6 +121,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 										value={field.value === 0 ? '' : field.value}
 										error={!!errors.templateOptions?.[index]?.modifier}
 										fullWidth
+										disabled={readMode}
 										label='Modification'
 									>
 										{enumOptionsModifier
@@ -135,13 +138,13 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 								</FormControl>
 							)}
 						/>
-						<IconButton size='large' onClick={() => remove(index)} color='error'>
-							<DeleteIcon />
+						<IconButton size='large' onClick={() => remove(index)} color='error' disabled={readMode}>
+							<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
 						</IconButton>
 					</Box>
 				))}
 			</Box>
-			<Button onClick={() => append({ field: '', modifier: 0 })} variant='contained' disabled={!isDisabledEdit}>
+			<Button onClick={() => append({ field: '', modifier: 0 })} variant='contained' disabled={readMode}>
 				Add Template Modifier
 			</Button>
 		</Box>

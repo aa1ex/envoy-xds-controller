@@ -10,7 +10,7 @@ import {
 import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
 
 import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -18,17 +18,20 @@ import { a11yProps } from '../customTabPanel/style.ts'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
 import Divider from '@mui/material/Divider'
 import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
-import { useSetEditVsStore } from '../../store/setEditVsStore.ts'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains/virtualHostDomains.tsx'
-import { useSetIsReadOnlyVsStore } from '../../store/setIsReadOnlyVs.ts'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+import { useTabStore } from '../../store/tabIndexStore.ts'
 
-export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo, isEdit }) => {
+export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
-	const isEditVs = useSetEditVsStore(state => state.isEditVs)
-	const setEditVS = useSetEditVsStore(state => state.setIsEditVs)
-	const isReadOnly = useSetIsReadOnlyVsStore(state => state.isReadOnlyVs)
+	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
+	const viewMode = useViewModeStore(state => state.viewMode)
+	// const setViewMode = useViewModeStore(state => state.setViewMode)
+
+	const tabIndex = useTabStore(state => state.tabIndex)
+	const setTabIndex = useTabStore(state => state.setTabIndex)
 
 	const { refetch } = useListVs(false)
 	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
@@ -58,7 +61,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	})
 
 	useEffect(() => {
-		if (isEdit && virtualServiceInfo) {
+		if (!isCreate && virtualServiceInfo) {
 			const vhDomains = virtualServiceInfo?.virtualHost?.domains || []
 
 			reset({
@@ -75,20 +78,11 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || []
 			})
 		}
-	}, [isEdit, virtualServiceInfo, reset])
+	}, [isCreate, virtualServiceInfo, reset])
 
-	const [tabIndex, setTabIndex] = React.useState(0)
 	const handleChangeTabIndex = (_e: React.SyntheticEvent, newTabIndex: number) => {
 		setTabIndex(newTabIndex)
 	}
-
-	//*Для изменения только домена
-	useEffect(() => {
-		if (isEditVs && isEdit) {
-			setTabIndex(1)
-			setEditVS(false)
-		}
-	}, [isEdit, isEditVs, setEditVS])
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const virtualHostData: VirtualHost = {
@@ -110,7 +104,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				: { case: undefined }
 		}
 
-		if (!isEdit) {
+		if (!isCreate) {
 			const createVSData: CreateVirtualServiceRequest = {
 				...baseVSData,
 				$typeName: 'virtual_service.v1.CreateVirtualServiceRequest' as const
@@ -119,7 +113,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			console.log('data for create', createVSData)
 			await createVirtualService(createVSData)
 		}
-		if (isEdit && virtualServiceInfo) {
+		if (isCreate && virtualServiceInfo) {
 			const { name, ...baseVSDataWithoutName } = baseVSData
 
 			const updateVSData: UpdateVirtualServiceRequest = {
@@ -164,8 +158,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										register={register}
 										control={control}
 										errors={errors}
-										isEdit={isEdit}
-										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
+										isEdit={!isCreate}
 									/>
 								</CustomTabPanel>
 
@@ -177,7 +170,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										setError={setError}
 										clearErrors={clearErrors}
 										watch={watch}
-										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 
@@ -187,7 +179,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										setValue={setValue}
 										errors={errors}
 										watch={watch}
-										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 
@@ -198,7 +189,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										errors={errors}
 										getValues={getValues}
 										clearErrors={clearErrors}
-										isDisabledEdit={virtualServiceInfo?.isEditable as boolean}
 									/>
 								</CustomTabPanel>
 							</Box>
@@ -215,9 +205,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								variant='contained'
 								type='submit'
 								loading={isFetchingCreateVs || isFetchingUpdateVs}
-								disabled={virtualServiceInfo?.isEditable === false || isReadOnly}
+								disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
 							>
-								{isEdit ? 'Update Virtual Service' : 'Create Virtual Service'}
+								{isCreate
+									? 'Create Virtual Service'
+									: viewMode === 'read'
+										? 'Read-Only Virtual Service'
+										: 'Update Virtual Service'}
 							</Button>
 						</Box>
 					</Box>

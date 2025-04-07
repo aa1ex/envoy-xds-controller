@@ -13,10 +13,9 @@ interface ISettingsTabVsProps {
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
 	watch: UseFormWatch<IVirtualServiceForm>
-	isDisabledEdit: boolean
 }
 
-export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue, errors, watch, isDisabledEdit }) => {
+export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue, errors, watch }) => {
 	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs()
 	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs()
 	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
@@ -30,7 +29,6 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 				errors={errors}
 				isErrorFetch={isErrorAccessLogs}
 				isFetching={isFetchingAccessLogs}
-				isDisabledEdit={isDisabledEdit}
 			/>
 			<DNdSelectFormVs
 				nameField={'additionalHttpFilterUids'}
@@ -41,7 +39,6 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 				errors={errors}
 				isErrorFetch={isErrorHttpFilters}
 				isFetching={isFetchingHttpFilters}
-				isDisabledEdit={isDisabledEdit}
 			/>
 			<DNdSelectFormVs
 				nameField={'additionalRouteUids'}
@@ -52,14 +49,8 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 				errors={errors}
 				isErrorFetch={isErrorRoutes}
 				isFetching={isFetchingRoutes}
-				isDisabledEdit={isDisabledEdit}
 			/>
-			<RemoteAddrFormVs
-				nameField={'useRemoteAddress'}
-				control={control}
-				errors={errors}
-				isDisabledEdit={isDisabledEdit}
-			/>
+			<RemoteAddrFormVs nameField={'useRemoteAddress'} control={control} errors={errors} />
 		</Box>
 	)
 }

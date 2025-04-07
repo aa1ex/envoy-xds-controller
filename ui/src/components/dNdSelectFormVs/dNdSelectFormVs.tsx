@@ -18,6 +18,7 @@ import TextField from '@mui/material/TextField'
 import List from '@mui/material/List'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
@@ -37,7 +38,6 @@ interface IdNdSelectFormVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	isErrorFetch: boolean
 	isFetching: boolean
-	isDisabledEdit: boolean
 }
 
 export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
@@ -48,11 +48,11 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	setValue,
 	errors,
 	isFetching,
-	isErrorFetch,
-	isDisabledEdit
+	isErrorFetch
 }) => {
 	const titleMessage = nameField === 'additionalHttpFilterUids' ? 'HTTP filter' : 'Route'
 	const selectedUids = watch(nameField)
+	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const onDragEnd = (e: DragEndEvent) => {
 		const { active, over } = e
@@ -96,11 +96,10 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 							})
 						}
 						loading={isFetching}
-						disabled={!isDisabledEdit}
+						disabled={readMode}
 						renderInput={params => (
 							<TextField
 								{...params}
-								// label={titleMessage}
 								error={!!errors[nameField] || isErrorFetch}
 								variant='standard'
 								helperText={
