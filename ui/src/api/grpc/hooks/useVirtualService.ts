@@ -14,10 +14,25 @@ import {
 	UpdateVirtualServiceRequest
 } from '../../../gen/virtual_service/v1/virtual_service_pb.ts'
 
+const metadata = {
+	headers: undefined
+}
+
+export function setAuthToken(token: string | undefined) {
+	if (!token) {
+		return
+	}
+	const headers = new Headers()
+	headers.set("Authorization", "Bearer " + token)
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-expect-error
+	metadata.headers = headers
+}
+
 export const useListVs = (flag: boolean) => {
 	return useQuery({
 		queryKey: ['listVs'],
-		queryFn: () => virtualServiceClient.listVirtualService({}),
+		queryFn: () => virtualServiceClient.listVirtualService({}, metadata),
 		enabled: flag
 	})
 }
@@ -25,7 +40,7 @@ export const useListVs = (flag: boolean) => {
 export const useGetVs = (uid: string) => {
 	return useQuery({
 		queryKey: ['getVs', uid],
-		queryFn: () => virtualServiceClient.getVirtualService({ uid }),
+		queryFn: () => virtualServiceClient.getVirtualService({ uid }, metadata),
 		gcTime: 0
 	})
 }
@@ -34,7 +49,7 @@ export const useCreateVs = () => {
 	const createVirtualServiceMutation = useMutation({
 		mutationKey: ['createVs'],
 		mutationFn: (vsCreateData: CreateVirtualServiceRequest) =>
-			virtualServiceClient.createVirtualService(vsCreateData)
+			virtualServiceClient.createVirtualService(vsCreateData, metadata)
 	})
 
 	return {
@@ -48,7 +63,7 @@ export const useUpdateVs = () => {
 	const updateVsMutations = useMutation({
 		mutationKey: ['update'],
 		mutationFn: (vsUpdateData: UpdateVirtualServiceRequest) =>
-			virtualServiceClient.updateVirtualService(vsUpdateData)
+			virtualServiceClient.updateVirtualService(vsUpdateData, metadata)
 	})
 
 	return {
@@ -61,7 +76,7 @@ export const useUpdateVs = () => {
 export const useDeleteVs = () => {
 	const deleteVirtualServiceMutation = useMutation({
 		mutationKey: ['deleteVs'],
-		mutationFn: (uid: string) => virtualServiceClient.deleteVirtualService({ uid })
+		mutationFn: (uid: string) => virtualServiceClient.deleteVirtualService({ uid }, metadata)
 	})
 
 	return {
@@ -72,48 +87,48 @@ export const useDeleteVs = () => {
 export const useAccessGroupsVs = () => {
 	return useQuery({
 		queryKey: ['accessGroupsVs'],
-		queryFn: () => accessGroupsServiceClient.listAccessGroup({})
+		queryFn: () => accessGroupsServiceClient.listAccessGroup({}, metadata)
 	})
 }
 
 export const useAccessLogsVs = () => {
 	return useQuery({
 		queryKey: ['accessLogsVs'],
-		queryFn: () => accessLogServiceClient.listAccessLogConfig({})
+		queryFn: () => accessLogServiceClient.listAccessLogConfig({}, metadata)
 	})
 }
 
 export const useHttpFilterVs = () => {
 	return useQuery({
 		queryKey: ['httpFilterVs'],
-		queryFn: () => httpFilterServiceClient.listHTTPFilter({})
+		queryFn: () => httpFilterServiceClient.listHTTPFilter({}, metadata)
 	})
 }
 
 export const useListenerVs = () => {
 	return useQuery({
 		queryKey: ['listenerVs'],
-		queryFn: () => listenerServiceClient.listListener({})
+		queryFn: () => listenerServiceClient.listListener({}, metadata)
 	})
 }
 
 export const useRouteVs = () => {
 	return useQuery({
 		queryKey: ['routeVs'],
-		queryFn: () => routeServiceClient.listRoute({})
+		queryFn: () => routeServiceClient.listRoute({}, metadata)
 	})
 }
 
 export const useTemplatesVs = () => {
 	return useQuery({
 		queryKey: ['templatesVs'],
-		queryFn: () => templateServiceClient.listVirtualServiceTemplate({})
+		queryFn: () => templateServiceClient.listVirtualServiceTemplate({}, metadata)
 	})
 }
 
 export const useNodeListVs = () => {
 	return useQuery({
 		queryKey: ['nodeListVs'],
-		queryFn: () => nodeServiceClient.listNode({})
+		queryFn: () => nodeServiceClient.listNode({}, metadata)
 	})
 }

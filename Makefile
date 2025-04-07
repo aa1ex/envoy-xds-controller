@@ -324,3 +324,7 @@ uninstall-prometheus:
 .PHONY: bufgen
 bufgen:
 	buf generate
+
+.PHONY: dev-auth
+dev-auth:
+	bash scripts/dev-auth.sh
