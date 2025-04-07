@@ -3,6 +3,7 @@ package api
 import (
 	"connectrpc.com/grpcreflect"
 	"fmt"
+	"github.com/casbin/casbin/v2"
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_group/v1/access_groupv1connect"
@@ -43,10 +44,12 @@ import (
 type Config struct {
 	EnableDevMode bool
 	Auth          struct {
-		Enabled   bool
-		IssuerURL string
-		ClientID  string
-		ACL       map[string][]string
+		Enabled             bool
+		IssuerURL           string
+		ClientID            string
+		ACL                 map[string][]string
+		AccessControlModel  string
+		AccessControlPolicy string
 	}
 	StaticResources struct {
 		AccessGroups []string `json:"excAccessGroups"`
@@ -147,7 +150,8 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	handler = mux
 
 	if c.cfg.Auth.Enabled {
-		middleware, err := grpcapi.NewAuthMiddleware(c.cfg.Auth.IssuerURL, c.cfg.Auth.ClientID)
+		enforcer, err := casbin.NewEnforcer(c.cfg.Auth.AccessControlModel, c.cfg.Auth.AccessControlPolicy)
+		middleware, err := grpcapi.NewAuthMiddleware(c.cfg.Auth.IssuerURL, c.cfg.Auth.ClientID, enforcer)
 		if err != nil {
 			return err
 		}

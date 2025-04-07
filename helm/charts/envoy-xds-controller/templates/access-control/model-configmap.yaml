@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "chart.labels" . | nindent 4 }}
 data:
-  MODEL: |-
+  model.conf: |-
     [request_definition]
     r = sub, dom, obj, act
 
@@ -22,4 +22,15 @@ data:
 
     [matchers]
     m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && globMatch(r.obj, p.obj) && r.act == p.act || r.sub == "superuser"
+  policy.csv: |-
+    p, virtual-service-creator, *, *, list-virtual-services
+    p, virtual-service-creator, *, *, get-virtual-service
+    p, virtual-service-creator, *, *, create-virtual-service
+    p, virtual-service-creator, *, *, update-virtual-service
+
+    p, virtual-service-reader, *, *, list-virtual-services
+    p, virtual-service-reader, *, *, get-virtual-service
+    p, virtual-service-reader, *, *, list-access-groups
+    p, virtual-service-reader, *, *, list-node-ids
+    p, virtual-service-reader, *, *, list-access-log-configs
 {{- end }}

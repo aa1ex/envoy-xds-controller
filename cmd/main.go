@@ -119,6 +119,8 @@ func main() {
 	var cacheAPIAddr string
 	var grpcAPIPort int
 	var devMode bool
+	var accessControlModelPath string
+	var accessControlPolicyPath string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", "0", "The address the metrics endpoint binds to. "+
 		"Use :8443 for HTTPS or :8080 for HTTP, or leave as 0 to disable the metrics service.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
@@ -135,12 +137,13 @@ func main() {
 	flag.StringVar(&cacheAPIAddr, "cache-api-addr", "localhost:9999", "Cache API address")
 	flag.IntVar(&grpcAPIPort, "grpc-api-port", 10000, "GRPC API port")
 	flag.BoolVar(&devMode, "development", false, "Enable dev mode")
+	flag.StringVar(&accessControlModelPath, "access-control-model-path", "/var/exc/access-control/model.conf", "Access Control Model Path")
+	flag.StringVar(&accessControlPolicyPath, "access-control-policy-path", "/var/exc/access-control/policy.csv", "Access Control Policy Path")
 	opts := zap.Options{
 		Development: devMode,
 	}
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
-
 	zapLevel := zap.Level(zapcore.InfoLevel)
 	if devMode {
 		zapLevel = zap.Level(zapcore.DebugLevel)
@@ -413,6 +416,8 @@ func main() {
 				apiServerCfg.Auth.Enabled, _ = strconv.ParseBool(os.Getenv("OIDC_ENABLED"))
 				apiServerCfg.Auth.IssuerURL = os.Getenv("OIDC_ISSUER_URL")
 				apiServerCfg.Auth.ClientID = os.Getenv("OIDC_CLIENT_ID")
+				apiServerCfg.Auth.AccessControlModel = accessControlModelPath
+				apiServerCfg.Auth.AccessControlPolicy = accessControlPolicyPath
 				if acl := os.Getenv("ACL_CONFIG"); acl != "" {
 					err = json.Unmarshal([]byte(acl), &apiServerCfg.Auth.ACL)
 					if err != nil {
