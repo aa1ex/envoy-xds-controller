@@ -10,7 +10,7 @@ import {
 import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
 
 import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
@@ -26,6 +26,7 @@ import { useTabStore } from '../../store/tabIndexStore.ts'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
+	const { groupId } = useParams()
 	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
 	const viewMode = useViewModeStore(state => state.viewMode)
 	const setViewMode = useViewModeStore(state => state.setViewMode)
@@ -39,7 +40,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const tabIndex = useTabStore(state => state.tabIndex)
 	const setTabIndex = useTabStore(state => state.setTabIndex)
 
-	const { refetch } = useListVs(false)
+	const { refetch } = useListVs(false, groupId)
 	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
 	const { updateVS, isFetchingUpdateVs } = useUpdateVs()
 
@@ -59,6 +60,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		defaultValues: {
 			nodeIds: [],
 			virtualHostDomains: [],
+			accessGroup: isCreate ? groupId : '',
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
@@ -97,7 +99,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const handleResetForm = () => {
 		isCreate ? reset() : handleSetDefaultValues()
 	}
-
+	console.log(isCreate)
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const virtualHostData: VirtualHost = {
 			$typeName: 'virtual_service.v1.VirtualHost',
@@ -118,7 +120,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				: { case: undefined }
 		}
 
-		if (!isCreate) {
+		if (isCreate) {
 			const createVSData: CreateVirtualServiceRequest = {
 				...baseVSData,
 				$typeName: 'virtual_service.v1.CreateVirtualServiceRequest' as const
@@ -127,7 +129,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			console.log('data for create', createVSData)
 			await createVirtualService(createVSData)
 		}
-		if (isCreate && virtualServiceInfo) {
+		if (!isCreate && virtualServiceInfo) {
 			const { name, ...baseVSDataWithoutName } = baseVSData
 
 			const updateVSData: UpdateVirtualServiceRequest = {
@@ -139,7 +141,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			console.log('data for Update', updateVSData)
 			await updateVS(updateVSData)
 		}
-		navigate('/virtualServices')
+		navigate(`/accessGroups/${groupId}/virtualServices`)
 		await refetch()
 	}
 	return (

@@ -29,10 +29,18 @@ export function setAuthToken(token: string | undefined) {
 	metadata.headers = headers
 }
 
-export const useListVs = (flag: boolean) => {
+export const useListVs = (flag: boolean, accessGroup?: string) => {
+	const safeAccessGroup = accessGroup ?? ''
+
 	return useQuery({
-		queryKey: ['listVs'],
-		queryFn: () => virtualServiceClient.listVirtualService({}, metadata),
+		queryKey: ['listVs', safeAccessGroup],
+		queryFn: () =>
+			virtualServiceClient.listVirtualService(
+				{
+					accessGroup: safeAccessGroup
+				},
+				metadata
+			),
 		enabled: flag
 	})
 }

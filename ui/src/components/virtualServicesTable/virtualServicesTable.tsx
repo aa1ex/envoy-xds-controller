@@ -4,8 +4,12 @@ import { MaterialReactTable, MRT_VisibilityState } from 'material-react-table'
 import { useConfigTable } from './configVirtualServicesTable.tsx'
 import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
 
-const VirtualServicesTable: React.FC = () => {
-	const { data: virtualServices, isError, isFetching, refetch } = useListVs(true)
+interface VirtualServicesTable {
+	groupId: string
+}
+
+const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
+	const { data: virtualServices, isError, isFetching, refetch } = useListVs(true, groupId)
 
 	const isFirstRender = useRef(true)
 
@@ -15,6 +19,7 @@ const VirtualServicesTable: React.FC = () => {
 	const [columnVisibility, setColumnVisibility] = useState<MRT_VisibilityState>({})
 
 	const { table } = useConfigTable({
+		groupId,
 		virtualServices,
 		refetch,
 		isError,

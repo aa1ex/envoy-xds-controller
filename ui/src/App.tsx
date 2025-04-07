@@ -14,10 +14,11 @@ import { setAuthToken } from './api/grpc/hooks/useVirtualService.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
+const AccessGroupsPage = lazy(() => import('./pages/accessGroupsPage/accessGroupsPage'))
 const VirtualServicesPage = lazy(() => import('./pages/virtualServicesPage/virtualServicesPage'))
-const Page404 = lazy(() => import('./pages/page404/page404'))
 const EditVsPage = lazy(() => import('./pages/editVsPage/editVsPage'))
 const CreateVsPage = lazy(() => import('./pages/createVsPage/createVsPage'))
+const Page404 = lazy(() => import('./pages/page404/page404'))
 
 function App() {
 	const [theme, colorMode] = useThemeMode()
@@ -54,11 +55,26 @@ function App() {
 								<Route index element={<HomePage />} />
 								<Route path=':nodeID' element={<NodeInfoPage />} />
 							</Route>
-							<Route path='virtualServices' element={<Layout />}>
-								<Route index element={<VirtualServicesPage />} />
-								<Route path=':uid' element={<EditVsPage />} />
-								<Route path='createVs' element={<CreateVsPage />} />
+							{/*<Route path='virtualServices' element={<Layout />}>*/}
+							{/*	<Route index element={<VirtualServicesPage />} />*/}
+							{/*	<Route path=':uid' element={<EditVsPage />} />*/}
+							{/*	<Route path='createVs' element={<CreateVsPage />} />*/}
+							{/*</Route>*/}
+							<Route path='accessGroups' element={<Layout />}>
+								<Route index element={<AccessGroupsPage />} />
+
+								<Route path=':groupId'>
+									{/* 👇 Автоматический редирект на virtualServices */}
+									<Route index element={<Navigate to='virtualServices' replace />} />
+
+									<Route path='virtualServices'>
+										<Route index element={<VirtualServicesPage />} />
+										<Route path='createVs' element={<CreateVsPage />} />
+										<Route path=':uid' element={<EditVsPage />} />
+									</Route>
+								</Route>
 							</Route>
+
 							<Route path='callback' element={<Navigate to='/nodeIDs' replace />} />
 							<Route path='*' element={<Page404 />} />
 						</Routes>

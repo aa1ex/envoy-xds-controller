@@ -18,6 +18,7 @@ import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { useTabStore } from '../../store/tabIndexStore.ts'
 
 interface IConfigVirtualServicesTable {
+	groupId: string
 	virtualServices: ListVirtualServiceResponse | undefined
 	refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<ListVirtualServiceResponse, Error>>
 	isError: boolean
@@ -28,6 +29,7 @@ interface IConfigVirtualServicesTable {
 }
 
 export const useConfigTable = ({
+	groupId,
 	virtualServices,
 	refetch,
 	isFetching,
@@ -53,17 +55,17 @@ export const useConfigTable = ({
 	const handeCreateVs = useCallback(() => {
 		setViewMode('edit')
 		setTabIndex(0)
-		navigate('createVs')
-	}, [navigate, setViewMode, setTabIndex])
+		navigate(`/accessGroups/${groupId}/virtualServices/createVs`)
+	}, [navigate, setViewMode, setTabIndex, groupId])
 
 	const openEditVsPage = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
 			setVsInfo(row.original.uid, row.original.name)
 			setViewMode('edit')
 			setTabIndex(0)
-			navigate(`/virtualServices/${row.original.uid}`)
+			navigate(`/accessGroups/${groupId}/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVsInfo, setViewMode, setTabIndex]
+		[navigate, setVsInfo, setViewMode, setTabIndex, groupId]
 	)
 
 	const openEditDomainVsPage = useCallback(
@@ -71,9 +73,9 @@ export const useConfigTable = ({
 			setVsInfo(row.original.uid, row.original.name)
 			setViewMode('edit')
 			setTabIndex(1)
-			navigate(`/virtualServices/${row.original.uid}`)
+			navigate(`/accessGroups/${groupId}/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVsInfo, setViewMode, setTabIndex]
+		[navigate, setVsInfo, setViewMode, setTabIndex, groupId]
 	)
 
 	const openReadOnlyVsPage = useCallback(
@@ -81,9 +83,9 @@ export const useConfigTable = ({
 			setVsInfo(row.original.uid, row.original.name)
 			setViewMode('read')
 			setTabIndex(0)
-			navigate(`/virtualServices/${row.original.uid}`)
+			navigate(`/accessGroups/${groupId}/virtualServices/${row.original.uid}`)
 		},
-		[navigate, setVsInfo, setViewMode, setTabIndex]
+		[navigate, setVsInfo, setViewMode, setTabIndex, groupId]
 	)
 
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(

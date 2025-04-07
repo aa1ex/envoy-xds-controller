@@ -6,26 +6,26 @@ import Typography from '@mui/material/Typography'
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-interface INodeCard {
-	node: string
+interface IAccessOrNodeCard {
+	entity: string
 }
 
-function NodeCard({ node }: INodeCard) {
+function AccessOrNodeCard({ entity }: IAccessOrNodeCard) {
 	const navigate = useNavigate()
 
-	const openNodeZoneInfo = useCallback(
-		(nodeID: string) => {
-			navigate(`${nodeID}`)
+	const openEntityPage = useCallback(
+		(entity: string) => {
+			navigate(`${entity}`)
 		},
 		[navigate]
 	)
 
 	return (
-		<Card key={node}>
-			<CardActionArea onClick={() => openNodeZoneInfo(node)} sx={{ height: '100%' }}>
+		<Card key={entity}>
+			<CardActionArea onClick={() => openEntityPage(entity)} sx={{ height: '100%', padding: 2 }}>
 				<CardContent>
 					<Typography gutterBottom variant='h5' component='div' margin={0}>
-						{node}
+						{entity}
 					</Typography>
 				</CardContent>
 			</CardActionArea>
@@ -33,4 +33,4 @@ function NodeCard({ node }: INodeCard) {
 	)
 }
 
-export default NodeCard
+export default AccessOrNodeCard

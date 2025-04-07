@@ -2,9 +2,11 @@ import VirtualServicesTable from '../../components/virtualServicesTable/virtualS
 import Box from '@mui/material/Box'
 import { styleBox, styleRootBoxVirtualService } from './style.ts'
 import { useColors } from '../../utils/hooks/useColors.ts'
+import { useParams } from 'react-router-dom'
 
 function VirtualServicesPage() {
 	const { colors } = useColors()
+	const { groupId } = useParams()
 
 	return (
 		<Box
@@ -13,7 +15,7 @@ function VirtualServicesPage() {
 			sx={{ ...styleRootBoxVirtualService, backgroundColor: colors.primary[800] }}
 		>
 			<Box sx={{ ...styleBox }}>
-				<VirtualServicesTable />
+				<VirtualServicesTable groupId={groupId as string} />
 			</Box>
 		</Box>
 	)

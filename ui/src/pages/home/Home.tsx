@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import { useNodeIDs } from '../../api/hooks/useNodeIDsApi'
-import NodeCard from '../../components/nodeCard/nodeCard'
+import AccessOrNodeCard from '../../components/accessOrNodeCard/accessOrNodeCard.tsx'
 import Spinner from '../../components/spinner/Spinner'
 import { useColors } from '../../utils/hooks/useColors'
 import { styleRootBox, styleWrapperCards } from './style'
@@ -10,7 +10,7 @@ const Home = () => {
 
 	const { data: nodes, isFetching } = useNodeIDs()
 
-	const renderCards = nodes?.map(node => <NodeCard node={node} key={node} />)
+	const renderCards = nodes?.map(node => <AccessOrNodeCard entity={node} key={node} />)
 
 	return (
 		<Box component='section' sx={{ ...styleRootBox, backgroundColor: colors.primary[800] }}>
