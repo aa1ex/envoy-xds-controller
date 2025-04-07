@@ -10,7 +10,7 @@ import { ColorModeContext } from './theme/theme'
 import useThemeMode from './utils/hooks/useThemeMode'
 import { setAccessToken } from './api/axiosApiClient.ts'
 import { env } from './env.ts'
-import {setAuthToken} from "./api/grpc/hooks/useVirtualService.ts";
+import { setAuthToken } from './api/grpc/hooks/useVirtualService.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))

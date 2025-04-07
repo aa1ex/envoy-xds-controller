@@ -17,11 +17,11 @@ function CustomTabPanel(props: ICustomTabPanelProps) {
 			hidden={value !== index}
 			id={`${variant}-tabpanel-${index}`}
 			aria-labelledby={`${variant}-tab-${index}`}
-			style={{ width: '100%' }}
+			style={{ width: '100%', flexGrow: 1, overflow: 'auto' }}
 			{...other}
 		>
 			{value === index && (
-				<Box sx={{ p: 1 }} height='100%'>
+				<Box sx={{ p: 1 }} height='100%' display='flex' flexDirection='column'>
 					<Box
 						className='Costyl style Pane'
 						sx={{
@@ -31,6 +31,7 @@ function CustomTabPanel(props: ICustomTabPanelProps) {
 								gap: 2,
 								pl: 1,
 								height: '100%'
+								// flexGrow: 1
 							})
 						}}
 					>

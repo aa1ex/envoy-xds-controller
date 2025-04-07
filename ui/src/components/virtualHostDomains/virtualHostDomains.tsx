@@ -156,7 +156,6 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 				flexDirection='column'
 				gap={0.7}
 				sx={{
-					maxHeight: '100%',
 					overflowY: 'auto',
 					paddingRight: '10px'
 				}}
@@ -165,8 +164,8 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 					<Card key={index} sx={{ flexShrink: 0 }}>
 						<CustomCardContent>
 							<Typography padding={1.2}>{domain}</Typography>
-							<IconButton onClick={() => removeDomain(index)} color='secondary'>
-								<DeleteIcon />
+							<IconButton onClick={() => removeDomain(index)} disabled={readMode}>
+								<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
 							</IconButton>
 						</CustomCardContent>
 					</Card>

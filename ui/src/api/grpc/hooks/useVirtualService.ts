@@ -23,7 +23,7 @@ export function setAuthToken(token: string | undefined) {
 		return
 	}
 	const headers = new Headers()
-	headers.set("Authorization", "Bearer " + token)
+	headers.set('Authorization', 'Bearer ' + token)
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-expect-error
 	metadata.headers = headers

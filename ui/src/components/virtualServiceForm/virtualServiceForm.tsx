@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -28,7 +28,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const navigate = useNavigate()
 	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
 	const viewMode = useViewModeStore(state => state.viewMode)
-	// const setViewMode = useViewModeStore(state => state.setViewMode)
+	const setViewMode = useViewModeStore(state => state.setViewMode)
+
+	useEffect(() => {
+		if (isCreate) {
+			setViewMode('edit')
+		}
+	}, [isCreate, setViewMode])
 
 	const tabIndex = useTabStore(state => state.tabIndex)
 	const setTabIndex = useTabStore(state => state.setTabIndex)
@@ -60,28 +66,36 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		}
 	})
 
-	useEffect(() => {
-		if (!isCreate && virtualServiceInfo) {
-			const vhDomains = virtualServiceInfo?.virtualHost?.domains || []
+	const handleSetDefaultValues = useCallback(() => {
+		if (isCreate || !virtualServiceInfo) return
 
-			reset({
-				name: virtualServiceInfo.name,
-				nodeIds: virtualServiceInfo.nodeIds || [],
-				accessGroup: virtualServiceInfo.accessGroup,
-				templateUid: virtualServiceInfo.template?.uid,
-				listenerUid: virtualServiceInfo.listener?.uid,
-				accessLogConfigUid: (virtualServiceInfo.accessLog?.value as ResourceRef)?.uid || '',
-				useRemoteAddress: virtualServiceInfo.useRemoteAddress,
-				templateOptions: virtualServiceInfo.templateOptions,
-				virtualHostDomains: vhDomains,
-				additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
-				additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || []
-			})
-		}
-	}, [isCreate, virtualServiceInfo, reset])
+		const vhDomains = virtualServiceInfo?.virtualHost?.domains || []
+
+		reset({
+			name: virtualServiceInfo.name,
+			nodeIds: virtualServiceInfo.nodeIds || [],
+			accessGroup: virtualServiceInfo.accessGroup,
+			templateUid: virtualServiceInfo.template?.uid,
+			listenerUid: virtualServiceInfo.listener?.uid,
+			accessLogConfigUid: (virtualServiceInfo.accessLog?.value as ResourceRef)?.uid || '',
+			useRemoteAddress: virtualServiceInfo.useRemoteAddress,
+			templateOptions: virtualServiceInfo.templateOptions,
+			virtualHostDomains: vhDomains,
+			additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
+			additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || []
+		})
+	}, [reset, isCreate, virtualServiceInfo])
+
+	useEffect(() => {
+		handleSetDefaultValues()
+	}, [handleSetDefaultValues])
 
 	const handleChangeTabIndex = (_e: React.SyntheticEvent, newTabIndex: number) => {
 		setTabIndex(newTabIndex)
+	}
+
+	const handleResetForm = () => {
+		isCreate ? reset() : handleSetDefaultValues()
 	}
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
@@ -151,68 +165,107 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						justifyContent='space-between'
 						className='vsFormWrapper'
 					>
-						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='93%'>
-							<Box display='flex' className='vsLeftColumn' width='60%'>
-								<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
-									<GeneralTabVs
-										register={register}
-										control={control}
-										errors={errors}
-										isEdit={!isCreate}
-									/>
-								</CustomTabPanel>
+						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
+							<Box
+								display='flex'
+								className='vsLeftColumn'
+								width='60%'
+								height='100%'
+								flexDirection='column'
+								justifyContent='space-between'
+							>
+								<Box
+									className='boxForm'
+									display='flex'
+									flexDirection='column'
+									height='90%'
+									flexGrow={1}
+								>
+									<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
+										<GeneralTabVs
+											register={register}
+											control={control}
+											errors={errors}
+											isEdit={!isCreate}
+										/>
+									</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
-									<VirtualHostDomains
-										control={control}
-										setValue={setValue}
-										errors={errors}
-										setError={setError}
-										clearErrors={clearErrors}
-										watch={watch}
-									/>
-								</CustomTabPanel>
+									<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
+										<VirtualHostDomains
+											control={control}
+											setValue={setValue}
+											errors={errors}
+											setError={setError}
+											clearErrors={clearErrors}
+											watch={watch}
+										/>
+									</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
-									<SettingsTabVs
-										control={control}
-										setValue={setValue}
-										errors={errors}
-										watch={watch}
-									/>
-								</CustomTabPanel>
+									<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
+										<SettingsTabVs
+											control={control}
+											setValue={setValue}
+											errors={errors}
+											watch={watch}
+										/>
+									</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
-									<TemplateOptionsFormVs
-										register={register}
-										control={control}
-										errors={errors}
-										getValues={getValues}
-										clearErrors={clearErrors}
-									/>
-								</CustomTabPanel>
+									<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
+										<TemplateOptionsFormVs
+											register={register}
+											control={control}
+											errors={errors}
+											getValues={getValues}
+											clearErrors={clearErrors}
+										/>
+									</CustomTabPanel>
+								</Box>
+								<Box
+									display='flex'
+									alignItems='center'
+									justifyContent='flex-start'
+									gap={3}
+									mt={1}
+									marginX={2}
+								>
+									<Button
+										variant='outlined'
+										loading={isFetchingCreateVs || isFetchingUpdateVs}
+										disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
+										onClick={() => navigate(-1)}
+									>
+										Back to Table
+									</Button>
+									<Button
+										variant='contained'
+										type='submit'
+										loading={isFetchingCreateVs || isFetchingUpdateVs}
+										disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
+									>
+										{isCreate
+											? 'Create Virtual Service'
+											: viewMode === 'read'
+												? 'Read-Only Virtual Service'
+												: 'Update Virtual Service'}
+									</Button>
+									<Button
+										variant='outlined'
+										color='warning'
+										loading={isFetchingCreateVs || isFetchingUpdateVs}
+										disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
+										onClick={handleResetForm}
+									>
+										Reset form
+									</Button>
+								</Box>
 							</Box>
+
 							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
 							<Box display='flex' className='vsLeftLeft' width='40%' p={1}>
 								<Box border='1px solid gray' borderRadius={1} p={2} height='100%' width='100%' mr={1}>
 									для наглядности
 								</Box>
 							</Box>
-						</Box>
-
-						<Box display='flex' alignItems='center' justifyContent='center'>
-							<Button
-								variant='contained'
-								type='submit'
-								loading={isFetchingCreateVs || isFetchingUpdateVs}
-								disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-							>
-								{isCreate
-									? 'Create Virtual Service'
-									: viewMode === 'read'
-										? 'Read-Only Virtual Service'
-										: 'Update Virtual Service'}
-							</Button>
 						</Box>
 					</Box>
 				</Box>
