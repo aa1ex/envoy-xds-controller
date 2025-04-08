@@ -4,12 +4,7 @@ import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { SelectNodeVs } from '../selectNodeVs/selectNodeVs.tsx'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
-import {
-	useAccessGroupsVs,
-	useListenerVs,
-	useNodeListVs,
-	useTemplatesVs
-} from '../../api/grpc/hooks/useVirtualService.ts'
+import { useListenerVs, useNodeListVs, useTemplatesVs } from '../../api/grpc/hooks/useVirtualService.ts'
 
 interface IGeneralTabVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -20,7 +15,6 @@ interface IGeneralTabVsProps {
 
 export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, errors, isEdit }) => {
 	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs()
-	const { data: accessGroups, isFetching: isFetchingAccessGroups, isError: isErrorAccessGroups } = useAccessGroupsVs()
 	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs()
 	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVs()
 
@@ -34,14 +28,6 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				errors={errors}
 				isFetching={isFetchingNodeList}
 				isErrorFetch={isErrorNodeList}
-			/>
-			<SelectFormVs
-				nameField={'accessGroup'}
-				data={accessGroups}
-				control={control}
-				errors={errors}
-				isFetching={isFetchingAccessGroups}
-				isErrorFetch={isErrorAccessGroups}
 			/>
 			<SelectFormVs
 				nameField={'templateUid'}

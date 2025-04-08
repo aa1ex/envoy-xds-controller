@@ -15,8 +15,11 @@ const AccessGroupsPage: React.FC = () => {
 		data: accessGroups,
 		isFetching: isFetchingAccessGroups,
 		isError: isErrorAccessGroups,
+		error,
 		refetch
 	} = useAccessGroupsVs()
+
+	console.log(error)
 
 	return (
 		<Box
@@ -39,6 +42,7 @@ const AccessGroupsPage: React.FC = () => {
 					<Typography variant='h6' color='error'>
 						Error loading Access Groups
 					</Typography>
+					<Typography color='error'>{error.message}</Typography>
 					<Typography variant='body2' color='text.secondary'>
 						Please try again later.
 					</Typography>

@@ -55,16 +55,11 @@ function App() {
 								<Route index element={<HomePage />} />
 								<Route path=':nodeID' element={<NodeInfoPage />} />
 							</Route>
-							{/*<Route path='virtualServices' element={<Layout />}>*/}
-							{/*	<Route index element={<VirtualServicesPage />} />*/}
-							{/*	<Route path=':uid' element={<EditVsPage />} />*/}
-							{/*	<Route path='createVs' element={<CreateVsPage />} />*/}
-							{/*</Route>*/}
+
 							<Route path='accessGroups' element={<Layout />}>
 								<Route index element={<AccessGroupsPage />} />
 
 								<Route path=':groupId'>
-									{/* 👇 Автоматический редирект на virtualServices */}
 									<Route index element={<Navigate to='virtualServices' replace />} />
 
 									<Route path='virtualServices'>
