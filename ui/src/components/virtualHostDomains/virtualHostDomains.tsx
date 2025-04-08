@@ -24,6 +24,7 @@ import { CustomCardContent, styleBox, styleTooltip } from './style.ts'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+import Checkbox from '@mui/material/Checkbox'
 
 interface IVirtualHostDomainsProps {
 	control: Control<IVirtualServiceForm>
@@ -44,15 +45,29 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 }) => {
 	const nameField = 'virtualHostDomains'
 	const [newDomain, setNewDomain] = useState('')
+	const [selectedDomains, setSelectedDomains] = useState<number[]>([])
+
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const addDomain = () => {
 		if (newDomain.trim() === '') return
-		const errorMessage = validationRulesVsForm.virtualHostDomains([newDomain])
+
+		const inputDomains = newDomain
+			.split('\n')
+			.map(d => d.trim())
+			.filter(Boolean)
+		const currentDomains = watch(nameField)
+		const uniqueNewDomains = inputDomains.filter(d => !currentDomains.includes(d))
+
+		if (uniqueNewDomains.length === 0) {
+			setError(nameField, { type: 'manual', message: 'No new valid domains to add.' })
+			return
+		}
+
+		const errorMessage = validationRulesVsForm.virtualHostDomains(uniqueNewDomains)
 
 		if (errorMessage === true) {
-			const currentDomains = watch(nameField)
-			setValue(nameField, [...currentDomains, newDomain])
+			setValue(nameField, [...currentDomains, ...uniqueNewDomains])
 			setNewDomain('')
 			clearErrors(nameField)
 		} else {
@@ -71,6 +86,28 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 		if (e.key === 'Enter') {
 			e.preventDefault()
 			addDomain()
+		}
+	}
+
+	const toggleSelectDomain = (index: number) => {
+		setSelectedDomains(prevState =>
+			prevState.includes(index) ? prevState.filter(i => i !== index) : [...prevState, index]
+		)
+	}
+
+	const removeSelectedDomains = () => {
+		const domains = watch(nameField)
+		const remaining = domains.filter((_, i) => !selectedDomains.includes(i))
+		setValue(nameField, remaining)
+		setSelectedDomains([])
+	}
+
+	const toggleSelectAll = () => {
+		const domains = watch(nameField)
+		if (selectedDomains.length === domains.length) {
+			setSelectedDomains([])
+		} else {
+			setSelectedDomains(domains.map((_, i) => i))
 		}
 	}
 
@@ -129,6 +166,9 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 								onKeyDown={handleKeyPress}
 								error={!!errors.virtualHostDomains}
 								disabled={readMode}
+								multiline
+								// minRows={3}
+								maxRows={15}
 							/>
 							<FormHelperText error={!!errors.virtualHostDomains} sx={{ ml: 0 }}>
 								{errors.virtualHostDomains?.message}
@@ -148,6 +188,21 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 					Upload Domains
 					<input type='file' accept='.txt' style={{ display: 'none' }} onChange={handleFileUpload} />
 				</Button>
+				{selectedDomains.length > 0 && !readMode && (
+					<Button
+						variant='outlined'
+						color='error'
+						onClick={removeSelectedDomains}
+						sx={{ flexShrink: 0, marginLeft: '10px' }}
+					>
+						Remove selected
+					</Button>
+				)}
+				{!readMode && watch(nameField).length > 0 && (
+					<Button variant='outlined' onClick={toggleSelectAll} sx={{ flexShrink: 0, marginX: '10px' }}>
+						{selectedDomains.length === watch(nameField).length ? 'Deselect all' : 'Select all'}
+					</Button>
+				)}
 			</Box>
 
 			<Box
@@ -155,15 +210,19 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 				display='flex'
 				flexDirection='column'
 				gap={0.7}
-				sx={{
-					overflowY: 'auto',
-					paddingRight: '10px'
-				}}
+				sx={{ overflowY: 'auto', paddingRight: '10px' }}
 			>
-				{watch('virtualHostDomains').map((domain, index) => (
+				{watch(nameField).map((domain, index) => (
 					<Card key={index} sx={{ flexShrink: 0 }}>
-						<CustomCardContent>
-							<Typography padding={1.2}>{domain}</Typography>
+						<CustomCardContent sx={{ display: 'flex', alignItems: 'center' }}>
+							<Checkbox
+								checked={selectedDomains.includes(index)}
+								onChange={() => toggleSelectDomain(index)}
+								disabled={readMode}
+							/>
+							<Typography padding={1.2} sx={{ flexGrow: 1 }}>
+								{domain}
+							</Typography>
 							<IconButton onClick={() => removeDomain(index)} disabled={readMode}>
 								<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
 							</IconButton>

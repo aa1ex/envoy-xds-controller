@@ -99,7 +99,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const handleResetForm = () => {
 		isCreate ? reset() : handleSetDefaultValues()
 	}
-	console.log(isCreate)
+
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const virtualHostData: VirtualHost = {
 			$typeName: 'virtual_service.v1.VirtualHost',

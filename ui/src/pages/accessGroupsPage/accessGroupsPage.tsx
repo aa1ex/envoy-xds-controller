@@ -19,8 +19,6 @@ const AccessGroupsPage: React.FC = () => {
 		refetch
 	} = useAccessGroupsVs()
 
-	console.log(error)
-
 	return (
 		<Box
 			component='section'
