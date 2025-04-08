@@ -76,8 +76,10 @@ export const useUpdateVs = () => {
 
 	return {
 		updateVS: updateVsMutations.mutateAsync,
+		successUpdateVs: updateVsMutations.isSuccess,
 		errorUpdateVs: updateVsMutations.error,
-		isFetchingUpdateVs: updateVsMutations.isPending
+		isFetchingUpdateVs: updateVsMutations.isPending,
+		resetQueryUpdateVs: updateVsMutations.reset
 	}
 }
 

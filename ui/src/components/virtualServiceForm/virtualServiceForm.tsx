@@ -23,6 +23,7 @@ import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains/virtualHostDomains.tsx'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { useTabStore } from '../../store/tabIndexStore.ts'
+import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
@@ -41,13 +42,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const setTabIndex = useTabStore(state => state.setTabIndex)
 
 	const { refetch } = useListVs(false, groupId)
-	const { createVirtualService, isFetchingCreateVs } = useCreateVs()
-	const { updateVS, isFetchingUpdateVs } = useUpdateVs()
+	const { createVirtualService, isFetchingCreateVs, errorCreateVs } = useCreateVs()
+	const { updateVS, isFetchingUpdateVs, errorUpdateVs, resetQueryUpdateVs } = useUpdateVs()
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 		setValue,
 		control,
 		setError,
@@ -126,22 +127,32 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				$typeName: 'virtual_service.v1.CreateVirtualServiceRequest' as const
 			}
 
-			console.log('data for create', createVSData)
+			// console.log('data for create', createVSData)
 			await createVirtualService(createVSData)
+			navigate(`/accessGroups/${groupId}/virtualServices`, {
+				state: {
+					successMessage: `Virtual Service ${data.name.toUpperCase()} created successfully`
+				}
+			})
 		}
 		if (!isCreate && virtualServiceInfo) {
 			const { name, ...baseVSDataWithoutName } = baseVSData
-
 			const updateVSData: UpdateVirtualServiceRequest = {
 				...baseVSDataWithoutName,
 				uid: virtualServiceInfo?.uid,
 				$typeName: 'virtual_service.v1.UpdateVirtualServiceRequest' as const
 			}
 
-			console.log('data for Update', updateVSData)
+			// console.log('data for Update', updateVSData)
 			await updateVS(updateVSData)
+			resetQueryUpdateVs()
+			navigate(`/accessGroups/${groupId}/virtualServices`, {
+				state: {
+					successMessage: `Virtual Service ${data.name.toUpperCase()} update successfully`
+				}
+			})
 		}
-		navigate(`/accessGroups/${groupId}/virtualServices`)
+		// navigate(`/accessGroups/${groupId}/virtualServices`)
 		await refetch()
 	}
 	return (
@@ -271,6 +282,12 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						</Box>
 					</Box>
 				</Box>
+				<ErrorSnackBarVs
+					errors={errors}
+					errorCreateVs={errorCreateVs}
+					errorUpdateVs={errorUpdateVs}
+					isSubmitted={isSubmitting}
+				/>
 			</form>
 		</>
 	)

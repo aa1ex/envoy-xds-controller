@@ -5,8 +5,6 @@ import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { useAccessLogsVs, useHttpFilterVs, useRouteVs } from '../../api/grpc/hooks/useVirtualService.ts'
-import Box from '@mui/material/Box'
-import { styleBox } from './style.ts'
 
 interface ISettingsTabVsProps {
 	control: Control<IVirtualServiceForm>
@@ -21,7 +19,7 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
 
 	return (
-		<Box sx={{ ...styleBox }} overflow={'auto'}>
+		<>
 			<SelectFormVs
 				nameField={'accessLogConfigUid'}
 				data={accessLogs}
@@ -51,6 +49,6 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 				isFetching={isFetchingRoutes}
 			/>
 			<RemoteAddrFormVs nameField={'useRemoteAddress'} control={control} errors={errors} />
-		</Box>
+		</>
 	)
 }

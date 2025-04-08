@@ -3,6 +3,9 @@ import { useListVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { MaterialReactTable, MRT_VisibilityState } from 'material-react-table'
 import { useConfigTable } from './configVirtualServicesTable.tsx'
 import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
+import { useLocation, useNavigate } from 'react-router-dom'
+import Snackbar from '@mui/material/Snackbar'
+import { Alert } from '@mui/material'
 
 interface VirtualServicesTable {
 	groupId: string
@@ -17,6 +20,20 @@ const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
 	const [nameForDialog, setNameForDialog] = useState('')
 	const [selectedUid, setSelectedUid] = useState('')
 	const [columnVisibility, setColumnVisibility] = useState<MRT_VisibilityState>({})
+
+	const location = useLocation()
+	const navigate = useNavigate()
+	const [openSnackBar, setOpenSnackBar] = useState(false)
+	const [snackMessage, setSnackMessage] = useState<string | null>(null)
+
+	useEffect(() => {
+		if (location.state?.successMessage) {
+			setSnackMessage(location.state.successMessage)
+			setOpenSnackBar(true)
+
+			navigate(location.pathname, { replace: true, state: null })
+		}
+	}, [location, navigate])
 
 	const { table } = useConfigTable({
 		groupId,
@@ -57,6 +74,16 @@ const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
 				selectedUid={selectedUid}
 				setSelectedUid={setSelectedUid}
 			/>
+			<Snackbar
+				open={openSnackBar}
+				autoHideDuration={3000}
+				onClose={() => setOpenSnackBar(false)}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+			>
+				<Alert onClose={() => setOpenSnackBar(false)} severity='success' variant='filled' sx={{ width: '50%' }}>
+					{snackMessage}
+				</Alert>
+			</Snackbar>
 		</>
 	)
 }
