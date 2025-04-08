@@ -193,10 +193,6 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
 
-	if req.Msg.AccessGroup != "" {
-		vs.SetAccessGroup(req.Msg.AccessGroup)
-	}
-
 	if req.Msg.TemplateUid != "" {
 		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
 		if vst == nil {

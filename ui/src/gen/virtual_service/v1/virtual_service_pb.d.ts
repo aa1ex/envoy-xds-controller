@@ -151,22 +151,17 @@ export declare type UpdateVirtualServiceRequest = Message<"virtual_service.v1.Up
   nodeIds: string[];
 
   /**
-   * @generated from field: string access_group = 3;
-   */
-  accessGroup: string;
-
-  /**
-   * @generated from field: string template_uid = 4;
+   * @generated from field: string template_uid = 3;
    */
   templateUid: string;
 
   /**
-   * @generated from field: string listener_uid = 5;
+   * @generated from field: string listener_uid = 4;
    */
   listenerUid: string;
 
   /**
-   * @generated from field: virtual_service.v1.VirtualHost virtual_host = 6;
+   * @generated from field: virtual_service.v1.VirtualHost virtual_host = 5;
    */
   virtualHost?: VirtualHost;
 
@@ -175,29 +170,29 @@ export declare type UpdateVirtualServiceRequest = Message<"virtual_service.v1.Up
    */
   accessLogConfig: {
     /**
-     * @generated from field: string access_log_config_uid = 7;
+     * @generated from field: string access_log_config_uid = 6;
      */
     value: string;
     case: "accessLogConfigUid";
   } | { case: undefined; value?: undefined };
 
   /**
-   * @generated from field: repeated string additional_http_filter_uids = 8;
+   * @generated from field: repeated string additional_http_filter_uids = 7;
    */
   additionalHttpFilterUids: string[];
 
   /**
-   * @generated from field: repeated string additional_route_uids = 9;
+   * @generated from field: repeated string additional_route_uids = 8;
    */
   additionalRouteUids: string[];
 
   /**
-   * @generated from field: optional bool use_remote_address = 10;
+   * @generated from field: optional bool use_remote_address = 9;
    */
   useRemoteAddress?: boolean;
 
   /**
-   * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 11;
+   * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 10;
    */
   templateOptions: TemplateOption[];
 };
