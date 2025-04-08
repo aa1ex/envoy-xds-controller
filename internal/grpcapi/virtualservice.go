@@ -33,10 +33,21 @@ func NewVirtualServiceStore(s *store.Store, c client.Client, targetNs string) *V
 	}
 }
 
-func (s *VirtualServiceStore) ListVirtualService(_ context.Context, r *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
+func (s *VirtualServiceStore) ListVirtualService(ctx context.Context, r *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
 	m := s.store.MapVirtualServices()
 	list := make([]*v1.VirtualServiceListItem, 0, len(m))
+
+	authorizer := getAuthorizerFromContext(ctx)
+
 	for _, v := range m {
+		isAvailable, err := authorizer.Authorize(v.GetAccessGroup(), v.Name)
+		if err != nil {
+			return nil, err
+		}
+		if !isAvailable {
+			continue
+		}
+
 		if r.Msg.AccessGroup != "" && r.Msg.AccessGroup != v.GetAccessGroup() {
 			continue
 		}
@@ -263,6 +274,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 				Namespace: &route.Namespace,
 			})
 		}
+	} else {
+		vs.Spec.AdditionalRoutes = nil
 	}
 
 	if len(req.Msg.AdditionalHttpFilterUids) > 0 {
@@ -277,6 +290,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 				Namespace: &filter.Namespace,
 			})
 		}
+	} else {
+		vs.Spec.AdditionalHttpFilters = nil
 	}
 
 	if req.Msg.UseRemoteAddress != nil {

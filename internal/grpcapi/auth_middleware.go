@@ -60,7 +60,7 @@ func (a *Authorizer) Authorize(domain string, object any) (bool, error) {
 			return true, nil
 		}
 	}
-	return false, authn.Errorf("forbidden")
+	return false, nil
 }
 
 func NewAuthMiddleware(issuerURL, clientID string, enf *casbin.Enforcer) (*AuthMiddleware, error) {
