@@ -31,6 +31,14 @@ data:
     cn: john
     mail: johndoe@example.com
     userpassword: bar
+    
+    dn: cn=tester,ou=People,dc=example,dc=org
+    objectClass: person
+    objectClass: inetOrgPerson
+    sn: tester
+    cn: tester
+    mail: tester@example.com
+    userpassword: tester
 
     # Group definitions.
 
@@ -48,3 +56,8 @@ data:
     objectClass: groupOfNames
     cn: developers
     member: cn=jane,ou=People,dc=example,dc=org
+
+    dn: cn=testers,ou=Groups,dc=example,dc=org
+    objectClass: groupOfNames
+    cn: testers
+    member: cn=tester,ou=People,dc=example,dc=org

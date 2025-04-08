@@ -211,6 +211,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 				})
 			}
 			vs.Spec.TemplateOptions = tOpts
+		} else {
+			vs.Spec.TemplateOptions = nil
 		}
 	}
 

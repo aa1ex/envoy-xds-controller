@@ -23,14 +23,31 @@ data:
     [matchers]
     m = g(r.sub, p.sub, r.dom) && r.dom == p.dom && globMatch(r.obj, p.obj) && r.act == p.act || r.sub == "superuser"
   policy.csv: |-
+    p, virtual-service-creator, *, *, list-access-groups
     p, virtual-service-creator, *, *, list-virtual-services
+    p, virtual-service-creator, *, *, list-virtual-service-templates
+    p, virtual-service-creator, *, *, list-listeners
+    p, virtual-service-creator, *, *, list-nodes
+    p, virtual-service-creator, *, *, list-access-log-configs
+    p, virtual-service-creator, *, *, list-http-filters
+    p, virtual-service-creator, *, *, list-routes
     p, virtual-service-creator, *, *, get-virtual-service
     p, virtual-service-creator, *, *, create-virtual-service
     p, virtual-service-creator, *, *, update-virtual-service
 
-    p, virtual-service-reader, *, *, list-virtual-services
-    p, virtual-service-reader, *, *, get-virtual-service
     p, virtual-service-reader, *, *, list-access-groups
-    p, virtual-service-reader, *, *, list-node-ids
+    p, virtual-service-reader, *, *, list-virtual-services
+    p, virtual-service-reader, *, *, list-virtual-service-templates
+    p, virtual-service-reader, *, *, list-listeners
+    p, virtual-service-reader, *, *, list-nodes
     p, virtual-service-reader, *, *, list-access-log-configs
+    p, virtual-service-reader, *, *, list-http-filters
+    p, virtual-service-reader, *, *, list-routes
+    p, virtual-service-reader, *, *, get-virtual-service
+
+    g, admins, virtual-service-creator, *
+    g, developers, virtual-service-reader, *
+    g, testers, virtual-service-reader, test
+    g, sa, virtual-service-reader, dev
+    g, sa, virtual-service-reader, test
 {{- end }}

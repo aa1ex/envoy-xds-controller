@@ -151,6 +151,9 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 
 	if c.cfg.Auth.Enabled {
 		enforcer, err := casbin.NewEnforcer(c.cfg.Auth.AccessControlModel, c.cfg.Auth.AccessControlPolicy)
+		if err != nil {
+			return err
+		}
 		middleware, err := grpcapi.NewAuthMiddleware(c.cfg.Auth.IssuerURL, c.cfg.Auth.ClientID, enforcer)
 		if err != nil {
 			return err

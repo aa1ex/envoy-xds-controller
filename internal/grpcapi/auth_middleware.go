@@ -20,12 +20,50 @@ import (
 type AuthMiddleware struct {
 	verifier          *oidc.IDTokenVerifier
 	wrappedMiddleware *authn.Middleware
-	enforcer          casbin.IEnforcer
+	enforcer          *casbin.Enforcer
 }
 
-type AuthorizeFunction func(domain string, object any) (bool, error)
+type Authorizer struct {
+	name     string
+	groups   []string
+	action   string
+	enforcer *casbin.Enforcer
+}
 
-func NewAuthMiddleware(issuerURL, clientID string, enf casbin.IEnforcer) (*AuthMiddleware, error) {
+func (a *Authorizer) getSubjects() []string {
+	return append([]string{a.name}, a.groups...)
+}
+
+func (a *Authorizer) GetAvailableAccessGroups() map[string]bool {
+	set := make(map[string]bool)
+	for _, sub := range a.getSubjects() {
+		domains, _ := a.enforcer.GetDomainsForUser(sub)
+		if len(domains) == 1 && domains[0] == "*" {
+			return map[string]bool{
+				"*": true,
+			}
+		}
+		for _, d := range domains {
+			set[d] = true
+		}
+	}
+	return set
+}
+
+func (a *Authorizer) Authorize(domain string, object any) (bool, error) {
+	for _, group := range a.getSubjects() {
+		result, err := a.enforcer.Enforce(group, domain, object, a.action)
+		if err != nil {
+			return false, err
+		}
+		if result {
+			return true, nil
+		}
+	}
+	return false, authn.Errorf("forbidden")
+}
+
+func NewAuthMiddleware(issuerURL, clientID string, enf *casbin.Enforcer) (*AuthMiddleware, error) {
 	provider, err := oidc.NewProvider(context.Background(), issuerURL)
 	if err != nil {
 		return nil, err
@@ -51,6 +89,7 @@ func (m *AuthMiddleware) authFunc(ctx context.Context, req *http.Request) (any, 
 		return nil, err
 	}
 	var claims struct {
+		Name   string   `json:"name"`
 		Groups []string `json:"groups"`
 	}
 	if err := idToken.Claims(&claims); err != nil {
@@ -63,19 +102,14 @@ func (m *AuthMiddleware) authFunc(ctx context.Context, req *http.Request) (any, 
 		return nil, authn.Errorf("unknown action: '%s'", proc)
 	}
 
-	var authorize AuthorizeFunction = func(domain string, object any) (bool, error) {
-		for _, group := range claims.Groups {
-			result, err := m.enforcer.Enforce(group, domain, object, action) // (r.sub, r.dom, r.obj, r.action
-			if err != nil {
-				return false, err
-			}
-			if result {
-				return true, nil
-			}
-		}
-		return false, authn.Errorf("forbidden")
+	authorizer := Authorizer{
+		name:     claims.Name,
+		enforcer: m.enforcer,
+		groups:   claims.Groups,
+		action:   action,
 	}
-	return authorize, nil
+
+	return authorizer, nil
 }
 
 func lookupAction(route string) string {
@@ -109,4 +143,8 @@ func lookupAction(route string) string {
 	default:
 		return ""
 	}
+}
+
+func getAuthorizerFromContext(ctx context.Context) Authorizer {
+	return authn.GetInfo(ctx).(Authorizer)
 }
