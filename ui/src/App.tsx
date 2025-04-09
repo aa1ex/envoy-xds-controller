@@ -8,9 +8,7 @@ import Spinner from './components/spinner/Spinner'
 import Layout from './layout/layout'
 import { ColorModeContext } from './theme/theme'
 import useThemeMode from './utils/hooks/useThemeMode'
-import { setAccessToken } from './api/axiosApiClient.ts'
 import { env } from './env.ts'
-import { setAuthToken } from './api/grpc/hooks/useVirtualService.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
@@ -40,8 +38,8 @@ function App() {
 			return <div>Redirect to login...</div>
 		}
 
-		setAccessToken(auth.user?.access_token)
-		setAuthToken(auth.user?.access_token)
+		// setAccessToken(auth.user?.access_token)
+		// setAuthToken(auth.user?.access_token)
 	}
 
 	return (

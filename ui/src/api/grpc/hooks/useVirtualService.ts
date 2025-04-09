@@ -38,8 +38,8 @@ export const useListVs = (flag: boolean, accessGroup?: string) => {
 			virtualServiceClient.listVirtualService(
 				{
 					accessGroup: safeAccessGroup
-				},
-				metadata
+				}
+				// metadata
 			),
 		enabled: flag
 	})
@@ -97,7 +97,11 @@ export const useDeleteVs = () => {
 export const useAccessGroupsVs = () => {
 	return useQuery({
 		queryKey: ['accessGroupsVs'],
-		queryFn: () => accessGroupsServiceClient.listAccessGroup({}, metadata)
+		queryFn: () =>
+			accessGroupsServiceClient.listAccessGroup(
+				{}
+				// metadata
+			)
 	})
 }
 
