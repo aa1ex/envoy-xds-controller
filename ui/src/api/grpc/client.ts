@@ -1,6 +1,6 @@
 import { createConnectTransport } from '@connectrpc/connect-web'
 import { env } from '../../env.ts'
-import { createClient, Interceptor } from '@connectrpc/connect'
+import { Code, ConnectError, createClient, Interceptor } from '@connectrpc/connect'
 import { VirtualServiceStoreService } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { VirtualServiceTemplateStoreService } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import { ListenerStoreService } from '../../gen/listener/v1/listener_pb.ts'
@@ -9,19 +9,11 @@ import { HTTPFilterStoreService } from '../../gen/http_filter/v1/http_filter_pb.
 import { RouteStoreService } from '../../gen/route/v1/route_pb.ts'
 import { AccessGroupStoreService } from '../../gen/access_group/v1/access_group_pb.ts'
 import { NodeStoreService } from '../../gen/node/v1/node_pb.ts'
+import { getAuth } from '../../utils/helpers/authBridge.ts'
 
-const authInterceptor: Interceptor = next => async req => {
-	const sessionData = sessionStorage.getItem(`oidc.user:${env.VITE_OIDC_AUTHORITY}:envoy-xds-controller`)
-	let accessToken
-
-	if (sessionData) {
-		try {
-			const parsed = JSON.parse(sessionData)
-			accessToken = parsed.access_token
-		} catch (e) {
-			console.error('Failed to parse token:', e)
-		}
-	}
+export const tokenInterceptor: Interceptor = next => async req => {
+	const auth = getAuth()
+	const accessToken = auth.user?.access_token
 
 	if (accessToken) {
 		req.header.set('Authorization', `Bearer ${accessToken}`)
@@ -30,9 +22,24 @@ const authInterceptor: Interceptor = next => async req => {
 	return next(req)
 }
 
+export const errorInterceptor: Interceptor = next => async req => {
+	try {
+		return await next(req)
+	} catch (err) {
+		if (err instanceof ConnectError && err.code === Code.Unauthenticated) {
+			console.log('Token expired or invalid, redirecting to login...')
+			await getAuth().signinRedirect()
+		} else {
+			console.error('Error:', err instanceof ConnectError ? err.message : 'Unexpected error')
+		}
+
+		throw err
+	}
+}
+
 export const transport = createConnectTransport({
 	baseUrl: env.VITE_GRPC_API_URL || '/grpc-api',
-	interceptors: [authInterceptor]
+	interceptors: [tokenInterceptor, errorInterceptor]
 })
 
 export const virtualServiceClient = createClient(VirtualServiceStoreService, transport)

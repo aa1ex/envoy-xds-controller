@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react'
 import { useAuth } from 'react-oidc-context'
 import { CssBaseline } from '@mui/material'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ErrorBoundary from './components/errorBoundary/ErrorBoundary'
 import Spinner from './components/spinner/Spinner'
@@ -9,6 +9,7 @@ import Layout from './layout/layout'
 import { ColorModeContext } from './theme/theme'
 import useThemeMode from './utils/hooks/useThemeMode'
 import { env } from './env.ts'
+import { provideAuth } from './utils/helpers/authBridge.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
@@ -20,11 +21,15 @@ const Page404 = lazy(() => import('./pages/page404/page404'))
 
 function App() {
 	const [theme, colorMode] = useThemeMode()
+	const auth = useAuth()
+
+	useEffect(() => {
+		if (env.VITE_OIDC_ENABLED === 'true' && auth.isAuthenticated && auth.user) {
+			provideAuth(auth)
+		}
+	}, [auth, auth.isAuthenticated, auth.user])
 
 	if (env.VITE_OIDC_ENABLED === 'true') {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		const auth = useAuth()
-
 		if (auth.isLoading) {
 			return <div>Loading...</div>
 		}
@@ -37,9 +42,6 @@ function App() {
 			void auth.signinRedirect()
 			return <div>Redirect to login...</div>
 		}
-
-		// setAccessToken(auth.user?.access_token)
-		// setAuthToken(auth.user?.access_token)
 	}
 
 	return (
