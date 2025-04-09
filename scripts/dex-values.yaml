@@ -7,14 +7,14 @@ config:
     allowedOrigins:
       - http://localhost:8080
       - http://localhost:5173
-  expiry:
-    deviceRequests: "5m"
-    signingKeys: "6h"
-    idTokens: "1m"
-    refreshTokens:
-     reuseInterval: "3s"
-     validIfNotUsedFor: "2160h" # 90 days
-     absoluteLifetime: "3960h" # 165 days
+#  expiry:
+#    deviceRequests: "5m"
+#    signingKeys: "6h"
+#    idTokens: "1m"
+#    refreshTokens:
+#     reuseInterval: "3s"
+#     validIfNotUsedFor: "2160h" # 90 days
+#     absoluteLifetime: "3960h" # 165 days
   connectors:
     - type: ldap
       name: OpenLDAP

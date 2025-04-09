@@ -23,30 +23,31 @@ data:
     [matchers]
     m = g(r.sub, p.sub, r.dom) && globMatch(r.dom, p.dom) && globMatch(r.obj, p.obj) && r.act == p.act || r.sub == "superuser"
   policy.csv: |-
-    p, virtual-service-creator, *, *, list-access-groups
-    p, virtual-service-creator, *, *, list-virtual-services
-    p, virtual-service-creator, *, *, list-virtual-service-templates
-    p, virtual-service-creator, *, *, list-listeners
-    p, virtual-service-creator, *, *, list-nodes
-    p, virtual-service-creator, *, *, list-access-log-configs
-    p, virtual-service-creator, *, *, list-http-filters
-    p, virtual-service-creator, *, *, list-routes
-    p, virtual-service-creator, *, *, get-virtual-service
-    p, virtual-service-creator, *, *, create-virtual-service
-    p, virtual-service-creator, *, *, update-virtual-service
-    p, virtual-service-creator, *, *, fill-template
+    p, role:editor, *, *, list-access-groups
+    p, role:editor, *, *, list-virtual-services
+    p, role:editor, *, *, list-virtual-service-templates
+    p, role:editor, *, *, list-listeners
+    p, role:editor, *, *, list-nodes
+    p, role:editor, *, *, list-access-log-configs
+    p, role:editor, *, *, list-http-filters
+    p, role:editor, *, *, list-routes
+    p, role:editor, *, *, get-virtual-service
+    p, role:editor, *, *, create-virtual-service
+    p, role:editor, *, *, update-virtual-service
+    p, role:editor, *, *, fill-template
 
-    p, virtual-service-reader, *, *, list-access-groups
-    p, virtual-service-reader, *, *, list-virtual-services
-    p, virtual-service-reader, *, *, list-virtual-service-templates
-    p, virtual-service-reader, *, *, list-listeners
-    p, virtual-service-reader, *, *, list-nodes
-    p, virtual-service-reader, *, *, list-access-log-configs
-    p, virtual-service-reader, *, *, list-http-filters
-    p, virtual-service-reader, *, *, list-routes
-    p, virtual-service-reader, *, *, get-virtual-service
-    p, virtual-service-reader, *, *, fill-template
+    p, role:reader, *, *, list-access-groups
+    p, role:reader, *, *, list-virtual-services
+    p, role:reader, *, *, list-virtual-service-templates
+    p, role:reader, *, *, list-listeners
+    p, role:reader, *, *, list-nodes
+    p, role:reader, *, *, list-access-log-configs
+    p, role:reader, *, *, list-http-filters
+    p, role:reader, *, *, list-routes
+    p, role:reader, *, *, get-virtual-service
+    p, role:reader, *, *, fill-template
 
-    g, admins, virtual-service-creator, *
-    g, developers, virtual-service-reader, *
+    g, admins, role:editor, dev
+    g, admins, role:editor, test
+    g, developers, role:reader, dev
 {{- end }}
