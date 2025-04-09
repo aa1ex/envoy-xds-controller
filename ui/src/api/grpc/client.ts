@@ -13,6 +13,7 @@ import { NodeStoreService } from '../../gen/node/v1/node_pb.ts'
 const authInterceptor: Interceptor = next => async req => {
 	const sessionData = sessionStorage.getItem(`oidc.user:${env.VITE_OIDC_AUTHORITY}:envoy-xds-controller`)
 	let accessToken
+
 	if (sessionData) {
 		try {
 			const parsed = JSON.parse(sessionData)
@@ -21,10 +22,11 @@ const authInterceptor: Interceptor = next => async req => {
 			console.error('Failed to parse token:', e)
 		}
 	}
+
 	if (accessToken) {
-		console.log('tut')
 		req.header.set('Authorization', `Bearer ${accessToken}`)
 	}
+
 	return next(req)
 }
 
