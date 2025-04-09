@@ -40,11 +40,11 @@ func (s *VirtualServiceStore) ListVirtualService(ctx context.Context, r *connect
 	authorizer := getAuthorizerFromContext(ctx)
 
 	for _, v := range m {
-		isAvailable, err := authorizer.Authorize(v.GetAccessGroup(), v.Name)
+		isAllowed, err := authorizer.Authorize(v.GetAccessGroup(), v.Name)
 		if err != nil {
 			return nil, err
 		}
-		if !isAvailable {
+		if !isAllowed {
 			continue
 		}
 
@@ -76,20 +76,37 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 		return nil, fmt.Errorf("nodeIDs is required")
 	}
 
+	if req.Msg.AccessGroup == "" {
+		return nil, fmt.Errorf("access group is required")
+	}
+
+	authorizer := getAuthorizerFromContext(ctx)
+	isAllowed, err := authorizer.Authorize(req.Msg.AccessGroup, req.Msg.Name)
+	if err != nil {
+		return nil, err
+	}
+	if !isAllowed {
+		return nil, fmt.Errorf("access group '%s' is not allowed to create virtual service '%s'", req.Msg.AccessGroup, req.Msg.Name)
+	}
+
 	vs := &v1alpha1.VirtualService{}
 	vs.Name = req.Msg.Name
 	vs.Labels = make(map[string]string)
 	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
-
-	if req.Msg.AccessGroup != "" {
-		vs.SetAccessGroup(req.Msg.AccessGroup)
-	}
+	vs.SetAccessGroup(req.Msg.AccessGroup)
 
 	if req.Msg.TemplateUid != "" {
 		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
 		if vst == nil {
+			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
+		}
+		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(vst.Name, ActionListVirtualServiceTemplate)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
 			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
 		}
 		vs.Spec.Template = &v1alpha1.ResourceRef{
@@ -111,6 +128,13 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	if req.Msg.ListenerUid != "" {
 		listener := s.store.GetListenerByUID(req.Msg.ListenerUid)
 		if listener == nil {
+			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
+		}
+		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(listener.Name, ActionListListeners)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
 			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
 		}
 		vs.Spec.Listener = &v1alpha1.ResourceRef{
@@ -136,6 +160,13 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			if alc == nil {
 				return nil, fmt.Errorf("access log config uid '%s' not found", alcUID)
 			}
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(alc.Name, ActionListAccessLogConfig)
+			if err != nil {
+				return nil, err
+			}
+			if !isAllowed {
+				return nil, fmt.Errorf("access log uid '%s' not found", req.Msg.ListenerUid)
+			}
 			vs.Spec.AccessLogConfig = &v1alpha1.ResourceRef{
 				Name:      alc.Name,
 				Namespace: &alc.Namespace,
@@ -149,6 +180,13 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			if route == nil {
 				return nil, fmt.Errorf("route uid '%s' not found", uid)
 			}
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(route.Name, ActionListRoutes)
+			if err != nil {
+				return nil, err
+			}
+			if !isAllowed {
+				return nil, fmt.Errorf("route uid '%s' not found", req.Msg.ListenerUid)
+			}
 			vs.Spec.AdditionalRoutes = append(vs.Spec.AdditionalRoutes, &v1alpha1.ResourceRef{
 				Name:      route.Name,
 				Namespace: &route.Namespace,
@@ -161,6 +199,13 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			filter := s.store.GetHTTPFilterByUID(uid)
 			if filter == nil {
 				return nil, fmt.Errorf("http filter uid '%s' not found", uid)
+			}
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(filter.Name, ActionListListeners)
+			if err != nil {
+				return nil, err
+			}
+			if !isAllowed {
+				return nil, fmt.Errorf("http filter uid '%s' not found", req.Msg.ListenerUid)
 			}
 			vs.Spec.AdditionalHttpFilters = append(vs.Spec.AdditionalHttpFilters, &v1alpha1.ResourceRef{
 				Name:      filter.Name,

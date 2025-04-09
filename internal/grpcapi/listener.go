@@ -22,14 +22,22 @@ func NewListenerStore(s *store.Store) *ListenerStore {
 	}
 }
 
-func (s *ListenerStore) ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
+func (s *ListenerStore) ListListener(ctx context.Context, _ *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
 	m := s.store.MapListeners()
 	list := make([]*v1.ListenerListItem, 0, len(m))
+	authorizer := getAuthorizerFromContext(ctx)
 	for _, v := range m {
 		item := &v1.ListenerListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 			Type: listenerType(v),
+		}
+		isAllowed, err := authorizer.Authorize("*", item.Name)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			continue
 		}
 		list = append(list, item)
 	}

@@ -16,11 +16,20 @@ func NewNodeStore(nodeIDs []string) *NodeStore {
 	return &NodeStore{nodeIDs: nodeIDs}
 }
 
-func (s *NodeStore) ListNode(context.Context, *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error) {
+func (s *NodeStore) ListNode(ctx context.Context, _ *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error) {
 	list := make([]*v1.NodeListItem, 0, len(s.nodeIDs))
+	authorizer := getAuthorizerFromContext(ctx)
+
 	for _, v := range s.nodeIDs {
 		item := &v1.NodeListItem{
 			Id: v,
+		}
+		isAllowed, err := authorizer.Authorize("*", item.Id)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			continue
 		}
 		list = append(list, item)
 	}

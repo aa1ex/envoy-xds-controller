@@ -1,6 +1,7 @@
 package grpcapi
 
 import (
+	"connectrpc.com/authn"
 	"connectrpc.com/connect"
 	"context"
 	"encoding/json"
@@ -23,20 +24,37 @@ func NewVirtualServiceTemplateStore(s *store.Store) *VirtualServiceTemplateStore
 	}
 }
 
-func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(_ context.Context, _ *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error) {
+func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(ctx context.Context, _ *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error) {
 	m := s.store.MapVirtualServiceTemplates()
 	list := make([]*v1.VirtualServiceTemplateListItem, 0, len(m))
+	authorizer := getAuthorizerFromContext(ctx)
 	for _, v := range m {
 		item := &v1.VirtualServiceTemplateListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
+		}
+		isAllowed, err := authorizer.Authorize("*", item.Name)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			continue
 		}
 		list = append(list, item)
 	}
 	return connect.NewResponse(&v1.ListVirtualServiceTemplateResponse{Items: list}), nil
 }
 
-func (s *VirtualServiceTemplateStore) FillTemplate(_ context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
+func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
+	authorizer := getAuthorizerFromContext(ctx)
+	isAllowed, err := authorizer.Authorize("", "")
+	if err != nil {
+		return nil, err
+	}
+	if !isAllowed {
+		return nil, authn.Errorf("forbidden")
+	}
+
 	if req.Msg.TemplateUid == "" {
 		return nil, fmt.Errorf("template uid is required")
 	}
