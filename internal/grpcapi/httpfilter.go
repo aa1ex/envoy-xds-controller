@@ -19,14 +19,23 @@ func NewHTTPFilterStore(s *store.Store) *HTTPFilterStore {
 	}
 }
 
-func (s *HTTPFilterStore) ListHTTPFilter(context.Context, *connect.Request[v1.ListHTTPFilterRequest]) (*connect.Response[v1.ListHTTPFilterResponse], error) {
+func (s *HTTPFilterStore) ListHTTPFilter(ctx context.Context, _ *connect.Request[v1.ListHTTPFilterRequest]) (*connect.Response[v1.ListHTTPFilterResponse], error) {
 	m := s.store.MapHTTPFilters()
 	list := make([]*v1.HTTPFilterListItem, 0, len(m))
+
+	authorizer := getAuthorizerFromContext(ctx)
 
 	for _, v := range m {
 		item := &v1.HTTPFilterListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
+		}
+		isAllowed, err := authorizer.Authorize("*", item.Name)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			continue
 		}
 		list = append(list, item)
 	}

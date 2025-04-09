@@ -51,8 +51,21 @@ func (a *Authorizer) GetAvailableAccessGroups() map[string]bool {
 }
 
 func (a *Authorizer) Authorize(domain string, object any) (bool, error) {
-	for _, group := range a.getSubjects() {
-		result, err := a.enforcer.Enforce(group, domain, object, a.action)
+	for _, sub := range a.getSubjects() {
+		result, err := a.enforcer.Enforce(sub, domain, object, a.action)
+		if err != nil {
+			return false, err
+		}
+		if result {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+func (a *Authorizer) AuthorizeCommonObjectWithAction(object any, action string) (bool, error) {
+	for _, sub := range a.getSubjects() {
+		result, err := a.enforcer.Enforce(sub, "", object, action)
 		if err != nil {
 			return false, err
 		}
@@ -86,7 +99,7 @@ func (m *AuthMiddleware) authFunc(ctx context.Context, req *http.Request) (any, 
 	}
 	idToken, err := m.verifier.Verify(ctx, token)
 	if err != nil {
-		return nil, err
+		return nil, authn.Errorf("failed to verify token: %v", err)
 	}
 	var claims struct {
 		Name   string   `json:"name"`
@@ -112,34 +125,50 @@ func (m *AuthMiddleware) authFunc(ctx context.Context, req *http.Request) (any, 
 	return authorizer, nil
 }
 
+const (
+	ActionListVirtualServices        = "list-virtual-services"
+	ActionGetVirtualService          = "get-virtual-service"
+	ActionCreateVirtualService       = "create-virtual-service"
+	ActionUpdateVirtualService       = "update-virtual-service"
+	ActionDeleteVirtualService       = "delete-virtual-service"
+	ActionListAccessLogConfig        = "list-access-log-config"
+	ActionListVirtualServiceTemplate = "list-virtual-service-template"
+	ActionListNodes                  = "list-nodes"
+	ActionListRoutes                 = "list-routes"
+	ActionListHTTPFilters            = "list-http-filters"
+	ActionListPolicies               = "list-policies"
+	ActionListAccessGroups           = "list-access-groups"
+	ActionListListeners              = "list-listeners"
+)
+
 func lookupAction(route string) string {
 	switch route {
 	case virtual_servicev1connect.VirtualServiceStoreServiceListVirtualServiceProcedure:
-		return "list-virtual-services"
+		return ActionListVirtualServices
 	case virtual_servicev1connect.VirtualServiceStoreServiceGetVirtualServiceProcedure:
-		return "get-virtual-service"
+		return ActionGetVirtualService
 	case virtual_servicev1connect.VirtualServiceStoreServiceCreateVirtualServiceProcedure:
-		return "create-virtual-service"
+		return ActionCreateVirtualService
 	case virtual_servicev1connect.VirtualServiceStoreServiceUpdateVirtualServiceProcedure:
-		return "update-virtual-service"
+		return ActionUpdateVirtualService
 	case virtual_servicev1connect.VirtualServiceStoreServiceDeleteVirtualServiceProcedure:
-		return "delete-virtual-service"
+		return ActionDeleteVirtualService
 	case access_log_configv1connect.AccessLogConfigStoreServiceListAccessLogConfigProcedure:
-		return "list-access-log-config"
+		return ActionListAccessLogConfig
 	case virtual_service_templatev1connect.VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure:
-		return "list-virtual-service-template"
+		return ActionListVirtualServiceTemplate
 	case nodev1connect.NodeStoreServiceListNodeProcedure:
-		return "list-nodes"
+		return ActionListNodes
 	case routev1connect.RouteStoreServiceListRouteProcedure:
-		return "list-routes"
+		return ActionListRoutes
 	case http_filterv1connect.HTTPFilterStoreServiceListHTTPFilterProcedure:
-		return "list-http-filters"
+		return ActionListHTTPFilters
 	case policyv1connect.PolicyStoreServiceListPolicyProcedure:
-		return "list-policies"
+		return ActionListPolicies
 	case access_groupv1connect.AccessGroupStoreServiceListAccessGroupProcedure:
-		return "list-access-groups"
+		return ActionListAccessGroups
 	case listenerv1connect.ListenerStoreServiceListListenerProcedure:
-		return "list-listeners"
+		return ActionListListeners
 	default:
 		return ""
 	}

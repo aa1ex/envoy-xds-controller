@@ -55,5 +55,9 @@ func (s *Store) GetVirtualServiceByUID(uid string) *v1alpha1.VirtualService {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	vs, _ := s.virtualServiceByUID[uid]
+	if vs == nil {
+		return nil
+	}
+	vs = vs.DeepCopy()
 	return vs
 }

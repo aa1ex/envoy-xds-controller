@@ -19,13 +19,22 @@ func NewAccessLogConfigStore(s *store.Store) *AccessLogConfigStore {
 	}
 }
 
-func (s *AccessLogConfigStore) ListAccessLogConfig(context.Context, *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error) {
+func (s *AccessLogConfigStore) ListAccessLogConfig(ctx context.Context, _ *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error) {
+	authorizer := getAuthorizerFromContext(ctx)
+
 	m := s.store.MapAccessLogs()
 	list := make([]*v1.AccessLogConfigListItem, 0, len(m))
 	for _, v := range m {
 		item := &v1.AccessLogConfigListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
+		}
+		isAllowed, err := authorizer.Authorize("*", item.Name)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			continue
 		}
 		list = append(list, item)
 	}

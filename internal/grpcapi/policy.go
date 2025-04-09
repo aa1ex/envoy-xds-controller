@@ -19,13 +19,21 @@ func NewPolicyStore(s *store.Store) *PolicyStore {
 	}
 }
 
-func (s *PolicyStore) ListPolicy(context.Context, *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error) {
+func (s *PolicyStore) ListPolicy(ctx context.Context, _ *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error) {
 	m := s.store.MapPolicies()
 	list := make([]*v1.PolicyListItem, 0, len(m))
+	authorizer := getAuthorizerFromContext(ctx)
 	for _, v := range m {
 		item := &v1.PolicyListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
+		}
+		isAllowed, err := authorizer.Authorize("*", item.Name)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			continue
 		}
 		list = append(list, item)
 	}
