@@ -32,7 +32,7 @@ func (s *ListenerStore) ListListener(ctx context.Context, _ *connect.Request[v1.
 			Name: v.Name,
 			Type: listenerType(v),
 		}
-		isAllowed, err := authorizer.Authorize("*", item.Name)
+		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
 		if err != nil {
 			return nil, err
 		}

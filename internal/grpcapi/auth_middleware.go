@@ -17,10 +17,20 @@ import (
 	"net/http"
 )
 
+const (
+	domainGeneral = "_"
+)
+
 type AuthMiddleware struct {
 	verifier          *oidc.IDTokenVerifier
 	wrappedMiddleware *authn.Middleware
 	enforcer          *casbin.Enforcer
+}
+
+type IAuthorizer interface {
+	Authorize(domain string, object any) (bool, error)
+	AuthorizeCommonObjectWithAction(object any, action string) (bool, error)
+	GetAvailableAccessGroups() map[string]bool
 }
 
 type Authorizer struct {
@@ -65,7 +75,7 @@ func (a *Authorizer) Authorize(domain string, object any) (bool, error) {
 
 func (a *Authorizer) AuthorizeCommonObjectWithAction(object any, action string) (bool, error) {
 	for _, sub := range a.getSubjects() {
-		result, err := a.enforcer.Enforce(sub, "", object, action)
+		result, err := a.enforcer.Enforce(sub, domainGeneral, object, action)
 		if err != nil {
 			return false, err
 		}
@@ -115,7 +125,7 @@ func (m *AuthMiddleware) authFunc(ctx context.Context, req *http.Request) (any, 
 		return nil, authn.Errorf("unknown action: '%s'", proc)
 	}
 
-	authorizer := Authorizer{
+	authorizer := &Authorizer{
 		name:     claims.Name,
 		enforcer: m.enforcer,
 		groups:   claims.Groups,
@@ -126,19 +136,19 @@ func (m *AuthMiddleware) authFunc(ctx context.Context, req *http.Request) (any, 
 }
 
 const (
-	ActionListVirtualServices        = "list-virtual-services"
-	ActionGetVirtualService          = "get-virtual-service"
-	ActionCreateVirtualService       = "create-virtual-service"
-	ActionUpdateVirtualService       = "update-virtual-service"
-	ActionDeleteVirtualService       = "delete-virtual-service"
-	ActionListAccessLogConfig        = "list-access-log-config"
-	ActionListVirtualServiceTemplate = "list-virtual-service-template"
-	ActionListNodes                  = "list-nodes"
-	ActionListRoutes                 = "list-routes"
-	ActionListHTTPFilters            = "list-http-filters"
-	ActionListPolicies               = "list-policies"
-	ActionListAccessGroups           = "list-access-groups"
-	ActionListListeners              = "list-listeners"
+	ActionListVirtualServices         = "list-virtual-services"
+	ActionGetVirtualService           = "get-virtual-service"
+	ActionCreateVirtualService        = "create-virtual-service"
+	ActionUpdateVirtualService        = "update-virtual-service"
+	ActionDeleteVirtualService        = "delete-virtual-service"
+	ActionListAccessLogConfigs        = "list-access-log-configs"
+	ActionListVirtualServiceTemplates = "list-virtual-service-templates"
+	ActionListNodes                   = "list-nodes"
+	ActionListRoutes                  = "list-routes"
+	ActionListHTTPFilters             = "list-http-filters"
+	ActionListPolicies                = "list-policies"
+	ActionListAccessGroups            = "list-access-groups"
+	ActionListListeners               = "list-listeners"
 )
 
 func lookupAction(route string) string {
@@ -154,9 +164,9 @@ func lookupAction(route string) string {
 	case virtual_servicev1connect.VirtualServiceStoreServiceDeleteVirtualServiceProcedure:
 		return ActionDeleteVirtualService
 	case access_log_configv1connect.AccessLogConfigStoreServiceListAccessLogConfigProcedure:
-		return ActionListAccessLogConfig
+		return ActionListAccessLogConfigs
 	case virtual_service_templatev1connect.VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure:
-		return ActionListVirtualServiceTemplate
+		return ActionListVirtualServiceTemplates
 	case nodev1connect.NodeStoreServiceListNodeProcedure:
 		return ActionListNodes
 	case routev1connect.RouteStoreServiceListRouteProcedure:
@@ -174,6 +184,32 @@ func lookupAction(route string) string {
 	}
 }
 
-func getAuthorizerFromContext(ctx context.Context) Authorizer {
-	return authn.GetInfo(ctx).(Authorizer)
+func getAuthorizerFromContext(ctx context.Context) IAuthorizer {
+	tmp := authn.GetInfo(ctx)
+	if tmp == nil {
+		return stubA
+	}
+	authorizer, ok := tmp.(*Authorizer)
+	if !ok {
+		return stubA
+	}
+	return authorizer
+}
+
+var stubA = &stubAuthorizer{}
+
+type stubAuthorizer struct{}
+
+func (a *stubAuthorizer) Authorize(string, any) (bool, error) {
+	return true, nil
+}
+
+func (a *stubAuthorizer) AuthorizeCommonObjectWithAction(any, string) (bool, error) {
+	return true, nil
+}
+
+func (a *stubAuthorizer) GetAvailableAccessGroups() map[string]bool {
+	return map[string]bool{
+		"*": true,
+	}
 }

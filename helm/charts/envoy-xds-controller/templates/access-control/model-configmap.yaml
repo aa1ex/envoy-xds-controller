@@ -23,20 +23,6 @@ data:
     [matchers]
     m = g(r.sub, p.sub, r.dom) && globMatch(r.dom, p.dom) && globMatch(r.obj, p.obj) && r.act == p.act || r.sub == "superuser"
   policy.csv: |-
-    p, role:editor, *, *, list-access-groups
-    p, role:editor, *, *, list-virtual-services
-    p, role:editor, *, *, list-virtual-service-templates
-    p, role:editor, *, *, list-listeners
-    p, role:editor, *, *, list-nodes
-    p, role:editor, *, *, list-access-log-configs
-    p, role:editor, *, *, list-http-filters
-    p, role:editor, *, *, list-routes
-    p, role:editor, *, *, get-virtual-service
-    p, role:editor, *, *, create-virtual-service
-    p, role:editor, *, *, update-virtual-service
-    p, role:editor, *, *, fill-template
-
-    p, role:reader, *, *, list-access-groups
     p, role:reader, *, *, list-virtual-services
     p, role:reader, *, *, list-virtual-service-templates
     p, role:reader, *, *, list-listeners
@@ -47,7 +33,23 @@ data:
     p, role:reader, *, *, get-virtual-service
     p, role:reader, *, *, fill-template
 
+    p, role:editor, *, *, list-virtual-services
+    p, role:editor, *, *, list-virtual-service-templates
+    p, role:editor, *, *, list-listeners
+    p, role:editor, *, *, list-nodes
+    p, role:editor, *, *, list-access-log-configs
+    p, role:editor, *, *, list-http-filters
+    p, role:editor, *, *, list-routes
+    p, role:editor, *, *, get-virtual-service
+    p, role:editor, *, *, fill-template
+    p, role:editor, *, *, create-virtual-service
+    p, role:editor, *, *, update-virtual-service
+
+    g, admins, role:editor, _
     g, admins, role:editor, dev
     g, admins, role:editor, test
+
+    g, developers, role:reader, _
     g, developers, role:reader, dev
+
 {{- end }}

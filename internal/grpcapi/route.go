@@ -28,7 +28,7 @@ func (s *RouteStore) ListRoute(ctx context.Context, _ *connect.Request[v1.ListRo
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize("*", item.Name)
+		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
 		if err != nil {
 			return nil, err
 		}

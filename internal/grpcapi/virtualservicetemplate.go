@@ -33,7 +33,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(ctx context.Con
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize("*", item.Name)
+		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -47,7 +47,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(ctx context.Con
 
 func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
 	authorizer := getAuthorizerFromContext(ctx)
-	isAllowed, err := authorizer.Authorize("", "")
+	isAllowed, err := authorizer.Authorize(domainGeneral, "*")
 	if err != nil {
 		return nil, err
 	}

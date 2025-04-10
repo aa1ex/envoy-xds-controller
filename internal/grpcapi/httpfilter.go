@@ -30,7 +30,7 @@ func (s *HTTPFilterStore) ListHTTPFilter(ctx context.Context, _ *connect.Request
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize("*", item.Name)
+		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
 		if err != nil {
 			return nil, err
 		}

@@ -102,7 +102,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 		if vst == nil {
 			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
 		}
-		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(vst.Name, ActionListVirtualServiceTemplate)
+		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(vst.Name, ActionListVirtualServiceTemplates)
 		if err != nil {
 			return nil, err
 		}
@@ -160,7 +160,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			if alc == nil {
 				return nil, fmt.Errorf("access log config uid '%s' not found", alcUID)
 			}
-			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(alc.Name, ActionListAccessLogConfig)
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(alc.Name, ActionListAccessLogConfigs)
 			if err != nil {
 				return nil, err
 			}

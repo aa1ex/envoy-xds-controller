@@ -24,7 +24,7 @@ func (s *NodeStore) ListNode(ctx context.Context, _ *connect.Request[v1.ListNode
 		item := &v1.NodeListItem{
 			Id: v,
 		}
-		isAllowed, err := authorizer.Authorize("*", item.Id)
+		isAllowed, err := authorizer.Authorize(domainGeneral, item.Id)
 		if err != nil {
 			return nil, err
 		}

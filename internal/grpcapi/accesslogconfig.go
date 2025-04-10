@@ -29,7 +29,7 @@ func (s *AccessLogConfigStore) ListAccessLogConfig(ctx context.Context, _ *conne
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize("*", item.Name)
+		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
 		if err != nil {
 			return nil, err
 		}
