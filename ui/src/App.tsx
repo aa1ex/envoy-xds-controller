@@ -6,10 +6,13 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import ErrorBoundary from './components/errorBoundary/ErrorBoundary'
 import Spinner from './components/spinner/Spinner'
 import Layout from './layout/layout'
+
 import { ColorModeContext } from './theme/theme'
 import useThemeMode from './utils/hooks/useThemeMode'
 import { env } from './env.ts'
 import { provideAuth } from './utils/helpers/authBridge.ts'
+import ErrorMessage from './components/errorMessage/ErrorMessage.tsx'
+import { ThemedWrapper } from './components/themeWrapper/themeWrapper.tsx'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
@@ -31,16 +34,28 @@ function App() {
 
 	if (env.VITE_OIDC_ENABLED === 'true') {
 		if (auth.isLoading) {
-			return <div>Loading...</div>
+			return (
+				<ThemedWrapper theme={theme} colorMode={colorMode}>
+					<Spinner />
+				</ThemedWrapper>
+			)
 		}
 
 		if (auth.error) {
-			return <div>Oops... {auth.error.message}</div>
+			return (
+				<ThemedWrapper theme={theme} colorMode={colorMode}>
+					<ErrorMessage error={auth.error.message} />
+				</ThemedWrapper>
+			)
 		}
 
 		if (!auth.isAuthenticated) {
 			void auth.signinRedirect()
-			return <div>Redirect to login...</div>
+			return (
+				<ThemedWrapper theme={theme} colorMode={colorMode}>
+					<div>Redirect to login...</div>
+				</ThemedWrapper>
+			)
 		}
 	}
 
