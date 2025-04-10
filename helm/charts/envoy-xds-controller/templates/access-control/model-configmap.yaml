@@ -51,5 +51,4 @@ data:
 
     g, developers, role:reader, _
     g, developers, role:reader, dev
-
 {{- end }}

@@ -52,7 +52,7 @@ type Config struct {
 		AccessControlPolicy string
 	}
 	StaticResources struct {
-		AccessGroups []string `json:"excAccessGroups"`
+		AccessGroups []string `json:"accessGroups"`
 		NodeIDs      []string `json:"nodeIds"`
 	}
 }

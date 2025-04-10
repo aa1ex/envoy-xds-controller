@@ -201,7 +201,7 @@ config:
     - "node4"
     - "test"
     - "dev"
-  excAccessGroups:
+  accessGroups:
     - "group1"
     - "group2"
     - "group3"
