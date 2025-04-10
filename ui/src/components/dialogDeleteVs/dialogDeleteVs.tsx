@@ -3,7 +3,7 @@ import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import Dialog from '@mui/material/Dialog'
 import { Button, DialogActions, DialogTitle } from '@mui/material'
 import DialogContent from '@mui/material/DialogContent'
-import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
+import { ListVirtualServicesResponse } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
 
 import { useDeleteVs } from '../../api/grpc/hooks/useVirtualService.ts'
 
@@ -13,7 +13,7 @@ interface IDialogDeleteVSProps {
 	setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>
 	refetchServices: (
 		options?: RefetchOptions | undefined
-	) => Promise<QueryObserverResult<ListVirtualServiceResponse, Error>>
+	) => Promise<QueryObserverResult<ListVirtualServicesResponse, Error>>
 	selectedUid: string
 	setSelectedUid: React.Dispatch<React.SetStateAction<string>>
 }

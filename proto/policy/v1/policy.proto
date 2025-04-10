@@ -10,11 +10,11 @@ message PolicyListItem  {
 }
 
 service PolicyStoreService {
-  rpc ListPolicy(ListPolicyRequest) returns (ListPolicyResponse);
+  rpc ListPolicies(ListPoliciesRequest) returns (ListPoliciesResponse);
 }
 
-message ListPolicyRequest {}
+message ListPoliciesRequest {}
 
-message ListPolicyResponse {
+message ListPoliciesResponse {
   repeated PolicyListItem items = 1;
 }

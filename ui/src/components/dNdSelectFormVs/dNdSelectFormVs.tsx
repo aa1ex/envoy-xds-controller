@@ -1,7 +1,7 @@
 import React from 'react'
 import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
-import { ListHTTPFilterResponse } from '../../gen/http_filter/v1/http_filter_pb.ts'
-import { ListRouteResponse } from '../../gen/route/v1/route_pb.ts'
+import { ListHTTPFiltersResponse } from '../../gen/http_filter/v1/http_filter_pb.ts'
+import { ListRoutesResponse } from '../../gen/route/v1/route_pb.ts'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
 import Chip from '@mui/material/Chip'
@@ -31,7 +31,7 @@ interface mockData {
 
 interface IdNdSelectFormVsProps {
 	nameField: nameFieldKeys
-	data: ListHTTPFilterResponse | ListRouteResponse | mockData | undefined
+	data: ListHTTPFiltersResponse | ListRoutesResponse | mockData | undefined
 	watch: UseFormWatch<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm, any>
 	setValue: UseFormSetValue<IVirtualServiceForm>

@@ -32,21 +32,21 @@ export declare type AccessLogConfigListItem = Message<"access_log_config.v1.Acce
 export declare const AccessLogConfigListItemSchema: GenMessage<AccessLogConfigListItem>;
 
 /**
- * @generated from message access_log_config.v1.ListAccessLogConfigRequest
+ * @generated from message access_log_config.v1.ListAccessLogConfigsRequest
  */
-export declare type ListAccessLogConfigRequest = Message<"access_log_config.v1.ListAccessLogConfigRequest"> & {
+export declare type ListAccessLogConfigsRequest = Message<"access_log_config.v1.ListAccessLogConfigsRequest"> & {
 };
 
 /**
- * Describes the message access_log_config.v1.ListAccessLogConfigRequest.
- * Use `create(ListAccessLogConfigRequestSchema)` to create a new message.
+ * Describes the message access_log_config.v1.ListAccessLogConfigsRequest.
+ * Use `create(ListAccessLogConfigsRequestSchema)` to create a new message.
  */
-export declare const ListAccessLogConfigRequestSchema: GenMessage<ListAccessLogConfigRequest>;
+export declare const ListAccessLogConfigsRequestSchema: GenMessage<ListAccessLogConfigsRequest>;
 
 /**
- * @generated from message access_log_config.v1.ListAccessLogConfigResponse
+ * @generated from message access_log_config.v1.ListAccessLogConfigsResponse
  */
-export declare type ListAccessLogConfigResponse = Message<"access_log_config.v1.ListAccessLogConfigResponse"> & {
+export declare type ListAccessLogConfigsResponse = Message<"access_log_config.v1.ListAccessLogConfigsResponse"> & {
   /**
    * @generated from field: repeated access_log_config.v1.AccessLogConfigListItem items = 1;
    */
@@ -54,22 +54,22 @@ export declare type ListAccessLogConfigResponse = Message<"access_log_config.v1.
 };
 
 /**
- * Describes the message access_log_config.v1.ListAccessLogConfigResponse.
- * Use `create(ListAccessLogConfigResponseSchema)` to create a new message.
+ * Describes the message access_log_config.v1.ListAccessLogConfigsResponse.
+ * Use `create(ListAccessLogConfigsResponseSchema)` to create a new message.
  */
-export declare const ListAccessLogConfigResponseSchema: GenMessage<ListAccessLogConfigResponse>;
+export declare const ListAccessLogConfigsResponseSchema: GenMessage<ListAccessLogConfigsResponse>;
 
 /**
  * @generated from service access_log_config.v1.AccessLogConfigStoreService
  */
 export declare const AccessLogConfigStoreService: GenService<{
   /**
-   * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfig
+   * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs
    */
-  listAccessLogConfig: {
+  listAccessLogConfigs: {
     methodKind: "unary";
-    input: typeof ListAccessLogConfigRequestSchema;
-    output: typeof ListAccessLogConfigResponseSchema;
+    input: typeof ListAccessLogConfigsRequestSchema;
+    output: typeof ListAccessLogConfigsResponseSchema;
   },
 }>;
 

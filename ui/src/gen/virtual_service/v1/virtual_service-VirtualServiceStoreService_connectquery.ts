@@ -25,6 +25,6 @@ export const deleteVirtualService = VirtualServiceStoreService.method.deleteVirt
 export const getVirtualService = VirtualServiceStoreService.method.getVirtualService;
 
 /**
- * @generated from rpc virtual_service.v1.VirtualServiceStoreService.ListVirtualService
+ * @generated from rpc virtual_service.v1.VirtualServiceStoreService.ListVirtualServices
  */
-export const listVirtualService = VirtualServiceStoreService.method.listVirtualService;
+export const listVirtualServices = VirtualServiceStoreService.method.listVirtualServices;

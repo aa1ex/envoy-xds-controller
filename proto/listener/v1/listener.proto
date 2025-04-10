@@ -18,11 +18,11 @@ message ListenerListItem  {
 }
 
 service ListenerStoreService {
-  rpc ListListener(ListListenerRequest) returns (ListListenerResponse);
+  rpc ListListeners(ListListenersRequest) returns (ListListenersResponse);
 }
 
-message ListListenerRequest {}
+message ListListenersRequest {}
 
-message ListListenerResponse {
+message ListListenersResponse {
   repeated ListenerListItem items = 1;
 }

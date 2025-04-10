@@ -33,14 +33,14 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// ListenerStoreServiceListListenerProcedure is the fully-qualified name of the
-	// ListenerStoreService's ListListener RPC.
-	ListenerStoreServiceListListenerProcedure = "/listener.v1.ListenerStoreService/ListListener"
+	// ListenerStoreServiceListListenersProcedure is the fully-qualified name of the
+	// ListenerStoreService's ListListeners RPC.
+	ListenerStoreServiceListListenersProcedure = "/listener.v1.ListenerStoreService/ListListeners"
 )
 
 // ListenerStoreServiceClient is a client for the listener.v1.ListenerStoreService service.
 type ListenerStoreServiceClient interface {
-	ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error)
+	ListListeners(context.Context, *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error)
 }
 
 // NewListenerStoreServiceClient constructs a client for the listener.v1.ListenerStoreService
@@ -54,10 +54,10 @@ func NewListenerStoreServiceClient(httpClient connect.HTTPClient, baseURL string
 	baseURL = strings.TrimRight(baseURL, "/")
 	listenerStoreServiceMethods := v1.File_listener_v1_listener_proto.Services().ByName("ListenerStoreService").Methods()
 	return &listenerStoreServiceClient{
-		listListener: connect.NewClient[v1.ListListenerRequest, v1.ListListenerResponse](
+		listListeners: connect.NewClient[v1.ListListenersRequest, v1.ListListenersResponse](
 			httpClient,
-			baseURL+ListenerStoreServiceListListenerProcedure,
-			connect.WithSchema(listenerStoreServiceMethods.ByName("ListListener")),
+			baseURL+ListenerStoreServiceListListenersProcedure,
+			connect.WithSchema(listenerStoreServiceMethods.ByName("ListListeners")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -65,17 +65,17 @@ func NewListenerStoreServiceClient(httpClient connect.HTTPClient, baseURL string
 
 // listenerStoreServiceClient implements ListenerStoreServiceClient.
 type listenerStoreServiceClient struct {
-	listListener *connect.Client[v1.ListListenerRequest, v1.ListListenerResponse]
+	listListeners *connect.Client[v1.ListListenersRequest, v1.ListListenersResponse]
 }
 
-// ListListener calls listener.v1.ListenerStoreService.ListListener.
-func (c *listenerStoreServiceClient) ListListener(ctx context.Context, req *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
-	return c.listListener.CallUnary(ctx, req)
+// ListListeners calls listener.v1.ListenerStoreService.ListListeners.
+func (c *listenerStoreServiceClient) ListListeners(ctx context.Context, req *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error) {
+	return c.listListeners.CallUnary(ctx, req)
 }
 
 // ListenerStoreServiceHandler is an implementation of the listener.v1.ListenerStoreService service.
 type ListenerStoreServiceHandler interface {
-	ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error)
+	ListListeners(context.Context, *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error)
 }
 
 // NewListenerStoreServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -85,16 +85,16 @@ type ListenerStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewListenerStoreServiceHandler(svc ListenerStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	listenerStoreServiceMethods := v1.File_listener_v1_listener_proto.Services().ByName("ListenerStoreService").Methods()
-	listenerStoreServiceListListenerHandler := connect.NewUnaryHandler(
-		ListenerStoreServiceListListenerProcedure,
-		svc.ListListener,
-		connect.WithSchema(listenerStoreServiceMethods.ByName("ListListener")),
+	listenerStoreServiceListListenersHandler := connect.NewUnaryHandler(
+		ListenerStoreServiceListListenersProcedure,
+		svc.ListListeners,
+		connect.WithSchema(listenerStoreServiceMethods.ByName("ListListeners")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/listener.v1.ListenerStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case ListenerStoreServiceListListenerProcedure:
-			listenerStoreServiceListListenerHandler.ServeHTTP(w, r)
+		case ListenerStoreServiceListListenersProcedure:
+			listenerStoreServiceListListenersHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -104,6 +104,6 @@ func NewListenerStoreServiceHandler(svc ListenerStoreServiceHandler, opts ...con
 // UnimplementedListenerStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedListenerStoreServiceHandler struct{}
 
-func (UnimplementedListenerStoreServiceHandler) ListListener(context.Context, *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listener.v1.ListenerStoreService.ListListener is not implemented"))
+func (UnimplementedListenerStoreServiceHandler) ListListeners(context.Context, *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("listener.v1.ListenerStoreService.ListListeners is not implemented"))
 }

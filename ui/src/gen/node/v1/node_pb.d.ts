@@ -27,21 +27,21 @@ export declare type NodeListItem = Message<"node.v1.NodeListItem"> & {
 export declare const NodeListItemSchema: GenMessage<NodeListItem>;
 
 /**
- * @generated from message node.v1.ListNodeRequest
+ * @generated from message node.v1.ListNodesRequest
  */
-export declare type ListNodeRequest = Message<"node.v1.ListNodeRequest"> & {
+export declare type ListNodesRequest = Message<"node.v1.ListNodesRequest"> & {
 };
 
 /**
- * Describes the message node.v1.ListNodeRequest.
- * Use `create(ListNodeRequestSchema)` to create a new message.
+ * Describes the message node.v1.ListNodesRequest.
+ * Use `create(ListNodesRequestSchema)` to create a new message.
  */
-export declare const ListNodeRequestSchema: GenMessage<ListNodeRequest>;
+export declare const ListNodesRequestSchema: GenMessage<ListNodesRequest>;
 
 /**
- * @generated from message node.v1.ListNodeResponse
+ * @generated from message node.v1.ListNodesResponse
  */
-export declare type ListNodeResponse = Message<"node.v1.ListNodeResponse"> & {
+export declare type ListNodesResponse = Message<"node.v1.ListNodesResponse"> & {
   /**
    * @generated from field: repeated node.v1.NodeListItem items = 1;
    */
@@ -49,22 +49,22 @@ export declare type ListNodeResponse = Message<"node.v1.ListNodeResponse"> & {
 };
 
 /**
- * Describes the message node.v1.ListNodeResponse.
- * Use `create(ListNodeResponseSchema)` to create a new message.
+ * Describes the message node.v1.ListNodesResponse.
+ * Use `create(ListNodesResponseSchema)` to create a new message.
  */
-export declare const ListNodeResponseSchema: GenMessage<ListNodeResponse>;
+export declare const ListNodesResponseSchema: GenMessage<ListNodesResponse>;
 
 /**
  * @generated from service node.v1.NodeStoreService
  */
 export declare const NodeStoreService: GenService<{
   /**
-   * @generated from rpc node.v1.NodeStoreService.ListNode
+   * @generated from rpc node.v1.NodeStoreService.ListNodes
    */
-  listNode: {
+  listNodes: {
     methodKind: "unary";
-    input: typeof ListNodeRequestSchema;
-    output: typeof ListNodeResponseSchema;
+    input: typeof ListNodesRequestSchema;
+    output: typeof ListNodesResponseSchema;
   },
 }>;
 

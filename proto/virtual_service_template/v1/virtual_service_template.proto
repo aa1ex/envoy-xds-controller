@@ -5,7 +5,7 @@ package virtual_service_template.v1;
 option go_package = "virtualservicetemplatev1";
 
 service VirtualServiceTemplateStoreService {
-  rpc ListVirtualServiceTemplate(ListVirtualServiceTemplateRequest) returns (ListVirtualServiceTemplateResponse);
+  rpc ListVirtualServiceTemplates(ListVirtualServiceTemplatesRequest) returns (ListVirtualServiceTemplatesResponse);
   rpc FillTemplate(FillTemplateRequest) returns (FillTemplateResponse);
 }
 
@@ -21,14 +21,14 @@ message TemplateOption {
   TemplateOptionModifier modifier = 2;
 }
 
-message ListVirtualServiceTemplateRequest {}
+message ListVirtualServiceTemplatesRequest {}
 
 message VirtualServiceTemplateListItem {
   string uid = 1;
   string name = 2;
 }
 
-message ListVirtualServiceTemplateResponse {
+message ListVirtualServiceTemplatesResponse {
   repeated VirtualServiceTemplateListItem items = 1;
 }
 

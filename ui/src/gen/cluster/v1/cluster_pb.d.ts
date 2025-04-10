@@ -32,21 +32,21 @@ export declare type ClusterListItem = Message<"cluster.v1.ClusterListItem"> & {
 export declare const ClusterListItemSchema: GenMessage<ClusterListItem>;
 
 /**
- * @generated from message cluster.v1.ListClusterRequest
+ * @generated from message cluster.v1.ListClustersRequest
  */
-export declare type ListClusterRequest = Message<"cluster.v1.ListClusterRequest"> & {
+export declare type ListClustersRequest = Message<"cluster.v1.ListClustersRequest"> & {
 };
 
 /**
- * Describes the message cluster.v1.ListClusterRequest.
- * Use `create(ListClusterRequestSchema)` to create a new message.
+ * Describes the message cluster.v1.ListClustersRequest.
+ * Use `create(ListClustersRequestSchema)` to create a new message.
  */
-export declare const ListClusterRequestSchema: GenMessage<ListClusterRequest>;
+export declare const ListClustersRequestSchema: GenMessage<ListClustersRequest>;
 
 /**
- * @generated from message cluster.v1.ListClusterResponse
+ * @generated from message cluster.v1.ListClustersResponse
  */
-export declare type ListClusterResponse = Message<"cluster.v1.ListClusterResponse"> & {
+export declare type ListClustersResponse = Message<"cluster.v1.ListClustersResponse"> & {
   /**
    * @generated from field: repeated cluster.v1.ClusterListItem items = 1;
    */
@@ -54,10 +54,10 @@ export declare type ListClusterResponse = Message<"cluster.v1.ListClusterRespons
 };
 
 /**
- * Describes the message cluster.v1.ListClusterResponse.
- * Use `create(ListClusterResponseSchema)` to create a new message.
+ * Describes the message cluster.v1.ListClustersResponse.
+ * Use `create(ListClustersResponseSchema)` to create a new message.
  */
-export declare const ListClusterResponseSchema: GenMessage<ListClusterResponse>;
+export declare const ListClustersResponseSchema: GenMessage<ListClustersResponse>;
 
 /**
  * @generated from service cluster.v1.ClusterStoreService
@@ -68,8 +68,8 @@ export declare const ClusterStoreService: GenService<{
    */
   listCluster: {
     methodKind: "unary";
-    input: typeof ListClusterRequestSchema;
-    output: typeof ListClusterResponseSchema;
+    input: typeof ListClustersRequestSchema;
+    output: typeof ListClustersResponseSchema;
   },
 }>;
 

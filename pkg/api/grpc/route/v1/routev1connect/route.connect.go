@@ -33,14 +33,14 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// RouteStoreServiceListRouteProcedure is the fully-qualified name of the RouteStoreService's
-	// ListRoute RPC.
-	RouteStoreServiceListRouteProcedure = "/route.v1.RouteStoreService/ListRoute"
+	// RouteStoreServiceListRoutesProcedure is the fully-qualified name of the RouteStoreService's
+	// ListRoutes RPC.
+	RouteStoreServiceListRoutesProcedure = "/route.v1.RouteStoreService/ListRoutes"
 )
 
 // RouteStoreServiceClient is a client for the route.v1.RouteStoreService service.
 type RouteStoreServiceClient interface {
-	ListRoute(context.Context, *connect.Request[v1.ListRouteRequest]) (*connect.Response[v1.ListRouteResponse], error)
+	ListRoutes(context.Context, *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error)
 }
 
 // NewRouteStoreServiceClient constructs a client for the route.v1.RouteStoreService service. By
@@ -54,10 +54,10 @@ func NewRouteStoreServiceClient(httpClient connect.HTTPClient, baseURL string, o
 	baseURL = strings.TrimRight(baseURL, "/")
 	routeStoreServiceMethods := v1.File_route_v1_route_proto.Services().ByName("RouteStoreService").Methods()
 	return &routeStoreServiceClient{
-		listRoute: connect.NewClient[v1.ListRouteRequest, v1.ListRouteResponse](
+		listRoutes: connect.NewClient[v1.ListRoutesRequest, v1.ListRoutesResponse](
 			httpClient,
-			baseURL+RouteStoreServiceListRouteProcedure,
-			connect.WithSchema(routeStoreServiceMethods.ByName("ListRoute")),
+			baseURL+RouteStoreServiceListRoutesProcedure,
+			connect.WithSchema(routeStoreServiceMethods.ByName("ListRoutes")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -65,17 +65,17 @@ func NewRouteStoreServiceClient(httpClient connect.HTTPClient, baseURL string, o
 
 // routeStoreServiceClient implements RouteStoreServiceClient.
 type routeStoreServiceClient struct {
-	listRoute *connect.Client[v1.ListRouteRequest, v1.ListRouteResponse]
+	listRoutes *connect.Client[v1.ListRoutesRequest, v1.ListRoutesResponse]
 }
 
-// ListRoute calls route.v1.RouteStoreService.ListRoute.
-func (c *routeStoreServiceClient) ListRoute(ctx context.Context, req *connect.Request[v1.ListRouteRequest]) (*connect.Response[v1.ListRouteResponse], error) {
-	return c.listRoute.CallUnary(ctx, req)
+// ListRoutes calls route.v1.RouteStoreService.ListRoutes.
+func (c *routeStoreServiceClient) ListRoutes(ctx context.Context, req *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error) {
+	return c.listRoutes.CallUnary(ctx, req)
 }
 
 // RouteStoreServiceHandler is an implementation of the route.v1.RouteStoreService service.
 type RouteStoreServiceHandler interface {
-	ListRoute(context.Context, *connect.Request[v1.ListRouteRequest]) (*connect.Response[v1.ListRouteResponse], error)
+	ListRoutes(context.Context, *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error)
 }
 
 // NewRouteStoreServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -85,16 +85,16 @@ type RouteStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewRouteStoreServiceHandler(svc RouteStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	routeStoreServiceMethods := v1.File_route_v1_route_proto.Services().ByName("RouteStoreService").Methods()
-	routeStoreServiceListRouteHandler := connect.NewUnaryHandler(
-		RouteStoreServiceListRouteProcedure,
-		svc.ListRoute,
-		connect.WithSchema(routeStoreServiceMethods.ByName("ListRoute")),
+	routeStoreServiceListRoutesHandler := connect.NewUnaryHandler(
+		RouteStoreServiceListRoutesProcedure,
+		svc.ListRoutes,
+		connect.WithSchema(routeStoreServiceMethods.ByName("ListRoutes")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/route.v1.RouteStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case RouteStoreServiceListRouteProcedure:
-			routeStoreServiceListRouteHandler.ServeHTTP(w, r)
+		case RouteStoreServiceListRoutesProcedure:
+			routeStoreServiceListRoutesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -104,6 +104,6 @@ func NewRouteStoreServiceHandler(svc RouteStoreServiceHandler, opts ...connect.H
 // UnimplementedRouteStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedRouteStoreServiceHandler struct{}
 
-func (UnimplementedRouteStoreServiceHandler) ListRoute(context.Context, *connect.Request[v1.ListRouteRequest]) (*connect.Response[v1.ListRouteResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("route.v1.RouteStoreService.ListRoute is not implemented"))
+func (UnimplementedRouteStoreServiceHandler) ListRoutes(context.Context, *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("route.v1.RouteStoreService.ListRoutes is not implemented"))
 }

@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file policy/v1/policy.proto.
  */
 export const file_policy_v1_policy: GenFile = /*@__PURE__*/
-  fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiKwoOUG9saWN5TGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiEwoRTGlzdFBvbGljeVJlcXVlc3QiPgoSTGlzdFBvbGljeVJlc3BvbnNlEigKBWl0ZW1zGAEgAygLMhkucG9saWN5LnYxLlBvbGljeUxpc3RJdGVtMl8KElBvbGljeVN0b3JlU2VydmljZRJJCgpMaXN0UG9saWN5EhwucG9saWN5LnYxLkxpc3RQb2xpY3lSZXF1ZXN0Gh0ucG9saWN5LnYxLkxpc3RQb2xpY3lSZXNwb25zZUKqAQoNY29tLnBvbGljeS52MUILUG9saWN5UHJvdG9QAVpHZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9wb2xpY3kvdjE7cG9saWN5djGiAgNQWFiqAglQb2xpY3kuVjHKAglQb2xpY3lcVjHiAhVQb2xpY3lcVjFcR1BCTWV0YWRhdGHqAgpQb2xpY3k6OlYxYgZwcm90bzM");
+  fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiKwoOUG9saWN5TGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiFQoTTGlzdFBvbGljaWVzUmVxdWVzdCJAChRMaXN0UG9saWNpZXNSZXNwb25zZRIoCgVpdGVtcxgBIAMoCzIZLnBvbGljeS52MS5Qb2xpY3lMaXN0SXRlbTJlChJQb2xpY3lTdG9yZVNlcnZpY2USTwoMTGlzdFBvbGljaWVzEh4ucG9saWN5LnYxLkxpc3RQb2xpY2llc1JlcXVlc3QaHy5wb2xpY3kudjEuTGlzdFBvbGljaWVzUmVzcG9uc2VCqgEKDWNvbS5wb2xpY3kudjFCC1BvbGljeVByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvcG9saWN5L3YxO3BvbGljeXYxogIDUFhYqgIJUG9saWN5LlYxygIJUG9saWN5XFYx4gIVUG9saWN5XFYxXEdQQk1ldGFkYXRh6gIKUG9saWN5OjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message policy.v1.PolicyListItem
@@ -35,22 +35,22 @@ export const PolicyListItemSchema: GenMessage<PolicyListItem> = /*@__PURE__*/
   messageDesc(file_policy_v1_policy, 0);
 
 /**
- * @generated from message policy.v1.ListPolicyRequest
+ * @generated from message policy.v1.ListPoliciesRequest
  */
-export type ListPolicyRequest = Message<"policy.v1.ListPolicyRequest"> & {
+export type ListPoliciesRequest = Message<"policy.v1.ListPoliciesRequest"> & {
 };
 
 /**
- * Describes the message policy.v1.ListPolicyRequest.
- * Use `create(ListPolicyRequestSchema)` to create a new message.
+ * Describes the message policy.v1.ListPoliciesRequest.
+ * Use `create(ListPoliciesRequestSchema)` to create a new message.
  */
-export const ListPolicyRequestSchema: GenMessage<ListPolicyRequest> = /*@__PURE__*/
+export const ListPoliciesRequestSchema: GenMessage<ListPoliciesRequest> = /*@__PURE__*/
   messageDesc(file_policy_v1_policy, 1);
 
 /**
- * @generated from message policy.v1.ListPolicyResponse
+ * @generated from message policy.v1.ListPoliciesResponse
  */
-export type ListPolicyResponse = Message<"policy.v1.ListPolicyResponse"> & {
+export type ListPoliciesResponse = Message<"policy.v1.ListPoliciesResponse"> & {
   /**
    * @generated from field: repeated policy.v1.PolicyListItem items = 1;
    */
@@ -58,10 +58,10 @@ export type ListPolicyResponse = Message<"policy.v1.ListPolicyResponse"> & {
 };
 
 /**
- * Describes the message policy.v1.ListPolicyResponse.
- * Use `create(ListPolicyResponseSchema)` to create a new message.
+ * Describes the message policy.v1.ListPoliciesResponse.
+ * Use `create(ListPoliciesResponseSchema)` to create a new message.
  */
-export const ListPolicyResponseSchema: GenMessage<ListPolicyResponse> = /*@__PURE__*/
+export const ListPoliciesResponseSchema: GenMessage<ListPoliciesResponse> = /*@__PURE__*/
   messageDesc(file_policy_v1_policy, 2);
 
 /**
@@ -69,12 +69,12 @@ export const ListPolicyResponseSchema: GenMessage<ListPolicyResponse> = /*@__PUR
  */
 export const PolicyStoreService: GenService<{
   /**
-   * @generated from rpc policy.v1.PolicyStoreService.ListPolicy
+   * @generated from rpc policy.v1.PolicyStoreService.ListPolicies
    */
-  listPolicy: {
+  listPolicies: {
     methodKind: "unary";
-    input: typeof ListPolicyRequestSchema;
-    output: typeof ListPolicyResponseSchema;
+    input: typeof ListPoliciesRequestSchema;
+    output: typeof ListPoliciesResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_policy_v1_policy, 0);

@@ -5,9 +5,9 @@
 import { VirtualServiceTemplateStoreService } from "./virtual_service_template_pb";
 
 /**
- * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplate
+ * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates
  */
-export const listVirtualServiceTemplate = VirtualServiceTemplateStoreService.method.listVirtualServiceTemplate;
+export const listVirtualServiceTemplates = VirtualServiceTemplateStoreService.method.listVirtualServiceTemplates;
 
 /**
  * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate

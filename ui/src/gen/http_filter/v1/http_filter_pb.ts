@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file http_filter/v1/http_filter.proto.
  */
 export const file_http_filter_v1_http_filter: GenFile = /*@__PURE__*/
-  fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiLwoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIhcKFUxpc3RIVFRQRmlsdGVyUmVxdWVzdCJLChZMaXN0SFRUUEZpbHRlclJlc3BvbnNlEjEKBWl0ZW1zGAEgAygLMiIuaHR0cF9maWx0ZXIudjEuSFRUUEZpbHRlckxpc3RJdGVtMnkKFkhUVFBGaWx0ZXJTdG9yZVNlcnZpY2USXwoOTGlzdEhUVFBGaWx0ZXISJS5odHRwX2ZpbHRlci52MS5MaXN0SFRUUEZpbHRlclJlcXVlc3QaJi5odHRwX2ZpbHRlci52MS5MaXN0SFRUUEZpbHRlclJlc3BvbnNlQs0BChJjb20uaHR0cF9maWx0ZXIudjFCD0h0dHBGaWx0ZXJQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2h0dHBfZmlsdGVyL3YxO2h0dHBfZmlsdGVydjGiAgNIWFiqAg1IdHRwRmlsdGVyLlYxygINSHR0cEZpbHRlclxWMeICGUh0dHBGaWx0ZXJcVjFcR1BCTWV0YWRhdGHqAg5IdHRwRmlsdGVyOjpWMWIGcHJvdG8z");
+  fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiLwoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIhgKFkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QiTAoXTGlzdEhUVFBGaWx0ZXJzUmVzcG9uc2USMQoFaXRlbXMYASADKAsyIi5odHRwX2ZpbHRlci52MS5IVFRQRmlsdGVyTGlzdEl0ZW0yewoWSFRUUEZpbHRlclN0b3JlU2VydmljZRJhCg5MaXN0SFRUUEZpbHRlchImLmh0dHBfZmlsdGVyLnYxLkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QaJy5odHRwX2ZpbHRlci52MS5MaXN0SFRUUEZpbHRlcnNSZXNwb25zZULNAQoSY29tLmh0dHBfZmlsdGVyLnYxQg9IdHRwRmlsdGVyUHJvdG9QAVpRZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9odHRwX2ZpbHRlci92MTtodHRwX2ZpbHRlcnYxogIDSFhYqgINSHR0cEZpbHRlci5WMcoCDUh0dHBGaWx0ZXJcVjHiAhlIdHRwRmlsdGVyXFYxXEdQQk1ldGFkYXRh6gIOSHR0cEZpbHRlcjo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message http_filter.v1.HTTPFilterListItem
@@ -35,22 +35,22 @@ export const HTTPFilterListItemSchema: GenMessage<HTTPFilterListItem> = /*@__PUR
   messageDesc(file_http_filter_v1_http_filter, 0);
 
 /**
- * @generated from message http_filter.v1.ListHTTPFilterRequest
+ * @generated from message http_filter.v1.ListHTTPFiltersRequest
  */
-export type ListHTTPFilterRequest = Message<"http_filter.v1.ListHTTPFilterRequest"> & {
+export type ListHTTPFiltersRequest = Message<"http_filter.v1.ListHTTPFiltersRequest"> & {
 };
 
 /**
- * Describes the message http_filter.v1.ListHTTPFilterRequest.
- * Use `create(ListHTTPFilterRequestSchema)` to create a new message.
+ * Describes the message http_filter.v1.ListHTTPFiltersRequest.
+ * Use `create(ListHTTPFiltersRequestSchema)` to create a new message.
  */
-export const ListHTTPFilterRequestSchema: GenMessage<ListHTTPFilterRequest> = /*@__PURE__*/
+export const ListHTTPFiltersRequestSchema: GenMessage<ListHTTPFiltersRequest> = /*@__PURE__*/
   messageDesc(file_http_filter_v1_http_filter, 1);
 
 /**
- * @generated from message http_filter.v1.ListHTTPFilterResponse
+ * @generated from message http_filter.v1.ListHTTPFiltersResponse
  */
-export type ListHTTPFilterResponse = Message<"http_filter.v1.ListHTTPFilterResponse"> & {
+export type ListHTTPFiltersResponse = Message<"http_filter.v1.ListHTTPFiltersResponse"> & {
   /**
    * @generated from field: repeated http_filter.v1.HTTPFilterListItem items = 1;
    */
@@ -58,10 +58,10 @@ export type ListHTTPFilterResponse = Message<"http_filter.v1.ListHTTPFilterRespo
 };
 
 /**
- * Describes the message http_filter.v1.ListHTTPFilterResponse.
- * Use `create(ListHTTPFilterResponseSchema)` to create a new message.
+ * Describes the message http_filter.v1.ListHTTPFiltersResponse.
+ * Use `create(ListHTTPFiltersResponseSchema)` to create a new message.
  */
-export const ListHTTPFilterResponseSchema: GenMessage<ListHTTPFilterResponse> = /*@__PURE__*/
+export const ListHTTPFiltersResponseSchema: GenMessage<ListHTTPFiltersResponse> = /*@__PURE__*/
   messageDesc(file_http_filter_v1_http_filter, 2);
 
 /**
@@ -73,8 +73,8 @@ export const HTTPFilterStoreService: GenService<{
    */
   listHTTPFilter: {
     methodKind: "unary";
-    input: typeof ListHTTPFilterRequestSchema;
-    output: typeof ListHTTPFilterResponseSchema;
+    input: typeof ListHTTPFiltersRequestSchema;
+    output: typeof ListHTTPFiltersResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_http_filter_v1_http_filter, 0);

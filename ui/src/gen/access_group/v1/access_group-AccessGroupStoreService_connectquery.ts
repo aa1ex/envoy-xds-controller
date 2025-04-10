@@ -5,6 +5,6 @@
 import { AccessGroupStoreService } from "./access_group_pb";
 
 /**
- * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroup
+ * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroups
  */
-export const listAccessGroup = AccessGroupStoreService.method.listAccessGroup;
+export const listAccessGroups = AccessGroupStoreService.method.listAccessGroups;

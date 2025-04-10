@@ -34,9 +34,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure is the fully-qualified name
-	// of the VirtualServiceTemplateStoreService's ListVirtualServiceTemplate RPC.
-	VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure = "/virtual_service_template.v1.VirtualServiceTemplateStoreService/ListVirtualServiceTemplate"
+	// VirtualServiceTemplateStoreServiceListVirtualServiceTemplatesProcedure is the fully-qualified
+	// name of the VirtualServiceTemplateStoreService's ListVirtualServiceTemplates RPC.
+	VirtualServiceTemplateStoreServiceListVirtualServiceTemplatesProcedure = "/virtual_service_template.v1.VirtualServiceTemplateStoreService/ListVirtualServiceTemplates"
 	// VirtualServiceTemplateStoreServiceFillTemplateProcedure is the fully-qualified name of the
 	// VirtualServiceTemplateStoreService's FillTemplate RPC.
 	VirtualServiceTemplateStoreServiceFillTemplateProcedure = "/virtual_service_template.v1.VirtualServiceTemplateStoreService/FillTemplate"
@@ -45,7 +45,7 @@ const (
 // VirtualServiceTemplateStoreServiceClient is a client for the
 // virtual_service_template.v1.VirtualServiceTemplateStoreService service.
 type VirtualServiceTemplateStoreServiceClient interface {
-	ListVirtualServiceTemplate(context.Context, *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error)
+	ListVirtualServiceTemplates(context.Context, *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error)
 	FillTemplate(context.Context, *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error)
 }
 
@@ -61,10 +61,10 @@ func NewVirtualServiceTemplateStoreServiceClient(httpClient connect.HTTPClient, 
 	baseURL = strings.TrimRight(baseURL, "/")
 	virtualServiceTemplateStoreServiceMethods := v1.File_virtual_service_template_v1_virtual_service_template_proto.Services().ByName("VirtualServiceTemplateStoreService").Methods()
 	return &virtualServiceTemplateStoreServiceClient{
-		listVirtualServiceTemplate: connect.NewClient[v1.ListVirtualServiceTemplateRequest, v1.ListVirtualServiceTemplateResponse](
+		listVirtualServiceTemplates: connect.NewClient[v1.ListVirtualServiceTemplatesRequest, v1.ListVirtualServiceTemplatesResponse](
 			httpClient,
-			baseURL+VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure,
-			connect.WithSchema(virtualServiceTemplateStoreServiceMethods.ByName("ListVirtualServiceTemplate")),
+			baseURL+VirtualServiceTemplateStoreServiceListVirtualServiceTemplatesProcedure,
+			connect.WithSchema(virtualServiceTemplateStoreServiceMethods.ByName("ListVirtualServiceTemplates")),
 			connect.WithClientOptions(opts...),
 		),
 		fillTemplate: connect.NewClient[v1.FillTemplateRequest, v1.FillTemplateResponse](
@@ -78,14 +78,14 @@ func NewVirtualServiceTemplateStoreServiceClient(httpClient connect.HTTPClient, 
 
 // virtualServiceTemplateStoreServiceClient implements VirtualServiceTemplateStoreServiceClient.
 type virtualServiceTemplateStoreServiceClient struct {
-	listVirtualServiceTemplate *connect.Client[v1.ListVirtualServiceTemplateRequest, v1.ListVirtualServiceTemplateResponse]
-	fillTemplate               *connect.Client[v1.FillTemplateRequest, v1.FillTemplateResponse]
+	listVirtualServiceTemplates *connect.Client[v1.ListVirtualServiceTemplatesRequest, v1.ListVirtualServiceTemplatesResponse]
+	fillTemplate                *connect.Client[v1.FillTemplateRequest, v1.FillTemplateResponse]
 }
 
-// ListVirtualServiceTemplate calls
-// virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplate.
-func (c *virtualServiceTemplateStoreServiceClient) ListVirtualServiceTemplate(ctx context.Context, req *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error) {
-	return c.listVirtualServiceTemplate.CallUnary(ctx, req)
+// ListVirtualServiceTemplates calls
+// virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates.
+func (c *virtualServiceTemplateStoreServiceClient) ListVirtualServiceTemplates(ctx context.Context, req *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error) {
+	return c.listVirtualServiceTemplates.CallUnary(ctx, req)
 }
 
 // FillTemplate calls virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate.
@@ -96,7 +96,7 @@ func (c *virtualServiceTemplateStoreServiceClient) FillTemplate(ctx context.Cont
 // VirtualServiceTemplateStoreServiceHandler is an implementation of the
 // virtual_service_template.v1.VirtualServiceTemplateStoreService service.
 type VirtualServiceTemplateStoreServiceHandler interface {
-	ListVirtualServiceTemplate(context.Context, *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error)
+	ListVirtualServiceTemplates(context.Context, *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error)
 	FillTemplate(context.Context, *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error)
 }
 
@@ -107,10 +107,10 @@ type VirtualServiceTemplateStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewVirtualServiceTemplateStoreServiceHandler(svc VirtualServiceTemplateStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	virtualServiceTemplateStoreServiceMethods := v1.File_virtual_service_template_v1_virtual_service_template_proto.Services().ByName("VirtualServiceTemplateStoreService").Methods()
-	virtualServiceTemplateStoreServiceListVirtualServiceTemplateHandler := connect.NewUnaryHandler(
-		VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure,
-		svc.ListVirtualServiceTemplate,
-		connect.WithSchema(virtualServiceTemplateStoreServiceMethods.ByName("ListVirtualServiceTemplate")),
+	virtualServiceTemplateStoreServiceListVirtualServiceTemplatesHandler := connect.NewUnaryHandler(
+		VirtualServiceTemplateStoreServiceListVirtualServiceTemplatesProcedure,
+		svc.ListVirtualServiceTemplates,
+		connect.WithSchema(virtualServiceTemplateStoreServiceMethods.ByName("ListVirtualServiceTemplates")),
 		connect.WithHandlerOptions(opts...),
 	)
 	virtualServiceTemplateStoreServiceFillTemplateHandler := connect.NewUnaryHandler(
@@ -121,8 +121,8 @@ func NewVirtualServiceTemplateStoreServiceHandler(svc VirtualServiceTemplateStor
 	)
 	return "/virtual_service_template.v1.VirtualServiceTemplateStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure:
-			virtualServiceTemplateStoreServiceListVirtualServiceTemplateHandler.ServeHTTP(w, r)
+		case VirtualServiceTemplateStoreServiceListVirtualServiceTemplatesProcedure:
+			virtualServiceTemplateStoreServiceListVirtualServiceTemplatesHandler.ServeHTTP(w, r)
 		case VirtualServiceTemplateStoreServiceFillTemplateProcedure:
 			virtualServiceTemplateStoreServiceFillTemplateHandler.ServeHTTP(w, r)
 		default:
@@ -135,8 +135,8 @@ func NewVirtualServiceTemplateStoreServiceHandler(svc VirtualServiceTemplateStor
 // methods.
 type UnimplementedVirtualServiceTemplateStoreServiceHandler struct{}
 
-func (UnimplementedVirtualServiceTemplateStoreServiceHandler) ListVirtualServiceTemplate(context.Context, *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplate is not implemented"))
+func (UnimplementedVirtualServiceTemplateStoreServiceHandler) ListVirtualServiceTemplates(context.Context, *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates is not implemented"))
 }
 
 func (UnimplementedVirtualServiceTemplateStoreServiceHandler) FillTemplate(context.Context, *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {

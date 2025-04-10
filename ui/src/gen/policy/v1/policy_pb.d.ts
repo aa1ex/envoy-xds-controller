@@ -32,21 +32,21 @@ export declare type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
 export declare const PolicyListItemSchema: GenMessage<PolicyListItem>;
 
 /**
- * @generated from message policy.v1.ListPolicyRequest
+ * @generated from message policy.v1.ListPoliciesRequest
  */
-export declare type ListPolicyRequest = Message<"policy.v1.ListPolicyRequest"> & {
+export declare type ListPoliciesRequest = Message<"policy.v1.ListPoliciesRequest"> & {
 };
 
 /**
- * Describes the message policy.v1.ListPolicyRequest.
- * Use `create(ListPolicyRequestSchema)` to create a new message.
+ * Describes the message policy.v1.ListPoliciesRequest.
+ * Use `create(ListPoliciesRequestSchema)` to create a new message.
  */
-export declare const ListPolicyRequestSchema: GenMessage<ListPolicyRequest>;
+export declare const ListPoliciesRequestSchema: GenMessage<ListPoliciesRequest>;
 
 /**
- * @generated from message policy.v1.ListPolicyResponse
+ * @generated from message policy.v1.ListPoliciesResponse
  */
-export declare type ListPolicyResponse = Message<"policy.v1.ListPolicyResponse"> & {
+export declare type ListPoliciesResponse = Message<"policy.v1.ListPoliciesResponse"> & {
   /**
    * @generated from field: repeated policy.v1.PolicyListItem items = 1;
    */
@@ -54,22 +54,22 @@ export declare type ListPolicyResponse = Message<"policy.v1.ListPolicyResponse">
 };
 
 /**
- * Describes the message policy.v1.ListPolicyResponse.
- * Use `create(ListPolicyResponseSchema)` to create a new message.
+ * Describes the message policy.v1.ListPoliciesResponse.
+ * Use `create(ListPoliciesResponseSchema)` to create a new message.
  */
-export declare const ListPolicyResponseSchema: GenMessage<ListPolicyResponse>;
+export declare const ListPoliciesResponseSchema: GenMessage<ListPoliciesResponse>;
 
 /**
  * @generated from service policy.v1.PolicyStoreService
  */
 export declare const PolicyStoreService: GenService<{
   /**
-   * @generated from rpc policy.v1.PolicyStoreService.ListPolicy
+   * @generated from rpc policy.v1.PolicyStoreService.ListPolicies
    */
-  listPolicy: {
+  listPolicies: {
     methodKind: "unary";
-    input: typeof ListPolicyRequestSchema;
-    output: typeof ListPolicyResponseSchema;
+    input: typeof ListPoliciesRequestSchema;
+    output: typeof ListPoliciesResponseSchema;
   },
 }>;
 

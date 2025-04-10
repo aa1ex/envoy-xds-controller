@@ -12,7 +12,7 @@ service VirtualServiceStoreService {
   rpc UpdateVirtualService(UpdateVirtualServiceRequest) returns (UpdateVirtualServiceResponse);
   rpc DeleteVirtualService(DeleteVirtualServiceRequest) returns (DeleteVirtualServiceResponse);
   rpc GetVirtualService(GetVirtualServiceRequest) returns (GetVirtualServiceResponse);
-  rpc ListVirtualService(ListVirtualServiceRequest) returns (ListVirtualServiceResponse);
+  rpc ListVirtualServices(ListVirtualServicesRequest) returns (ListVirtualServicesResponse);
 }
 
 message VirtualHost {
@@ -83,7 +83,7 @@ message GetVirtualServiceResponse {
   bool is_editable = 14;
 }
 
-message ListVirtualServiceRequest {
+message ListVirtualServicesRequest {
   string access_group = 1;
 }
 
@@ -96,6 +96,6 @@ message VirtualServiceListItem {
   bool is_editable = 6;
 }
 
-message ListVirtualServiceResponse {
+message ListVirtualServicesResponse {
   repeated VirtualServiceListItem items = 1;
 }

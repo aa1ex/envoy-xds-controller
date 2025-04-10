@@ -34,15 +34,15 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// AccessLogConfigStoreServiceListAccessLogConfigProcedure is the fully-qualified name of the
-	// AccessLogConfigStoreService's ListAccessLogConfig RPC.
-	AccessLogConfigStoreServiceListAccessLogConfigProcedure = "/access_log_config.v1.AccessLogConfigStoreService/ListAccessLogConfig"
+	// AccessLogConfigStoreServiceListAccessLogConfigsProcedure is the fully-qualified name of the
+	// AccessLogConfigStoreService's ListAccessLogConfigs RPC.
+	AccessLogConfigStoreServiceListAccessLogConfigsProcedure = "/access_log_config.v1.AccessLogConfigStoreService/ListAccessLogConfigs"
 )
 
 // AccessLogConfigStoreServiceClient is a client for the
 // access_log_config.v1.AccessLogConfigStoreService service.
 type AccessLogConfigStoreServiceClient interface {
-	ListAccessLogConfig(context.Context, *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error)
+	ListAccessLogConfigs(context.Context, *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error)
 }
 
 // NewAccessLogConfigStoreServiceClient constructs a client for the
@@ -57,10 +57,10 @@ func NewAccessLogConfigStoreServiceClient(httpClient connect.HTTPClient, baseURL
 	baseURL = strings.TrimRight(baseURL, "/")
 	accessLogConfigStoreServiceMethods := v1.File_access_log_config_v1_access_log_config_proto.Services().ByName("AccessLogConfigStoreService").Methods()
 	return &accessLogConfigStoreServiceClient{
-		listAccessLogConfig: connect.NewClient[v1.ListAccessLogConfigRequest, v1.ListAccessLogConfigResponse](
+		listAccessLogConfigs: connect.NewClient[v1.ListAccessLogConfigsRequest, v1.ListAccessLogConfigsResponse](
 			httpClient,
-			baseURL+AccessLogConfigStoreServiceListAccessLogConfigProcedure,
-			connect.WithSchema(accessLogConfigStoreServiceMethods.ByName("ListAccessLogConfig")),
+			baseURL+AccessLogConfigStoreServiceListAccessLogConfigsProcedure,
+			connect.WithSchema(accessLogConfigStoreServiceMethods.ByName("ListAccessLogConfigs")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -68,18 +68,18 @@ func NewAccessLogConfigStoreServiceClient(httpClient connect.HTTPClient, baseURL
 
 // accessLogConfigStoreServiceClient implements AccessLogConfigStoreServiceClient.
 type accessLogConfigStoreServiceClient struct {
-	listAccessLogConfig *connect.Client[v1.ListAccessLogConfigRequest, v1.ListAccessLogConfigResponse]
+	listAccessLogConfigs *connect.Client[v1.ListAccessLogConfigsRequest, v1.ListAccessLogConfigsResponse]
 }
 
-// ListAccessLogConfig calls access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfig.
-func (c *accessLogConfigStoreServiceClient) ListAccessLogConfig(ctx context.Context, req *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error) {
-	return c.listAccessLogConfig.CallUnary(ctx, req)
+// ListAccessLogConfigs calls access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs.
+func (c *accessLogConfigStoreServiceClient) ListAccessLogConfigs(ctx context.Context, req *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
+	return c.listAccessLogConfigs.CallUnary(ctx, req)
 }
 
 // AccessLogConfigStoreServiceHandler is an implementation of the
 // access_log_config.v1.AccessLogConfigStoreService service.
 type AccessLogConfigStoreServiceHandler interface {
-	ListAccessLogConfig(context.Context, *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error)
+	ListAccessLogConfigs(context.Context, *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error)
 }
 
 // NewAccessLogConfigStoreServiceHandler builds an HTTP handler from the service implementation. It
@@ -89,16 +89,16 @@ type AccessLogConfigStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewAccessLogConfigStoreServiceHandler(svc AccessLogConfigStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	accessLogConfigStoreServiceMethods := v1.File_access_log_config_v1_access_log_config_proto.Services().ByName("AccessLogConfigStoreService").Methods()
-	accessLogConfigStoreServiceListAccessLogConfigHandler := connect.NewUnaryHandler(
-		AccessLogConfigStoreServiceListAccessLogConfigProcedure,
-		svc.ListAccessLogConfig,
-		connect.WithSchema(accessLogConfigStoreServiceMethods.ByName("ListAccessLogConfig")),
+	accessLogConfigStoreServiceListAccessLogConfigsHandler := connect.NewUnaryHandler(
+		AccessLogConfigStoreServiceListAccessLogConfigsProcedure,
+		svc.ListAccessLogConfigs,
+		connect.WithSchema(accessLogConfigStoreServiceMethods.ByName("ListAccessLogConfigs")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/access_log_config.v1.AccessLogConfigStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case AccessLogConfigStoreServiceListAccessLogConfigProcedure:
-			accessLogConfigStoreServiceListAccessLogConfigHandler.ServeHTTP(w, r)
+		case AccessLogConfigStoreServiceListAccessLogConfigsProcedure:
+			accessLogConfigStoreServiceListAccessLogConfigsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -108,6 +108,6 @@ func NewAccessLogConfigStoreServiceHandler(svc AccessLogConfigStoreServiceHandle
 // UnimplementedAccessLogConfigStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedAccessLogConfigStoreServiceHandler struct{}
 
-func (UnimplementedAccessLogConfigStoreServiceHandler) ListAccessLogConfig(context.Context, *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfig is not implemented"))
+func (UnimplementedAccessLogConfigStoreServiceHandler) ListAccessLogConfigs(context.Context, *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs is not implemented"))
 }

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
 import { styleBox, styleTooltip } from './style.ts'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
-import { ListNodeResponse } from '../../gen/node/v1/node_pb'
+import { ListNodesResponse } from '../../gen/node/v1/node_pb'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
@@ -19,7 +19,7 @@ import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 interface ISelectNodeVsProps {
 	nameField: Extract<keyof IVirtualServiceForm, 'nodeIds'>
-	dataNodes: ListNodeResponse | undefined
+	dataNodes: ListNodesResponse | undefined
 	control: Control<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean

@@ -27,21 +27,21 @@ export declare type AccessGroupListItem = Message<"access_group.v1.AccessGroupLi
 export declare const AccessGroupListItemSchema: GenMessage<AccessGroupListItem>;
 
 /**
- * @generated from message access_group.v1.ListAccessGroupRequest
+ * @generated from message access_group.v1.ListAccessGroupsRequest
  */
-export declare type ListAccessGroupRequest = Message<"access_group.v1.ListAccessGroupRequest"> & {
+export declare type ListAccessGroupsRequest = Message<"access_group.v1.ListAccessGroupsRequest"> & {
 };
 
 /**
- * Describes the message access_group.v1.ListAccessGroupRequest.
- * Use `create(ListAccessGroupRequestSchema)` to create a new message.
+ * Describes the message access_group.v1.ListAccessGroupsRequest.
+ * Use `create(ListAccessGroupsRequestSchema)` to create a new message.
  */
-export declare const ListAccessGroupRequestSchema: GenMessage<ListAccessGroupRequest>;
+export declare const ListAccessGroupsRequestSchema: GenMessage<ListAccessGroupsRequest>;
 
 /**
- * @generated from message access_group.v1.ListAccessGroupResponse
+ * @generated from message access_group.v1.ListAccessGroupsResponse
  */
-export declare type ListAccessGroupResponse = Message<"access_group.v1.ListAccessGroupResponse"> & {
+export declare type ListAccessGroupsResponse = Message<"access_group.v1.ListAccessGroupsResponse"> & {
   /**
    * @generated from field: repeated access_group.v1.AccessGroupListItem items = 1;
    */
@@ -49,22 +49,22 @@ export declare type ListAccessGroupResponse = Message<"access_group.v1.ListAcces
 };
 
 /**
- * Describes the message access_group.v1.ListAccessGroupResponse.
- * Use `create(ListAccessGroupResponseSchema)` to create a new message.
+ * Describes the message access_group.v1.ListAccessGroupsResponse.
+ * Use `create(ListAccessGroupsResponseSchema)` to create a new message.
  */
-export declare const ListAccessGroupResponseSchema: GenMessage<ListAccessGroupResponse>;
+export declare const ListAccessGroupsResponseSchema: GenMessage<ListAccessGroupsResponse>;
 
 /**
  * @generated from service access_group.v1.AccessGroupStoreService
  */
 export declare const AccessGroupStoreService: GenService<{
   /**
-   * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroup
+   * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroups
    */
-  listAccessGroup: {
+  listAccessGroups: {
     methodKind: "unary";
-    input: typeof ListAccessGroupRequestSchema;
-    output: typeof ListAccessGroupResponseSchema;
+    input: typeof ListAccessGroupsRequestSchema;
+    output: typeof ListAccessGroupsResponseSchema;
   },
 }>;
 

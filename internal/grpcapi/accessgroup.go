@@ -16,7 +16,7 @@ func NewAccessGroupStore(accessGroups []string) *AccessGroupStore {
 	return &AccessGroupStore{accessGroups: accessGroups}
 }
 
-func (s *AccessGroupStore) ListAccessGroup(ctx context.Context, _ *connect.Request[v1.ListAccessGroupRequest]) (*connect.Response[v1.ListAccessGroupResponse], error) {
+func (s *AccessGroupStore) ListAccessGroups(ctx context.Context, _ *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error) {
 	authorizer := getAuthorizerFromContext(ctx)
 	availableGroups := authorizer.GetAvailableAccessGroups()
 	isAllGroupAvailable := len(availableGroups) == 1 && availableGroups["*"] == true
@@ -30,5 +30,5 @@ func (s *AccessGroupStore) ListAccessGroup(ctx context.Context, _ *connect.Reque
 			list = append(list, item)
 		}
 	}
-	return connect.NewResponse(&v1.ListAccessGroupResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListAccessGroupsResponse{Items: list}), nil
 }

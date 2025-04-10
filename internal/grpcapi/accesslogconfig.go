@@ -19,7 +19,7 @@ func NewAccessLogConfigStore(s *store.Store) *AccessLogConfigStore {
 	}
 }
 
-func (s *AccessLogConfigStore) ListAccessLogConfig(ctx context.Context, _ *connect.Request[v1.ListAccessLogConfigRequest]) (*connect.Response[v1.ListAccessLogConfigResponse], error) {
+func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, _ *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
 	authorizer := getAuthorizerFromContext(ctx)
 
 	m := s.store.MapAccessLogs()
@@ -38,5 +38,5 @@ func (s *AccessLogConfigStore) ListAccessLogConfig(ctx context.Context, _ *conne
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListAccessLogConfigResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListAccessLogConfigsResponse{Items: list}), nil
 }

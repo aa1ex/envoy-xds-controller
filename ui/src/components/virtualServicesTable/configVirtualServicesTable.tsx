@@ -7,7 +7,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import { ListVirtualServiceResponse } from '../../gen/virtual_service/v1/virtual_service_pb'
+import { ListVirtualServicesResponse } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import { Delete, Edit } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
@@ -19,8 +19,8 @@ import { useTabStore } from '../../store/tabIndexStore.ts'
 
 interface IConfigVirtualServicesTable {
 	groupId: string
-	virtualServices: ListVirtualServiceResponse | undefined
-	refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<ListVirtualServiceResponse, Error>>
+	virtualServices: ListVirtualServicesResponse | undefined
+	refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<ListVirtualServicesResponse, Error>>
 	isError: boolean
 	isFetching: boolean
 	setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>

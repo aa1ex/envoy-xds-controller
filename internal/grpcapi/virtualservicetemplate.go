@@ -24,7 +24,7 @@ func NewVirtualServiceTemplateStore(s *store.Store) *VirtualServiceTemplateStore
 	}
 }
 
-func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(ctx context.Context, _ *connect.Request[v1.ListVirtualServiceTemplateRequest]) (*connect.Response[v1.ListVirtualServiceTemplateResponse], error) {
+func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Context, _ *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error) {
 	m := s.store.MapVirtualServiceTemplates()
 	list := make([]*v1.VirtualServiceTemplateListItem, 0, len(m))
 	authorizer := getAuthorizerFromContext(ctx)
@@ -42,7 +42,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplate(ctx context.Con
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListVirtualServiceTemplateResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListVirtualServiceTemplatesResponse{Items: list}), nil
 }
 
 func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {

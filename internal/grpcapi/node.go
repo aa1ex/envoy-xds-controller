@@ -16,7 +16,7 @@ func NewNodeStore(nodeIDs []string) *NodeStore {
 	return &NodeStore{nodeIDs: nodeIDs}
 }
 
-func (s *NodeStore) ListNode(ctx context.Context, _ *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error) {
+func (s *NodeStore) ListNodes(ctx context.Context, _ *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error) {
 	list := make([]*v1.NodeListItem, 0, len(s.nodeIDs))
 	authorizer := getAuthorizerFromContext(ctx)
 
@@ -33,5 +33,5 @@ func (s *NodeStore) ListNode(ctx context.Context, _ *connect.Request[v1.ListNode
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListNodeResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListNodesResponse{Items: list}), nil
 }

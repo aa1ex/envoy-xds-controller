@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file route/v1/route.proto.
  */
 export const file_route_v1_route: GenFile = /*@__PURE__*/
-  fileDesc("ChRyb3V0ZS92MS9yb3V0ZS5wcm90bxIIcm91dGUudjEiKgoNUm91dGVMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCSISChBMaXN0Um91dGVSZXF1ZXN0IjsKEUxpc3RSb3V0ZVJlc3BvbnNlEiYKBWl0ZW1zGAEgAygLMhcucm91dGUudjEuUm91dGVMaXN0SXRlbTJZChFSb3V0ZVN0b3JlU2VydmljZRJECglMaXN0Um91dGUSGi5yb3V0ZS52MS5MaXN0Um91dGVSZXF1ZXN0Ghsucm91dGUudjEuTGlzdFJvdXRlUmVzcG9uc2VCogEKDGNvbS5yb3V0ZS52MUIKUm91dGVQcm90b1ABWkVnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL3JvdXRlL3YxO3JvdXRldjGiAgNSWFiqAghSb3V0ZS5WMcoCCFJvdXRlXFYx4gIUUm91dGVcVjFcR1BCTWV0YWRhdGHqAglSb3V0ZTo6VjFiBnByb3RvMw");
+  fileDesc("ChRyb3V0ZS92MS9yb3V0ZS5wcm90bxIIcm91dGUudjEiKgoNUm91dGVMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCSITChFMaXN0Um91dGVzUmVxdWVzdCI8ChJMaXN0Um91dGVzUmVzcG9uc2USJgoFaXRlbXMYASADKAsyFy5yb3V0ZS52MS5Sb3V0ZUxpc3RJdGVtMlwKEVJvdXRlU3RvcmVTZXJ2aWNlEkcKCkxpc3RSb3V0ZXMSGy5yb3V0ZS52MS5MaXN0Um91dGVzUmVxdWVzdBocLnJvdXRlLnYxLkxpc3RSb3V0ZXNSZXNwb25zZUKiAQoMY29tLnJvdXRlLnYxQgpSb3V0ZVByb3RvUAFaRWdpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvcm91dGUvdjE7cm91dGV2MaICA1JYWKoCCFJvdXRlLlYxygIIUm91dGVcVjHiAhRSb3V0ZVxWMVxHUEJNZXRhZGF0YeoCCVJvdXRlOjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message route.v1.RouteListItem
@@ -35,22 +35,22 @@ export const RouteListItemSchema: GenMessage<RouteListItem> = /*@__PURE__*/
   messageDesc(file_route_v1_route, 0);
 
 /**
- * @generated from message route.v1.ListRouteRequest
+ * @generated from message route.v1.ListRoutesRequest
  */
-export type ListRouteRequest = Message<"route.v1.ListRouteRequest"> & {
+export type ListRoutesRequest = Message<"route.v1.ListRoutesRequest"> & {
 };
 
 /**
- * Describes the message route.v1.ListRouteRequest.
- * Use `create(ListRouteRequestSchema)` to create a new message.
+ * Describes the message route.v1.ListRoutesRequest.
+ * Use `create(ListRoutesRequestSchema)` to create a new message.
  */
-export const ListRouteRequestSchema: GenMessage<ListRouteRequest> = /*@__PURE__*/
+export const ListRoutesRequestSchema: GenMessage<ListRoutesRequest> = /*@__PURE__*/
   messageDesc(file_route_v1_route, 1);
 
 /**
- * @generated from message route.v1.ListRouteResponse
+ * @generated from message route.v1.ListRoutesResponse
  */
-export type ListRouteResponse = Message<"route.v1.ListRouteResponse"> & {
+export type ListRoutesResponse = Message<"route.v1.ListRoutesResponse"> & {
   /**
    * @generated from field: repeated route.v1.RouteListItem items = 1;
    */
@@ -58,10 +58,10 @@ export type ListRouteResponse = Message<"route.v1.ListRouteResponse"> & {
 };
 
 /**
- * Describes the message route.v1.ListRouteResponse.
- * Use `create(ListRouteResponseSchema)` to create a new message.
+ * Describes the message route.v1.ListRoutesResponse.
+ * Use `create(ListRoutesResponseSchema)` to create a new message.
  */
-export const ListRouteResponseSchema: GenMessage<ListRouteResponse> = /*@__PURE__*/
+export const ListRoutesResponseSchema: GenMessage<ListRoutesResponse> = /*@__PURE__*/
   messageDesc(file_route_v1_route, 2);
 
 /**
@@ -69,12 +69,12 @@ export const ListRouteResponseSchema: GenMessage<ListRouteResponse> = /*@__PURE_
  */
 export const RouteStoreService: GenService<{
   /**
-   * @generated from rpc route.v1.RouteStoreService.ListRoute
+   * @generated from rpc route.v1.RouteStoreService.ListRoutes
    */
-  listRoute: {
+  listRoutes: {
     methodKind: "unary";
-    input: typeof ListRouteRequestSchema;
-    output: typeof ListRouteResponseSchema;
+    input: typeof ListRoutesRequestSchema;
+    output: typeof ListRoutesResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_route_v1_route, 0);

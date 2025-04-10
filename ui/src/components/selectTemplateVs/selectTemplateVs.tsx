@@ -1,6 +1,6 @@
 import React from 'react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
-import { ListVirtualServiceTemplateResponse } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
+import { ListVirtualServiceTemplatesResponse } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
@@ -8,7 +8,7 @@ import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 interface ISelectTemplateVsProps {
 	control: Control<IVirtualServiceForm, any>
-	templatesVs: ListVirtualServiceTemplateResponse | undefined
+	templatesVs: ListVirtualServiceTemplatesResponse | undefined
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean

@@ -5,6 +5,6 @@
 import { NodeStoreService } from "./node_pb";
 
 /**
- * @generated from rpc node.v1.NodeStoreService.ListNode
+ * @generated from rpc node.v1.NodeStoreService.ListNodes
  */
-export const listNode = NodeStoreService.method.listNode;
+export const listNodes = NodeStoreService.method.listNodes;

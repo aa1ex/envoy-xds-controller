@@ -5,15 +5,15 @@ package node.v1;
 option go_package = "nodev1";
 
 service NodeStoreService {
-  rpc ListNode(ListNodeRequest) returns (ListNodeResponse);
+  rpc ListNodes(ListNodesRequest) returns (ListNodesResponse);
 }
 
 message NodeListItem {
   string id = 1;
 }
 
-message ListNodeRequest {}
+message ListNodesRequest {}
 
-message ListNodeResponse {
+message ListNodesResponse {
   repeated NodeListItem items = 1;
 }

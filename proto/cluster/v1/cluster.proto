@@ -10,11 +10,11 @@ message ClusterListItem  {
 }
 
 service ClusterStoreService {
-  rpc ListCluster(ListClusterRequest) returns (ListClusterResponse);
+  rpc ListCluster(ListClustersRequest) returns (ListClustersResponse);
 }
 
-message ListClusterRequest {}
+message ListClustersRequest {}
 
-message ListClusterResponse {
+message ListClustersResponse {
   repeated ClusterListItem items = 1;
 }

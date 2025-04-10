@@ -5,6 +5,6 @@
 import { ListenerStoreService } from "./listener_pb";
 
 /**
- * @generated from rpc listener.v1.ListenerStoreService.ListListener
+ * @generated from rpc listener.v1.ListenerStoreService.ListListeners
  */
-export const listListener = ListenerStoreService.method.listListener;
+export const listListeners = ListenerStoreService.method.listListeners;

@@ -19,7 +19,7 @@ func NewPolicyStore(s *store.Store) *PolicyStore {
 	}
 }
 
-func (s *PolicyStore) ListPolicy(ctx context.Context, _ *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error) {
+func (s *PolicyStore) ListPolicies(ctx context.Context, _ *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error) {
 	m := s.store.MapPolicies()
 	list := make([]*v1.PolicyListItem, 0, len(m))
 	authorizer := getAuthorizerFromContext(ctx)
@@ -37,5 +37,5 @@ func (s *PolicyStore) ListPolicy(ctx context.Context, _ *connect.Request[v1.List
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListPolicyResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListPoliciesResponse{Items: list}), nil
 }

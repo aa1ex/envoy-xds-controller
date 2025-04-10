@@ -1,10 +1,10 @@
 import React from 'react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
 import {
-	ListVirtualServiceTemplateResponse,
+	ListVirtualServiceTemplatesResponse,
 	VirtualServiceTemplateListItem
 } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
-import { ListenerListItem, ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
+import { ListenerListItem, ListListenersResponse } from '../../gen/listener/v1/listener_pb.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
@@ -14,9 +14,9 @@ import Select from '@mui/material/Select'
 import CircularProgress from '@mui/material/CircularProgress'
 import {
 	AccessLogConfigListItem,
-	ListAccessLogConfigResponse
+	ListAccessLogConfigsResponse
 } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
-import { AccessGroupListItem, ListAccessGroupResponse } from '../../gen/access_group/v1/access_group_pb'
+import { AccessGroupListItem, ListAccessGroupsResponse } from '../../gen/access_group/v1/access_group_pb'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
@@ -31,10 +31,10 @@ interface ISelectFormVsProps {
 	nameField: nameFieldKeys
 	control: Control<IVirtualServiceForm, any>
 	data:
-		| ListListenerResponse
-		| ListVirtualServiceTemplateResponse
-		| ListAccessLogConfigResponse
-		| ListAccessGroupResponse
+		| ListListenersResponse
+		| ListVirtualServiceTemplatesResponse
+		| ListAccessLogConfigsResponse
+		| ListAccessGroupsResponse
 		| undefined
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean

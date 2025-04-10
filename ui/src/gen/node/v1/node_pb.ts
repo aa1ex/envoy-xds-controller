@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file node/v1/node.proto.
  */
 export const file_node_v1_node: GenFile = /*@__PURE__*/
-  fileDesc("ChJub2RlL3YxL25vZGUucHJvdG8SB25vZGUudjEiGgoMTm9kZUxpc3RJdGVtEgoKAmlkGAEgASgJIhEKD0xpc3ROb2RlUmVxdWVzdCI4ChBMaXN0Tm9kZVJlc3BvbnNlEiQKBWl0ZW1zGAEgAygLMhUubm9kZS52MS5Ob2RlTGlzdEl0ZW0yUwoQTm9kZVN0b3JlU2VydmljZRI/CghMaXN0Tm9kZRIYLm5vZGUudjEuTGlzdE5vZGVSZXF1ZXN0Ghkubm9kZS52MS5MaXN0Tm9kZVJlc3BvbnNlQpoBCgtjb20ubm9kZS52MUIJTm9kZVByb3RvUAFaQ2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvbm9kZS92MTtub2RldjGiAgNOWFiqAgdOb2RlLlYxygIHTm9kZVxWMeICE05vZGVcVjFcR1BCTWV0YWRhdGHqAghOb2RlOjpWMWIGcHJvdG8z");
+  fileDesc("ChJub2RlL3YxL25vZGUucHJvdG8SB25vZGUudjEiGgoMTm9kZUxpc3RJdGVtEgoKAmlkGAEgASgJIhIKEExpc3ROb2Rlc1JlcXVlc3QiOQoRTGlzdE5vZGVzUmVzcG9uc2USJAoFaXRlbXMYASADKAsyFS5ub2RlLnYxLk5vZGVMaXN0SXRlbTJWChBOb2RlU3RvcmVTZXJ2aWNlEkIKCUxpc3ROb2RlcxIZLm5vZGUudjEuTGlzdE5vZGVzUmVxdWVzdBoaLm5vZGUudjEuTGlzdE5vZGVzUmVzcG9uc2VCmgEKC2NvbS5ub2RlLnYxQglOb2RlUHJvdG9QAVpDZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9ub2RlL3YxO25vZGV2MaICA05YWKoCB05vZGUuVjHKAgdOb2RlXFYx4gITTm9kZVxWMVxHUEJNZXRhZGF0YeoCCE5vZGU6OlYxYgZwcm90bzM");
 
 /**
  * @generated from message node.v1.NodeListItem
@@ -30,22 +30,22 @@ export const NodeListItemSchema: GenMessage<NodeListItem> = /*@__PURE__*/
   messageDesc(file_node_v1_node, 0);
 
 /**
- * @generated from message node.v1.ListNodeRequest
+ * @generated from message node.v1.ListNodesRequest
  */
-export type ListNodeRequest = Message<"node.v1.ListNodeRequest"> & {
+export type ListNodesRequest = Message<"node.v1.ListNodesRequest"> & {
 };
 
 /**
- * Describes the message node.v1.ListNodeRequest.
- * Use `create(ListNodeRequestSchema)` to create a new message.
+ * Describes the message node.v1.ListNodesRequest.
+ * Use `create(ListNodesRequestSchema)` to create a new message.
  */
-export const ListNodeRequestSchema: GenMessage<ListNodeRequest> = /*@__PURE__*/
+export const ListNodesRequestSchema: GenMessage<ListNodesRequest> = /*@__PURE__*/
   messageDesc(file_node_v1_node, 1);
 
 /**
- * @generated from message node.v1.ListNodeResponse
+ * @generated from message node.v1.ListNodesResponse
  */
-export type ListNodeResponse = Message<"node.v1.ListNodeResponse"> & {
+export type ListNodesResponse = Message<"node.v1.ListNodesResponse"> & {
   /**
    * @generated from field: repeated node.v1.NodeListItem items = 1;
    */
@@ -53,10 +53,10 @@ export type ListNodeResponse = Message<"node.v1.ListNodeResponse"> & {
 };
 
 /**
- * Describes the message node.v1.ListNodeResponse.
- * Use `create(ListNodeResponseSchema)` to create a new message.
+ * Describes the message node.v1.ListNodesResponse.
+ * Use `create(ListNodesResponseSchema)` to create a new message.
  */
-export const ListNodeResponseSchema: GenMessage<ListNodeResponse> = /*@__PURE__*/
+export const ListNodesResponseSchema: GenMessage<ListNodesResponse> = /*@__PURE__*/
   messageDesc(file_node_v1_node, 2);
 
 /**
@@ -64,12 +64,12 @@ export const ListNodeResponseSchema: GenMessage<ListNodeResponse> = /*@__PURE__*
  */
 export const NodeStoreService: GenService<{
   /**
-   * @generated from rpc node.v1.NodeStoreService.ListNode
+   * @generated from rpc node.v1.NodeStoreService.ListNodes
    */
-  listNode: {
+  listNodes: {
     methodKind: "unary";
-    input: typeof ListNodeRequestSchema;
-    output: typeof ListNodeResponseSchema;
+    input: typeof ListNodesRequestSchema;
+    output: typeof ListNodesResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_node_v1_node, 0);

@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file cluster/v1/cluster.proto.
  */
 export const file_cluster_v1_cluster: GenFile = /*@__PURE__*/
-  fileDesc("ChhjbHVzdGVyL3YxL2NsdXN0ZXIucHJvdG8SCmNsdXN0ZXIudjEiLAoPQ2x1c3Rlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIhQKEkxpc3RDbHVzdGVyUmVxdWVzdCJBChNMaXN0Q2x1c3RlclJlc3BvbnNlEioKBWl0ZW1zGAEgAygLMhsuY2x1c3Rlci52MS5DbHVzdGVyTGlzdEl0ZW0yZQoTQ2x1c3RlclN0b3JlU2VydmljZRJOCgtMaXN0Q2x1c3RlchIeLmNsdXN0ZXIudjEuTGlzdENsdXN0ZXJSZXF1ZXN0Gh8uY2x1c3Rlci52MS5MaXN0Q2x1c3RlclJlc3BvbnNlQrIBCg5jb20uY2x1c3Rlci52MUIMQ2x1c3RlclByb3RvUAFaSWdpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvY2x1c3Rlci92MTtjbHVzdGVydjGiAgNDWFiqAgpDbHVzdGVyLlYxygIKQ2x1c3RlclxWMeICFkNsdXN0ZXJcVjFcR1BCTWV0YWRhdGHqAgtDbHVzdGVyOjpWMWIGcHJvdG8z");
+  fileDesc("ChhjbHVzdGVyL3YxL2NsdXN0ZXIucHJvdG8SCmNsdXN0ZXIudjEiLAoPQ2x1c3Rlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIhUKE0xpc3RDbHVzdGVyc1JlcXVlc3QiQgoUTGlzdENsdXN0ZXJzUmVzcG9uc2USKgoFaXRlbXMYASADKAsyGy5jbHVzdGVyLnYxLkNsdXN0ZXJMaXN0SXRlbTJnChNDbHVzdGVyU3RvcmVTZXJ2aWNlElAKC0xpc3RDbHVzdGVyEh8uY2x1c3Rlci52MS5MaXN0Q2x1c3RlcnNSZXF1ZXN0GiAuY2x1c3Rlci52MS5MaXN0Q2x1c3RlcnNSZXNwb25zZUKyAQoOY29tLmNsdXN0ZXIudjFCDENsdXN0ZXJQcm90b1ABWklnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2NsdXN0ZXIvdjE7Y2x1c3RlcnYxogIDQ1hYqgIKQ2x1c3Rlci5WMcoCCkNsdXN0ZXJcVjHiAhZDbHVzdGVyXFYxXEdQQk1ldGFkYXRh6gILQ2x1c3Rlcjo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message cluster.v1.ClusterListItem
@@ -35,22 +35,22 @@ export const ClusterListItemSchema: GenMessage<ClusterListItem> = /*@__PURE__*/
   messageDesc(file_cluster_v1_cluster, 0);
 
 /**
- * @generated from message cluster.v1.ListClusterRequest
+ * @generated from message cluster.v1.ListClustersRequest
  */
-export type ListClusterRequest = Message<"cluster.v1.ListClusterRequest"> & {
+export type ListClustersRequest = Message<"cluster.v1.ListClustersRequest"> & {
 };
 
 /**
- * Describes the message cluster.v1.ListClusterRequest.
- * Use `create(ListClusterRequestSchema)` to create a new message.
+ * Describes the message cluster.v1.ListClustersRequest.
+ * Use `create(ListClustersRequestSchema)` to create a new message.
  */
-export const ListClusterRequestSchema: GenMessage<ListClusterRequest> = /*@__PURE__*/
+export const ListClustersRequestSchema: GenMessage<ListClustersRequest> = /*@__PURE__*/
   messageDesc(file_cluster_v1_cluster, 1);
 
 /**
- * @generated from message cluster.v1.ListClusterResponse
+ * @generated from message cluster.v1.ListClustersResponse
  */
-export type ListClusterResponse = Message<"cluster.v1.ListClusterResponse"> & {
+export type ListClustersResponse = Message<"cluster.v1.ListClustersResponse"> & {
   /**
    * @generated from field: repeated cluster.v1.ClusterListItem items = 1;
    */
@@ -58,10 +58,10 @@ export type ListClusterResponse = Message<"cluster.v1.ListClusterResponse"> & {
 };
 
 /**
- * Describes the message cluster.v1.ListClusterResponse.
- * Use `create(ListClusterResponseSchema)` to create a new message.
+ * Describes the message cluster.v1.ListClustersResponse.
+ * Use `create(ListClustersResponseSchema)` to create a new message.
  */
-export const ListClusterResponseSchema: GenMessage<ListClusterResponse> = /*@__PURE__*/
+export const ListClustersResponseSchema: GenMessage<ListClustersResponse> = /*@__PURE__*/
   messageDesc(file_cluster_v1_cluster, 2);
 
 /**
@@ -73,8 +73,8 @@ export const ClusterStoreService: GenService<{
    */
   listCluster: {
     methodKind: "unary";
-    input: typeof ListClusterRequestSchema;
-    output: typeof ListClusterResponseSchema;
+    input: typeof ListClustersRequestSchema;
+    output: typeof ListClustersResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_cluster_v1_cluster, 0);

@@ -40,7 +40,7 @@ const (
 
 // ClusterStoreServiceClient is a client for the cluster.v1.ClusterStoreService service.
 type ClusterStoreServiceClient interface {
-	ListCluster(context.Context, *connect.Request[v1.ListClusterRequest]) (*connect.Response[v1.ListClusterResponse], error)
+	ListCluster(context.Context, *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error)
 }
 
 // NewClusterStoreServiceClient constructs a client for the cluster.v1.ClusterStoreService service.
@@ -54,7 +54,7 @@ func NewClusterStoreServiceClient(httpClient connect.HTTPClient, baseURL string,
 	baseURL = strings.TrimRight(baseURL, "/")
 	clusterStoreServiceMethods := v1.File_cluster_v1_cluster_proto.Services().ByName("ClusterStoreService").Methods()
 	return &clusterStoreServiceClient{
-		listCluster: connect.NewClient[v1.ListClusterRequest, v1.ListClusterResponse](
+		listCluster: connect.NewClient[v1.ListClustersRequest, v1.ListClustersResponse](
 			httpClient,
 			baseURL+ClusterStoreServiceListClusterProcedure,
 			connect.WithSchema(clusterStoreServiceMethods.ByName("ListCluster")),
@@ -65,17 +65,17 @@ func NewClusterStoreServiceClient(httpClient connect.HTTPClient, baseURL string,
 
 // clusterStoreServiceClient implements ClusterStoreServiceClient.
 type clusterStoreServiceClient struct {
-	listCluster *connect.Client[v1.ListClusterRequest, v1.ListClusterResponse]
+	listCluster *connect.Client[v1.ListClustersRequest, v1.ListClustersResponse]
 }
 
 // ListCluster calls cluster.v1.ClusterStoreService.ListCluster.
-func (c *clusterStoreServiceClient) ListCluster(ctx context.Context, req *connect.Request[v1.ListClusterRequest]) (*connect.Response[v1.ListClusterResponse], error) {
+func (c *clusterStoreServiceClient) ListCluster(ctx context.Context, req *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error) {
 	return c.listCluster.CallUnary(ctx, req)
 }
 
 // ClusterStoreServiceHandler is an implementation of the cluster.v1.ClusterStoreService service.
 type ClusterStoreServiceHandler interface {
-	ListCluster(context.Context, *connect.Request[v1.ListClusterRequest]) (*connect.Response[v1.ListClusterResponse], error)
+	ListCluster(context.Context, *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error)
 }
 
 // NewClusterStoreServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -104,6 +104,6 @@ func NewClusterStoreServiceHandler(svc ClusterStoreServiceHandler, opts ...conne
 // UnimplementedClusterStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedClusterStoreServiceHandler struct{}
 
-func (UnimplementedClusterStoreServiceHandler) ListCluster(context.Context, *connect.Request[v1.ListClusterRequest]) (*connect.Response[v1.ListClusterResponse], error) {
+func (UnimplementedClusterStoreServiceHandler) ListCluster(context.Context, *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("cluster.v1.ClusterStoreService.ListCluster is not implemented"))
 }

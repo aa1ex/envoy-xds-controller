@@ -19,7 +19,7 @@ func NewClusterStore(s *store.Store) *ClusterStore {
 	}
 }
 
-func (s *ClusterStore) ListCluster(context.Context, *connect.Request[v1.ListClusterRequest]) (*connect.Response[v1.ListClusterResponse], error) {
+func (s *ClusterStore) ListClusters(context.Context, *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error) {
 	m := s.store.MapClusters()
 	list := make([]*v1.ClusterListItem, 0, len(m))
 	for _, v := range m {
@@ -29,5 +29,5 @@ func (s *ClusterStore) ListCluster(context.Context, *connect.Request[v1.ListClus
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListClusterResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListClustersResponse{Items: list}), nil
 }

@@ -32,21 +32,21 @@ export declare type RouteListItem = Message<"route.v1.RouteListItem"> & {
 export declare const RouteListItemSchema: GenMessage<RouteListItem>;
 
 /**
- * @generated from message route.v1.ListRouteRequest
+ * @generated from message route.v1.ListRoutesRequest
  */
-export declare type ListRouteRequest = Message<"route.v1.ListRouteRequest"> & {
+export declare type ListRoutesRequest = Message<"route.v1.ListRoutesRequest"> & {
 };
 
 /**
- * Describes the message route.v1.ListRouteRequest.
- * Use `create(ListRouteRequestSchema)` to create a new message.
+ * Describes the message route.v1.ListRoutesRequest.
+ * Use `create(ListRoutesRequestSchema)` to create a new message.
  */
-export declare const ListRouteRequestSchema: GenMessage<ListRouteRequest>;
+export declare const ListRoutesRequestSchema: GenMessage<ListRoutesRequest>;
 
 /**
- * @generated from message route.v1.ListRouteResponse
+ * @generated from message route.v1.ListRoutesResponse
  */
-export declare type ListRouteResponse = Message<"route.v1.ListRouteResponse"> & {
+export declare type ListRoutesResponse = Message<"route.v1.ListRoutesResponse"> & {
   /**
    * @generated from field: repeated route.v1.RouteListItem items = 1;
    */
@@ -54,22 +54,22 @@ export declare type ListRouteResponse = Message<"route.v1.ListRouteResponse"> & 
 };
 
 /**
- * Describes the message route.v1.ListRouteResponse.
- * Use `create(ListRouteResponseSchema)` to create a new message.
+ * Describes the message route.v1.ListRoutesResponse.
+ * Use `create(ListRoutesResponseSchema)` to create a new message.
  */
-export declare const ListRouteResponseSchema: GenMessage<ListRouteResponse>;
+export declare const ListRoutesResponseSchema: GenMessage<ListRoutesResponse>;
 
 /**
  * @generated from service route.v1.RouteStoreService
  */
 export declare const RouteStoreService: GenService<{
   /**
-   * @generated from rpc route.v1.RouteStoreService.ListRoute
+   * @generated from rpc route.v1.RouteStoreService.ListRoutes
    */
-  listRoute: {
+  listRoutes: {
     methodKind: "unary";
-    input: typeof ListRouteRequestSchema;
-    output: typeof ListRouteResponseSchema;
+    input: typeof ListRoutesRequestSchema;
+    output: typeof ListRoutesResponseSchema;
   },
 }>;
 

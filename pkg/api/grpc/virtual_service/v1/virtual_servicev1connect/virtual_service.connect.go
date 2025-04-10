@@ -46,9 +46,9 @@ const (
 	// VirtualServiceStoreServiceGetVirtualServiceProcedure is the fully-qualified name of the
 	// VirtualServiceStoreService's GetVirtualService RPC.
 	VirtualServiceStoreServiceGetVirtualServiceProcedure = "/virtual_service.v1.VirtualServiceStoreService/GetVirtualService"
-	// VirtualServiceStoreServiceListVirtualServiceProcedure is the fully-qualified name of the
-	// VirtualServiceStoreService's ListVirtualService RPC.
-	VirtualServiceStoreServiceListVirtualServiceProcedure = "/virtual_service.v1.VirtualServiceStoreService/ListVirtualService"
+	// VirtualServiceStoreServiceListVirtualServicesProcedure is the fully-qualified name of the
+	// VirtualServiceStoreService's ListVirtualServices RPC.
+	VirtualServiceStoreServiceListVirtualServicesProcedure = "/virtual_service.v1.VirtualServiceStoreService/ListVirtualServices"
 )
 
 // VirtualServiceStoreServiceClient is a client for the
@@ -58,7 +58,7 @@ type VirtualServiceStoreServiceClient interface {
 	UpdateVirtualService(context.Context, *connect.Request[v1.UpdateVirtualServiceRequest]) (*connect.Response[v1.UpdateVirtualServiceResponse], error)
 	DeleteVirtualService(context.Context, *connect.Request[v1.DeleteVirtualServiceRequest]) (*connect.Response[v1.DeleteVirtualServiceResponse], error)
 	GetVirtualService(context.Context, *connect.Request[v1.GetVirtualServiceRequest]) (*connect.Response[v1.GetVirtualServiceResponse], error)
-	ListVirtualService(context.Context, *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error)
+	ListVirtualServices(context.Context, *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error)
 }
 
 // NewVirtualServiceStoreServiceClient constructs a client for the
@@ -97,10 +97,10 @@ func NewVirtualServiceStoreServiceClient(httpClient connect.HTTPClient, baseURL 
 			connect.WithSchema(virtualServiceStoreServiceMethods.ByName("GetVirtualService")),
 			connect.WithClientOptions(opts...),
 		),
-		listVirtualService: connect.NewClient[v1.ListVirtualServiceRequest, v1.ListVirtualServiceResponse](
+		listVirtualServices: connect.NewClient[v1.ListVirtualServicesRequest, v1.ListVirtualServicesResponse](
 			httpClient,
-			baseURL+VirtualServiceStoreServiceListVirtualServiceProcedure,
-			connect.WithSchema(virtualServiceStoreServiceMethods.ByName("ListVirtualService")),
+			baseURL+VirtualServiceStoreServiceListVirtualServicesProcedure,
+			connect.WithSchema(virtualServiceStoreServiceMethods.ByName("ListVirtualServices")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -112,7 +112,7 @@ type virtualServiceStoreServiceClient struct {
 	updateVirtualService *connect.Client[v1.UpdateVirtualServiceRequest, v1.UpdateVirtualServiceResponse]
 	deleteVirtualService *connect.Client[v1.DeleteVirtualServiceRequest, v1.DeleteVirtualServiceResponse]
 	getVirtualService    *connect.Client[v1.GetVirtualServiceRequest, v1.GetVirtualServiceResponse]
-	listVirtualService   *connect.Client[v1.ListVirtualServiceRequest, v1.ListVirtualServiceResponse]
+	listVirtualServices  *connect.Client[v1.ListVirtualServicesRequest, v1.ListVirtualServicesResponse]
 }
 
 // CreateVirtualService calls virtual_service.v1.VirtualServiceStoreService.CreateVirtualService.
@@ -135,9 +135,9 @@ func (c *virtualServiceStoreServiceClient) GetVirtualService(ctx context.Context
 	return c.getVirtualService.CallUnary(ctx, req)
 }
 
-// ListVirtualService calls virtual_service.v1.VirtualServiceStoreService.ListVirtualService.
-func (c *virtualServiceStoreServiceClient) ListVirtualService(ctx context.Context, req *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
-	return c.listVirtualService.CallUnary(ctx, req)
+// ListVirtualServices calls virtual_service.v1.VirtualServiceStoreService.ListVirtualServices.
+func (c *virtualServiceStoreServiceClient) ListVirtualServices(ctx context.Context, req *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error) {
+	return c.listVirtualServices.CallUnary(ctx, req)
 }
 
 // VirtualServiceStoreServiceHandler is an implementation of the
@@ -147,7 +147,7 @@ type VirtualServiceStoreServiceHandler interface {
 	UpdateVirtualService(context.Context, *connect.Request[v1.UpdateVirtualServiceRequest]) (*connect.Response[v1.UpdateVirtualServiceResponse], error)
 	DeleteVirtualService(context.Context, *connect.Request[v1.DeleteVirtualServiceRequest]) (*connect.Response[v1.DeleteVirtualServiceResponse], error)
 	GetVirtualService(context.Context, *connect.Request[v1.GetVirtualServiceRequest]) (*connect.Response[v1.GetVirtualServiceResponse], error)
-	ListVirtualService(context.Context, *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error)
+	ListVirtualServices(context.Context, *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error)
 }
 
 // NewVirtualServiceStoreServiceHandler builds an HTTP handler from the service implementation. It
@@ -181,10 +181,10 @@ func NewVirtualServiceStoreServiceHandler(svc VirtualServiceStoreServiceHandler,
 		connect.WithSchema(virtualServiceStoreServiceMethods.ByName("GetVirtualService")),
 		connect.WithHandlerOptions(opts...),
 	)
-	virtualServiceStoreServiceListVirtualServiceHandler := connect.NewUnaryHandler(
-		VirtualServiceStoreServiceListVirtualServiceProcedure,
-		svc.ListVirtualService,
-		connect.WithSchema(virtualServiceStoreServiceMethods.ByName("ListVirtualService")),
+	virtualServiceStoreServiceListVirtualServicesHandler := connect.NewUnaryHandler(
+		VirtualServiceStoreServiceListVirtualServicesProcedure,
+		svc.ListVirtualServices,
+		connect.WithSchema(virtualServiceStoreServiceMethods.ByName("ListVirtualServices")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/virtual_service.v1.VirtualServiceStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -197,8 +197,8 @@ func NewVirtualServiceStoreServiceHandler(svc VirtualServiceStoreServiceHandler,
 			virtualServiceStoreServiceDeleteVirtualServiceHandler.ServeHTTP(w, r)
 		case VirtualServiceStoreServiceGetVirtualServiceProcedure:
 			virtualServiceStoreServiceGetVirtualServiceHandler.ServeHTTP(w, r)
-		case VirtualServiceStoreServiceListVirtualServiceProcedure:
-			virtualServiceStoreServiceListVirtualServiceHandler.ServeHTTP(w, r)
+		case VirtualServiceStoreServiceListVirtualServicesProcedure:
+			virtualServiceStoreServiceListVirtualServicesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -224,6 +224,6 @@ func (UnimplementedVirtualServiceStoreServiceHandler) GetVirtualService(context.
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("virtual_service.v1.VirtualServiceStoreService.GetVirtualService is not implemented"))
 }
 
-func (UnimplementedVirtualServiceStoreServiceHandler) ListVirtualService(context.Context, *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("virtual_service.v1.VirtualServiceStoreService.ListVirtualService is not implemented"))
+func (UnimplementedVirtualServiceStoreServiceHandler) ListVirtualServices(context.Context, *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("virtual_service.v1.VirtualServiceStoreService.ListVirtualServices is not implemented"))
 }

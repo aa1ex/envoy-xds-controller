@@ -33,15 +33,15 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// AccessGroupStoreServiceListAccessGroupProcedure is the fully-qualified name of the
-	// AccessGroupStoreService's ListAccessGroup RPC.
-	AccessGroupStoreServiceListAccessGroupProcedure = "/access_group.v1.AccessGroupStoreService/ListAccessGroup"
+	// AccessGroupStoreServiceListAccessGroupsProcedure is the fully-qualified name of the
+	// AccessGroupStoreService's ListAccessGroups RPC.
+	AccessGroupStoreServiceListAccessGroupsProcedure = "/access_group.v1.AccessGroupStoreService/ListAccessGroups"
 )
 
 // AccessGroupStoreServiceClient is a client for the access_group.v1.AccessGroupStoreService
 // service.
 type AccessGroupStoreServiceClient interface {
-	ListAccessGroup(context.Context, *connect.Request[v1.ListAccessGroupRequest]) (*connect.Response[v1.ListAccessGroupResponse], error)
+	ListAccessGroups(context.Context, *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error)
 }
 
 // NewAccessGroupStoreServiceClient constructs a client for the
@@ -55,10 +55,10 @@ func NewAccessGroupStoreServiceClient(httpClient connect.HTTPClient, baseURL str
 	baseURL = strings.TrimRight(baseURL, "/")
 	accessGroupStoreServiceMethods := v1.File_access_group_v1_access_group_proto.Services().ByName("AccessGroupStoreService").Methods()
 	return &accessGroupStoreServiceClient{
-		listAccessGroup: connect.NewClient[v1.ListAccessGroupRequest, v1.ListAccessGroupResponse](
+		listAccessGroups: connect.NewClient[v1.ListAccessGroupsRequest, v1.ListAccessGroupsResponse](
 			httpClient,
-			baseURL+AccessGroupStoreServiceListAccessGroupProcedure,
-			connect.WithSchema(accessGroupStoreServiceMethods.ByName("ListAccessGroup")),
+			baseURL+AccessGroupStoreServiceListAccessGroupsProcedure,
+			connect.WithSchema(accessGroupStoreServiceMethods.ByName("ListAccessGroups")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -66,18 +66,18 @@ func NewAccessGroupStoreServiceClient(httpClient connect.HTTPClient, baseURL str
 
 // accessGroupStoreServiceClient implements AccessGroupStoreServiceClient.
 type accessGroupStoreServiceClient struct {
-	listAccessGroup *connect.Client[v1.ListAccessGroupRequest, v1.ListAccessGroupResponse]
+	listAccessGroups *connect.Client[v1.ListAccessGroupsRequest, v1.ListAccessGroupsResponse]
 }
 
-// ListAccessGroup calls access_group.v1.AccessGroupStoreService.ListAccessGroup.
-func (c *accessGroupStoreServiceClient) ListAccessGroup(ctx context.Context, req *connect.Request[v1.ListAccessGroupRequest]) (*connect.Response[v1.ListAccessGroupResponse], error) {
-	return c.listAccessGroup.CallUnary(ctx, req)
+// ListAccessGroups calls access_group.v1.AccessGroupStoreService.ListAccessGroups.
+func (c *accessGroupStoreServiceClient) ListAccessGroups(ctx context.Context, req *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error) {
+	return c.listAccessGroups.CallUnary(ctx, req)
 }
 
 // AccessGroupStoreServiceHandler is an implementation of the
 // access_group.v1.AccessGroupStoreService service.
 type AccessGroupStoreServiceHandler interface {
-	ListAccessGroup(context.Context, *connect.Request[v1.ListAccessGroupRequest]) (*connect.Response[v1.ListAccessGroupResponse], error)
+	ListAccessGroups(context.Context, *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error)
 }
 
 // NewAccessGroupStoreServiceHandler builds an HTTP handler from the service implementation. It
@@ -87,16 +87,16 @@ type AccessGroupStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewAccessGroupStoreServiceHandler(svc AccessGroupStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	accessGroupStoreServiceMethods := v1.File_access_group_v1_access_group_proto.Services().ByName("AccessGroupStoreService").Methods()
-	accessGroupStoreServiceListAccessGroupHandler := connect.NewUnaryHandler(
-		AccessGroupStoreServiceListAccessGroupProcedure,
-		svc.ListAccessGroup,
-		connect.WithSchema(accessGroupStoreServiceMethods.ByName("ListAccessGroup")),
+	accessGroupStoreServiceListAccessGroupsHandler := connect.NewUnaryHandler(
+		AccessGroupStoreServiceListAccessGroupsProcedure,
+		svc.ListAccessGroups,
+		connect.WithSchema(accessGroupStoreServiceMethods.ByName("ListAccessGroups")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/access_group.v1.AccessGroupStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case AccessGroupStoreServiceListAccessGroupProcedure:
-			accessGroupStoreServiceListAccessGroupHandler.ServeHTTP(w, r)
+		case AccessGroupStoreServiceListAccessGroupsProcedure:
+			accessGroupStoreServiceListAccessGroupsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -106,6 +106,6 @@ func NewAccessGroupStoreServiceHandler(svc AccessGroupStoreServiceHandler, opts 
 // UnimplementedAccessGroupStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedAccessGroupStoreServiceHandler struct{}
 
-func (UnimplementedAccessGroupStoreServiceHandler) ListAccessGroup(context.Context, *connect.Request[v1.ListAccessGroupRequest]) (*connect.Response[v1.ListAccessGroupResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("access_group.v1.AccessGroupStoreService.ListAccessGroup is not implemented"))
+func (UnimplementedAccessGroupStoreServiceHandler) ListAccessGroups(context.Context, *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("access_group.v1.AccessGroupStoreService.ListAccessGroups is not implemented"))
 }

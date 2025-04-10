@@ -5,6 +5,6 @@
 import { PolicyStoreService } from "./policy_pb";
 
 /**
- * @generated from rpc policy.v1.PolicyStoreService.ListPolicy
+ * @generated from rpc policy.v1.PolicyStoreService.ListPolicies
  */
-export const listPolicy = PolicyStoreService.method.listPolicy;
+export const listPolicies = PolicyStoreService.method.listPolicies;

@@ -5,7 +5,7 @@ package route.v1;
 option go_package = "routev1";
 
 service RouteStoreService {
-  rpc ListRoute(ListRouteRequest) returns (ListRouteResponse);
+  rpc ListRoutes(ListRoutesRequest) returns (ListRoutesResponse);
 }
 
 message RouteListItem {
@@ -13,8 +13,8 @@ message RouteListItem {
   string name = 2;
 }
 
-message ListRouteRequest {}
+message ListRoutesRequest {}
 
-message ListRouteResponse {
+message ListRoutesResponse {
   repeated RouteListItem items = 1;
 }

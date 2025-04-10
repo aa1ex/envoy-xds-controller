@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file listener/v1/listener.proto.
  */
 export const file_listener_v1_listener: GenFile = /*@__PURE__*/
-  fileDesc("ChpsaXN0ZW5lci92MS9saXN0ZW5lci5wcm90bxILbGlzdGVuZXIudjEiVgoQTGlzdGVuZXJMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCRInCgR0eXBlGAMgASgOMhkubGlzdGVuZXIudjEuTGlzdGVuZXJUeXBlIhUKE0xpc3RMaXN0ZW5lclJlcXVlc3QiRAoUTGlzdExpc3RlbmVyUmVzcG9uc2USLAoFaXRlbXMYASADKAsyHS5saXN0ZW5lci52MS5MaXN0ZW5lckxpc3RJdGVtKnUKDExpc3RlbmVyVHlwZRIdChlMSVNURU5FUl9UWVBFX1VOU1BFQ0lGSUVEEAASFgoSTElTVEVORVJfVFlQRV9IVFRQEAESFwoTTElTVEVORVJfVFlQRV9IVFRQUxACEhUKEUxJU1RFTkVSX1RZUEVfVENQEAMyawoUTGlzdGVuZXJTdG9yZVNlcnZpY2USUwoMTGlzdExpc3RlbmVyEiAubGlzdGVuZXIudjEuTGlzdExpc3RlbmVyUmVxdWVzdBohLmxpc3RlbmVyLnYxLkxpc3RMaXN0ZW5lclJlc3BvbnNlQroBCg9jb20ubGlzdGVuZXIudjFCDUxpc3RlbmVyUHJvdG9QAVpLZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9saXN0ZW5lci92MTtsaXN0ZW5lcnYxogIDTFhYqgILTGlzdGVuZXIuVjHKAgtMaXN0ZW5lclxWMeICF0xpc3RlbmVyXFYxXEdQQk1ldGFkYXRh6gIMTGlzdGVuZXI6OlYxYgZwcm90bzM");
+  fileDesc("ChpsaXN0ZW5lci92MS9saXN0ZW5lci5wcm90bxILbGlzdGVuZXIudjEiVgoQTGlzdGVuZXJMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCRInCgR0eXBlGAMgASgOMhkubGlzdGVuZXIudjEuTGlzdGVuZXJUeXBlIhYKFExpc3RMaXN0ZW5lcnNSZXF1ZXN0IkUKFUxpc3RMaXN0ZW5lcnNSZXNwb25zZRIsCgVpdGVtcxgBIAMoCzIdLmxpc3RlbmVyLnYxLkxpc3RlbmVyTGlzdEl0ZW0qdQoMTGlzdGVuZXJUeXBlEh0KGUxJU1RFTkVSX1RZUEVfVU5TUEVDSUZJRUQQABIWChJMSVNURU5FUl9UWVBFX0hUVFAQARIXChNMSVNURU5FUl9UWVBFX0hUVFBTEAISFQoRTElTVEVORVJfVFlQRV9UQ1AQAzJuChRMaXN0ZW5lclN0b3JlU2VydmljZRJWCg1MaXN0TGlzdGVuZXJzEiEubGlzdGVuZXIudjEuTGlzdExpc3RlbmVyc1JlcXVlc3QaIi5saXN0ZW5lci52MS5MaXN0TGlzdGVuZXJzUmVzcG9uc2VCugEKD2NvbS5saXN0ZW5lci52MUINTGlzdGVuZXJQcm90b1ABWktnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2xpc3RlbmVyL3YxO2xpc3RlbmVydjGiAgNMWFiqAgtMaXN0ZW5lci5WMcoCC0xpc3RlbmVyXFYx4gIXTGlzdGVuZXJcVjFcR1BCTWV0YWRhdGHqAgxMaXN0ZW5lcjo6VjFiBnByb3RvMw");
 
 /**
  * @generated from message listener.v1.ListenerListItem
@@ -40,22 +40,22 @@ export const ListenerListItemSchema: GenMessage<ListenerListItem> = /*@__PURE__*
   messageDesc(file_listener_v1_listener, 0);
 
 /**
- * @generated from message listener.v1.ListListenerRequest
+ * @generated from message listener.v1.ListListenersRequest
  */
-export type ListListenerRequest = Message<"listener.v1.ListListenerRequest"> & {
+export type ListListenersRequest = Message<"listener.v1.ListListenersRequest"> & {
 };
 
 /**
- * Describes the message listener.v1.ListListenerRequest.
- * Use `create(ListListenerRequestSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenersRequest.
+ * Use `create(ListListenersRequestSchema)` to create a new message.
  */
-export const ListListenerRequestSchema: GenMessage<ListListenerRequest> = /*@__PURE__*/
+export const ListListenersRequestSchema: GenMessage<ListListenersRequest> = /*@__PURE__*/
   messageDesc(file_listener_v1_listener, 1);
 
 /**
- * @generated from message listener.v1.ListListenerResponse
+ * @generated from message listener.v1.ListListenersResponse
  */
-export type ListListenerResponse = Message<"listener.v1.ListListenerResponse"> & {
+export type ListListenersResponse = Message<"listener.v1.ListListenersResponse"> & {
   /**
    * @generated from field: repeated listener.v1.ListenerListItem items = 1;
    */
@@ -63,10 +63,10 @@ export type ListListenerResponse = Message<"listener.v1.ListListenerResponse"> &
 };
 
 /**
- * Describes the message listener.v1.ListListenerResponse.
- * Use `create(ListListenerResponseSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenersResponse.
+ * Use `create(ListListenersResponseSchema)` to create a new message.
  */
-export const ListListenerResponseSchema: GenMessage<ListListenerResponse> = /*@__PURE__*/
+export const ListListenersResponseSchema: GenMessage<ListListenersResponse> = /*@__PURE__*/
   messageDesc(file_listener_v1_listener, 2);
 
 /**
@@ -105,12 +105,12 @@ export const ListenerTypeSchema: GenEnum<ListenerType> = /*@__PURE__*/
  */
 export const ListenerStoreService: GenService<{
   /**
-   * @generated from rpc listener.v1.ListenerStoreService.ListListener
+   * @generated from rpc listener.v1.ListenerStoreService.ListListeners
    */
-  listListener: {
+  listListeners: {
     methodKind: "unary";
-    input: typeof ListListenerRequestSchema;
-    output: typeof ListListenerResponseSchema;
+    input: typeof ListListenersRequestSchema;
+    output: typeof ListListenersResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_listener_v1_listener, 0);

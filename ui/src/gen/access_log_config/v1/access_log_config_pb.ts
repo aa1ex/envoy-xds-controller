@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file access_log_config/v1/access_log_config.proto.
  */
 export const file_access_log_config_v1_access_log_config: GenFile = /*@__PURE__*/
-  fileDesc("CixhY2Nlc3NfbG9nX2NvbmZpZy92MS9hY2Nlc3NfbG9nX2NvbmZpZy5wcm90bxIUYWNjZXNzX2xvZ19jb25maWcudjEiNAoXQWNjZXNzTG9nQ29uZmlnTGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiHAoaTGlzdEFjY2Vzc0xvZ0NvbmZpZ1JlcXVlc3QiWwobTGlzdEFjY2Vzc0xvZ0NvbmZpZ1Jlc3BvbnNlEjwKBWl0ZW1zGAEgAygLMi0uYWNjZXNzX2xvZ19jb25maWcudjEuQWNjZXNzTG9nQ29uZmlnTGlzdEl0ZW0ymQEKG0FjY2Vzc0xvZ0NvbmZpZ1N0b3JlU2VydmljZRJ6ChNMaXN0QWNjZXNzTG9nQ29uZmlnEjAuYWNjZXNzX2xvZ19jb25maWcudjEuTGlzdEFjY2Vzc0xvZ0NvbmZpZ1JlcXVlc3QaMS5hY2Nlc3NfbG9nX2NvbmZpZy52MS5MaXN0QWNjZXNzTG9nQ29uZmlnUmVzcG9uc2VC+AEKGGNvbS5hY2Nlc3NfbG9nX2NvbmZpZy52MUIUQWNjZXNzTG9nQ29uZmlnUHJvdG9QAVpdZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9hY2Nlc3NfbG9nX2NvbmZpZy92MTthY2Nlc3NfbG9nX2NvbmZpZ3YxogIDQVhYqgISQWNjZXNzTG9nQ29uZmlnLlYxygISQWNjZXNzTG9nQ29uZmlnXFYx4gIeQWNjZXNzTG9nQ29uZmlnXFYxXEdQQk1ldGFkYXRh6gITQWNjZXNzTG9nQ29uZmlnOjpWMWIGcHJvdG8z");
+  fileDesc("CixhY2Nlc3NfbG9nX2NvbmZpZy92MS9hY2Nlc3NfbG9nX2NvbmZpZy5wcm90bxIUYWNjZXNzX2xvZ19jb25maWcudjEiNAoXQWNjZXNzTG9nQ29uZmlnTGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiHQobTGlzdEFjY2Vzc0xvZ0NvbmZpZ3NSZXF1ZXN0IlwKHExpc3RBY2Nlc3NMb2dDb25maWdzUmVzcG9uc2USPAoFaXRlbXMYASADKAsyLS5hY2Nlc3NfbG9nX2NvbmZpZy52MS5BY2Nlc3NMb2dDb25maWdMaXN0SXRlbTKcAQobQWNjZXNzTG9nQ29uZmlnU3RvcmVTZXJ2aWNlEn0KFExpc3RBY2Nlc3NMb2dDb25maWdzEjEuYWNjZXNzX2xvZ19jb25maWcudjEuTGlzdEFjY2Vzc0xvZ0NvbmZpZ3NSZXF1ZXN0GjIuYWNjZXNzX2xvZ19jb25maWcudjEuTGlzdEFjY2Vzc0xvZ0NvbmZpZ3NSZXNwb25zZUL4AQoYY29tLmFjY2Vzc19sb2dfY29uZmlnLnYxQhRBY2Nlc3NMb2dDb25maWdQcm90b1ABWl1naXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2FjY2Vzc19sb2dfY29uZmlnL3YxO2FjY2Vzc19sb2dfY29uZmlndjGiAgNBWFiqAhJBY2Nlc3NMb2dDb25maWcuVjHKAhJBY2Nlc3NMb2dDb25maWdcVjHiAh5BY2Nlc3NMb2dDb25maWdcVjFcR1BCTWV0YWRhdGHqAhNBY2Nlc3NMb2dDb25maWc6OlYxYgZwcm90bzM");
 
 /**
  * @generated from message access_log_config.v1.AccessLogConfigListItem
@@ -35,22 +35,22 @@ export const AccessLogConfigListItemSchema: GenMessage<AccessLogConfigListItem> 
   messageDesc(file_access_log_config_v1_access_log_config, 0);
 
 /**
- * @generated from message access_log_config.v1.ListAccessLogConfigRequest
+ * @generated from message access_log_config.v1.ListAccessLogConfigsRequest
  */
-export type ListAccessLogConfigRequest = Message<"access_log_config.v1.ListAccessLogConfigRequest"> & {
+export type ListAccessLogConfigsRequest = Message<"access_log_config.v1.ListAccessLogConfigsRequest"> & {
 };
 
 /**
- * Describes the message access_log_config.v1.ListAccessLogConfigRequest.
- * Use `create(ListAccessLogConfigRequestSchema)` to create a new message.
+ * Describes the message access_log_config.v1.ListAccessLogConfigsRequest.
+ * Use `create(ListAccessLogConfigsRequestSchema)` to create a new message.
  */
-export const ListAccessLogConfigRequestSchema: GenMessage<ListAccessLogConfigRequest> = /*@__PURE__*/
+export const ListAccessLogConfigsRequestSchema: GenMessage<ListAccessLogConfigsRequest> = /*@__PURE__*/
   messageDesc(file_access_log_config_v1_access_log_config, 1);
 
 /**
- * @generated from message access_log_config.v1.ListAccessLogConfigResponse
+ * @generated from message access_log_config.v1.ListAccessLogConfigsResponse
  */
-export type ListAccessLogConfigResponse = Message<"access_log_config.v1.ListAccessLogConfigResponse"> & {
+export type ListAccessLogConfigsResponse = Message<"access_log_config.v1.ListAccessLogConfigsResponse"> & {
   /**
    * @generated from field: repeated access_log_config.v1.AccessLogConfigListItem items = 1;
    */
@@ -58,10 +58,10 @@ export type ListAccessLogConfigResponse = Message<"access_log_config.v1.ListAcce
 };
 
 /**
- * Describes the message access_log_config.v1.ListAccessLogConfigResponse.
- * Use `create(ListAccessLogConfigResponseSchema)` to create a new message.
+ * Describes the message access_log_config.v1.ListAccessLogConfigsResponse.
+ * Use `create(ListAccessLogConfigsResponseSchema)` to create a new message.
  */
-export const ListAccessLogConfigResponseSchema: GenMessage<ListAccessLogConfigResponse> = /*@__PURE__*/
+export const ListAccessLogConfigsResponseSchema: GenMessage<ListAccessLogConfigsResponse> = /*@__PURE__*/
   messageDesc(file_access_log_config_v1_access_log_config, 2);
 
 /**
@@ -69,12 +69,12 @@ export const ListAccessLogConfigResponseSchema: GenMessage<ListAccessLogConfigRe
  */
 export const AccessLogConfigStoreService: GenService<{
   /**
-   * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfig
+   * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs
    */
-  listAccessLogConfig: {
+  listAccessLogConfigs: {
     methodKind: "unary";
-    input: typeof ListAccessLogConfigRequestSchema;
-    output: typeof ListAccessLogConfigResponseSchema;
+    input: typeof ListAccessLogConfigsRequestSchema;
+    output: typeof ListAccessLogConfigsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_access_log_config_v1_access_log_config, 0);

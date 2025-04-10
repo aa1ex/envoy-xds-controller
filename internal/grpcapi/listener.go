@@ -22,7 +22,7 @@ func NewListenerStore(s *store.Store) *ListenerStore {
 	}
 }
 
-func (s *ListenerStore) ListListener(ctx context.Context, _ *connect.Request[v1.ListListenerRequest]) (*connect.Response[v1.ListListenerResponse], error) {
+func (s *ListenerStore) ListListeners(ctx context.Context, _ *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error) {
 	m := s.store.MapListeners()
 	list := make([]*v1.ListenerListItem, 0, len(m))
 	authorizer := getAuthorizerFromContext(ctx)
@@ -41,7 +41,7 @@ func (s *ListenerStore) ListListener(ctx context.Context, _ *connect.Request[v1.
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListListenerResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListListenersResponse{Items: list}), nil
 }
 
 func listenerType(l *v1alpha1.Listener) v1.ListenerType {

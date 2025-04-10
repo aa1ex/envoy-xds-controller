@@ -1,6 +1,6 @@
 import React from 'react'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
-import { ListListenerResponse } from '../../gen/listener/v1/listener_pb.ts'
+import { ListListenersResponse } from '../../gen/listener/v1/listener_pb.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -8,7 +8,7 @@ import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 interface ISelectListenersVsProps {
 	control: Control<IVirtualServiceForm, any>
-	listeners: ListListenerResponse | undefined
+	listeners: ListListenersResponse | undefined
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean

@@ -5,6 +5,6 @@
 import { RouteStoreService } from "./route_pb";
 
 /**
- * @generated from rpc route.v1.RouteStoreService.ListRoute
+ * @generated from rpc route.v1.RouteStoreService.ListRoutes
  */
-export const listRoute = RouteStoreService.method.listRoute;
+export const listRoutes = RouteStoreService.method.listRoutes;

@@ -33,14 +33,14 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// NodeStoreServiceListNodeProcedure is the fully-qualified name of the NodeStoreService's ListNode
-	// RPC.
-	NodeStoreServiceListNodeProcedure = "/node.v1.NodeStoreService/ListNode"
+	// NodeStoreServiceListNodesProcedure is the fully-qualified name of the NodeStoreService's
+	// ListNodes RPC.
+	NodeStoreServiceListNodesProcedure = "/node.v1.NodeStoreService/ListNodes"
 )
 
 // NodeStoreServiceClient is a client for the node.v1.NodeStoreService service.
 type NodeStoreServiceClient interface {
-	ListNode(context.Context, *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error)
+	ListNodes(context.Context, *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error)
 }
 
 // NewNodeStoreServiceClient constructs a client for the node.v1.NodeStoreService service. By
@@ -54,10 +54,10 @@ func NewNodeStoreServiceClient(httpClient connect.HTTPClient, baseURL string, op
 	baseURL = strings.TrimRight(baseURL, "/")
 	nodeStoreServiceMethods := v1.File_node_v1_node_proto.Services().ByName("NodeStoreService").Methods()
 	return &nodeStoreServiceClient{
-		listNode: connect.NewClient[v1.ListNodeRequest, v1.ListNodeResponse](
+		listNodes: connect.NewClient[v1.ListNodesRequest, v1.ListNodesResponse](
 			httpClient,
-			baseURL+NodeStoreServiceListNodeProcedure,
-			connect.WithSchema(nodeStoreServiceMethods.ByName("ListNode")),
+			baseURL+NodeStoreServiceListNodesProcedure,
+			connect.WithSchema(nodeStoreServiceMethods.ByName("ListNodes")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -65,17 +65,17 @@ func NewNodeStoreServiceClient(httpClient connect.HTTPClient, baseURL string, op
 
 // nodeStoreServiceClient implements NodeStoreServiceClient.
 type nodeStoreServiceClient struct {
-	listNode *connect.Client[v1.ListNodeRequest, v1.ListNodeResponse]
+	listNodes *connect.Client[v1.ListNodesRequest, v1.ListNodesResponse]
 }
 
-// ListNode calls node.v1.NodeStoreService.ListNode.
-func (c *nodeStoreServiceClient) ListNode(ctx context.Context, req *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error) {
-	return c.listNode.CallUnary(ctx, req)
+// ListNodes calls node.v1.NodeStoreService.ListNodes.
+func (c *nodeStoreServiceClient) ListNodes(ctx context.Context, req *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error) {
+	return c.listNodes.CallUnary(ctx, req)
 }
 
 // NodeStoreServiceHandler is an implementation of the node.v1.NodeStoreService service.
 type NodeStoreServiceHandler interface {
-	ListNode(context.Context, *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error)
+	ListNodes(context.Context, *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error)
 }
 
 // NewNodeStoreServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -85,16 +85,16 @@ type NodeStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewNodeStoreServiceHandler(svc NodeStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	nodeStoreServiceMethods := v1.File_node_v1_node_proto.Services().ByName("NodeStoreService").Methods()
-	nodeStoreServiceListNodeHandler := connect.NewUnaryHandler(
-		NodeStoreServiceListNodeProcedure,
-		svc.ListNode,
-		connect.WithSchema(nodeStoreServiceMethods.ByName("ListNode")),
+	nodeStoreServiceListNodesHandler := connect.NewUnaryHandler(
+		NodeStoreServiceListNodesProcedure,
+		svc.ListNodes,
+		connect.WithSchema(nodeStoreServiceMethods.ByName("ListNodes")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/node.v1.NodeStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case NodeStoreServiceListNodeProcedure:
-			nodeStoreServiceListNodeHandler.ServeHTTP(w, r)
+		case NodeStoreServiceListNodesProcedure:
+			nodeStoreServiceListNodesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -104,6 +104,6 @@ func NewNodeStoreServiceHandler(svc NodeStoreServiceHandler, opts ...connect.Han
 // UnimplementedNodeStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedNodeStoreServiceHandler struct{}
 
-func (UnimplementedNodeStoreServiceHandler) ListNode(context.Context, *connect.Request[v1.ListNodeRequest]) (*connect.Response[v1.ListNodeResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("node.v1.NodeStoreService.ListNode is not implemented"))
+func (UnimplementedNodeStoreServiceHandler) ListNodes(context.Context, *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("node.v1.NodeStoreService.ListNodes is not implemented"))
 }

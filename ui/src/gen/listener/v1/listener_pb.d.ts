@@ -37,21 +37,21 @@ export declare type ListenerListItem = Message<"listener.v1.ListenerListItem"> &
 export declare const ListenerListItemSchema: GenMessage<ListenerListItem>;
 
 /**
- * @generated from message listener.v1.ListListenerRequest
+ * @generated from message listener.v1.ListListenersRequest
  */
-export declare type ListListenerRequest = Message<"listener.v1.ListListenerRequest"> & {
+export declare type ListListenersRequest = Message<"listener.v1.ListListenersRequest"> & {
 };
 
 /**
- * Describes the message listener.v1.ListListenerRequest.
- * Use `create(ListListenerRequestSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenersRequest.
+ * Use `create(ListListenersRequestSchema)` to create a new message.
  */
-export declare const ListListenerRequestSchema: GenMessage<ListListenerRequest>;
+export declare const ListListenersRequestSchema: GenMessage<ListListenersRequest>;
 
 /**
- * @generated from message listener.v1.ListListenerResponse
+ * @generated from message listener.v1.ListListenersResponse
  */
-export declare type ListListenerResponse = Message<"listener.v1.ListListenerResponse"> & {
+export declare type ListListenersResponse = Message<"listener.v1.ListListenersResponse"> & {
   /**
    * @generated from field: repeated listener.v1.ListenerListItem items = 1;
    */
@@ -59,10 +59,10 @@ export declare type ListListenerResponse = Message<"listener.v1.ListListenerResp
 };
 
 /**
- * Describes the message listener.v1.ListListenerResponse.
- * Use `create(ListListenerResponseSchema)` to create a new message.
+ * Describes the message listener.v1.ListListenersResponse.
+ * Use `create(ListListenersResponseSchema)` to create a new message.
  */
-export declare const ListListenerResponseSchema: GenMessage<ListListenerResponse>;
+export declare const ListListenersResponseSchema: GenMessage<ListListenersResponse>;
 
 /**
  * @generated from enum listener.v1.ListenerType
@@ -99,12 +99,12 @@ export declare const ListenerTypeSchema: GenEnum<ListenerType>;
  */
 export declare const ListenerStoreService: GenService<{
   /**
-   * @generated from rpc listener.v1.ListenerStoreService.ListListener
+   * @generated from rpc listener.v1.ListenerStoreService.ListListeners
    */
-  listListener: {
+  listListeners: {
     methodKind: "unary";
-    input: typeof ListListenerRequestSchema;
-    output: typeof ListListenerResponseSchema;
+    input: typeof ListListenersRequestSchema;
+    output: typeof ListListenersResponseSchema;
   },
 }>;
 

@@ -348,9 +348,9 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
 export declare const GetVirtualServiceResponseSchema: GenMessage<GetVirtualServiceResponse>;
 
 /**
- * @generated from message virtual_service.v1.ListVirtualServiceRequest
+ * @generated from message virtual_service.v1.ListVirtualServicesRequest
  */
-export declare type ListVirtualServiceRequest = Message<"virtual_service.v1.ListVirtualServiceRequest"> & {
+export declare type ListVirtualServicesRequest = Message<"virtual_service.v1.ListVirtualServicesRequest"> & {
   /**
    * @generated from field: string access_group = 1;
    */
@@ -358,10 +358,10 @@ export declare type ListVirtualServiceRequest = Message<"virtual_service.v1.List
 };
 
 /**
- * Describes the message virtual_service.v1.ListVirtualServiceRequest.
- * Use `create(ListVirtualServiceRequestSchema)` to create a new message.
+ * Describes the message virtual_service.v1.ListVirtualServicesRequest.
+ * Use `create(ListVirtualServicesRequestSchema)` to create a new message.
  */
-export declare const ListVirtualServiceRequestSchema: GenMessage<ListVirtualServiceRequest>;
+export declare const ListVirtualServicesRequestSchema: GenMessage<ListVirtualServicesRequest>;
 
 /**
  * @generated from message virtual_service.v1.VirtualServiceListItem
@@ -405,9 +405,9 @@ export declare type VirtualServiceListItem = Message<"virtual_service.v1.Virtual
 export declare const VirtualServiceListItemSchema: GenMessage<VirtualServiceListItem>;
 
 /**
- * @generated from message virtual_service.v1.ListVirtualServiceResponse
+ * @generated from message virtual_service.v1.ListVirtualServicesResponse
  */
-export declare type ListVirtualServiceResponse = Message<"virtual_service.v1.ListVirtualServiceResponse"> & {
+export declare type ListVirtualServicesResponse = Message<"virtual_service.v1.ListVirtualServicesResponse"> & {
   /**
    * @generated from field: repeated virtual_service.v1.VirtualServiceListItem items = 1;
    */
@@ -415,10 +415,10 @@ export declare type ListVirtualServiceResponse = Message<"virtual_service.v1.Lis
 };
 
 /**
- * Describes the message virtual_service.v1.ListVirtualServiceResponse.
- * Use `create(ListVirtualServiceResponseSchema)` to create a new message.
+ * Describes the message virtual_service.v1.ListVirtualServicesResponse.
+ * Use `create(ListVirtualServicesResponseSchema)` to create a new message.
  */
-export declare const ListVirtualServiceResponseSchema: GenMessage<ListVirtualServiceResponse>;
+export declare const ListVirtualServicesResponseSchema: GenMessage<ListVirtualServicesResponse>;
 
 /**
  * @generated from service virtual_service.v1.VirtualServiceStoreService
@@ -457,12 +457,12 @@ export declare const VirtualServiceStoreService: GenService<{
     output: typeof GetVirtualServiceResponseSchema;
   },
   /**
-   * @generated from rpc virtual_service.v1.VirtualServiceStoreService.ListVirtualService
+   * @generated from rpc virtual_service.v1.VirtualServiceStoreService.ListVirtualServices
    */
-  listVirtualService: {
+  listVirtualServices: {
     methodKind: "unary";
-    input: typeof ListVirtualServiceRequestSchema;
-    output: typeof ListVirtualServiceResponseSchema;
+    input: typeof ListVirtualServicesRequestSchema;
+    output: typeof ListVirtualServicesResponseSchema;
   },
 }>;
 

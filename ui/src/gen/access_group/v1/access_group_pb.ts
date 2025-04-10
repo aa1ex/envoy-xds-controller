@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file access_group/v1/access_group.proto.
  */
 export const file_access_group_v1_access_group: GenFile = /*@__PURE__*/
-  fileDesc("CiJhY2Nlc3NfZ3JvdXAvdjEvYWNjZXNzX2dyb3VwLnByb3RvEg9hY2Nlc3NfZ3JvdXAudjEiIwoTQWNjZXNzR3JvdXBMaXN0SXRlbRIMCgRuYW1lGAEgASgJIhgKFkxpc3RBY2Nlc3NHcm91cFJlcXVlc3QiTgoXTGlzdEFjY2Vzc0dyb3VwUmVzcG9uc2USMwoFaXRlbXMYASADKAsyJC5hY2Nlc3NfZ3JvdXAudjEuQWNjZXNzR3JvdXBMaXN0SXRlbTJ/ChdBY2Nlc3NHcm91cFN0b3JlU2VydmljZRJkCg9MaXN0QWNjZXNzR3JvdXASJy5hY2Nlc3NfZ3JvdXAudjEuTGlzdEFjY2Vzc0dyb3VwUmVxdWVzdBooLmFjY2Vzc19ncm91cC52MS5MaXN0QWNjZXNzR3JvdXBSZXNwb25zZULVAQoTY29tLmFjY2Vzc19ncm91cC52MUIQQWNjZXNzR3JvdXBQcm90b1ABWlNnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2FjY2Vzc19ncm91cC92MTthY2Nlc3NfZ3JvdXB2MaICA0FYWKoCDkFjY2Vzc0dyb3VwLlYxygIOQWNjZXNzR3JvdXBcVjHiAhpBY2Nlc3NHcm91cFxWMVxHUEJNZXRhZGF0YeoCD0FjY2Vzc0dyb3VwOjpWMWIGcHJvdG8z");
+  fileDesc("CiJhY2Nlc3NfZ3JvdXAvdjEvYWNjZXNzX2dyb3VwLnByb3RvEg9hY2Nlc3NfZ3JvdXAudjEiIwoTQWNjZXNzR3JvdXBMaXN0SXRlbRIMCgRuYW1lGAEgASgJIhkKF0xpc3RBY2Nlc3NHcm91cHNSZXF1ZXN0Ik8KGExpc3RBY2Nlc3NHcm91cHNSZXNwb25zZRIzCgVpdGVtcxgBIAMoCzIkLmFjY2Vzc19ncm91cC52MS5BY2Nlc3NHcm91cExpc3RJdGVtMoIBChdBY2Nlc3NHcm91cFN0b3JlU2VydmljZRJnChBMaXN0QWNjZXNzR3JvdXBzEiguYWNjZXNzX2dyb3VwLnYxLkxpc3RBY2Nlc3NHcm91cHNSZXF1ZXN0GikuYWNjZXNzX2dyb3VwLnYxLkxpc3RBY2Nlc3NHcm91cHNSZXNwb25zZULVAQoTY29tLmFjY2Vzc19ncm91cC52MUIQQWNjZXNzR3JvdXBQcm90b1ABWlNnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2FjY2Vzc19ncm91cC92MTthY2Nlc3NfZ3JvdXB2MaICA0FYWKoCDkFjY2Vzc0dyb3VwLlYxygIOQWNjZXNzR3JvdXBcVjHiAhpBY2Nlc3NHcm91cFxWMVxHUEJNZXRhZGF0YeoCD0FjY2Vzc0dyb3VwOjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message access_group.v1.AccessGroupListItem
@@ -30,22 +30,22 @@ export const AccessGroupListItemSchema: GenMessage<AccessGroupListItem> = /*@__P
   messageDesc(file_access_group_v1_access_group, 0);
 
 /**
- * @generated from message access_group.v1.ListAccessGroupRequest
+ * @generated from message access_group.v1.ListAccessGroupsRequest
  */
-export type ListAccessGroupRequest = Message<"access_group.v1.ListAccessGroupRequest"> & {
+export type ListAccessGroupsRequest = Message<"access_group.v1.ListAccessGroupsRequest"> & {
 };
 
 /**
- * Describes the message access_group.v1.ListAccessGroupRequest.
- * Use `create(ListAccessGroupRequestSchema)` to create a new message.
+ * Describes the message access_group.v1.ListAccessGroupsRequest.
+ * Use `create(ListAccessGroupsRequestSchema)` to create a new message.
  */
-export const ListAccessGroupRequestSchema: GenMessage<ListAccessGroupRequest> = /*@__PURE__*/
+export const ListAccessGroupsRequestSchema: GenMessage<ListAccessGroupsRequest> = /*@__PURE__*/
   messageDesc(file_access_group_v1_access_group, 1);
 
 /**
- * @generated from message access_group.v1.ListAccessGroupResponse
+ * @generated from message access_group.v1.ListAccessGroupsResponse
  */
-export type ListAccessGroupResponse = Message<"access_group.v1.ListAccessGroupResponse"> & {
+export type ListAccessGroupsResponse = Message<"access_group.v1.ListAccessGroupsResponse"> & {
   /**
    * @generated from field: repeated access_group.v1.AccessGroupListItem items = 1;
    */
@@ -53,10 +53,10 @@ export type ListAccessGroupResponse = Message<"access_group.v1.ListAccessGroupRe
 };
 
 /**
- * Describes the message access_group.v1.ListAccessGroupResponse.
- * Use `create(ListAccessGroupResponseSchema)` to create a new message.
+ * Describes the message access_group.v1.ListAccessGroupsResponse.
+ * Use `create(ListAccessGroupsResponseSchema)` to create a new message.
  */
-export const ListAccessGroupResponseSchema: GenMessage<ListAccessGroupResponse> = /*@__PURE__*/
+export const ListAccessGroupsResponseSchema: GenMessage<ListAccessGroupsResponse> = /*@__PURE__*/
   messageDesc(file_access_group_v1_access_group, 2);
 
 /**
@@ -64,12 +64,12 @@ export const ListAccessGroupResponseSchema: GenMessage<ListAccessGroupResponse> 
  */
 export const AccessGroupStoreService: GenService<{
   /**
-   * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroup
+   * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroups
    */
-  listAccessGroup: {
+  listAccessGroups: {
     methodKind: "unary";
-    input: typeof ListAccessGroupRequestSchema;
-    output: typeof ListAccessGroupResponseSchema;
+    input: typeof ListAccessGroupsRequestSchema;
+    output: typeof ListAccessGroupsResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_access_group_v1_access_group, 0);

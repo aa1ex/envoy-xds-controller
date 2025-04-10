@@ -19,7 +19,7 @@ func NewHTTPFilterStore(s *store.Store) *HTTPFilterStore {
 	}
 }
 
-func (s *HTTPFilterStore) ListHTTPFilter(ctx context.Context, _ *connect.Request[v1.ListHTTPFilterRequest]) (*connect.Response[v1.ListHTTPFilterResponse], error) {
+func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, _ *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error) {
 	m := s.store.MapHTTPFilters()
 	list := make([]*v1.HTTPFilterListItem, 0, len(m))
 
@@ -39,5 +39,5 @@ func (s *HTTPFilterStore) ListHTTPFilter(ctx context.Context, _ *connect.Request
 		}
 		list = append(list, item)
 	}
-	return connect.NewResponse(&v1.ListHTTPFilterResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListHTTPFiltersResponse{Items: list}), nil
 }

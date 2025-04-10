@@ -35,7 +35,7 @@ export const useListVs = (flag: boolean, accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['listVs', safeAccessGroup],
 		queryFn: () =>
-			virtualServiceClient.listVirtualService(
+			virtualServiceClient.listVirtualServices(
 				{
 					accessGroup: safeAccessGroup
 				}
@@ -98,7 +98,7 @@ export const useAccessGroupsVs = () => {
 	return useQuery({
 		queryKey: ['accessGroupsVs'],
 		queryFn: () =>
-			accessGroupsServiceClient.listAccessGroup(
+			accessGroupsServiceClient.listAccessGroups(
 				{}
 				// metadata
 			)
@@ -108,7 +108,7 @@ export const useAccessGroupsVs = () => {
 export const useAccessLogsVs = () => {
 	return useQuery({
 		queryKey: ['accessLogsVs'],
-		queryFn: () => accessLogServiceClient.listAccessLogConfig({}, metadata)
+		queryFn: () => accessLogServiceClient.listAccessLogConfigs({}, metadata)
 	})
 }
 
@@ -122,27 +122,27 @@ export const useHttpFilterVs = () => {
 export const useListenerVs = () => {
 	return useQuery({
 		queryKey: ['listenerVs'],
-		queryFn: () => listenerServiceClient.listListener({}, metadata)
+		queryFn: () => listenerServiceClient.listListeners({}, metadata)
 	})
 }
 
 export const useRouteVs = () => {
 	return useQuery({
 		queryKey: ['routeVs'],
-		queryFn: () => routeServiceClient.listRoute({}, metadata)
+		queryFn: () => routeServiceClient.listRoutes({}, metadata)
 	})
 }
 
 export const useTemplatesVs = () => {
 	return useQuery({
 		queryKey: ['templatesVs'],
-		queryFn: () => templateServiceClient.listVirtualServiceTemplate({}, metadata)
+		queryFn: () => templateServiceClient.listVirtualServiceTemplates({}, metadata)
 	})
 }
 
 export const useNodeListVs = () => {
 	return useQuery({
 		queryKey: ['nodeListVs'],
-		queryFn: () => nodeServiceClient.listNode({}, metadata)
+		queryFn: () => nodeServiceClient.listNodes({}, metadata)
 	})
 }

@@ -33,7 +33,7 @@ func NewVirtualServiceStore(s *store.Store, c client.Client, targetNs string) *V
 	}
 }
 
-func (s *VirtualServiceStore) ListVirtualService(ctx context.Context, r *connect.Request[v1.ListVirtualServiceRequest]) (*connect.Response[v1.ListVirtualServiceResponse], error) {
+func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error) {
 	m := s.store.MapVirtualServices()
 	list := make([]*v1.VirtualServiceListItem, 0, len(m))
 
@@ -68,7 +68,7 @@ func (s *VirtualServiceStore) ListVirtualService(ctx context.Context, r *connect
 		vs.IsEditable = v.IsEditable()
 		list = append(list, vs)
 	}
-	return connect.NewResponse(&v1.ListVirtualServiceResponse{Items: list}), nil
+	return connect.NewResponse(&v1.ListVirtualServicesResponse{Items: list}), nil
 }
 
 func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *connect.Request[v1.CreateVirtualServiceRequest]) (*connect.Response[v1.CreateVirtualServiceResponse], error) {

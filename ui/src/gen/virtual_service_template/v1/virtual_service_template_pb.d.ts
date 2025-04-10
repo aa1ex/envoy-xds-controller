@@ -32,16 +32,16 @@ export declare type TemplateOption = Message<"virtual_service_template.v1.Templa
 export declare const TemplateOptionSchema: GenMessage<TemplateOption>;
 
 /**
- * @generated from message virtual_service_template.v1.ListVirtualServiceTemplateRequest
+ * @generated from message virtual_service_template.v1.ListVirtualServiceTemplatesRequest
  */
-export declare type ListVirtualServiceTemplateRequest = Message<"virtual_service_template.v1.ListVirtualServiceTemplateRequest"> & {
+export declare type ListVirtualServiceTemplatesRequest = Message<"virtual_service_template.v1.ListVirtualServiceTemplatesRequest"> & {
 };
 
 /**
- * Describes the message virtual_service_template.v1.ListVirtualServiceTemplateRequest.
- * Use `create(ListVirtualServiceTemplateRequestSchema)` to create a new message.
+ * Describes the message virtual_service_template.v1.ListVirtualServiceTemplatesRequest.
+ * Use `create(ListVirtualServiceTemplatesRequestSchema)` to create a new message.
  */
-export declare const ListVirtualServiceTemplateRequestSchema: GenMessage<ListVirtualServiceTemplateRequest>;
+export declare const ListVirtualServiceTemplatesRequestSchema: GenMessage<ListVirtualServiceTemplatesRequest>;
 
 /**
  * @generated from message virtual_service_template.v1.VirtualServiceTemplateListItem
@@ -65,9 +65,9 @@ export declare type VirtualServiceTemplateListItem = Message<"virtual_service_te
 export declare const VirtualServiceTemplateListItemSchema: GenMessage<VirtualServiceTemplateListItem>;
 
 /**
- * @generated from message virtual_service_template.v1.ListVirtualServiceTemplateResponse
+ * @generated from message virtual_service_template.v1.ListVirtualServiceTemplatesResponse
  */
-export declare type ListVirtualServiceTemplateResponse = Message<"virtual_service_template.v1.ListVirtualServiceTemplateResponse"> & {
+export declare type ListVirtualServiceTemplatesResponse = Message<"virtual_service_template.v1.ListVirtualServiceTemplatesResponse"> & {
   /**
    * @generated from field: repeated virtual_service_template.v1.VirtualServiceTemplateListItem items = 1;
    */
@@ -75,10 +75,10 @@ export declare type ListVirtualServiceTemplateResponse = Message<"virtual_servic
 };
 
 /**
- * Describes the message virtual_service_template.v1.ListVirtualServiceTemplateResponse.
- * Use `create(ListVirtualServiceTemplateResponseSchema)` to create a new message.
+ * Describes the message virtual_service_template.v1.ListVirtualServiceTemplatesResponse.
+ * Use `create(ListVirtualServiceTemplatesResponseSchema)` to create a new message.
  */
-export declare const ListVirtualServiceTemplateResponseSchema: GenMessage<ListVirtualServiceTemplateResponse>;
+export declare const ListVirtualServiceTemplatesResponseSchema: GenMessage<ListVirtualServiceTemplatesResponse>;
 
 /**
  * @generated from message virtual_service_template.v1.FillTemplateRequest
@@ -188,12 +188,12 @@ export declare const TemplateOptionModifierSchema: GenEnum<TemplateOptionModifie
  */
 export declare const VirtualServiceTemplateStoreService: GenService<{
   /**
-   * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplate
+   * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates
    */
-  listVirtualServiceTemplate: {
+  listVirtualServiceTemplates: {
     methodKind: "unary";
-    input: typeof ListVirtualServiceTemplateRequestSchema;
-    output: typeof ListVirtualServiceTemplateResponseSchema;
+    input: typeof ListVirtualServiceTemplatesRequestSchema;
+    output: typeof ListVirtualServiceTemplatesResponseSchema;
   },
   /**
    * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate

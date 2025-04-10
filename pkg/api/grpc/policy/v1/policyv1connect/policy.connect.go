@@ -33,14 +33,14 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// PolicyStoreServiceListPolicyProcedure is the fully-qualified name of the PolicyStoreService's
-	// ListPolicy RPC.
-	PolicyStoreServiceListPolicyProcedure = "/policy.v1.PolicyStoreService/ListPolicy"
+	// PolicyStoreServiceListPoliciesProcedure is the fully-qualified name of the PolicyStoreService's
+	// ListPolicies RPC.
+	PolicyStoreServiceListPoliciesProcedure = "/policy.v1.PolicyStoreService/ListPolicies"
 )
 
 // PolicyStoreServiceClient is a client for the policy.v1.PolicyStoreService service.
 type PolicyStoreServiceClient interface {
-	ListPolicy(context.Context, *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error)
+	ListPolicies(context.Context, *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error)
 }
 
 // NewPolicyStoreServiceClient constructs a client for the policy.v1.PolicyStoreService service. By
@@ -54,10 +54,10 @@ func NewPolicyStoreServiceClient(httpClient connect.HTTPClient, baseURL string, 
 	baseURL = strings.TrimRight(baseURL, "/")
 	policyStoreServiceMethods := v1.File_policy_v1_policy_proto.Services().ByName("PolicyStoreService").Methods()
 	return &policyStoreServiceClient{
-		listPolicy: connect.NewClient[v1.ListPolicyRequest, v1.ListPolicyResponse](
+		listPolicies: connect.NewClient[v1.ListPoliciesRequest, v1.ListPoliciesResponse](
 			httpClient,
-			baseURL+PolicyStoreServiceListPolicyProcedure,
-			connect.WithSchema(policyStoreServiceMethods.ByName("ListPolicy")),
+			baseURL+PolicyStoreServiceListPoliciesProcedure,
+			connect.WithSchema(policyStoreServiceMethods.ByName("ListPolicies")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -65,17 +65,17 @@ func NewPolicyStoreServiceClient(httpClient connect.HTTPClient, baseURL string, 
 
 // policyStoreServiceClient implements PolicyStoreServiceClient.
 type policyStoreServiceClient struct {
-	listPolicy *connect.Client[v1.ListPolicyRequest, v1.ListPolicyResponse]
+	listPolicies *connect.Client[v1.ListPoliciesRequest, v1.ListPoliciesResponse]
 }
 
-// ListPolicy calls policy.v1.PolicyStoreService.ListPolicy.
-func (c *policyStoreServiceClient) ListPolicy(ctx context.Context, req *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error) {
-	return c.listPolicy.CallUnary(ctx, req)
+// ListPolicies calls policy.v1.PolicyStoreService.ListPolicies.
+func (c *policyStoreServiceClient) ListPolicies(ctx context.Context, req *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error) {
+	return c.listPolicies.CallUnary(ctx, req)
 }
 
 // PolicyStoreServiceHandler is an implementation of the policy.v1.PolicyStoreService service.
 type PolicyStoreServiceHandler interface {
-	ListPolicy(context.Context, *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error)
+	ListPolicies(context.Context, *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error)
 }
 
 // NewPolicyStoreServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -85,16 +85,16 @@ type PolicyStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewPolicyStoreServiceHandler(svc PolicyStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	policyStoreServiceMethods := v1.File_policy_v1_policy_proto.Services().ByName("PolicyStoreService").Methods()
-	policyStoreServiceListPolicyHandler := connect.NewUnaryHandler(
-		PolicyStoreServiceListPolicyProcedure,
-		svc.ListPolicy,
-		connect.WithSchema(policyStoreServiceMethods.ByName("ListPolicy")),
+	policyStoreServiceListPoliciesHandler := connect.NewUnaryHandler(
+		PolicyStoreServiceListPoliciesProcedure,
+		svc.ListPolicies,
+		connect.WithSchema(policyStoreServiceMethods.ByName("ListPolicies")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/policy.v1.PolicyStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case PolicyStoreServiceListPolicyProcedure:
-			policyStoreServiceListPolicyHandler.ServeHTTP(w, r)
+		case PolicyStoreServiceListPoliciesProcedure:
+			policyStoreServiceListPoliciesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -104,6 +104,6 @@ func NewPolicyStoreServiceHandler(svc PolicyStoreServiceHandler, opts ...connect
 // UnimplementedPolicyStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedPolicyStoreServiceHandler struct{}
 
-func (UnimplementedPolicyStoreServiceHandler) ListPolicy(context.Context, *connect.Request[v1.ListPolicyRequest]) (*connect.Response[v1.ListPolicyResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("policy.v1.PolicyStoreService.ListPolicy is not implemented"))
+func (UnimplementedPolicyStoreServiceHandler) ListPolicies(context.Context, *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("policy.v1.PolicyStoreService.ListPolicies is not implemented"))
 }

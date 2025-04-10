@@ -153,7 +153,7 @@ const (
 
 func lookupAction(route string) string {
 	switch route {
-	case virtual_servicev1connect.VirtualServiceStoreServiceListVirtualServiceProcedure:
+	case virtual_servicev1connect.VirtualServiceStoreServiceListVirtualServicesProcedure:
 		return ActionListVirtualServices
 	case virtual_servicev1connect.VirtualServiceStoreServiceGetVirtualServiceProcedure:
 		return ActionGetVirtualService
@@ -163,21 +163,21 @@ func lookupAction(route string) string {
 		return ActionUpdateVirtualService
 	case virtual_servicev1connect.VirtualServiceStoreServiceDeleteVirtualServiceProcedure:
 		return ActionDeleteVirtualService
-	case access_log_configv1connect.AccessLogConfigStoreServiceListAccessLogConfigProcedure:
+	case access_log_configv1connect.AccessLogConfigStoreServiceListAccessLogConfigsProcedure:
 		return ActionListAccessLogConfigs
-	case virtual_service_templatev1connect.VirtualServiceTemplateStoreServiceListVirtualServiceTemplateProcedure:
+	case virtual_service_templatev1connect.VirtualServiceTemplateStoreServiceListVirtualServiceTemplatesProcedure:
 		return ActionListVirtualServiceTemplates
-	case nodev1connect.NodeStoreServiceListNodeProcedure:
+	case nodev1connect.NodeStoreServiceListNodesProcedure:
 		return ActionListNodes
-	case routev1connect.RouteStoreServiceListRouteProcedure:
+	case routev1connect.RouteStoreServiceListRoutesProcedure:
 		return ActionListRoutes
 	case http_filterv1connect.HTTPFilterStoreServiceListHTTPFilterProcedure:
 		return ActionListHTTPFilters
-	case policyv1connect.PolicyStoreServiceListPolicyProcedure:
+	case policyv1connect.PolicyStoreServiceListPoliciesProcedure:
 		return ActionListPolicies
-	case access_groupv1connect.AccessGroupStoreServiceListAccessGroupProcedure:
+	case access_groupv1connect.AccessGroupStoreServiceListAccessGroupsProcedure:
 		return ActionListAccessGroups
-	case listenerv1connect.ListenerStoreServiceListListenerProcedure:
+	case listenerv1connect.ListenerStoreServiceListListenersProcedure:
 		return ActionListListeners
 	default:
 		return ""
