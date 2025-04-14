@@ -10,7 +10,7 @@ metadata:
     exc-access-group: dev
 spec:
   template:
-    name: virtual-service-template
+    name: https-template
   virtualHost:
     domains:
       - exc.kaasops.io
