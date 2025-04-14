@@ -5,6 +5,7 @@ import (
 	"context"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_group/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_group/v1/access_groupv1connect"
+	"sort"
 )
 
 type AccessGroupStore struct {
@@ -30,5 +31,8 @@ func (s *AccessGroupStore) ListAccessGroups(ctx context.Context, _ *connect.Requ
 			list = append(list, item)
 		}
 	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Name < list[j].Name
+	})
 	return connect.NewResponse(&v1.ListAccessGroupsResponse{Items: list}), nil
 }

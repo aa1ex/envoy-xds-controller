@@ -5,6 +5,7 @@ import (
 	"context"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/node/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/node/v1/nodev1connect"
+	"sort"
 )
 
 type NodeStore struct {
@@ -38,5 +39,8 @@ func (s *NodeStore) ListNodes(ctx context.Context, req *connect.Request[v1.ListN
 		}
 		list = append(list, item)
 	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Id < list[j].Id
+	})
 	return connect.NewResponse(&v1.ListNodesResponse{Items: list}), nil
 }

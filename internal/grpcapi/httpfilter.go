@@ -6,6 +6,7 @@ import (
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/http_filter/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/http_filter/v1/http_filterv1connect"
+	"sort"
 )
 
 type HTTPFilterStore struct {
@@ -44,5 +45,8 @@ func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, req *connect.Requ
 		}
 		list = append(list, item)
 	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Name < list[j].Name
+	})
 	return connect.NewResponse(&v1.ListHTTPFiltersResponse{Items: list}), nil
 }

@@ -9,4 +9,4 @@ kubectl apply -f "${SCRIPT_DIR}/ldap" -n ldap
 
 helm repo add dex https://charts.dexidp.io
 
-helm install dex -n dex dex/dex --values "${SCRIPT_DIR}/dex-values.yaml"
+helm install dex -n dex dex/dex --values "${SCRIPT_DIR}/dex/values.yaml"

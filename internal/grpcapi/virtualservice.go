@@ -16,6 +16,7 @@ import (
 	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sort"
 )
 
 type VirtualServiceStore struct {
@@ -68,6 +69,9 @@ func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connec
 		vs.IsEditable = v.IsEditable()
 		list = append(list, vs)
 	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Name < list[j].Name
+	})
 	return connect.NewResponse(&v1.ListVirtualServicesResponse{Items: list}), nil
 }
 

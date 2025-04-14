@@ -6,6 +6,7 @@ import (
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_log_config/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_log_config/v1/access_log_configv1connect"
+	"sort"
 )
 
 type AccessLogConfigStore struct {
@@ -43,5 +44,8 @@ func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *co
 		}
 		list = append(list, item)
 	}
+	sort.Slice(list, func(i, j int) bool {
+		return list[i].Name < list[j].Name
+	})
 	return connect.NewResponse(&v1.ListAccessLogConfigsResponse{Items: list}), nil
 }
