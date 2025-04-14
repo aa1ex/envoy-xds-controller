@@ -14,6 +14,7 @@ const (
 	AnnotationNodeIDs  = "envoy.kaasops.io/node-id"
 	AnnotationEditable = "envoy.kaasops.io/editable"
 	LabelAccessGroup   = "exc-access-group"
+	LabelName          = "exc-name"
 )
 
 func (vs *VirtualService) GetNodeIDs() []string {
@@ -42,6 +43,23 @@ func (vs *VirtualService) SetNodeIDs(nodeIDs []string) {
 		annotations[AnnotationNodeIDs] = strings.Join(nodeIDs, ",")
 	}
 	vs.SetAnnotations(annotations)
+}
+
+func (vs *VirtualService) GetLabelName() string {
+	name, ok := vs.GetLabels()[LabelName]
+	if !ok {
+		return vs.Name
+	}
+	return name
+}
+
+func (vs *VirtualService) SetLabelName(name string) {
+	labels := vs.GetLabels()
+	if len(labels) == 0 {
+		labels = make(map[string]string)
+	}
+	labels[LabelName] = name
+	vs.SetLabels(labels)
 }
 
 func (vs *VirtualService) GetAccessGroup() string {

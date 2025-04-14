@@ -84,6 +84,7 @@ metadata:
   annotations:
     envoy.kaasops.io/node-id: dev
   labels:
+    exc-name: vs-tcp-proxy
     exc-access-group: dev
 spec:
   listener:

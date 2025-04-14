@@ -18,17 +18,6 @@ const metadata = {
 	headers: undefined
 }
 
-export function setAuthToken(token: string | undefined) {
-	if (!token) {
-		return
-	}
-	const headers = new Headers()
-	headers.set('Authorization', 'Bearer ' + token)
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-expect-error
-	metadata.headers = headers
-}
-
 export const useListVs = (flag: boolean, accessGroup?: string) => {
 	const safeAccessGroup = accessGroup ?? ''
 
@@ -105,44 +94,44 @@ export const useAccessGroupsVs = () => {
 	})
 }
 
-export const useAccessLogsVs = () => {
+export const useAccessLogsVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['accessLogsVs'],
-		queryFn: () => accessLogServiceClient.listAccessLogConfigs({}, metadata)
+		queryFn: () => accessLogServiceClient.listAccessLogConfigs({ accessGroup: accessGroup || '' }, metadata)
 	})
 }
 
-export const useHttpFilterVs = () => {
+export const useHttpFilterVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['httpFilterVs'],
-		queryFn: () => httpFilterServiceClient.listHTTPFilter({}, metadata)
+		queryFn: () => httpFilterServiceClient.listHTTPFilters({ accessGroup: accessGroup || '' }, metadata)
 	})
 }
 
-export const useListenerVs = () => {
+export const useListenerVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['listenerVs'],
-		queryFn: () => listenerServiceClient.listListeners({}, metadata)
+		queryFn: () => listenerServiceClient.listListeners({ accessGroup: accessGroup || '' }, metadata)
 	})
 }
 
-export const useRouteVs = () => {
+export const useRouteVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['routeVs'],
-		queryFn: () => routeServiceClient.listRoutes({}, metadata)
+		queryFn: () => routeServiceClient.listRoutes({ accessGroup: accessGroup || '' }, metadata)
 	})
 }
 
-export const useTemplatesVs = () => {
+export const useTemplatesVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['templatesVs'],
-		queryFn: () => templateServiceClient.listVirtualServiceTemplates({}, metadata)
+		queryFn: () => templateServiceClient.listVirtualServiceTemplates({ accessGroup: accessGroup || '' }, metadata)
 	})
 }
 
-export const useNodeListVs = () => {
+export const useNodeListVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['nodeListVs'],
-		queryFn: () => nodeServiceClient.listNodes({}, metadata)
+		queryFn: () => nodeServiceClient.listNodes({ accessGroup: accessGroup || '' }, metadata)
 	})
 }

@@ -6,6 +6,7 @@ metadata:
     envoy.kaasops.io/node-id: test
     envoy.kaasops.io/editable: "true"
   labels:
+    exc-name: vs-http
     exc-access-group: test
 spec:
   listener:

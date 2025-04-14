@@ -24,8 +24,8 @@ export const validationRulesVsForm: Record<
 		if (typeof value !== 'string') return 'The Template field is required'
 		return true
 	},
-	listenerUid: value => {
-		if (typeof value !== 'string') return 'The Listener field is required'
+	listenerUid: () => {
+		// if (typeof value !== 'string') return 'The Listener field is required'
 		return true
 	},
 	virtualHostDomains: value => {

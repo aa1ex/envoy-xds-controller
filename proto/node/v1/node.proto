@@ -12,7 +12,9 @@ message NodeListItem {
   string id = 1;
 }
 
-message ListNodesRequest {}
+message ListNodesRequest {
+  string access_group = 1;
+}
 
 message ListNodesResponse {
   repeated NodeListItem items = 1;

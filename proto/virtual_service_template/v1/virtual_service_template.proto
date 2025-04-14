@@ -21,7 +21,9 @@ message TemplateOption {
   TemplateOptionModifier modifier = 2;
 }
 
-message ListVirtualServiceTemplatesRequest {}
+message ListVirtualServiceTemplatesRequest {
+  string access_group = 1;
+}
 
 message VirtualServiceTemplateListItem {
   string uid = 1;

@@ -5,7 +5,7 @@ package http_filter.v1;
 option go_package = "httpfilterv1";
 
 service HTTPFilterStoreService {
-  rpc ListHTTPFilter(ListHTTPFiltersRequest) returns (ListHTTPFiltersResponse);
+  rpc ListHTTPFilters(ListHTTPFiltersRequest) returns (ListHTTPFiltersResponse);
 }
 
 message HTTPFilterListItem {
@@ -13,7 +13,9 @@ message HTTPFilterListItem {
   string name = 2;
 }
 
-message ListHTTPFiltersRequest {}
+message ListHTTPFiltersRequest {
+  string access_group = 1;
+}
 
 message ListHTTPFiltersResponse {
   repeated HTTPFilterListItem items = 1;

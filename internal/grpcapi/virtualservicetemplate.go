@@ -24,16 +24,22 @@ func NewVirtualServiceTemplateStore(s *store.Store) *VirtualServiceTemplateStore
 	}
 }
 
-func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Context, _ *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error) {
+func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Context, req *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error) {
 	m := s.store.MapVirtualServiceTemplates()
 	list := make([]*v1.VirtualServiceTemplateListItem, 0, len(m))
 	authorizer := getAuthorizerFromContext(ctx)
+
+	accessGroup := req.Msg.AccessGroup
+	if accessGroup == "" {
+		accessGroup = domainGeneral
+	}
+
 	for _, v := range m {
 		item := &v1.VirtualServiceTemplateListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
+		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
 		if err != nil {
 			return nil, err
 		}

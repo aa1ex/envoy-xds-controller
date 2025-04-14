@@ -5,6 +5,7 @@ import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { useAccessLogsVs, useHttpFilterVs, useRouteVs } from '../../api/grpc/hooks/useVirtualService.ts'
+import { useParams } from 'react-router-dom'
 
 interface ISettingsTabVsProps {
 	control: Control<IVirtualServiceForm>
@@ -14,9 +15,10 @@ interface ISettingsTabVsProps {
 }
 
 export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue, errors, watch }) => {
-	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs()
-	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs()
-	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs()
+	const { groupId: group } = useParams()
+	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs(group)
+	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs(group)
+	const { data: routes, isFetching: isFetchingRoutes, isError: isErrorRoutes } = useRouteVs(group)
 
 	return (
 		<>

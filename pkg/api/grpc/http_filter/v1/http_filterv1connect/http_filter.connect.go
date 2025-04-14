@@ -33,14 +33,14 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// HTTPFilterStoreServiceListHTTPFilterProcedure is the fully-qualified name of the
-	// HTTPFilterStoreService's ListHTTPFilter RPC.
-	HTTPFilterStoreServiceListHTTPFilterProcedure = "/http_filter.v1.HTTPFilterStoreService/ListHTTPFilter"
+	// HTTPFilterStoreServiceListHTTPFiltersProcedure is the fully-qualified name of the
+	// HTTPFilterStoreService's ListHTTPFilters RPC.
+	HTTPFilterStoreServiceListHTTPFiltersProcedure = "/http_filter.v1.HTTPFilterStoreService/ListHTTPFilters"
 )
 
 // HTTPFilterStoreServiceClient is a client for the http_filter.v1.HTTPFilterStoreService service.
 type HTTPFilterStoreServiceClient interface {
-	ListHTTPFilter(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error)
+	ListHTTPFilters(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error)
 }
 
 // NewHTTPFilterStoreServiceClient constructs a client for the http_filter.v1.HTTPFilterStoreService
@@ -54,10 +54,10 @@ func NewHTTPFilterStoreServiceClient(httpClient connect.HTTPClient, baseURL stri
 	baseURL = strings.TrimRight(baseURL, "/")
 	hTTPFilterStoreServiceMethods := v1.File_http_filter_v1_http_filter_proto.Services().ByName("HTTPFilterStoreService").Methods()
 	return &hTTPFilterStoreServiceClient{
-		listHTTPFilter: connect.NewClient[v1.ListHTTPFiltersRequest, v1.ListHTTPFiltersResponse](
+		listHTTPFilters: connect.NewClient[v1.ListHTTPFiltersRequest, v1.ListHTTPFiltersResponse](
 			httpClient,
-			baseURL+HTTPFilterStoreServiceListHTTPFilterProcedure,
-			connect.WithSchema(hTTPFilterStoreServiceMethods.ByName("ListHTTPFilter")),
+			baseURL+HTTPFilterStoreServiceListHTTPFiltersProcedure,
+			connect.WithSchema(hTTPFilterStoreServiceMethods.ByName("ListHTTPFilters")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -65,18 +65,18 @@ func NewHTTPFilterStoreServiceClient(httpClient connect.HTTPClient, baseURL stri
 
 // hTTPFilterStoreServiceClient implements HTTPFilterStoreServiceClient.
 type hTTPFilterStoreServiceClient struct {
-	listHTTPFilter *connect.Client[v1.ListHTTPFiltersRequest, v1.ListHTTPFiltersResponse]
+	listHTTPFilters *connect.Client[v1.ListHTTPFiltersRequest, v1.ListHTTPFiltersResponse]
 }
 
-// ListHTTPFilter calls http_filter.v1.HTTPFilterStoreService.ListHTTPFilter.
-func (c *hTTPFilterStoreServiceClient) ListHTTPFilter(ctx context.Context, req *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error) {
-	return c.listHTTPFilter.CallUnary(ctx, req)
+// ListHTTPFilters calls http_filter.v1.HTTPFilterStoreService.ListHTTPFilters.
+func (c *hTTPFilterStoreServiceClient) ListHTTPFilters(ctx context.Context, req *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error) {
+	return c.listHTTPFilters.CallUnary(ctx, req)
 }
 
 // HTTPFilterStoreServiceHandler is an implementation of the http_filter.v1.HTTPFilterStoreService
 // service.
 type HTTPFilterStoreServiceHandler interface {
-	ListHTTPFilter(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error)
+	ListHTTPFilters(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error)
 }
 
 // NewHTTPFilterStoreServiceHandler builds an HTTP handler from the service implementation. It
@@ -86,16 +86,16 @@ type HTTPFilterStoreServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewHTTPFilterStoreServiceHandler(svc HTTPFilterStoreServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	hTTPFilterStoreServiceMethods := v1.File_http_filter_v1_http_filter_proto.Services().ByName("HTTPFilterStoreService").Methods()
-	hTTPFilterStoreServiceListHTTPFilterHandler := connect.NewUnaryHandler(
-		HTTPFilterStoreServiceListHTTPFilterProcedure,
-		svc.ListHTTPFilter,
-		connect.WithSchema(hTTPFilterStoreServiceMethods.ByName("ListHTTPFilter")),
+	hTTPFilterStoreServiceListHTTPFiltersHandler := connect.NewUnaryHandler(
+		HTTPFilterStoreServiceListHTTPFiltersProcedure,
+		svc.ListHTTPFilters,
+		connect.WithSchema(hTTPFilterStoreServiceMethods.ByName("ListHTTPFilters")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/http_filter.v1.HTTPFilterStoreService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case HTTPFilterStoreServiceListHTTPFilterProcedure:
-			hTTPFilterStoreServiceListHTTPFilterHandler.ServeHTTP(w, r)
+		case HTTPFilterStoreServiceListHTTPFiltersProcedure:
+			hTTPFilterStoreServiceListHTTPFiltersHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -105,6 +105,6 @@ func NewHTTPFilterStoreServiceHandler(svc HTTPFilterStoreServiceHandler, opts ..
 // UnimplementedHTTPFilterStoreServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedHTTPFilterStoreServiceHandler struct{}
 
-func (UnimplementedHTTPFilterStoreServiceHandler) ListHTTPFilter(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("http_filter.v1.HTTPFilterStoreService.ListHTTPFilter is not implemented"))
+func (UnimplementedHTTPFilterStoreServiceHandler) ListHTTPFilters(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("http_filter.v1.HTTPFilterStoreService.ListHTTPFilters is not implemented"))
 }

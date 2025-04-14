@@ -40,6 +40,10 @@ export declare const ListenerListItemSchema: GenMessage<ListenerListItem>;
  * @generated from message listener.v1.ListListenersRequest
  */
 export declare type ListListenersRequest = Message<"listener.v1.ListListenersRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**

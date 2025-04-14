@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file node/v1/node.proto.
  */
 export const file_node_v1_node: GenFile = /*@__PURE__*/
-  fileDesc("ChJub2RlL3YxL25vZGUucHJvdG8SB25vZGUudjEiGgoMTm9kZUxpc3RJdGVtEgoKAmlkGAEgASgJIhIKEExpc3ROb2Rlc1JlcXVlc3QiOQoRTGlzdE5vZGVzUmVzcG9uc2USJAoFaXRlbXMYASADKAsyFS5ub2RlLnYxLk5vZGVMaXN0SXRlbTJWChBOb2RlU3RvcmVTZXJ2aWNlEkIKCUxpc3ROb2RlcxIZLm5vZGUudjEuTGlzdE5vZGVzUmVxdWVzdBoaLm5vZGUudjEuTGlzdE5vZGVzUmVzcG9uc2VCmgEKC2NvbS5ub2RlLnYxQglOb2RlUHJvdG9QAVpDZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9ub2RlL3YxO25vZGV2MaICA05YWKoCB05vZGUuVjHKAgdOb2RlXFYx4gITTm9kZVxWMVxHUEJNZXRhZGF0YeoCCE5vZGU6OlYxYgZwcm90bzM");
+  fileDesc("ChJub2RlL3YxL25vZGUucHJvdG8SB25vZGUudjEiGgoMTm9kZUxpc3RJdGVtEgoKAmlkGAEgASgJIigKEExpc3ROb2Rlc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIjkKEUxpc3ROb2Rlc1Jlc3BvbnNlEiQKBWl0ZW1zGAEgAygLMhUubm9kZS52MS5Ob2RlTGlzdEl0ZW0yVgoQTm9kZVN0b3JlU2VydmljZRJCCglMaXN0Tm9kZXMSGS5ub2RlLnYxLkxpc3ROb2Rlc1JlcXVlc3QaGi5ub2RlLnYxLkxpc3ROb2Rlc1Jlc3BvbnNlQpoBCgtjb20ubm9kZS52MUIJTm9kZVByb3RvUAFaQ2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvbm9kZS92MTtub2RldjGiAgNOWFiqAgdOb2RlLlYxygIHTm9kZVxWMeICE05vZGVcVjFcR1BCTWV0YWRhdGHqAghOb2RlOjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message node.v1.NodeListItem
@@ -33,6 +33,10 @@ export const NodeListItemSchema: GenMessage<NodeListItem> = /*@__PURE__*/
  * @generated from message node.v1.ListNodesRequest
  */
 export type ListNodesRequest = Message<"node.v1.ListNodesRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**

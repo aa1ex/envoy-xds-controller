@@ -21,7 +21,9 @@ service ListenerStoreService {
   rpc ListListeners(ListListenersRequest) returns (ListListenersResponse);
 }
 
-message ListListenersRequest {}
+message ListListenersRequest {
+  string access_group = 1;
+}
 
 message ListListenersResponse {
   repeated ListenerListItem items = 1;

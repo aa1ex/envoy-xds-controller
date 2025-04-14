@@ -91,13 +91,9 @@ export const useConfigTable = ({
 	const columns = useMemo<MRT_ColumnDef<VirtualServiceListItem>[]>(
 		() => [
 			{
-				//TODO их может быт несколько
-				accessorKey: 'nodeIds',
-				header: 'Node IDs',
-				minSize: 250,
-				size: 300,
-				Cell: ({ renderedCellValue }) =>
-					Array.isArray(renderedCellValue) && <NodeIdsChip nodeIsData={renderedCellValue} />
+				accessorKey: 'uid',
+				header: 'UID',
+				minSize: 350
 			},
 			{
 				accessorKey: 'name',
@@ -105,14 +101,13 @@ export const useConfigTable = ({
 				minSize: 200
 			},
 			{
-				accessorKey: 'accessGroup',
-				header: 'Access Group',
-				minSize: 200
-			},
-			{
-				accessorKey: 'uid',
-				header: 'UID',
-				minSize: 350
+				//TODO их может быт несколько
+				accessorKey: 'nodeIds',
+				header: 'Node IDs',
+				minSize: 250,
+				size: 300,
+				Cell: ({ renderedCellValue }) =>
+					Array.isArray(renderedCellValue) && <NodeIdsChip nodeIsData={renderedCellValue} />
 			}
 		],
 		[]

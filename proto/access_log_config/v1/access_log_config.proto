@@ -13,7 +13,9 @@ message AccessLogConfigListItem {
   string name = 2;
 }
 
-message ListAccessLogConfigsRequest {}
+message ListAccessLogConfigsRequest {
+  string access_group = 1;
+}
 
 message ListAccessLogConfigsResponse {
   repeated AccessLogConfigListItem items = 1;

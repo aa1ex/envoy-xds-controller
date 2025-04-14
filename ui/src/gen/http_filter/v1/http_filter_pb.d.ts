@@ -35,6 +35,10 @@ export declare const HTTPFilterListItemSchema: GenMessage<HTTPFilterListItem>;
  * @generated from message http_filter.v1.ListHTTPFiltersRequest
  */
 export declare type ListHTTPFiltersRequest = Message<"http_filter.v1.ListHTTPFiltersRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**
@@ -64,9 +68,9 @@ export declare const ListHTTPFiltersResponseSchema: GenMessage<ListHTTPFiltersRe
  */
 export declare const HTTPFilterStoreService: GenService<{
   /**
-   * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilter
+   * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilters
    */
-  listHTTPFilter: {
+  listHTTPFilters: {
     methodKind: "unary";
     input: typeof ListHTTPFiltersRequestSchema;
     output: typeof ListHTTPFiltersResponseSchema;

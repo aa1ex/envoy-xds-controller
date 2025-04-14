@@ -35,6 +35,10 @@ export declare const TemplateOptionSchema: GenMessage<TemplateOption>;
  * @generated from message virtual_service_template.v1.ListVirtualServiceTemplatesRequest
  */
 export declare type ListVirtualServiceTemplatesRequest = Message<"virtual_service_template.v1.ListVirtualServiceTemplatesRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**

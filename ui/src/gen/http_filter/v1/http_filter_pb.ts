@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file http_filter/v1/http_filter.proto.
  */
 export const file_http_filter_v1_http_filter: GenFile = /*@__PURE__*/
-  fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiLwoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIhgKFkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QiTAoXTGlzdEhUVFBGaWx0ZXJzUmVzcG9uc2USMQoFaXRlbXMYASADKAsyIi5odHRwX2ZpbHRlci52MS5IVFRQRmlsdGVyTGlzdEl0ZW0yewoWSFRUUEZpbHRlclN0b3JlU2VydmljZRJhCg5MaXN0SFRUUEZpbHRlchImLmh0dHBfZmlsdGVyLnYxLkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QaJy5odHRwX2ZpbHRlci52MS5MaXN0SFRUUEZpbHRlcnNSZXNwb25zZULNAQoSY29tLmh0dHBfZmlsdGVyLnYxQg9IdHRwRmlsdGVyUHJvdG9QAVpRZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9odHRwX2ZpbHRlci92MTtodHRwX2ZpbHRlcnYxogIDSFhYqgINSHR0cEZpbHRlci5WMcoCDUh0dHBGaWx0ZXJcVjHiAhlIdHRwRmlsdGVyXFYxXEdQQk1ldGFkYXRh6gIOSHR0cEZpbHRlcjo6VjFiBnByb3RvMw");
+  fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiLwoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIi4KFkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIkwKF0xpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlEjEKBWl0ZW1zGAEgAygLMiIuaHR0cF9maWx0ZXIudjEuSFRUUEZpbHRlckxpc3RJdGVtMnwKFkhUVFBGaWx0ZXJTdG9yZVNlcnZpY2USYgoPTGlzdEhUVFBGaWx0ZXJzEiYuaHR0cF9maWx0ZXIudjEuTGlzdEhUVFBGaWx0ZXJzUmVxdWVzdBonLmh0dHBfZmlsdGVyLnYxLkxpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlQs0BChJjb20uaHR0cF9maWx0ZXIudjFCD0h0dHBGaWx0ZXJQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2h0dHBfZmlsdGVyL3YxO2h0dHBfZmlsdGVydjGiAgNIWFiqAg1IdHRwRmlsdGVyLlYxygINSHR0cEZpbHRlclxWMeICGUh0dHBGaWx0ZXJcVjFcR1BCTWV0YWRhdGHqAg5IdHRwRmlsdGVyOjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message http_filter.v1.HTTPFilterListItem
@@ -38,6 +38,10 @@ export const HTTPFilterListItemSchema: GenMessage<HTTPFilterListItem> = /*@__PUR
  * @generated from message http_filter.v1.ListHTTPFiltersRequest
  */
 export type ListHTTPFiltersRequest = Message<"http_filter.v1.ListHTTPFiltersRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**
@@ -69,9 +73,9 @@ export const ListHTTPFiltersResponseSchema: GenMessage<ListHTTPFiltersResponse> 
  */
 export const HTTPFilterStoreService: GenService<{
   /**
-   * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilter
+   * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilters
    */
-  listHTTPFilter: {
+  listHTTPFilters: {
     methodKind: "unary";
     input: typeof ListHTTPFiltersRequestSchema;
     output: typeof ListHTTPFiltersResponseSchema;

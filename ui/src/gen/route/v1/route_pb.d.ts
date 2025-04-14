@@ -35,6 +35,10 @@ export declare const RouteListItemSchema: GenMessage<RouteListItem>;
  * @generated from message route.v1.ListRoutesRequest
  */
 export declare type ListRoutesRequest = Message<"route.v1.ListRoutesRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**

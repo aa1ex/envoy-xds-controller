@@ -30,6 +30,10 @@ export declare const NodeListItemSchema: GenMessage<NodeListItem>;
  * @generated from message node.v1.ListNodesRequest
  */
 export declare type ListNodesRequest = Message<"node.v1.ListNodesRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**

@@ -53,7 +53,7 @@ func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connec
 		}
 		vs := &v1.VirtualServiceListItem{
 			Uid:         string(v.UID),
-			Name:        v.Name,
+			Name:        v.GetLabelName(),
 			NodeIds:     v.GetNodeIDs(),
 			AccessGroup: v.GetAccessGroup(),
 		}
@@ -90,19 +90,20 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 	}
 
 	vs := &v1alpha1.VirtualService{}
-	vs.Name = req.Msg.Name
-	vs.Labels = make(map[string]string)
+	vs.Name = req.Msg.AccessGroup + "-" + req.Msg.Name // CR name
 	vs.SetEditable(true)
+	vs.SetLabelName(req.Msg.Name)
+	vs.SetNamespace(req.Msg.Name)
+	vs.SetAccessGroup(req.Msg.AccessGroup)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
-	vs.SetAccessGroup(req.Msg.AccessGroup)
 
 	if req.Msg.TemplateUid != "" {
 		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
 		if vst == nil {
 			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
 		}
-		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(vst.Name, ActionListVirtualServiceTemplates)
+		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, vst.Name, ActionListVirtualServiceTemplates)
 		if err != nil {
 			return nil, err
 		}
@@ -130,7 +131,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 		if listener == nil {
 			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
 		}
-		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(listener.Name, ActionListListeners)
+		isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, listener.Name, ActionListListeners)
 		if err != nil {
 			return nil, err
 		}
@@ -160,7 +161,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			if alc == nil {
 				return nil, fmt.Errorf("access log config uid '%s' not found", alcUID)
 			}
-			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(alc.Name, ActionListAccessLogConfigs)
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, alc.Name, ActionListAccessLogConfigs)
 			if err != nil {
 				return nil, err
 			}
@@ -180,7 +181,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			if route == nil {
 				return nil, fmt.Errorf("route uid '%s' not found", uid)
 			}
-			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(route.Name, ActionListRoutes)
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, route.Name, ActionListRoutes)
 			if err != nil {
 				return nil, err
 			}
@@ -200,7 +201,7 @@ func (s *VirtualServiceStore) CreateVirtualService(ctx context.Context, req *con
 			if filter == nil {
 				return nil, fmt.Errorf("http filter uid '%s' not found", uid)
 			}
-			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(filter.Name, ActionListListeners)
+			isAllowed, err = authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, filter.Name, ActionListHTTPFilters)
 			if err != nil {
 				return nil, err
 			}
@@ -245,6 +246,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		return nil, fmt.Errorf("virtual service uid '%s' is not editable", req.Msg.Uid)
 	}
 
+	authorizer := getAuthorizerFromContext(ctx)
+
 	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
@@ -252,6 +255,13 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 	if req.Msg.TemplateUid != "" {
 		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
 		if vst == nil {
+			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
+		}
+		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), vst.Name, ActionListVirtualServiceTemplates)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
 			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
 		}
 		vs.Spec.Template = &v1alpha1.ResourceRef{
@@ -277,6 +287,13 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		if listener == nil {
 			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
 		}
+		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), listener.Name, ActionListListeners)
+		if err != nil {
+			return nil, err
+		}
+		if !isAllowed {
+			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
+		}
 		vs.Spec.Listener = &v1alpha1.ResourceRef{
 			Name:      listener.Name,
 			Namespace: &listener.Namespace,
@@ -300,6 +317,13 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 			if alc == nil {
 				return nil, fmt.Errorf("access log config uid '%s' not found", alcUID)
 			}
+			isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), alc.Name, ActionListAccessLogConfigs)
+			if err != nil {
+				return nil, err
+			}
+			if !isAllowed {
+				return nil, fmt.Errorf("access log uid '%s' not found", req.Msg.ListenerUid)
+			}
 			vs.Spec.AccessLogConfig = &v1alpha1.ResourceRef{
 				Name:      alc.Name,
 				Namespace: &alc.Namespace,
@@ -313,6 +337,13 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 			route := s.store.GetRouteByUID(uid)
 			if route == nil {
 				return nil, fmt.Errorf("route uid '%s' not found", uid)
+			}
+			isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), route.Name, ActionListRoutes)
+			if err != nil {
+				return nil, err
+			}
+			if !isAllowed {
+				return nil, fmt.Errorf("route uid '%s' not found", req.Msg.ListenerUid)
 			}
 			vs.Spec.AdditionalRoutes = append(vs.Spec.AdditionalRoutes, &v1alpha1.ResourceRef{
 				Name:      route.Name,
@@ -329,6 +360,13 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 			filter := s.store.GetHTTPFilterByUID(uid)
 			if filter == nil {
 				return nil, fmt.Errorf("http filter uid '%s' not found", uid)
+			}
+			isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), filter.Name, ActionListHTTPFilters)
+			if err != nil {
+				return nil, err
+			}
+			if !isAllowed {
+				return nil, fmt.Errorf("http filter uid '%s' not found", req.Msg.ListenerUid)
 			}
 			vs.Spec.AdditionalHttpFilters = append(vs.Spec.AdditionalHttpFilters, &v1alpha1.ResourceRef{
 				Name:      filter.Name,
@@ -370,7 +408,7 @@ func (s *VirtualServiceStore) DeleteVirtualService(ctx context.Context, req *con
 	return connect.NewResponse(&v1.DeleteVirtualServiceResponse{}), nil
 }
 
-func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connect.Request[v1.GetVirtualServiceRequest]) (*connect.Response[v1.GetVirtualServiceResponse], error) {
+func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.Request[v1.GetVirtualServiceRequest]) (*connect.Response[v1.GetVirtualServiceResponse], error) {
 	if req.Msg.Uid == "" {
 		return nil, fmt.Errorf("uid is required")
 	}
@@ -380,7 +418,7 @@ func (s *VirtualServiceStore) GetVirtualService(ctx context.Context, req *connec
 	}
 	resp := &v1.GetVirtualServiceResponse{
 		Uid:         string(vs.UID),
-		Name:        vs.Name,
+		Name:        vs.GetLabelName(),
 		NodeIds:     vs.GetNodeIDs(),
 		AccessGroup: vs.GetAccessGroup(),
 		IsEditable:  vs.IsEditable(),

@@ -22,17 +22,23 @@ func NewListenerStore(s *store.Store) *ListenerStore {
 	}
 }
 
-func (s *ListenerStore) ListListeners(ctx context.Context, _ *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error) {
+func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error) {
 	m := s.store.MapListeners()
 	list := make([]*v1.ListenerListItem, 0, len(m))
 	authorizer := getAuthorizerFromContext(ctx)
+
+	accessGroup := req.Msg.AccessGroup
+	if accessGroup == "" {
+		accessGroup = domainGeneral
+	}
+
 	for _, v := range m {
 		item := &v1.ListenerListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 			Type: listenerType(v),
 		}
-		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
+		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
 		if err != nil {
 			return nil, err
 		}

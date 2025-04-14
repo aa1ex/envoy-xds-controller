@@ -35,6 +35,10 @@ export declare const AccessLogConfigListItemSchema: GenMessage<AccessLogConfigLi
  * @generated from message access_log_config.v1.ListAccessLogConfigsRequest
  */
 export declare type ListAccessLogConfigsRequest = Message<"access_log_config.v1.ListAccessLogConfigsRequest"> & {
+  /**
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
 };
 
 /**

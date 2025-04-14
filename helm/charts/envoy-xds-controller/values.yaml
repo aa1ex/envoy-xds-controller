@@ -192,6 +192,8 @@ auth:
       users:
         - "node1"
         - "node2"
+      testers:
+        - "test"
 
 config:
   nodeIds:

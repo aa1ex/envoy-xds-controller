@@ -19,8 +19,13 @@ func NewAccessLogConfigStore(s *store.Store) *AccessLogConfigStore {
 	}
 }
 
-func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, _ *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
+func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
 	authorizer := getAuthorizerFromContext(ctx)
+
+	accessGroup := req.Msg.AccessGroup
+	if accessGroup == "" {
+		accessGroup = domainGeneral
+	}
 
 	m := s.store.MapAccessLogs()
 	list := make([]*v1.AccessLogConfigListItem, 0, len(m))
@@ -29,7 +34,7 @@ func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, _ *conn
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
+		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
 		if err != nil {
 			return nil, err
 		}

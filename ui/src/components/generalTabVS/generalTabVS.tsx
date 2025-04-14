@@ -5,6 +5,7 @@ import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
 import { SelectNodeVs } from '../selectNodeVs/selectNodeVs.tsx'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { useListenerVs, useNodeListVs, useTemplatesVs } from '../../api/grpc/hooks/useVirtualService.ts'
+import { useParams } from 'react-router-dom'
 
 interface IGeneralTabVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -14,9 +15,11 @@ interface IGeneralTabVsProps {
 }
 
 export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, errors, isEdit }) => {
-	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs()
-	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs()
-	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVs()
+	const { groupId } = useParams()
+
+	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs(groupId)
+	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs(groupId)
+	const { data: listeners, isFetching: isFetchingListeners, isError: isErrorListeners } = useListenerVs(groupId)
 
 	return (
 		<>

@@ -6,6 +6,7 @@ metadata:
     envoy.kaasops.io/node-id: dev
     envoy.kaasops.io/editable: "true"
   labels:
+    exc-name: vs-from-template
     exc-access-group: dev
 spec:
   template:

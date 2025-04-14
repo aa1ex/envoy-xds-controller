@@ -5,6 +5,6 @@
 import { HTTPFilterStoreService } from "./http_filter_pb";
 
 /**
- * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilter
+ * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilters
  */
-export const listHTTPFilter = HTTPFilterStoreService.method.listHTTPFilter;
+export const listHTTPFilters = HTTPFilterStoreService.method.listHTTPFilters;

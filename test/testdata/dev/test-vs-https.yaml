@@ -5,6 +5,7 @@ metadata:
   annotations:
     envoy.kaasops.io/node-id: test
   labels:
+    exc-name: virtual-service
     exc-access-group: test
 spec:
   listener:

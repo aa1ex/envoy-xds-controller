@@ -68,7 +68,7 @@ func (v *VirtualServiceCustomValidator) ValidateCreate(ctx context.Context, obj 
 	if !ok {
 		return nil, fmt.Errorf("expected a VirtualService object but got %T", obj)
 	}
-	virtualservicelog.Info("Validation for VirtualService upon creation", "name", virtualservice.GetName())
+	virtualservicelog.Info("Validation for VirtualService upon creation", "name", virtualservice.GetLabelName())
 
 	if err := v.validateVirtualService(ctx, virtualservice); err != nil {
 		return nil, fmt.Errorf("failed to validate VirtualService %s: %w", virtualservice.Name, err)
@@ -83,7 +83,7 @@ func (v *VirtualServiceCustomValidator) ValidateUpdate(ctx context.Context, oldO
 	if !ok {
 		return nil, fmt.Errorf("expected a VirtualService object for the newObj but got %T", newObj)
 	}
-	virtualservicelog.Info("Validation for VirtualService upon update", "name", virtualservice.GetName())
+	virtualservicelog.Info("Validation for VirtualService upon update", "name", virtualservice.GetLabelName())
 
 	if err := v.validateVirtualService(ctx, virtualservice); err != nil {
 		return nil, fmt.Errorf("failed to validate VirtualService %s: %w", virtualservice.Name, err)

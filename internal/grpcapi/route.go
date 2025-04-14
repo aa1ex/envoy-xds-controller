@@ -19,16 +19,22 @@ func NewRouteStore(s *store.Store) *RouteStore {
 	}
 }
 
-func (s *RouteStore) ListRoutes(ctx context.Context, _ *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error) {
+func (s *RouteStore) ListRoutes(ctx context.Context, req *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error) {
 	m := s.store.MapRoutes()
 	list := make([]*v1.RouteListItem, 0, len(m))
 	authorizer := getAuthorizerFromContext(ctx)
+
+	accessGroup := req.Msg.AccessGroup
+	if accessGroup == "" {
+		accessGroup = domainGeneral
+	}
+
 	for _, v := range m {
 		item := &v1.RouteListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
+		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
 		if err != nil {
 			return nil, err
 		}

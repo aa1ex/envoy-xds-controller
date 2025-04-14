@@ -13,7 +13,9 @@ message RouteListItem {
   string name = 2;
 }
 
-message ListRoutesRequest {}
+message ListRoutesRequest {
+  string access_group = 1;
+}
 
 message ListRoutesResponse {
   repeated RouteListItem items = 1;
