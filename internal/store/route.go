@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetRoute(r *v1alpha1.Route) {
@@ -16,7 +17,7 @@ func (s *Store) SetRoute(r *v1alpha1.Route) {
 func (s *Store) GetRoute(name helpers.NamespacedName) *v1alpha1.Route {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	r, _ := s.routes[name]
+	r := s.routes[name]
 	return r
 }
 

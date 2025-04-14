@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetCluster(c *v1alpha1.Cluster) {
@@ -16,7 +17,7 @@ func (s *Store) SetCluster(c *v1alpha1.Cluster) {
 func (s *Store) GetCluster(name helpers.NamespacedName) *v1alpha1.Cluster {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	c, _ := s.clusters[name]
+	c := s.clusters[name]
 	return c
 }
 

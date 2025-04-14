@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetHTTPFilter(hf *v1alpha1.HttpFilter) {
@@ -16,7 +17,7 @@ func (s *Store) SetHTTPFilter(hf *v1alpha1.HttpFilter) {
 func (s *Store) GetHTTPFilter(name helpers.NamespacedName) *v1alpha1.HttpFilter {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	hf, _ := s.httpFilters[name]
+	hf := s.httpFilters[name]
 	return hf
 }
 
@@ -54,6 +55,6 @@ func (s *Store) updateHTTPFilterByUIDMap() {
 func (s *Store) GetHTTPFilterByUID(uid string) *v1alpha1.HttpFilter {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	hf, _ := s.httpFilterByUID[uid]
+	hf := s.httpFilterByUID[uid]
 	return hf
 }

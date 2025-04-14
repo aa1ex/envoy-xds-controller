@@ -1,11 +1,12 @@
 package store
 
 import (
+	"maps"
+	"strings"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	corev1 "k8s.io/api/core/v1"
-	"maps"
-	"strings"
 )
 
 func (s *Store) SetSecret(secret *corev1.Secret) {
@@ -18,7 +19,7 @@ func (s *Store) SetSecret(secret *corev1.Secret) {
 func (s *Store) GetSecret(name helpers.NamespacedName) *corev1.Secret {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	secret, _ := s.secrets[name]
+	secret := s.secrets[name]
 	return secret
 }
 

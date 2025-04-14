@@ -1,12 +1,13 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/route/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/route/v1/routev1connect"
-	"sort"
 )
 
 type RouteStore struct {
@@ -23,7 +24,7 @@ func NewRouteStore(s *store.Store) *RouteStore {
 func (s *RouteStore) ListRoutes(ctx context.Context, req *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error) {
 	m := s.store.MapRoutes()
 	list := make([]*v1.RouteListItem, 0, len(m))
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {

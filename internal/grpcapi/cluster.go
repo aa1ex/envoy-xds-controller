@@ -1,12 +1,13 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/cluster/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/cluster/v1/clusterv1connect"
-	"sort"
 )
 
 type ClusterStore struct {

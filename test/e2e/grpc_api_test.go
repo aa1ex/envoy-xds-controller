@@ -1,12 +1,13 @@
 package e2e
 
 import (
-	"github.com/kaasops/envoy-xds-controller/test/utils"
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/kaasops/envoy-xds-controller/test/utils"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 func grpcAPIContext() {

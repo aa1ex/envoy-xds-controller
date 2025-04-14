@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetVirtualServiceTemplate(vst *v1alpha1.VirtualServiceTemplate) {
@@ -16,7 +17,7 @@ func (s *Store) SetVirtualServiceTemplate(vst *v1alpha1.VirtualServiceTemplate) 
 func (s *Store) GetVirtualServiceTemplate(name helpers.NamespacedName) *v1alpha1.VirtualServiceTemplate {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	vst, _ := s.virtualServiceTemplates[name]
+	vst := s.virtualServiceTemplates[name]
 	return vst
 }
 
@@ -54,6 +55,6 @@ func (s *Store) updateVirtualServiceTemplateByUIDMap() {
 func (s *Store) GetVirtualServiceTemplateByUID(uid string) *v1alpha1.VirtualServiceTemplate {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	vst, _ := s.virtualServiceTemplateByUID[uid]
+	vst := s.virtualServiceTemplateByUID[uid]
 	return vst
 }

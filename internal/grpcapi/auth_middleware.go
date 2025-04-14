@@ -1,8 +1,10 @@
 package grpcapi
 
 import (
-	"connectrpc.com/authn"
 	"context"
+	"net/http"
+
+	"connectrpc.com/authn"
 	"github.com/casbin/casbin/v2"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_group/v1/access_groupv1connect"
@@ -14,7 +16,6 @@ import (
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/route/v1/routev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1/virtual_service_templatev1connect"
-	"net/http"
 )
 
 const (
@@ -184,7 +185,7 @@ func lookupAction(route string) string {
 	}
 }
 
-func getAuthorizerFromContext(ctx context.Context) IAuthorizer {
+func GetAuthorizerFromContext(ctx context.Context) IAuthorizer {
 	tmp := authn.GetInfo(ctx)
 	if tmp == nil {
 		return stubA

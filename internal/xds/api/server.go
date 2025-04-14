@@ -1,8 +1,15 @@
 package api
 
 import (
-	"connectrpc.com/grpcreflect"
 	"fmt"
+	"net"
+	"net/http"
+	"strconv"
+	"time"
+
+	"github.com/kaasops/envoy-xds-controller/internal/grpcapi/virtualservice"
+
+	"connectrpc.com/grpcreflect"
 	"github.com/casbin/casbin/v2"
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
@@ -19,11 +26,7 @@ import (
 	"github.com/rs/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
-	"net"
-	"net/http"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strconv"
-	"time"
 
 	ginzap "github.com/gin-contrib/zap"
 	"go.uber.org/zap"
@@ -122,7 +125,7 @@ func (c *Client) Run(port int, cacheAPIScheme, cacheAPIAddr string) error {
 func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targetNs string) error {
 	mux := http.NewServeMux()
 
-	path, handler := virtual_servicev1connect.NewVirtualServiceStoreServiceHandler(grpcapi.NewVirtualServiceStore(s, mgrClient, targetNs))
+	path, handler := virtual_servicev1connect.NewVirtualServiceStoreServiceHandler(virtualservice.NewVirtualServiceStore(s, mgrClient, targetNs))
 	mux.Handle(path, handler)
 	path, handler = virtual_service_templatev1connect.NewVirtualServiceTemplateStoreServiceHandler(grpcapi.NewVirtualServiceTemplateStore(s))
 	mux.Handle(path, handler)

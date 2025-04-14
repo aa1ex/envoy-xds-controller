@@ -1,12 +1,13 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_log_config/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/access_log_config/v1/access_log_configv1connect"
-	"sort"
 )
 
 type AccessLogConfigStore struct {
@@ -21,7 +22,7 @@ func NewAccessLogConfigStore(s *store.Store) *AccessLogConfigStore {
 }
 
 func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {

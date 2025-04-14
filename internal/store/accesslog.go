@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetAccessLog(a *v1alpha1.AccessLogConfig) {
@@ -16,7 +17,7 @@ func (s *Store) SetAccessLog(a *v1alpha1.AccessLogConfig) {
 func (s *Store) GetAccessLog(name helpers.NamespacedName) *v1alpha1.AccessLogConfig {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	a, _ := s.accessLogs[name]
+	a := s.accessLogs[name]
 	return a
 }
 

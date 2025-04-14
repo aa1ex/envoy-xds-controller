@@ -1,17 +1,18 @@
 package grpcapi
 
 import (
-	"connectrpc.com/authn"
-	"connectrpc.com/connect"
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
+
+	"connectrpc.com/authn"
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1/virtual_service_templatev1connect"
 	"k8s.io/apimachinery/pkg/runtime"
-	"sort"
 )
 
 type VirtualServiceTemplateStore struct {
@@ -28,7 +29,7 @@ func NewVirtualServiceTemplateStore(s *store.Store) *VirtualServiceTemplateStore
 func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Context, req *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error) {
 	m := s.store.MapVirtualServiceTemplates()
 	list := make([]*v1.VirtualServiceTemplateListItem, 0, len(m))
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
@@ -56,7 +57,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 }
 
 func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 	isAllowed, err := authorizer.Authorize(domainGeneral, "*")
 	if err != nil {
 		return nil, err

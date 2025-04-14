@@ -1,11 +1,12 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/node/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/node/v1/nodev1connect"
-	"sort"
 )
 
 type NodeStore struct {
@@ -19,7 +20,7 @@ func NewNodeStore(nodeIDs []string) *NodeStore {
 
 func (s *NodeStore) ListNodes(ctx context.Context, req *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error) {
 	list := make([]*v1.NodeListItem, 0, len(s.nodeIDs))
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {

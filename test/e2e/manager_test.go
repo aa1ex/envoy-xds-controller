@@ -2,11 +2,12 @@ package e2e
 
 import (
 	"fmt"
+	"os/exec"
+	"time"
+
 	"github.com/kaasops/envoy-xds-controller/test/utils"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"os/exec"
-	"time"
 )
 
 func managerContext(controllerPodName *string) func() {

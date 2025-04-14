@@ -137,8 +137,17 @@ func main() {
 	flag.StringVar(&cacheAPIAddr, "cache-api-addr", "localhost:9999", "Cache API address")
 	flag.IntVar(&grpcAPIPort, "grpc-api-port", 10000, "GRPC API port")
 	flag.BoolVar(&devMode, "development", false, "Enable dev mode")
-	flag.StringVar(&accessControlModelPath, "access-control-model-path", "/var/exc/access-control/model.conf", "Access Control Model Path")
-	flag.StringVar(&accessControlPolicyPath, "access-control-policy-path", "/var/exc/access-control/policy.csv", "Access Control Policy Path")
+	flag.StringVar(&accessControlModelPath,
+		"access-control-model-path",
+		"/var/exc/access-control/model.conf",
+		"Access Control Model Path",
+	)
+	flag.StringVar(
+		&accessControlPolicyPath,
+		"access-control-policy-path",
+		"/var/exc/access-control/policy.csv",
+		"Access Control Policy Path",
+	)
 	opts := zap.Options{
 		Development: devMode,
 	}

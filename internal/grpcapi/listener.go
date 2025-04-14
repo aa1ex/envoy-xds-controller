@@ -1,15 +1,16 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	listenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/listener/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/listener/v1/listenerv1connect"
-	"sort"
 )
 
 type ListenerStore struct {
@@ -26,7 +27,7 @@ func NewListenerStore(s *store.Store) *ListenerStore {
 func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error) {
 	m := s.store.MapListeners()
 	list := make([]*v1.ListenerListItem, 0, len(m))
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {

@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetListener(l *v1alpha1.Listener) {
@@ -16,7 +17,7 @@ func (s *Store) SetListener(l *v1alpha1.Listener) {
 func (s *Store) GetListener(name helpers.NamespacedName) *v1alpha1.Listener {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	l, _ := s.listeners[name]
+	l := s.listeners[name]
 	return l
 }
 

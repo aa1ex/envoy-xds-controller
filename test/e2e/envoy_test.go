@@ -2,15 +2,17 @@ package e2e
 
 import (
 	"encoding/json"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	"os/exec"
+	"strings"
+	"time"
 
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/test/utils"
 	"github.com/tidwall/gjson"
-	"os/exec"
-	"strings"
-	"time"
 )
 
 func envoyContext() {

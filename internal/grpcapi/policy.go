@@ -1,12 +1,13 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/policy/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/policy/v1/policyv1connect"
-	"sort"
 )
 
 type PolicyStore struct {
@@ -23,7 +24,7 @@ func NewPolicyStore(s *store.Store) *PolicyStore {
 func (s *PolicyStore) ListPolicies(ctx context.Context, _ *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error) {
 	m := s.store.MapPolicies()
 	list := make([]*v1.PolicyListItem, 0, len(m))
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 	for _, v := range m {
 		item := &v1.PolicyListItem{
 			Uid:  string(v.UID),

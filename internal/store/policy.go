@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetPolicy(p *v1alpha1.Policy) {
@@ -15,7 +16,7 @@ func (s *Store) SetPolicy(p *v1alpha1.Policy) {
 func (s *Store) GetPolicy(name helpers.NamespacedName) *v1alpha1.Policy {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	p, _ := s.policies[name]
+	p := s.policies[name]
 	return p
 }
 

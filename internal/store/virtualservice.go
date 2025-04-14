@@ -1,9 +1,10 @@
 package store
 
 import (
+	"maps"
+
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
-	"maps"
 )
 
 func (s *Store) SetVirtualService(vs *v1alpha1.VirtualService) {
@@ -16,7 +17,7 @@ func (s *Store) SetVirtualService(vs *v1alpha1.VirtualService) {
 func (s *Store) GetVirtualService(name helpers.NamespacedName) *v1alpha1.VirtualService {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	vs, _ := s.virtualServices[name]
+	vs := s.virtualServices[name]
 	return vs
 }
 
@@ -54,7 +55,7 @@ func (s *Store) updateVirtualServiceByUIDMap() {
 func (s *Store) GetVirtualServiceByUID(uid string) *v1alpha1.VirtualService {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	vs, _ := s.virtualServiceByUID[uid]
+	vs := s.virtualServiceByUID[uid]
 	if vs == nil {
 		return nil
 	}

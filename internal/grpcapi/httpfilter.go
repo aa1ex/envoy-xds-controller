@@ -1,12 +1,13 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+	"sort"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/http_filter/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/http_filter/v1/http_filterv1connect"
-	"sort"
 )
 
 type HTTPFilterStore struct {
@@ -24,7 +25,7 @@ func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, req *connect.Requ
 	m := s.store.MapHTTPFilters()
 	list := make([]*v1.HTTPFilterListItem, 0, len(m))
 
-	authorizer := getAuthorizerFromContext(ctx)
+	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
