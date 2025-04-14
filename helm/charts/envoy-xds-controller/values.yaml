@@ -177,7 +177,7 @@ webhook:
     name: "envoy-xds-controller-webhook-cert"
 
 auth:
-  enabled: true
+  enabled: false
   oidc:
     clientId: "envoy-xds-controller"
     issuerUrl: "http://dex.dex:5556"

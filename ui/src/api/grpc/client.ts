@@ -12,13 +12,14 @@ import { NodeStoreService } from '../../gen/node/v1/node_pb.ts'
 import { getAuth } from '../../utils/helpers/authBridge.ts'
 
 export const tokenInterceptor: Interceptor = next => async req => {
-	const auth = getAuth()
-	const accessToken = auth.user?.access_token
+	if (env.VITE_OIDC_ENABLED === 'true') {
+		const auth = getAuth()
+		const accessToken = auth.user?.access_token
 
-	if (accessToken) {
-		req.header.set('Authorization', `Bearer ${accessToken}`)
+		if (accessToken) {
+			req.header.set('Authorization', `Bearer ${accessToken}`)
+		}
 	}
-
 	return next(req)
 }
 

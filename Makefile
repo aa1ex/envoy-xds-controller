@@ -253,6 +253,7 @@ endef
 ## HELM
 
 URL=https://kaasops.github.io/envoy-xds-controller/helm
+AUTH_ENABLED=false
 
 .PHONY: helm-lint
 helm-lint:
@@ -271,11 +272,15 @@ helm-index:
 .PHONY: helm-deploy-local
 helm-deploy-local: manifests set-local## Install Envoy xDS Controller into the local Kubernetes cluster specified in ~/.kube/config.
 	@$(LOG_TARGET)
-	helm install exc --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set ui.enabled=true --set cacheAPI.enabled=true --set ui.image.repository=$(UI_IMG_WITHOUT_TAG) --set ui.image.tag=$(TAG) --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+	helm install exc --set auth.enabled=$(AUTH_ENABLED) --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set ui.enabled=true --set cacheAPI.enabled=true --set ui.image.repository=$(UI_IMG_WITHOUT_TAG) --set ui.image.tag=$(TAG) --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
 
 .PHONY: set-local
 set-local:
 	$(eval REGISTRY := $(LOCAL_REGISTRY))
+
+.PHONY: set-auth-env
+set-auth-env:
+	$(eval AUTH_ENABLED := true)
 
 .PHONY: debug-local
 debug-local: set-local
@@ -328,3 +333,6 @@ bufgen:
 .PHONY: dev-auth
 dev-auth:
 	bash scripts/dev-auth.sh
+
+.PHONY: dev-local-with-auth
+dev-local-with-auth: dev-auth set-auth-env dev-local

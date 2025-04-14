@@ -30,7 +30,7 @@ function App() {
 		if (env.VITE_OIDC_ENABLED === 'true' && auth.isAuthenticated && auth.user) {
 			provideAuth(auth)
 		}
-	}, [auth, auth.isAuthenticated, auth.user])
+	}, [auth, auth?.isAuthenticated, auth?.user])
 
 	if (env.VITE_OIDC_ENABLED === 'true') {
 		if (auth.isLoading) {
