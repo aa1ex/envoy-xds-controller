@@ -30,7 +30,7 @@ func (s *PolicyStore) ListPolicies(ctx context.Context, _ *connect.Request[v1.Li
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(domainGeneral, item.Name)
+		isAllowed, err := authorizer.Authorize(DomainGeneral, item.Name)
 		if err != nil {
 			return nil, err
 		}

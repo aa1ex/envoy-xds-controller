@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
+
 	"connectrpc.com/connect"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
@@ -32,23 +34,32 @@ func (s *VirtualServiceStore) CreateVirtualService(
 		return nil, fmt.Errorf("access group '%s' is not allowed to create virtual service '%s'", req.Msg.AccessGroup, req.Msg.Name)
 	}
 
+	accessGroup := req.Msg.AccessGroup
+
 	vs := s.initializeVirtualService(req)
-	if err := s.processTemplate(ctx, req, vs, authorizer); err != nil {
+	if err := s.processTemplate(
+		ctx,
+		accessGroup,
+		req.Msg.TemplateUid,
+		req.Msg.TemplateOptions,
+		vs,
+		authorizer,
+	); err != nil {
 		return nil, err
 	}
-	if err := s.processListener(ctx, req, vs, authorizer); err != nil {
+	if err := s.processListener(ctx, accessGroup, req.Msg.ListenerUid, vs, authorizer); err != nil {
 		return nil, err
 	}
-	if err := s.processVirtualHost(req, vs); err != nil {
+	if err := s.processVirtualHost(req.Msg.VirtualHost, vs); err != nil {
 		return nil, err
 	}
-	if err := s.processAccessLogConfig(ctx, req, vs, authorizer); err != nil {
+	if err := s.processAccessLogConfig(ctx, accessGroup, req.Msg.GetAccessLogConfigUid(), vs, authorizer); err != nil {
 		return nil, err
 	}
-	if err := s.processAdditionalRoutes(ctx, req, vs, authorizer); err != nil {
+	if err := s.processAdditionalRoutes(ctx, accessGroup, req.Msg.AdditionalRouteUids, vs, authorizer); err != nil {
 		return nil, err
 	}
-	if err := s.processAdditionalHTTPFilters(ctx, req, vs, authorizer); err != nil {
+	if err := s.processAdditionalHTTPFilters(ctx, accessGroup, req.Msg.AdditionalHttpFilterUids, vs, authorizer); err != nil {
 		return nil, err
 	}
 
@@ -81,25 +92,23 @@ func (s *VirtualServiceStore) initializeVirtualService(req *connect.Request[v1.C
 }
 func (s *VirtualServiceStore) processTemplate(
 	_ context.Context,
-	req *connect.Request[v1.CreateVirtualServiceRequest],
+	accessGroup string,
+	templateUID string,
+	templateOpts []*virtual_service_templatev1.TemplateOption,
 	vs *v1alpha1.VirtualService,
 	authorizer grpcapi.IAuthorizer,
 ) error {
-	if req.Msg.TemplateUid == "" {
-		return nil
-	}
-
-	vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
+	vst := s.store.GetVirtualServiceTemplateByUID(templateUID)
 	if vst == nil {
-		return fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
+		return fmt.Errorf("template uid '%s' not found", templateUID)
 	}
 
-	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, vst.Name, grpcapi.ActionListVirtualServiceTemplates)
+	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, vst.Name, grpcapi.ActionListVirtualServiceTemplates)
 	if err != nil {
 		return err
 	}
 	if !isAllowed {
-		return fmt.Errorf("template uid '%s' not allowed", req.Msg.TemplateUid)
+		return fmt.Errorf("template uid '%s' not allowed", templateUID)
 	}
 
 	vs.Spec.Template = &v1alpha1.ResourceRef{
@@ -107,9 +116,9 @@ func (s *VirtualServiceStore) processTemplate(
 		Namespace: &vst.Namespace,
 	}
 
-	if len(req.Msg.TemplateOptions) > 0 {
-		tOpts := make([]v1alpha1.TemplateOpts, 0, len(req.Msg.TemplateOptions))
-		for _, opt := range req.Msg.TemplateOptions {
+	if len(templateOpts) > 0 {
+		tOpts := make([]v1alpha1.TemplateOpts, 0, len(templateOpts))
+		for _, opt := range templateOpts {
 			tOpts = append(tOpts, v1alpha1.TemplateOpts{
 				Field:    opt.Field,
 				Modifier: parseTemplateOptionModifier(opt.Modifier),
@@ -121,25 +130,26 @@ func (s *VirtualServiceStore) processTemplate(
 }
 func (s *VirtualServiceStore) processListener(
 	_ context.Context,
-	req *connect.Request[v1.CreateVirtualServiceRequest],
+	accessGroup string,
+	listenerUID string,
 	vs *v1alpha1.VirtualService,
 	authorizer grpcapi.IAuthorizer,
 ) error {
-	if req.Msg.ListenerUid == "" {
+	if listenerUID == "" {
 		return nil
 	}
 
-	listener := s.store.GetListenerByUID(req.Msg.ListenerUid)
+	listener := s.store.GetListenerByUID(listenerUID)
 	if listener == nil {
-		return fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
+		return fmt.Errorf("listener uid '%s' not found", listenerUID)
 	}
 
-	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, listener.Name, grpcapi.ActionListListeners)
+	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, listener.Name, grpcapi.ActionListListeners)
 	if err != nil {
 		return err
 	}
 	if !isAllowed {
-		return fmt.Errorf("listener '%s' not allowed", req.Msg.ListenerUid)
+		return fmt.Errorf("listener '%s' not allowed", listenerUID)
 	}
 
 	vs.Spec.Listener = &v1alpha1.ResourceRef{
@@ -150,16 +160,16 @@ func (s *VirtualServiceStore) processListener(
 }
 
 func (s *VirtualServiceStore) processVirtualHost(
-	req *connect.Request[v1.CreateVirtualServiceRequest],
+	vh *v1.VirtualHost,
 	vs *v1alpha1.VirtualService,
 ) error {
-	if req.Msg.VirtualHost == nil {
+	if vh == nil {
 		return nil
 	}
 
 	virtualHost := &routev3.VirtualHost{
 		Name:    vs.Name + "-virtual-host",
-		Domains: req.Msg.VirtualHost.Domains,
+		Domains: vh.Domains,
 	}
 
 	vhData, err := protoutil.Marshaler.Marshal(virtualHost)
@@ -173,11 +183,11 @@ func (s *VirtualServiceStore) processVirtualHost(
 
 func (s *VirtualServiceStore) processAccessLogConfig(
 	_ context.Context,
-	req *connect.Request[v1.CreateVirtualServiceRequest],
+	accessGroup string,
+	alcUID string,
 	vs *v1alpha1.VirtualService,
 	authorizer grpcapi.IAuthorizer,
 ) error {
-	alcUID := req.Msg.GetAccessLogConfigUid()
 	if alcUID == "" {
 		return nil
 	}
@@ -187,7 +197,7 @@ func (s *VirtualServiceStore) processAccessLogConfig(
 		return fmt.Errorf("access log config uid '%s' not found", alcUID)
 	}
 
-	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, alc.Name, grpcapi.ActionListAccessLogConfigs)
+	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, alc.Name, grpcapi.ActionListAccessLogConfigs)
 	if err != nil {
 		return err
 	}
@@ -204,17 +214,18 @@ func (s *VirtualServiceStore) processAccessLogConfig(
 
 func (s *VirtualServiceStore) processAdditionalRoutes(
 	_ context.Context,
-	req *connect.Request[v1.CreateVirtualServiceRequest],
+	accessGroup string,
+	additionalRouteUIDs []string,
 	vs *v1alpha1.VirtualService,
 	authorizer grpcapi.IAuthorizer,
 ) error {
-	for _, uid := range req.Msg.AdditionalRouteUids {
+	for _, uid := range additionalRouteUIDs {
 		route := s.store.GetRouteByUID(uid)
 		if route == nil {
 			return fmt.Errorf("route uid '%s' not found", uid)
 		}
 
-		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, route.Name, grpcapi.ActionListRoutes)
+		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, route.Name, grpcapi.ActionListRoutes)
 		if err != nil {
 			return err
 		}
@@ -248,17 +259,18 @@ func (s *VirtualServiceStore) buildAndCreateVirtualService(
 
 func (s *VirtualServiceStore) processAdditionalHTTPFilters(
 	_ context.Context,
-	req *connect.Request[v1.CreateVirtualServiceRequest],
+	accessGroup string,
+	additionalHttpFilterUIDs []string,
 	vs *v1alpha1.VirtualService,
 	authorizer grpcapi.IAuthorizer,
 ) error {
-	for _, uid := range req.Msg.AdditionalHttpFilterUids {
+	for _, uid := range additionalHttpFilterUIDs {
 		filter := s.store.GetHTTPFilterByUID(uid)
 		if filter == nil {
 			return fmt.Errorf("http filter uid '%s' not found", uid)
 		}
 
-		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(req.Msg.AccessGroup, filter.Name, grpcapi.ActionListHTTPFilters)
+		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, filter.Name, grpcapi.ActionListHTTPFilters)
 		if err != nil {
 			return err
 		}
@@ -284,6 +296,12 @@ func (s *VirtualServiceStore) validateCreateVirtualServiceRequest(req *connect.R
 	}
 	if req.Msg.AccessGroup == "" {
 		return fmt.Errorf("access group is required")
+	}
+	if req.Msg.AccessGroup == grpcapi.DomainGeneral {
+		return fmt.Errorf("forbidden to create virtual service in group '-'")
+	}
+	if req.Msg.TemplateUid == "" {
+		return fmt.Errorf("template uid is required")
 	}
 	return nil
 }

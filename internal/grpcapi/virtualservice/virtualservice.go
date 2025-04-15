@@ -3,9 +3,6 @@ package virtualservice
 import (
 	"context"
 	"fmt"
-	"sort"
-
-	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 
 	"connectrpc.com/connect"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
@@ -33,47 +30,6 @@ func NewVirtualServiceStore(s *store.Store, c client.Client, targetNs string) *V
 		client:   c,
 		targetNs: targetNs,
 	}
-}
-
-func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error) {
-	m := s.store.MapVirtualServices()
-	list := make([]*v1.VirtualServiceListItem, 0, len(m))
-
-	authorizer := grpcapi.GetAuthorizerFromContext(ctx)
-
-	for _, v := range m {
-		isAllowed, err := authorizer.Authorize(v.GetAccessGroup(), v.Name)
-		if err != nil {
-			return nil, err
-		}
-		if !isAllowed {
-			continue
-		}
-
-		if r.Msg.AccessGroup != "" && r.Msg.AccessGroup != v.GetAccessGroup() {
-			continue
-		}
-		vs := &v1.VirtualServiceListItem{
-			Uid:         string(v.UID),
-			Name:        v.GetLabelName(),
-			NodeIds:     v.GetNodeIDs(),
-			AccessGroup: v.GetAccessGroup(),
-		}
-		if v.Spec.Template != nil {
-			template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: v.Namespace, Name: v.Spec.Template.Name})
-			vs.Template = &commonv1.ResourceRef{
-				Uid:       string(template.UID),
-				Name:      template.Name,
-				Namespace: template.Namespace,
-			}
-		}
-		vs.IsEditable = v.IsEditable()
-		list = append(list, vs)
-	}
-	sort.Slice(list, func(i, j int) bool {
-		return list[i].Name < list[j].Name
-	})
-	return connect.NewResponse(&v1.ListVirtualServicesResponse{Items: list}), nil
 }
 
 func (s *VirtualServiceStore) DeleteVirtualService(ctx context.Context, req *connect.Request[v1.DeleteVirtualServiceRequest]) (*connect.Response[v1.DeleteVirtualServiceResponse], error) {

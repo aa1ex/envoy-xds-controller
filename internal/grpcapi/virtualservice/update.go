@@ -1,16 +1,13 @@
 package virtualservice
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"fmt"
-	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
-	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
-	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/resbuilder"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *connect.Request[v1.UpdateVirtualServiceRequest]) (*connect.Response[v1.UpdateVirtualServiceResponse], error) {
@@ -27,107 +24,38 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 
 	authorizer := grpcapi.GetAuthorizerFromContext(ctx)
 
-	vs.SetEditable(true)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
 
-	if req.Msg.TemplateUid != "" {
-		vst := s.store.GetVirtualServiceTemplateByUID(req.Msg.TemplateUid)
-		if vst == nil {
-			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
-		}
-		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), vst.Name, grpcapi.ActionListVirtualServiceTemplates)
-		if err != nil {
-			return nil, err
-		}
-		if !isAllowed {
-			return nil, fmt.Errorf("template uid '%s' not found", req.Msg.TemplateUid)
-		}
-		vs.Spec.Template = &v1alpha1.ResourceRef{
-			Name:      vst.Name,
-			Namespace: &vst.Namespace,
-		}
-		if len(req.Msg.TemplateOptions) > 0 {
-			tOpts := make([]v1alpha1.TemplateOpts, 0, len(req.Msg.TemplateOptions))
-			for _, opt := range req.Msg.TemplateOptions {
-				tOpts = append(tOpts, v1alpha1.TemplateOpts{
-					Field:    opt.Field,
-					Modifier: parseTemplateOptionModifier(opt.Modifier),
-				})
-			}
-			vs.Spec.TemplateOptions = tOpts
-		} else {
-			vs.Spec.TemplateOptions = nil
-		}
+	accessGroup := vs.GetAccessGroup()
+
+	if err := s.processTemplate(
+		ctx,
+		accessGroup,
+		req.Msg.TemplateUid,
+		req.Msg.TemplateOptions,
+		vs,
+		authorizer,
+	); err != nil {
+		return nil, err
 	}
 
-	if req.Msg.ListenerUid != "" {
-		listener := s.store.GetListenerByUID(req.Msg.ListenerUid)
-		if listener == nil {
-			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
-		}
-		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), listener.Name, grpcapi.ActionListListeners)
-		if err != nil {
-			return nil, err
-		}
-		if !isAllowed {
-			return nil, fmt.Errorf("listener uid '%s' not found", req.Msg.ListenerUid)
-		}
-		vs.Spec.Listener = &v1alpha1.ResourceRef{
-			Name:      listener.Name,
-			Namespace: &listener.Namespace,
-		}
+	if err := s.processListener(ctx, accessGroup, req.Msg.ListenerUid, vs, authorizer); err != nil {
+		return nil, err
 	}
 
-	if req.Msg.VirtualHost != nil {
-		virtualHost := &routev3.VirtualHost{}
-		virtualHost.Name = vs.Name + "-virtual-host"
-		virtualHost.Domains = req.Msg.VirtualHost.Domains
-		vhData, err := protoutil.Marshaler.Marshal(virtualHost)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal virtual host: %w", err)
-		}
-		vs.Spec.VirtualHost = &runtime.RawExtension{Raw: vhData}
+	if err := s.processVirtualHost(req.Msg.VirtualHost, vs); err != nil {
+		return nil, err
 	}
 
-	if req.Msg.AccessLogConfig != nil {
-		if alcUID := req.Msg.GetAccessLogConfigUid(); alcUID != "" {
-			alc := s.store.GetAccessLogByUID(alcUID)
-			if alc == nil {
-				return nil, fmt.Errorf("access log config uid '%s' not found", alcUID)
-			}
-			isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), alc.Name, grpcapi.ActionListAccessLogConfigs)
-			if err != nil {
-				return nil, err
-			}
-			if !isAllowed {
-				return nil, fmt.Errorf("access log uid '%s' not found", req.Msg.ListenerUid)
-			}
-			vs.Spec.AccessLogConfig = &v1alpha1.ResourceRef{
-				Name:      alc.Name,
-				Namespace: &alc.Namespace,
-			}
-		}
+	if err := s.processAccessLogConfig(ctx, accessGroup, req.Msg.GetAccessLogConfigUid(), vs, authorizer); err != nil {
+		return nil, err
 	}
 
 	if len(req.Msg.AdditionalRouteUids) > 0 {
 		vs.Spec.AdditionalRoutes = vs.Spec.AdditionalRoutes[:0]
-		for _, uid := range req.Msg.AdditionalRouteUids {
-			route := s.store.GetRouteByUID(uid)
-			if route == nil {
-				return nil, fmt.Errorf("route uid '%s' not found", uid)
-			}
-			isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), route.Name, grpcapi.ActionListRoutes)
-			if err != nil {
-				return nil, err
-			}
-			if !isAllowed {
-				return nil, fmt.Errorf("route uid '%s' not found", req.Msg.ListenerUid)
-			}
-			vs.Spec.AdditionalRoutes = append(vs.Spec.AdditionalRoutes, &v1alpha1.ResourceRef{
-				Name:      route.Name,
-				Namespace: &route.Namespace,
-			})
+		if err := s.processAdditionalRoutes(ctx, accessGroup, req.Msg.AdditionalRouteUids, vs, authorizer); err != nil {
+			return nil, err
 		}
 	} else {
 		vs.Spec.AdditionalRoutes = nil
@@ -135,22 +63,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 
 	if len(req.Msg.AdditionalHttpFilterUids) > 0 {
 		vs.Spec.AdditionalHttpFilters = vs.Spec.AdditionalHttpFilters[:0]
-		for _, uid := range req.Msg.AdditionalHttpFilterUids {
-			filter := s.store.GetHTTPFilterByUID(uid)
-			if filter == nil {
-				return nil, fmt.Errorf("http filter uid '%s' not found", uid)
-			}
-			isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(vs.GetAccessGroup(), filter.Name, grpcapi.ActionListHTTPFilters)
-			if err != nil {
-				return nil, err
-			}
-			if !isAllowed {
-				return nil, fmt.Errorf("http filter uid '%s' not found", req.Msg.ListenerUid)
-			}
-			vs.Spec.AdditionalHttpFilters = append(vs.Spec.AdditionalHttpFilters, &v1alpha1.ResourceRef{
-				Name:      filter.Name,
-				Namespace: &filter.Namespace,
-			})
+		if err := s.processAdditionalHTTPFilters(ctx, accessGroup, req.Msg.AdditionalHttpFilterUids, vs, authorizer); err != nil {
+			return nil, err
 		}
 	} else {
 		vs.Spec.AdditionalHttpFilters = nil
@@ -170,12 +84,15 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 	return connect.NewResponse(&v1.UpdateVirtualServiceResponse{}), nil
 }
 
-func (s *VirtualServiceStore) validateUpdateVirtualServiceRequest(ctx context.Context, req *connect.Request[v1.UpdateVirtualServiceRequest]) error {
+func (s *VirtualServiceStore) validateUpdateVirtualServiceRequest(_ context.Context, req *connect.Request[v1.UpdateVirtualServiceRequest]) error {
 	if req == nil || req.Msg == nil {
 		return fmt.Errorf("request or message cannot be nil")
 	}
 	if req.Msg.Uid == "" {
 		return fmt.Errorf("uid is required")
+	}
+	if req.Msg.TemplateUid == "" {
+		return fmt.Errorf("template uid is required")
 	}
 	return nil
 }

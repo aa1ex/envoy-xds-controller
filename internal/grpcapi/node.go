@@ -24,7 +24,7 @@ func (s *NodeStore) ListNodes(ctx context.Context, req *connect.Request[v1.ListN
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = domainGeneral
+		accessGroup = DomainGeneral
 	}
 
 	for _, v := range s.nodeIDs {

@@ -33,7 +33,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = domainGeneral
+		accessGroup = DomainGeneral
 	}
 
 	for _, v := range m {
@@ -58,7 +58,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 
 func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
 	authorizer := GetAuthorizerFromContext(ctx)
-	isAllowed, err := authorizer.Authorize(domainGeneral, "*")
+	isAllowed, err := authorizer.Authorize(DomainGeneral, "*")
 	if err != nil {
 		return nil, err
 	}

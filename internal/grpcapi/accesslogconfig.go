@@ -26,7 +26,7 @@ func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *co
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = domainGeneral
+		accessGroup = DomainGeneral
 	}
 
 	m := s.store.MapAccessLogs()

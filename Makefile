@@ -312,7 +312,7 @@ dev-backend: set-local docker-build docker-push install-prometheus helm-deploy-b
 
 .PHONY: deploy-e2e
 deploy-e2e: manifests
-	helm install exc-e2e --set metrics.enabled=true --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set cacheAPI.enabled=true --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+	helm install exc-e2e --set metrics.address=:8443 --set 'watchNamespaces={default}' --set image.repository=$(IMG_WITHOUT_TAG) --set image.tag=$(TAG) --set cacheAPI.enabled=true --namespace envoy-xds-controller --create-namespace ./helm/charts/envoy-xds-controller --debug --timeout='$(DEPLOY_TIMEOUT)' --wait
 
 .PHONY: undeploy-e2e
 undeploy-e2e:
@@ -336,3 +336,7 @@ dev-auth:
 
 .PHONY: dev-local-with-auth
 dev-local-with-auth: dev-auth set-auth-env dev-local
+
+.PHONY: helm-template
+helm-template:
+	helm template exc -n envoy-xds-controller ./helm/charts/envoy-xds-controller/

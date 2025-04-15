@@ -29,7 +29,7 @@ func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, req *connect.Requ
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = domainGeneral
+		accessGroup = DomainGeneral
 	}
 
 	for _, v := range m {

@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	domainGeneral = "_"
+	DomainGeneral = "_"
 )
 
 type AuthMiddleware struct {

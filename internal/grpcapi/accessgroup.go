@@ -32,6 +32,11 @@ func (s *AccessGroupStore) ListAccessGroups(ctx context.Context, _ *connect.Requ
 			list = append(list, item)
 		}
 	}
+	if isAllGroupAvailable || availableGroups[DomainGeneral] {
+		list = append(list, &v1.AccessGroupListItem{
+			Name: DomainGeneral,
+		})
+	}
 	sort.Slice(list, func(i, j int) bool {
 		return list[i].Name < list[j].Name
 	})

@@ -31,7 +31,7 @@ func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = domainGeneral
+		accessGroup = DomainGeneral
 	}
 
 	for _, v := range m {

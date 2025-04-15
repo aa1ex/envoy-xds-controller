@@ -213,7 +213,7 @@ export const useConfigTable = ({
 					size='small'
 					sx={{ fontSize: 15, height: 36 }}
 				>
-					Add VirtualService
+					Create VirtualService
 				</Button>
 			</Box>
 		)
