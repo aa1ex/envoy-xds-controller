@@ -169,7 +169,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						<Tab label='General' {...a11yProps(0, 'vertical')} />
 						<Tab label='Domains' {...a11yProps(1, 'vertical')} />
 						<Tab label='Settings' {...a11yProps(2, 'vertical')} />
-						<Tab label='Template' {...a11yProps(3, 'vertical')} />
+						{/*<Tab label='Template' {...a11yProps(3, 'vertical')} />*/}
 					</Tabs>
 					<Box
 						display='flex'
