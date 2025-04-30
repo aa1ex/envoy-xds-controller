@@ -33,6 +33,8 @@ spec:
 ...
 ```
 
+Template definition:
+
 ```yaml
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualServiceTemplate
@@ -56,6 +58,8 @@ spec:
             inline_string: "{\"message\":\"Hello from template\"}"
 ```
 
+In this example, the reference to another accessLogConfig is overridden.
+
 ```yaml
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualService
@@ -72,6 +76,9 @@ spec:
     domains:
       - exc.kaasops.io
 ```
+
+In this example, the reference to the accessLogConfig used in the template is removed, and instead, accessLog is defined
+inside the virtual service.
 
 ```yaml
 apiVersion: envoy.kaasops.io/v1alpha1
@@ -90,6 +97,7 @@ spec:
     name: envoy.access_loggers
     typed_config:
       "@type": type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog
+      path: /tmp/app.log
       log_format:
         json_format:
           message: "%LOCAL_REPLY_BODY%"
