@@ -105,7 +105,7 @@ func (v *VirtualServiceCustomValidator) validateVirtualService(ctx context.Conte
 	if err := s.Fill(ctx, v.Client); err != nil {
 		return err
 	}
-	if _, _, err := resbuilder.BuildResources(vs, s); err != nil {
+	if _, err := resbuilder.BuildResources(vs, s); err != nil {
 		return err
 	}
 	return nil

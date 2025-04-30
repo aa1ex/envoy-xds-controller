@@ -44,16 +44,6 @@ func (c *CacheUpdater) Init(ctx context.Context, cl client.Client) error {
 	return c.buildCache(ctx)
 }
 
-func (c *CacheUpdater) UpdateCache(ctx context.Context, cl client.Client) error {
-	c.mx.Lock()
-	defer c.mx.Unlock()
-
-	if err := c.store.Fill(ctx, cl); err != nil { // TODO: remove
-		return fmt.Errorf("failed to fill store: %w", err)
-	}
-	return c.buildCache(ctx)
-}
-
 func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	errs := make([]error, 0)
 
@@ -62,6 +52,7 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	// ---------------------------------------------
 
 	usedSecrets := make(map[helpers.NamespacedName]helpers.NamespacedName)
+	nodeIDDomainsSet := make(map[string]struct{})
 
 	nodeIDsForCleanup := c.snapshotCache.GetNodeIDsAsMap()
 	var commonVirtualServices []*v1alpha1.VirtualService
@@ -78,17 +69,26 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 			continue
 		}
 
-		vsRes, vsUsedSecrets, err := resbuilder.BuildResources(vs, c.store)
+		vsRes, err := resbuilder.BuildResources(vs, c.store)
 		if err != nil {
 			errs = append(errs, err)
 			continue
 		}
 
-		for _, secret := range vsUsedSecrets {
+		for _, secret := range vsRes.UsedSecrets {
 			usedSecrets[secret] = helpers.NamespacedName{Name: vs.Name, Namespace: vs.Namespace}
 		}
 
 		for _, nodeID := range vsNodeIDs {
+
+			for _, domain := range vsRes.Domains {
+				nodeDom := nodeIDDomain(nodeID, domain)
+				if _, ok := nodeIDDomainsSet[nodeDom]; ok {
+					return fmt.Errorf("duplicate domain %s for node %s", domain, nodeID)
+				}
+				nodeIDDomainsSet[nodeDom] = struct{}{}
+			}
+
 			if vsRes.RouteConfig != nil {
 				mixer.Add(nodeID, resource.RouteType, vsRes.RouteConfig)
 			}
@@ -104,16 +104,25 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 
 	if len(commonVirtualServices) > 0 {
 		for _, vs := range commonVirtualServices {
-			vsRes, vsUsedSecrets, err := resbuilder.BuildResources(vs, c.store)
+			vsRes, err := resbuilder.BuildResources(vs, c.store)
 			if err != nil {
 				errs = append(errs, err)
 				continue
 			}
-			for _, secret := range vsUsedSecrets {
+			for _, secret := range vsRes.UsedSecrets {
 				usedSecrets[secret] = helpers.NamespacedName{Name: vs.Name, Namespace: vs.Namespace}
 			}
 
 			for nodeID := range mixer.nodeIDs {
+
+				for _, domain := range vsRes.Domains {
+					nodeDom := nodeIDDomain(nodeID, domain)
+					if _, ok := nodeIDDomainsSet[nodeDom]; ok {
+						return fmt.Errorf("duplicate domain %s for node %s", domain, nodeID)
+					}
+					nodeIDDomainsSet[nodeDom] = struct{}{}
+				}
+
 				if vsRes.RouteConfig != nil {
 					mixer.Add(nodeID, resource.RouteType, vsRes.RouteConfig)
 				}
@@ -293,4 +302,8 @@ func getName(msg proto.Message) string {
 
 func isCommonVirtualService(nodeIDs []string) bool {
 	return len(nodeIDs) == 1 && nodeIDs[0] == "*"
+}
+
+func nodeIDDomain(nodeID, domain string) string {
+	return nodeID + ":" + domain
 }

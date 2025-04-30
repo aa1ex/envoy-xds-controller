@@ -74,7 +74,7 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		vs.Spec.UseRemoteAddress = req.Msg.UseRemoteAddress
 	}
 
-	if _, _, err := resbuilder.BuildResources(vs, s.store); err != nil {
+	if _, err := resbuilder.BuildResources(vs, s.store); err != nil {
 		return nil, err
 	}
 

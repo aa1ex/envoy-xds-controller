@@ -250,7 +250,7 @@ func (s *VirtualServiceStore) buildAndCreateVirtualService(
 		return err
 	}
 
-	if _, _, err := resbuilder.BuildResources(vs, tmpStore); err != nil {
+	if _, err := resbuilder.BuildResources(vs, tmpStore); err != nil {
 		return err
 	}
 
