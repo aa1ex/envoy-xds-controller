@@ -30,7 +30,7 @@ type AuthMiddleware struct {
 
 type IAuthorizer interface {
 	Authorize(domain string, object any) (bool, error)
-	AuthorizeCommonObjectWithAction(domain string, object any, action string) (bool, error)
+	AuthorizeWithAction(domain string, object any, action string) (bool, error)
 	GetAvailableAccessGroups() map[string]bool
 }
 
@@ -74,7 +74,7 @@ func (a *Authorizer) Authorize(domain string, object any) (bool, error) {
 	return false, nil
 }
 
-func (a *Authorizer) AuthorizeCommonObjectWithAction(domain string, object any, action string) (bool, error) {
+func (a *Authorizer) AuthorizeWithAction(domain string, object any, action string) (bool, error) {
 	for _, sub := range a.getSubjects() {
 		result, err := a.enforcer.Enforce(sub, domain, object, action)
 		if err != nil {
@@ -205,7 +205,7 @@ func (a *stubAuthorizer) Authorize(string, any) (bool, error) {
 	return true, nil
 }
 
-func (a *stubAuthorizer) AuthorizeCommonObjectWithAction(string, any, string) (bool, error) {
+func (a *stubAuthorizer) AuthorizeWithAction(string, any, string) (bool, error) {
 	return true, nil
 }
 

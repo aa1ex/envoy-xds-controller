@@ -180,3 +180,22 @@ func (vs *VirtualService) IsEditable() bool {
 	}
 	return editable == "true"
 }
+
+func (vs *VirtualService) GetHashSum() *uint32 {
+	data, _ := json.Marshal(struct {
+		Spec    any
+		NodeIDs []string
+	}{
+		Spec:    vs.Spec,
+		NodeIDs: vs.GetNodeIDs(),
+	})
+	sum := helpers.GetHash(data)
+	return &sum
+}
+
+func (vs *VirtualService) IsNewOrChanged() bool {
+	if vs.Status.LastAppliedHash == nil {
+		return true
+	}
+	return *vs.Status.LastAppliedHash != *vs.GetHashSum()
+}

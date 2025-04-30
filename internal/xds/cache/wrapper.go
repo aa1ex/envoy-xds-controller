@@ -127,3 +127,16 @@ func (c *SnapshotCache) GetListeners(nodeID string) ([]*listenerv3.Listener, err
 	}
 	return listeners, nil
 }
+
+func (c *SnapshotCache) Range(f func(nodeID string, snapshot cache.ResourceSnapshot) error) error {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	for nodeID := range c.nodeIDs {
+		snapshot, _ := c.SnapshotCache.GetSnapshot(nodeID)
+		err := f(nodeID, snapshot)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

@@ -44,16 +44,6 @@ func (c *CacheUpdater) Init(ctx context.Context, cl client.Client) error {
 	return c.buildCache(ctx)
 }
 
-func (c *CacheUpdater) UpdateCache(ctx context.Context, cl client.Client) error {
-	c.mx.Lock()
-	defer c.mx.Unlock()
-
-	if err := c.store.Fill(ctx, cl); err != nil { // TODO: remove
-		return fmt.Errorf("failed to fill store: %w", err)
-	}
-	return c.buildCache(ctx)
-}
-
 func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	errs := make([]error, 0)
 
@@ -176,6 +166,12 @@ func (c *CacheUpdater) buildCache(ctx context.Context) error {
 	return nil
 }
 
+func (c *CacheUpdater) GetNodeIDs() []string {
+	c.mx.RLock()
+	defer c.mx.RUnlock()
+	return c.snapshotCache.GetNodeIDs()
+}
+
 func (c *CacheUpdater) GetUsedSecrets() map[helpers.NamespacedName]helpers.NamespacedName {
 	c.mx.RLock()
 	defer c.mx.RUnlock()
@@ -232,6 +228,12 @@ func (c *CacheUpdater) GetMarshaledStore() ([]byte, error) {
 		data["specClusters"][specCluster] = cl
 	}
 	return json.MarshalIndent(data, "", "\t")
+}
+
+func (c *CacheUpdater) CloneStore() *store.Store {
+	c.mx.RLock()
+	defer c.mx.RUnlock()
+	return c.store.Clone()
 }
 
 func updateSnapshot(prevSnapshot cache.ResourceSnapshot, resources map[resource.Type][]types.Resource) (*cache.Snapshot, bool, error) {

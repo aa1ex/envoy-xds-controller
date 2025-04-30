@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"fmt"
+	"hash/crc32"
 	"strings"
 )
 
@@ -42,4 +43,9 @@ func SplitNamespacedName(resourceName string) (namespace, name string, err error
 	name = splitResourceName[1]
 
 	return
+}
+
+func GetHash(input []byte) uint32 {
+	crc32q := crc32.MakeTable(crc32.IEEE)
+	return crc32.Checksum(input, crc32q)
 }

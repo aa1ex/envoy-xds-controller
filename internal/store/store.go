@@ -56,6 +56,89 @@ func New() *Store {
 	return store
 }
 
+func (s *Store) Clone() *Store {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	clone := &Store{
+		virtualServices:             make(map[helpers.NamespacedName]*v1alpha1.VirtualService),
+		virtualServiceByUID:         make(map[string]*v1alpha1.VirtualService),
+		virtualServiceTemplates:     make(map[helpers.NamespacedName]*v1alpha1.VirtualServiceTemplate),
+		virtualServiceTemplateByUID: make(map[string]*v1alpha1.VirtualServiceTemplate),
+		routes:                      make(map[helpers.NamespacedName]*v1alpha1.Route),
+		routeByUID:                  make(map[string]*v1alpha1.Route),
+		clusters:                    make(map[helpers.NamespacedName]*v1alpha1.Cluster),
+		clusterByUID:                make(map[string]*v1alpha1.Cluster),
+		specClusters:                make(map[string]*v1alpha1.Cluster),
+		httpFilters:                 make(map[helpers.NamespacedName]*v1alpha1.HttpFilter),
+		httpFilterByUID:             make(map[string]*v1alpha1.HttpFilter),
+		listeners:                   make(map[helpers.NamespacedName]*v1alpha1.Listener),
+		listenerByUID:               make(map[string]*v1alpha1.Listener),
+		accessLogs:                  make(map[helpers.NamespacedName]*v1alpha1.AccessLogConfig),
+		accessLogByUID:              make(map[string]*v1alpha1.AccessLogConfig),
+		policies:                    make(map[helpers.NamespacedName]*v1alpha1.Policy),
+		secrets:                     make(map[helpers.NamespacedName]*v1.Secret),
+		domainToSecretMap:           make(map[string]v1.Secret),
+	}
+
+	for k, v := range s.virtualServices {
+		clone.virtualServices[k] = v
+	}
+	for k, v := range s.virtualServiceByUID {
+		clone.virtualServiceByUID[k] = v
+	}
+	for k, v := range s.virtualServiceTemplates {
+		clone.virtualServiceTemplates[k] = v
+	}
+	for k, v := range s.virtualServiceTemplateByUID {
+		clone.virtualServiceTemplateByUID[k] = v
+	}
+	for k, v := range s.routes {
+		clone.routes[k] = v
+	}
+	for k, v := range s.routeByUID {
+		clone.routeByUID[k] = v
+	}
+	for k, v := range s.clusters {
+		clone.clusters[k] = v
+	}
+	for k, v := range s.clusterByUID {
+		clone.clusterByUID[k] = v
+	}
+	for k, v := range s.specClusters {
+		clone.specClusters[k] = v
+	}
+	for k, v := range s.httpFilters {
+		clone.httpFilters[k] = v
+	}
+	for k, v := range s.httpFilterByUID {
+		clone.httpFilterByUID[k] = v
+	}
+	for k, v := range s.listeners {
+		clone.listeners[k] = v
+	}
+	for k, v := range s.listenerByUID {
+		clone.listenerByUID[k] = v
+	}
+	for k, v := range s.accessLogs {
+		clone.accessLogs[k] = v
+	}
+	for k, v := range s.accessLogByUID {
+		clone.accessLogByUID[k] = v
+	}
+	for k, v := range s.policies {
+		clone.policies[k] = v
+	}
+	for k, v := range s.secrets {
+		clone.secrets[k] = v
+	}
+	for k, v := range s.domainToSecretMap {
+		clone.domainToSecretMap[k] = v
+	}
+
+	return clone
+}
+
 func (s *Store) Fill(ctx context.Context, cl client.Client) error {
 	var accessLogConfigs v1alpha1.AccessLogConfigList
 	if err := cl.List(ctx, &accessLogConfigs); err != nil {
@@ -113,7 +196,9 @@ func (s *Store) Fill(ctx context.Context, cl client.Client) error {
 	s.specClusters = make(map[string]*v1alpha1.Cluster, len(clusters.Items))
 
 	for _, vs := range virtualServices.Items {
-		s.virtualServices[helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name}] = &vs
+		if vs.Status.Valid {
+			s.virtualServices[helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name}] = &vs
+		}
 	}
 	for _, vst := range virtualServiceTemplates.Items {
 		s.virtualServiceTemplates[helpers.NamespacedName{Namespace: vst.Namespace, Name: vst.Name}] = &vst

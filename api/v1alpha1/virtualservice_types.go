@@ -29,7 +29,7 @@ type VirtualServiceSpec struct {
 
 // VirtualServiceStatus defines the observed state of VirtualService
 type VirtualServiceStatus struct {
-	Message     Message       `json:"message,omitempty"`
+	Message     string        `json:"message,omitempty"`
 	Valid       bool          `json:"valid"`
 	UsedSecrets []ResourceRef `json:"usedSecrets,omitempty"`
 

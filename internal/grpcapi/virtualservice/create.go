@@ -3,7 +3,6 @@ package virtualservice
 import (
 	"context"
 	"fmt"
-
 	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 
 	"connectrpc.com/connect"
@@ -103,7 +102,7 @@ func (s *VirtualServiceStore) processTemplate(
 		return fmt.Errorf("template uid '%s' not found", templateUID)
 	}
 
-	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, vst.Name, grpcapi.ActionListVirtualServiceTemplates)
+	isAllowed, err := authorizer.AuthorizeWithAction(accessGroup, vst.Name, grpcapi.ActionListVirtualServiceTemplates)
 	if err != nil {
 		return err
 	}
@@ -144,7 +143,7 @@ func (s *VirtualServiceStore) processListener(
 		return fmt.Errorf("listener uid '%s' not found", listenerUID)
 	}
 
-	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, listener.Name, grpcapi.ActionListListeners)
+	isAllowed, err := authorizer.AuthorizeWithAction(accessGroup, listener.Name, grpcapi.ActionListListeners)
 	if err != nil {
 		return err
 	}
@@ -197,7 +196,7 @@ func (s *VirtualServiceStore) processAccessLogConfig(
 		return fmt.Errorf("access log config uid '%s' not found", alcUID)
 	}
 
-	isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, alc.Name, grpcapi.ActionListAccessLogConfigs)
+	isAllowed, err := authorizer.AuthorizeWithAction(accessGroup, alc.Name, grpcapi.ActionListAccessLogConfigs)
 	if err != nil {
 		return err
 	}
@@ -225,7 +224,7 @@ func (s *VirtualServiceStore) processAdditionalRoutes(
 			return fmt.Errorf("route uid '%s' not found", uid)
 		}
 
-		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, route.Name, grpcapi.ActionListRoutes)
+		isAllowed, err := authorizer.AuthorizeWithAction(accessGroup, route.Name, grpcapi.ActionListRoutes)
 		if err != nil {
 			return err
 		}
@@ -270,7 +269,7 @@ func (s *VirtualServiceStore) processAdditionalHTTPFilters(
 			return fmt.Errorf("http filter uid '%s' not found", uid)
 		}
 
-		isAllowed, err := authorizer.AuthorizeCommonObjectWithAction(accessGroup, filter.Name, grpcapi.ActionListHTTPFilters)
+		isAllowed, err := authorizer.AuthorizeWithAction(accessGroup, filter.Name, grpcapi.ActionListHTTPFilters)
 		if err != nil {
 			return err
 		}

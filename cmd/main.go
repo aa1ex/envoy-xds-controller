@@ -411,8 +411,8 @@ func main() {
 		}
 
 		go func() {
-			srv := server.NewServer(ctx, snapshotCache, &test.Callbacks{Debug: true})
-			if err = xds.RunServer(srv, cfg.XDS.Port); err != nil {
+			srv := xds.NewServer(server.NewServer(ctx, snapshotCache, &test.Callbacks{Debug: true}))
+			if err = srv.Serve(cfg.XDS.Port); err != nil {
 				setupServers.Error(err, "cannot run xDS server")
 				os.Exit(1)
 			}
