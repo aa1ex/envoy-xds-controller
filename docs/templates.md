@@ -3,11 +3,35 @@
 
 ## Template options
 
+Modifiers:
 - merge (by default) - merges object fields, overrides primitive types in existing objects, merges lists
 - replace - replaces objects, replaces lists
 - delete - deletes a field by key (does not work for list elements)
 
+
 ### Examples
+
+using:
+```yaml
+apiVersion: envoy.kaasops.io/v1alpha1
+kind: VirtualService
+metadata:
+  name: demo-virtual-service
+  annotations:
+    envoy.kaasops.io/node-id: test
+spec:
+  template:
+    name: https-template
+  templateOptions:
+    - field: accessLogConfig
+      modifier: delete
+    - field: additionalHttpFilters
+      modifier: replace
+  additionalHttpFilters:
+    - my-filter-1
+    - my-filter-2
+...
+```
 
 ```yaml
 apiVersion: envoy.kaasops.io/v1alpha1
