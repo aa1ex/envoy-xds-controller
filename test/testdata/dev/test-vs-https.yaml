@@ -19,7 +19,7 @@ spec:
   virtualHost:
     name: test-virtual-host
     domains:
-      - exc.kaasops.io
+      - example2.kaasops.io
     routes:
       - match:
           prefix: "/"

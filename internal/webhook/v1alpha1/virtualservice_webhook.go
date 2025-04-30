@@ -19,9 +19,10 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/cache"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
 	"github.com/kaasops/envoy-xds-controller/internal/store"
-	"github.com/kaasops/envoy-xds-controller/internal/xds/resbuilder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -102,11 +103,10 @@ func (v *VirtualServiceCustomValidator) validateVirtualService(ctx context.Conte
 		return fmt.Errorf("nodeIDs is required")
 	}
 	s := store.New()
-	if err := s.Fill(ctx, v.Client); err != nil {
-		return err
+	snapshotCache := cache.NewSnapshotCache()
+	cacheUpdater := updater.NewCacheUpdater(snapshotCache, s)
+	if err := cacheUpdater.Init(ctx, v.Client); err != nil {
+		return fmt.Errorf("failed to init cache updater for validation: %w", err)
 	}
-	if _, err := resbuilder.BuildResources(vs, s); err != nil {
-		return err
-	}
-	return nil
+	return cacheUpdater.UpsertVirtualService(ctx, vs)
 }
