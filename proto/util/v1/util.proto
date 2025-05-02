@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package util.v1;
+
+option go_package = "utilv1";
+
+import "google/protobuf/timestamp.proto";
+
+service UtilsService {
+  rpc VerifyDomains(VerifyDomainsRequest) returns (VerifyDomainsResponse);
+}
+
+message VerifyDomainsRequest {
+  repeated string domains = 1;
+}
+
+message DomainVerificationResult {
+  string domain = 1;
+  bool valid_certificate = 2;
+  string issuer = 3;
+  google.protobuf.Timestamp expires_at = 4;
+  bool matched_by_wildcard = 5;
+  string error = 6;
+}
+
+message VerifyDomainsResponse {
+  repeated DomainVerificationResult results = 1;
+}

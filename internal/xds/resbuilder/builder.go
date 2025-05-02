@@ -334,6 +334,14 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 			if err := protoutil.Unmarshaler.Unmarshal(rt.Raw, &r); err != nil {
 				return nil, fmt.Errorf("failed to unmarshal route %s/%s (%d): %w", routeRefNs, routeRef.Name, idx, err)
 			}
+			if rr := r.GetRoute(); rr != nil {
+				if clName := rr.GetCluster(); clName != "" {
+					cl := store.GetSpecCluster(clName)
+					if cl == nil {
+						return nil, fmt.Errorf("cluster %s not found", clName)
+					}
+				}
+			}
 			virtualHost.Routes = append(virtualHost.Routes, &r)
 		}
 	}

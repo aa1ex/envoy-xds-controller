@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/util/v1/utilv1connect"
 	"net"
 	"net/http"
 	"strconv"
@@ -144,6 +145,8 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	path, handler = nodev1connect.NewNodeStoreServiceHandler(grpcapi.NewNodeStore(c.cfg.StaticResources.NodeIDs))
 	mux.Handle(path, handler)
 	path, handler = access_groupv1connect.NewAccessGroupStoreServiceHandler(grpcapi.NewAccessGroupStore(c.cfg.StaticResources.AccessGroups))
+	mux.Handle(path, handler)
+	path, handler = utilv1connect.NewUtilsServiceHandler(grpcapi.NewUtilsService(s))
 	mux.Handle(path, handler)
 
 	reflector := grpcreflect.NewStaticReflector()

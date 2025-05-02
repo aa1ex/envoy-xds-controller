@@ -12,7 +12,7 @@ import (
 
 func grpcAPIContext() {
 	It("should ensure the grpc api available", func() {
-		response := fetchDataViaGRPC(`{"accessGroup": "-"}`, "virtual_service.v1.VirtualServiceStoreService.ListVirtualService")
+		response := fetchDataViaGRPC(`{"accessGroup": "-"}`, "virtual_service.v1.VirtualServiceStoreService.ListVirtualServices")
 		Expect(strings.TrimSpace(response)).To(Equal("{}"))
 	})
 }
