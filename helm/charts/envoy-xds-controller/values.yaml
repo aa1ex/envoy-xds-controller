@@ -194,26 +194,25 @@ auth:
         - "node2"
       testers:
         - "test"
-  rbac:
-    policy: |-
-      g, admins, role:editor, _
-      g, admins, role:editor, dev
-      g, admins, role:editor, test
-      g, developers, role:reader, _
-      g, developers, role:reader, dev
-      g, testers,, test
-      
-      p, testers, test, *, list-virtual-services
-      p, testers, test, *, list-virtual-service-templates
-      p, testers, test, *, list-listeners
-      p, testers, test, test, list-nodes
-      p, testers, test, *, list-access-log-configs
-      p, testers, test, *, list-http-filters
-      p, testers, test, *, list-routes
-      p, testers, test, *, get-virtual-service
-      p, testers, test, *, fill-template
-      p, testers, test, *, create-virtual-service
-      p, testers, test, *, update-virtual-service
+  rbacPolicy: |-
+    g, admins, role:editor, _
+    g, admins, role:editor, dev
+    g, admins, role:editor, test
+    g, developers, role:reader, _
+    g, developers, role:reader, dev
+    g, testers,, test
+    
+    p, testers, test, *, list-virtual-services
+    p, testers, test, *, list-virtual-service-templates
+    p, testers, test, *, list-listeners
+    p, testers, test, test, list-nodes
+    p, testers, test, *, list-access-log-configs
+    p, testers, test, *, list-http-filters
+    p, testers, test, *, list-routes
+    p, testers, test, *, get-virtual-service
+    p, testers, test, *, fill-template
+    p, testers, test, *, create-virtual-service
+    p, testers, test, *, update-virtual-service
 
 config:
   nodeIds:

@@ -44,5 +44,5 @@ data:
     p, role:editor, *, *, fill-template
     p, role:editor, *, *, create-virtual-service
     p, role:editor, *, *, update-virtual-service
-    {{- .Values.auth.rbac.policy | nindent 4 -}}
+    {{- .Values.auth.rbacPolicy | nindent 4 -}}
 {{- end }}
