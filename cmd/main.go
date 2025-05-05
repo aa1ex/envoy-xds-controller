@@ -22,6 +22,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/filewatcher"
 	"net/http"
 	"os"
 	"strconv"
@@ -121,6 +122,7 @@ func main() {
 	var devMode bool
 	var accessControlModelPath string
 	var accessControlPolicyPath string
+	var configPath string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", "0", "The address the metrics endpoint binds to. "+
 		"Use :8443 for HTTPS or :8080 for HTTP, or leave as 0 to disable the metrics service.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
@@ -147,6 +149,12 @@ func main() {
 		"access-control-policy-path",
 		"/var/exc/access-control/policy.csv",
 		"Access Control Policy Path",
+	)
+	flag.StringVar(
+		&configPath,
+		"config",
+		"/var/exc/config.json",
+		"Config Path",
 	)
 	opts := zap.Options{
 		Development: devMode,
@@ -242,6 +250,12 @@ func main() {
 	resStore := store.New()
 	snapshotCache := cache.NewSnapshotCache()
 	cacheUpdater := updater.NewCacheUpdater(snapshotCache, resStore)
+	fWatcher, err := filewatcher.NewFileWatcher()
+	if err != nil {
+		setupLog.Error(err, "unable to create file watcher")
+		os.Exit(1)
+	}
+	defer fWatcher.Cancel()
 
 	if err = (&controller.ClusterReconciler{
 		Client:  mgr.GetClient(),
@@ -315,6 +329,7 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Secret")
 		os.Exit(1)
 	}
+
 	// nolint:goconst
 	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
 
@@ -434,14 +449,20 @@ func main() {
 						os.Exit(1)
 					}
 				}
-				if config := os.Getenv("CONFIG"); config != "" {
-					err = json.Unmarshal([]byte(config), &apiServerCfg.StaticResources)
-					if err != nil {
-						setupServers.Error(err, "failed to parse static resources config")
-						os.Exit(1)
-					}
+				data, err := os.ReadFile(configPath)
+				if err != nil {
+					setupServers.Error(err, "failed to read config")
+					os.Exit(1)
 				}
-				apiServer := api.New(snapshotCache, apiServerCfg, zapLogger, devMode)
+				if err = json.Unmarshal(data, &apiServerCfg.StaticResources); err != nil {
+					setupServers.Error(err, "failed to parse static resources config")
+					os.Exit(1)
+				}
+				apiServer, err := api.New(snapshotCache, apiServerCfg, zapLogger, devMode, fWatcher, configPath)
+				if err != nil {
+					setupServers.Error(err, "failed to create api server")
+					os.Exit(1)
+				}
 				if err := apiServer.RunGRPC(
 					grpcAPIPort,
 					resStore,

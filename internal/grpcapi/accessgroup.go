@@ -10,12 +10,16 @@ import (
 )
 
 type AccessGroupStore struct {
-	accessGroups []string
+	accessGroupSvc AccessGroupService
 	access_groupv1connect.AccessGroupStoreServiceHandler
 }
 
-func NewAccessGroupStore(accessGroups []string) *AccessGroupStore {
-	return &AccessGroupStore{accessGroups: accessGroups}
+type AccessGroupService interface {
+	GetAccessGroups() []string
+}
+
+func NewAccessGroupStore(svc AccessGroupService) *AccessGroupStore {
+	return &AccessGroupStore{accessGroupSvc: svc}
 }
 
 func (s *AccessGroupStore) ListAccessGroups(ctx context.Context, _ *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error) {
@@ -23,8 +27,10 @@ func (s *AccessGroupStore) ListAccessGroups(ctx context.Context, _ *connect.Requ
 	availableGroups := authorizer.GetAvailableAccessGroups()
 	isAllGroupAvailable := len(availableGroups) == 1 && availableGroups["*"]
 
-	list := make([]*v1.AccessGroupListItem, 0, len(s.accessGroups))
-	for _, v := range s.accessGroups {
+	accessGroups := s.accessGroupSvc.GetAccessGroups()
+
+	list := make([]*v1.AccessGroupListItem, 0, len(accessGroups))
+	for _, v := range accessGroups {
 		item := &v1.AccessGroupListItem{
 			Name: v,
 		}

@@ -91,6 +91,10 @@ Create the name of the service account to use
  {{- $modelVolumeMount := dict "name" "auth" "mountPath" "/var/exc/access-control" -}}
  {{- $mounts = append $mounts $modelVolumeMount -}}
  {{- end -}}
+ {{- if .Values.config -}}
+ {{- $configVolumeMount := dict "name" "config" "mountPath" "/var/exc" -}}
+ {{- $mounts = append $mounts $configVolumeMount -}}
+ {{- end -}}
  {{- if $mounts -}}
  {{- toYaml $mounts -}}
  {{- end -}}
@@ -115,6 +119,10 @@ Create the name of the service account to use
  {{- if .Values.auth.enabled -}}
  {{- $modelVolume := dict "name" "auth" "configMap" (dict "name" "access-control-model" ) -}}
  {{- $volumes = append $volumes $modelVolume -}}
+ {{- end -}}
+ {{- if .Values.config -}}
+ {{- $configVolume := dict "name" "config" "configMap" (dict "name" "config" ) -}}
+ {{- $volumes = append $volumes $configVolume -}}
  {{- end -}}
  {{- if $volumes -}}
  {{- toYaml $volumes -}}

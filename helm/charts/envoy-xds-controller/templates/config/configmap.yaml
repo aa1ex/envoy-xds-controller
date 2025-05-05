@@ -7,5 +7,5 @@ metadata:
   labels:
     {{- include "chart.labels" . | nindent 4 }}
 data:
-  CONFIG: '{{ .Values.config | toJson }}'
+  config.json: '{{ .Values.config | toJson }}'
 {{- end }}

@@ -1,11 +1,15 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/filewatcher"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/util/v1/utilv1connect"
 	"net"
 	"net/http"
+	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/kaasops/envoy-xds-controller/internal/grpcapi/virtualservice"
@@ -62,19 +66,49 @@ type Config struct {
 }
 
 type Client struct {
-	Cache   *xdscache.SnapshotCache
-	cfg     *Config
-	logger  *zap.Logger
-	devMode bool
+	Cache    *xdscache.SnapshotCache
+	logger   *zap.Logger
+	devMode  bool
+	fWatcher *filewatcher.FileWatcher
+	mu       *sync.RWMutex
+	cfg      *Config
 }
 
-func New(cache *xdscache.SnapshotCache, cfg *Config, logger *zap.Logger, devMode bool) *Client {
-	return &Client{
-		Cache:   cache,
-		cfg:     cfg,
-		logger:  logger,
-		devMode: devMode,
+func New(
+	cache *xdscache.SnapshotCache,
+	cfg *Config,
+	logger *zap.Logger,
+	devMode bool,
+	watcher *filewatcher.FileWatcher,
+	staticResourcesPath string,
+) (*Client, error) {
+
+	mu := &sync.RWMutex{}
+
+	err := watcher.Add(staticResourcesPath, func(_ string) {
+		logger.Info("static resources config changed")
+
+		data, err := os.ReadFile(staticResourcesPath)
+		if err != nil {
+			logger.Error("failed to read static resources config", zap.Error(err))
+		}
+		if err = json.Unmarshal(data, &cfg.StaticResources); err != nil {
+			logger.Error("failed to unmarshal static resources config", zap.Error(err))
+		}
+		logger.Info("static resources config reloaded")
+	})
+	if err != nil {
+		return nil, err
 	}
+
+	return &Client{
+		Cache:    cache,
+		mu:       mu,
+		cfg:      cfg,
+		logger:   logger,
+		devMode:  devMode,
+		fWatcher: watcher,
+	}, nil
 }
 
 func (c *Client) Run(port int, cacheAPIScheme, cacheAPIAddr string) error {
@@ -142,9 +176,9 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	mux.Handle(path, handler)
 	path, handler = clusterv1connect.NewClusterStoreServiceHandler(grpcapi.NewClusterStore(s))
 	mux.Handle(path, handler)
-	path, handler = nodev1connect.NewNodeStoreServiceHandler(grpcapi.NewNodeStore(c.cfg.StaticResources.NodeIDs))
+	path, handler = nodev1connect.NewNodeStoreServiceHandler(grpcapi.NewNodeStore(c))
 	mux.Handle(path, handler)
-	path, handler = access_groupv1connect.NewAccessGroupStoreServiceHandler(grpcapi.NewAccessGroupStore(c.cfg.StaticResources.AccessGroups))
+	path, handler = access_groupv1connect.NewAccessGroupStoreServiceHandler(grpcapi.NewAccessGroupStore(c))
 	mux.Handle(path, handler)
 	path, handler = utilv1connect.NewUtilsServiceHandler(grpcapi.NewUtilsService(s))
 	mux.Handle(path, handler)
@@ -158,6 +192,22 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	if c.cfg.Auth.Enabled {
 		enforcer, err := casbin.NewEnforcer(c.cfg.Auth.AccessControlModel, c.cfg.Auth.AccessControlPolicy)
 		if err != nil {
+			return err
+		}
+
+		if err := c.fWatcher.Add(c.cfg.Auth.AccessControlModel, func(_ string) {
+			c.logger.Info("rbac model changed")
+
+			if err := enforcer.LoadModel(); err != nil {
+				c.logger.Error("failed to load rbac model", zap.Error(err))
+				return
+			}
+			if err := enforcer.LoadPolicy(); err != nil {
+				c.logger.Error("failed to load rbac policy", zap.Error(err))
+				return
+			}
+			c.logger.Info("rbac policy and model reloaded")
+		}); err != nil {
 			return err
 		}
 		middleware, err := grpcapi.NewAuthMiddleware(c.cfg.Auth.IssuerURL, c.cfg.Auth.ClientID, enforcer)
@@ -175,4 +225,16 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 		)
 	}()
 	return nil
+}
+
+func (c *Client) GetNodeIDs() []string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.cfg.StaticResources.NodeIDs
+}
+
+func (c *Client) GetAccessGroups() []string {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.cfg.StaticResources.AccessGroups
 }

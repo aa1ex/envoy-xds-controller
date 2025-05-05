@@ -10,16 +10,22 @@ import (
 )
 
 type NodeStore struct {
-	nodeIDs []string
+	nodeSvc NodeService
 	nodev1connect.NodeStoreServiceHandler
 }
 
-func NewNodeStore(nodeIDs []string) *NodeStore {
-	return &NodeStore{nodeIDs: nodeIDs}
+type NodeService interface {
+	GetNodeIDs() []string
+}
+
+func NewNodeStore(svc NodeService) *NodeStore {
+	return &NodeStore{nodeSvc: svc}
 }
 
 func (s *NodeStore) ListNodes(ctx context.Context, req *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error) {
-	list := make([]*v1.NodeListItem, 0, len(s.nodeIDs))
+	nodeIDs := s.nodeSvc.GetNodeIDs()
+
+	list := make([]*v1.NodeListItem, 0, len(nodeIDs))
 	authorizer := GetAuthorizerFromContext(ctx)
 
 	accessGroup := req.Msg.AccessGroup
@@ -27,7 +33,7 @@ func (s *NodeStore) ListNodes(ctx context.Context, req *connect.Request[v1.ListN
 		accessGroup = DomainGeneral
 	}
 
-	for _, v := range s.nodeIDs {
+	for _, v := range nodeIDs {
 		item := &v1.NodeListItem{
 			Id: v,
 		}
