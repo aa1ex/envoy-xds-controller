@@ -114,7 +114,7 @@ func main() {
 	var secureMetrics bool
 	var enableHTTP2 bool
 	var tlsOpts []func(*tls.Config)
-	var enableCacheAPI bool // TODO: rename enable-api
+	var enableAPI bool
 	var cacheAPIPort int
 	var cacheAPIScheme string
 	var cacheAPIAddr string
@@ -133,7 +133,7 @@ func main() {
 		"If set, the metrics endpoint is served securely via HTTPS. Use --metrics-secure=false to use HTTP instead.")
 	flag.BoolVar(&enableHTTP2, "enable-http2", false,
 		"If set, HTTP/2 will be enabled for the metrics and webhook servers")
-	flag.BoolVar(&enableCacheAPI, "enable-cache-api", false, "Enable Cache API, for debug")
+	flag.BoolVar(&enableAPI, "enable-cache-api", false, "Enable Cache API, for debug") // TODO: rename enable-api
 	flag.IntVar(&cacheAPIPort, "cache-api-port", 9999, "Cache API port")
 	flag.StringVar(&cacheAPIScheme, "cache-api-scheme", "http", "Cache API scheme")
 	flag.StringVar(&cacheAPIAddr, "cache-api-addr", "localhost:9999", "Cache API address")
@@ -141,19 +141,19 @@ func main() {
 	flag.BoolVar(&devMode, "development", false, "Enable dev mode")
 	flag.StringVar(&accessControlModelPath,
 		"access-control-model-path",
-		"/var/exc/access-control/model.conf",
+		"/etc/exc/access-control/model.conf",
 		"Access Control Model Path",
 	)
 	flag.StringVar(
 		&accessControlPolicyPath,
 		"access-control-policy-path",
-		"/var/exc/access-control/policy.csv",
+		"/etc/exc/access-control/policy.csv",
 		"Access Control Policy Path",
 	)
 	flag.StringVar(
 		&configPath,
 		"config",
-		"/var/exc/config.json",
+		"/etc/exc/config.json",
 		"Config Path",
 	)
 	opts := zap.Options{
@@ -433,7 +433,7 @@ func main() {
 			}
 		}()
 
-		if enableCacheAPI {
+		if enableAPI {
 			go func() {
 				apiServerCfg := &api.Config{}
 				apiServerCfg.EnableDevMode = devMode

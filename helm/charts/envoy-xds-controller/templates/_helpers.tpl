@@ -88,11 +88,11 @@ Create the name of the service account to use
  {{- $mounts = concat $mounts .Values.extraVolumeMounts -}}
  {{- end -}}
  {{- if .Values.auth.enabled -}}
- {{- $modelVolumeMount := dict "name" "auth" "mountPath" "/var/exc/access-control" -}}
+ {{- $modelVolumeMount := dict "name" "auth" "mountPath" "/etc/exc/access-control" -}}
  {{- $mounts = append $mounts $modelVolumeMount -}}
  {{- end -}}
  {{- if .Values.config -}}
- {{- $configVolumeMount := dict "name" "config" "mountPath" "/var/exc" -}}
+ {{- $configVolumeMount := dict "name" "config" "mountPath" "/etc/exc" -}}
  {{- $mounts = append $mounts $configVolumeMount -}}
  {{- end -}}
  {{- if $mounts -}}
