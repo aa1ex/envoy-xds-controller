@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file common/v1/common.proto.
  */
 export const file_common_v1_common: GenFile = /*@__PURE__*/
-  fileDesc("ChZjb21tb24vdjEvY29tbW9uLnByb3RvEgljb21tb24udjEiOwoLUmVzb3VyY2VSZWYSCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkSEQoJbmFtZXNwYWNlGAMgASgJQqoBCg1jb20uY29tbW9uLnYxQgtDb21tb25Qcm90b1ABWkdnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2NvbW1vbi92MTtjb21tb252MaICA0NYWKoCCUNvbW1vbi5WMcoCCUNvbW1vblxWMeICFUNvbW1vblxWMVxHUEJNZXRhZGF0YeoCCkNvbW1vbjo6VjFiBnByb3RvMw");
+  fileDesc("ChZjb21tb24vdjEvY29tbW9uLnByb3RvEgljb21tb24udjEiKAoLUmVzb3VyY2VSZWYSCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAlCqgEKDWNvbS5jb21tb24udjFCC0NvbW1vblByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvY29tbW9uL3YxO2NvbW1vbnYxogIDQ1hYqgIJQ29tbW9uLlYxygIJQ29tbW9uXFYx4gIVQ29tbW9uXFYxXEdQQk1ldGFkYXRh6gIKQ29tbW9uOjpWMWIGcHJvdG8z");
 
 /**
  * @generated from message common.v1.ResourceRef
@@ -25,11 +25,6 @@ export type ResourceRef = Message<"common.v1.ResourceRef"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**

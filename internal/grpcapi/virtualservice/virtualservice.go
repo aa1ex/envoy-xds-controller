@@ -67,9 +67,8 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 	if vs.Spec.Template != nil {
 		template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.Template.Name})
 		resp.Template = &commonv1.ResourceRef{
-			Uid:       string(template.UID),
-			Name:      template.Name,
-			Namespace: template.Namespace,
+			Uid:  string(template.UID),
+			Name: template.Name,
 		}
 		if len(vs.Spec.TemplateOptions) > 0 {
 			resp.TemplateOptions = make([]*virtual_service_templatev1.TemplateOption, 0, len(vs.Spec.TemplateOptions))
@@ -84,9 +83,8 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 	if vs.Spec.Listener != nil {
 		listener := s.store.GetListener(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.Listener.Name})
 		resp.Listener = &commonv1.ResourceRef{
-			Uid:       string(listener.UID),
-			Name:      listener.Name,
-			Namespace: listener.Namespace,
+			Uid:  string(listener.UID),
+			Name: listener.Name,
 		}
 	}
 	if vs.Spec.VirtualHost != nil {
@@ -100,9 +98,8 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 	if vs.Spec.AccessLogConfig != nil {
 		alc := s.store.GetAccessLog(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.AccessLogConfig.Name})
 		resp.AccessLog = &v1.GetVirtualServiceResponse_AccessLogConfig{AccessLogConfig: &commonv1.ResourceRef{
-			Uid:       string(alc.UID),
-			Name:      alc.Name,
-			Namespace: alc.Namespace,
+			Uid:  string(alc.UID),
+			Name: alc.Name,
 		}}
 	}
 	if vs.Spec.AdditionalRoutes != nil {
@@ -110,9 +107,8 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 		for _, route := range vs.Spec.AdditionalRoutes {
 			r := s.store.GetRoute(helpers.NamespacedName{Namespace: vs.Namespace, Name: route.Name})
 			resp.AdditionalRoutes = append(resp.AdditionalRoutes, &commonv1.ResourceRef{
-				Uid:       string(r.UID),
-				Name:      r.Name,
-				Namespace: r.Namespace,
+				Uid:  string(r.UID),
+				Name: r.Name,
 			})
 		}
 	}
@@ -121,9 +117,8 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 		for _, filter := range vs.Spec.AdditionalHttpFilters {
 			f := s.store.GetHTTPFilter(helpers.NamespacedName{Namespace: vs.Namespace, Name: filter.Name})
 			resp.AdditionalHttpFilters = append(resp.AdditionalHttpFilters, &commonv1.ResourceRef{
-				Uid:       string(f.UID),
-				Name:      f.Name,
-				Namespace: f.Namespace,
+				Uid:  string(f.UID),
+				Name: f.Name,
 			})
 		}
 	}

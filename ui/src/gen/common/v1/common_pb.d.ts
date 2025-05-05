@@ -23,11 +23,6 @@ export declare type ResourceRef = Message<"common.v1.ResourceRef"> & {
    * @generated from field: string name = 2;
    */
   name: string;
-
-  /**
-   * @generated from field: string namespace = 3;
-   */
-  namespace: string;
 };
 
 /**

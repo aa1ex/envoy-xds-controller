@@ -48,9 +48,8 @@ func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connec
 		if v.Spec.Template != nil {
 			template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: v.Namespace, Name: v.Spec.Template.Name})
 			vs.Template = &commonv1.ResourceRef{
-				Uid:       string(template.UID),
-				Name:      template.Name,
-				Namespace: template.Namespace,
+				Uid:  string(template.UID),
+				Name: template.Name,
 			}
 		}
 		vs.IsEditable = v.IsEditable()
