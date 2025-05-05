@@ -20,19 +20,19 @@ message VirtualHost {
 }
 
 message CreateVirtualServiceRequest {
-  string name = 1; //строка
-  repeated string node_ids = 2; //список чипов, данные вводим сами, из головы
-  string access_group = 3; //Селектор выбора группы
-  string template_uid = 4; //выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
-  string listener_uid = 5; //выбор из колекции listeners proto/listener/v1/listener.proto
-  VirtualHost virtual_host = 6; // объект {domains: ["список", "доменов"]}
-  oneof access_log_config {// выбор из колекции access_log_config proto/access_log_config/v1/access_log_config.proto:7
-    string access_log_config_uid = 7; // select
+  string name = 1;
+  repeated string node_ids = 2;
+  string access_group = 3;
+  string template_uid = 4;
+  string listener_uid = 5;
+  VirtualHost virtual_host = 6;
+  oneof access_log_config {
+    string access_log_config_uid = 7;
   }
-  repeated string additional_http_filter_uids = 8; // селектор множества фильтров порядок важен, сначала добавляем из списка, а после двигаем
-  repeated string additional_route_uids = 9; // примерно так же как и http filter
-  optional bool use_remote_address = 10; // выбор из 3х значений ДА/НЕТ/NUll дефолт null
-  repeated virtual_service_template.v1.TemplateOption template_options = 11; // набор опций пе
+  repeated string additional_http_filter_uids = 8;
+  repeated string additional_route_uids = 9;
+  optional bool use_remote_address = 10;
+  repeated virtual_service_template.v1.TemplateOption template_options = 11;
 }
 
 message CreateVirtualServiceResponse {}

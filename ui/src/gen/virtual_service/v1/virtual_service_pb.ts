@@ -38,56 +38,40 @@ export const VirtualHostSchema: GenMessage<VirtualHost> = /*@__PURE__*/
  */
 export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirtualServiceRequest"> & {
   /**
-   * строка
-   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
-   * список чипов, данные вводим сами, из головы
-   *
    * @generated from field: repeated string node_ids = 2;
    */
   nodeIds: string[];
 
   /**
-   * Селектор выбора группы
-   *
    * @generated from field: string access_group = 3;
    */
   accessGroup: string;
 
   /**
-   * выбор селектора из virtual_service_template.proto VirtualServiceTemplateStoreService
-   *
    * @generated from field: string template_uid = 4;
    */
   templateUid: string;
 
   /**
-   * выбор из колекции listeners proto/listener/v1/listener.proto
-   *
    * @generated from field: string listener_uid = 5;
    */
   listenerUid: string;
 
   /**
-   * объект {domains: ["список", "доменов"]}
-   *
    * @generated from field: virtual_service.v1.VirtualHost virtual_host = 6;
    */
   virtualHost?: VirtualHost;
 
   /**
-   * выбор из колекции access_log_config proto/access_log_config/v1/access_log_config.proto:7
-   *
    * @generated from oneof virtual_service.v1.CreateVirtualServiceRequest.access_log_config
    */
   accessLogConfig: {
     /**
-     * select
-     *
      * @generated from field: string access_log_config_uid = 7;
      */
     value: string;
@@ -95,29 +79,21 @@ export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirt
   } | { case: undefined; value?: undefined };
 
   /**
-   * селектор множества фильтров порядок важен, сначала добавляем из списка, а после двигаем
-   *
    * @generated from field: repeated string additional_http_filter_uids = 8;
    */
   additionalHttpFilterUids: string[];
 
   /**
-   * примерно так же как и http filter
-   *
    * @generated from field: repeated string additional_route_uids = 9;
    */
   additionalRouteUids: string[];
 
   /**
-   * выбор из 3х значений ДА/НЕТ/NUll дефолт null
-   *
    * @generated from field: optional bool use_remote_address = 10;
    */
   useRemoteAddress?: boolean;
 
   /**
-   * набор опций пе
-   *
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 11;
    */
   templateOptions: TemplateOption[];
