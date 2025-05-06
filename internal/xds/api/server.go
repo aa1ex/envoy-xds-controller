@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/kaasops/envoy-xds-controller/internal/filewatcher"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/permissions/v1/permissionsv1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/util/v1/utilv1connect"
 	"net"
 	"net/http"
@@ -187,13 +188,14 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 	mux.Handle(grpcreflect.NewHandlerV1(reflector))
 	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
 
-	handler = mux
-
 	if c.cfg.Auth.Enabled {
 		enforcer, err := casbin.NewEnforcer(c.cfg.Auth.AccessControlModel, c.cfg.Auth.AccessControlPolicy)
 		if err != nil {
 			return err
 		}
+		path, handler = permissionsv1connect.NewPermissionsServiceHandler(grpcapi.NewPermissionsService(enforcer))
+		mux.Handle(path, handler)
+		handler = mux
 
 		if err := c.fWatcher.Add(c.cfg.Auth.AccessControlModel, func(_ string) {
 			c.logger.Info("rbac model changed")
@@ -215,6 +217,8 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 			return err
 		}
 		handler = middleware.Wrap(mux)
+	} else {
+		handler = mux
 	}
 
 	go func() {

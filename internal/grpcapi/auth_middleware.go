@@ -2,6 +2,7 @@ package grpcapi
 
 import (
 	"context"
+	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/permissions/v1/permissionsv1connect"
 	"net/http"
 
 	"connectrpc.com/authn"
@@ -32,6 +33,7 @@ type IAuthorizer interface {
 	Authorize(domain string, object any) (bool, error)
 	AuthorizeCommonObjectWithAction(domain string, object any, action string) (bool, error)
 	GetAvailableAccessGroups() map[string]bool
+	GetSubjects() []string
 }
 
 type Authorizer struct {
@@ -39,6 +41,10 @@ type Authorizer struct {
 	groups   []string
 	action   string
 	enforcer *casbin.Enforcer
+}
+
+func (a *Authorizer) GetSubjects() []string {
+	return a.getSubjects()
 }
 
 func (a *Authorizer) getSubjects() []string {
@@ -150,6 +156,7 @@ const (
 	ActionListPolicies                = "list-policies"
 	ActionListAccessGroups            = "list-access-groups"
 	ActionListListeners               = "list-listeners"
+	ActionListPermissions             = "list-permissions"
 )
 
 func lookupAction(route string) string {
@@ -180,6 +187,8 @@ func lookupAction(route string) string {
 		return ActionListAccessGroups
 	case listenerv1connect.ListenerStoreServiceListListenersProcedure:
 		return ActionListListeners
+	case permissionsv1connect.PermissionsServiceListPermissionsProcedure:
+		return ActionListPermissions
 	default:
 		return ""
 	}
@@ -213,4 +222,8 @@ func (a *stubAuthorizer) GetAvailableAccessGroups() map[string]bool {
 	return map[string]bool{
 		"*": true,
 	}
+}
+
+func (a *stubAuthorizer) GetSubjects() []string {
+	return []string{}
 }

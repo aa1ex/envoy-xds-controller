@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package permissions.v1;
+
+option go_package = "permissionsv1";
+
+service PermissionsService {
+  rpc ListPermissions(ListPermissionsRequest) returns (ListPermissionsResponse);
+}
+
+message PermissionsItem {
+  string action = 1;
+  repeated string objects = 2;
+}
+
+message ListPermissionsRequest {
+  string access_group = 1;
+}
+
+message ListPermissionsResponse {
+  repeated PermissionsItem items = 1;
+}
