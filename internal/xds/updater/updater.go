@@ -33,7 +33,7 @@ func NewCacheUpdater(wsc *wrapped.SnapshotCache, store *store.Store) *CacheUpdat
 	return &CacheUpdater{snapshotCache: wsc, usedSecrets: make(map[helpers.NamespacedName]helpers.NamespacedName), store: store}
 }
 
-func (c *CacheUpdater) Init(ctx context.Context, cl client.Client) error {
+func (c *CacheUpdater) InitFromKubernetes(ctx context.Context, cl client.Client) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 
@@ -41,10 +41,10 @@ func (c *CacheUpdater) Init(ctx context.Context, cl client.Client) error {
 		return fmt.Errorf("failed to fill store: %w", err)
 	}
 
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
-func (c *CacheUpdater) buildCache(ctx context.Context) error {
+func (c *CacheUpdater) rebuildSnapshot(ctx context.Context) error {
 	errs := make([]error, 0)
 
 	mixer := NewMixer()

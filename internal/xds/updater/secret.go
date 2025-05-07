@@ -10,19 +10,19 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (c *CacheUpdater) UpsertSecret(ctx context.Context, secret *v1.Secret) error {
+func (c *CacheUpdater) ApplySecret(ctx context.Context, secret *v1.Secret) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	prevSecret := c.store.GetSecret(helpers.NamespacedName{Namespace: secret.Namespace, Name: secret.Name})
 	if prevSecret == nil {
 		c.store.SetSecret(secret)
-		return c.buildCache(ctx)
+		return c.rebuildSnapshot(ctx)
 	}
-	if checkSecretsEqual(prevSecret, secret) {
+	if secretsEqual(prevSecret, secret) {
 		return nil
 	}
 	c.store.SetSecret(secret)
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
 func (c *CacheUpdater) DeleteSecret(ctx context.Context, nn types.NamespacedName) error {
@@ -32,10 +32,10 @@ func (c *CacheUpdater) DeleteSecret(ctx context.Context, nn types.NamespacedName
 		return nil
 	}
 	c.store.DeleteSecret(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
-func checkSecretsEqual(a, b *v1.Secret) bool {
+func secretsEqual(a, b *v1.Secret) bool {
 	if a.Data == nil && b.Data == nil {
 		return true
 	}

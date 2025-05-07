@@ -8,19 +8,19 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (c *CacheUpdater) UpsertCluster(ctx context.Context, cl *v1alpha1.Cluster) error {
+func (c *CacheUpdater) ApplyCluster(ctx context.Context, cl *v1alpha1.Cluster) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	prevCluster := c.store.GetCluster(helpers.NamespacedName{Namespace: cl.Namespace, Name: cl.Name})
 	if prevCluster == nil {
 		c.store.SetCluster(cl)
-		return c.buildCache(ctx)
+		return c.rebuildSnapshot(ctx)
 	}
 	if prevCluster.IsEqual(cl) {
 		return nil
 	}
 	c.store.SetCluster(cl)
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
 func (c *CacheUpdater) DeleteCluster(ctx context.Context, cl types.NamespacedName) error {
@@ -30,7 +30,7 @@ func (c *CacheUpdater) DeleteCluster(ctx context.Context, cl types.NamespacedNam
 		return nil
 	}
 	c.store.DeleteCluster(helpers.NamespacedName{Namespace: cl.Namespace, Name: cl.Name})
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
 func (c *CacheUpdater) GetSpecCluster(specCluster string) *v1alpha1.Cluster {

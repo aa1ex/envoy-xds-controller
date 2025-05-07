@@ -8,19 +8,19 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (c *CacheUpdater) UpsertAccessLogConfig(ctx context.Context, alc *v1alpha1.AccessLogConfig) error {
+func (c *CacheUpdater) ApplyAccessLogConfig(ctx context.Context, alc *v1alpha1.AccessLogConfig) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	prevALC := c.store.GetAccessLog(helpers.NamespacedName{Namespace: alc.Namespace, Name: alc.Name})
 	if prevALC == nil {
 		c.store.SetAccessLog(alc)
-		return c.buildCache(ctx)
+		return c.rebuildSnapshot(ctx)
 	}
 	if prevALC.IsEqual(alc) {
 		return nil
 	}
 	c.store.SetAccessLog(alc)
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
 func (c *CacheUpdater) DeleteAccessLogConfig(ctx context.Context, alc types.NamespacedName) error {
@@ -30,5 +30,5 @@ func (c *CacheUpdater) DeleteAccessLogConfig(ctx context.Context, alc types.Name
 		return nil
 	}
 	c.store.DeleteAccessLog(helpers.NamespacedName{Namespace: alc.Namespace, Name: alc.Name})
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }

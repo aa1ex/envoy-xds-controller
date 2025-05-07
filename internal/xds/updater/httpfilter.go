@@ -8,19 +8,19 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (c *CacheUpdater) UpsertHTTPFilter(ctx context.Context, httpFilter *v1alpha1.HttpFilter) error {
+func (c *CacheUpdater) ApplyHTTPFilter(ctx context.Context, httpFilter *v1alpha1.HttpFilter) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	prevHTTPFilter := c.store.GetHTTPFilter(helpers.NamespacedName{Namespace: httpFilter.Namespace, Name: httpFilter.Name})
 	if prevHTTPFilter == nil {
 		c.store.SetHTTPFilter(httpFilter)
-		return c.buildCache(ctx)
+		return c.rebuildSnapshot(ctx)
 	}
 	if prevHTTPFilter.IsEqual(httpFilter) {
 		return nil
 	}
 	c.store.SetHTTPFilter(httpFilter)
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
 func (c *CacheUpdater) DeleteHTTPFilter(ctx context.Context, nn types.NamespacedName) error {
@@ -30,5 +30,5 @@ func (c *CacheUpdater) DeleteHTTPFilter(ctx context.Context, nn types.Namespaced
 		return nil
 	}
 	c.store.DeleteHTTPFilter(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }

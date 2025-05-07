@@ -8,19 +8,19 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func (c *CacheUpdater) UpsertVirtualService(ctx context.Context, vs *v1alpha1.VirtualService) error {
+func (c *CacheUpdater) ApplyVirtualService(ctx context.Context, vs *v1alpha1.VirtualService) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	prevVS := c.store.GetVirtualService(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name})
 	if prevVS == nil {
 		c.store.SetVirtualService(vs)
-		return c.buildCache(ctx)
+		return c.rebuildSnapshot(ctx)
 	}
 	if prevVS.IsEqual(vs) {
 		return nil
 	}
 	c.store.SetVirtualService(vs)
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }
 
 func (c *CacheUpdater) DeleteVirtualService(ctx context.Context, nn types.NamespacedName) error {
@@ -30,5 +30,5 @@ func (c *CacheUpdater) DeleteVirtualService(ctx context.Context, nn types.Namesp
 		return nil
 	}
 	c.store.DeleteVirtualService(helpers.NamespacedName{Namespace: nn.Namespace, Name: nn.Name})
-	return c.buildCache(ctx)
+	return c.rebuildSnapshot(ctx)
 }

@@ -333,7 +333,7 @@ func main() {
 	// nolint:goconst
 	if os.Getenv("ENABLE_WEBHOOKS") != "false" {
 
-		// Init Kubernetes Client for Webhook
+		// InitFromKubernetes Kubernetes Client for Webhook
 		webhookClient, err := client.New(ctrl.GetConfigOrDie(), client.Options{
 			Scheme: mgr.GetScheme(),
 			Mapper: mgr.GetRESTMapper(),
@@ -421,7 +421,7 @@ func main() {
 		setupServers := log.FromContext(ctx)
 		setupServers.Info("Starting servers")
 
-		if err := cacheUpdater.Init(ctx, mgr.GetClient()); err != nil {
+		if err := cacheUpdater.InitFromKubernetes(ctx, mgr.GetClient()); err != nil {
 			return fmt.Errorf("unable to init cache updater: %w", err)
 		}
 

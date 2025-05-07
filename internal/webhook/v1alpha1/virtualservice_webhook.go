@@ -105,8 +105,8 @@ func (v *VirtualServiceCustomValidator) validateVirtualService(ctx context.Conte
 	s := store.New()
 	snapshotCache := cache.NewSnapshotCache()
 	cacheUpdater := updater.NewCacheUpdater(snapshotCache, s)
-	if err := cacheUpdater.Init(ctx, v.Client); err != nil {
+	if err := cacheUpdater.InitFromKubernetes(ctx, v.Client); err != nil {
 		return fmt.Errorf("failed to init cache updater for validation: %w", err)
 	}
-	return cacheUpdater.UpsertVirtualService(ctx, vs)
+	return cacheUpdater.ApplyVirtualService(ctx, vs)
 }
