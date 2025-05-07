@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_http_filter_v1_http_filter: GenFile;
 
 /**
+ * Represents an individual HTTP filter.
+ *
  * @generated from message http_filter.v1.HTTPFilterListItem
  */
 export declare type HTTPFilterListItem = Message<"http_filter.v1.HTTPFilterListItem"> & {
   /**
+   * Unique identifier of the HTTP filter.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name of the HTTP filter.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -32,10 +38,14 @@ export declare type HTTPFilterListItem = Message<"http_filter.v1.HTTPFilterListI
 export declare const HTTPFilterListItemSchema: GenMessage<HTTPFilterListItem>;
 
 /**
+ * Request message for listing HTTP filters.
+ *
  * @generated from message http_filter.v1.ListHTTPFiltersRequest
  */
 export declare type ListHTTPFiltersRequest = Message<"http_filter.v1.ListHTTPFiltersRequest"> & {
   /**
+   * Name of the access group to filter HTTP filters by.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -48,10 +58,14 @@ export declare type ListHTTPFiltersRequest = Message<"http_filter.v1.ListHTTPFil
 export declare const ListHTTPFiltersRequestSchema: GenMessage<ListHTTPFiltersRequest>;
 
 /**
+ * Response message containing a list of HTTP filters.
+ *
  * @generated from message http_filter.v1.ListHTTPFiltersResponse
  */
 export declare type ListHTTPFiltersResponse = Message<"http_filter.v1.ListHTTPFiltersResponse"> & {
   /**
+   * List of HTTP filter items.
+   *
    * @generated from field: repeated http_filter.v1.HTTPFilterListItem items = 1;
    */
   items: HTTPFilterListItem[];
@@ -64,10 +78,14 @@ export declare type ListHTTPFiltersResponse = Message<"http_filter.v1.ListHTTPFi
 export declare const ListHTTPFiltersResponseSchema: GenMessage<ListHTTPFiltersResponse>;
 
 /**
+ * Service to manage HTTP filters.
+ *
  * @generated from service http_filter.v1.HTTPFilterStoreService
  */
 export declare const HTTPFilterStoreService: GenService<{
   /**
+   * Lists all HTTP filters for a given access group.
+   *
    * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilters
    */
   listHTTPFilters: {

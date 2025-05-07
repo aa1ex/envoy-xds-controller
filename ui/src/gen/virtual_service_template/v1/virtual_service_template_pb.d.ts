@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_virtual_service_template_v1_virtual_service_template: GenFile;
 
 /**
+ * Represents a single option to be applied to a template.
+ *
  * @generated from message virtual_service_template.v1.TemplateOption
  */
 export declare type TemplateOption = Message<"virtual_service_template.v1.TemplateOption"> & {
   /**
+   * The field name of the option.
+   *
    * @generated from field: string field = 1;
    */
   field: string;
 
   /**
+   * The modifier applied to the field.
+   *
    * @generated from field: virtual_service_template.v1.TemplateOptionModifier modifier = 2;
    */
   modifier: TemplateOptionModifier;
@@ -32,10 +38,14 @@ export declare type TemplateOption = Message<"virtual_service_template.v1.Templa
 export declare const TemplateOptionSchema: GenMessage<TemplateOption>;
 
 /**
+ * Request message for listing all virtual service templates.
+ *
  * @generated from message virtual_service_template.v1.ListVirtualServiceTemplatesRequest
  */
 export declare type ListVirtualServiceTemplatesRequest = Message<"virtual_service_template.v1.ListVirtualServiceTemplatesRequest"> & {
   /**
+   * The access group for filtering templates.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -48,15 +58,21 @@ export declare type ListVirtualServiceTemplatesRequest = Message<"virtual_servic
 export declare const ListVirtualServiceTemplatesRequestSchema: GenMessage<ListVirtualServiceTemplatesRequest>;
 
 /**
+ * Details of a virtual service template.
+ *
  * @generated from message virtual_service_template.v1.VirtualServiceTemplateListItem
  */
 export declare type VirtualServiceTemplateListItem = Message<"virtual_service_template.v1.VirtualServiceTemplateListItem"> & {
   /**
+   * Unique identifier of the template.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name of the template.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -69,10 +85,14 @@ export declare type VirtualServiceTemplateListItem = Message<"virtual_service_te
 export declare const VirtualServiceTemplateListItemSchema: GenMessage<VirtualServiceTemplateListItem>;
 
 /**
+ * Response message containing the list of virtual service templates.
+ *
  * @generated from message virtual_service_template.v1.ListVirtualServiceTemplatesResponse
  */
 export declare type ListVirtualServiceTemplatesResponse = Message<"virtual_service_template.v1.ListVirtualServiceTemplatesResponse"> & {
   /**
+   * The list of virtual service templates.
+   *
    * @generated from field: repeated virtual_service_template.v1.VirtualServiceTemplateListItem items = 1;
    */
   items: VirtualServiceTemplateListItem[];
@@ -85,29 +105,41 @@ export declare type ListVirtualServiceTemplatesResponse = Message<"virtual_servi
 export declare const ListVirtualServiceTemplatesResponseSchema: GenMessage<ListVirtualServiceTemplatesResponse>;
 
 /**
+ * Request message for filling a template with specific configurations.
+ *
  * @generated from message virtual_service_template.v1.FillTemplateRequest
  */
 export declare type FillTemplateRequest = Message<"virtual_service_template.v1.FillTemplateRequest"> & {
   /**
+   * Unique identifier of the template to fill.
+   *
    * @generated from field: string template_uid = 1;
    */
   templateUid: string;
 
   /**
+   * Unique identifier of the listener to associate with the template.
+   *
    * @generated from field: string listener_uid = 2;
    */
   listenerUid: string;
 
   /**
+   * Virtual host configuration in binary format.
+   *
    * @generated from field: bytes virtual_host = 3;
    */
   virtualHost: Uint8Array;
 
   /**
+   * Access log configuration.
+   *
    * @generated from oneof virtual_service_template.v1.FillTemplateRequest.access_log_config
    */
   accessLogConfig: {
     /**
+     * Unique identifier of the access log configuration.
+     *
      * @generated from field: string access_log_config_uid = 4;
      */
     value: string;
@@ -115,21 +147,29 @@ export declare type FillTemplateRequest = Message<"virtual_service_template.v1.F
   } | { case: undefined; value?: undefined };
 
   /**
+   * Additional HTTP filter unique identifiers.
+   *
    * @generated from field: repeated string additional_http_filter_uids = 5;
    */
   additionalHttpFilterUids: string[];
 
   /**
+   * Additional route unique identifiers.
+   *
    * @generated from field: repeated string additional_route_uids = 6;
    */
   additionalRouteUids: string[];
 
   /**
+   * Whether to use the remote address.
+   *
    * @generated from field: optional bool use_remote_address = 7;
    */
   useRemoteAddress?: boolean;
 
   /**
+   * Options to modify the template.
+   *
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 8;
    */
   templateOptions: TemplateOption[];
@@ -142,10 +182,14 @@ export declare type FillTemplateRequest = Message<"virtual_service_template.v1.F
 export declare const FillTemplateRequestSchema: GenMessage<FillTemplateRequest>;
 
 /**
+ * Response message containing the filled template as a raw string.
+ *
  * @generated from message virtual_service_template.v1.FillTemplateResponse
  */
 export declare type FillTemplateResponse = Message<"virtual_service_template.v1.FillTemplateResponse"> & {
   /**
+   * The raw string representation of the filled template.
+   *
    * @generated from field: string raw = 1;
    */
   raw: string;
@@ -158,25 +202,35 @@ export declare type FillTemplateResponse = Message<"virtual_service_template.v1.
 export declare const FillTemplateResponseSchema: GenMessage<FillTemplateResponse>;
 
 /**
+ * Enum describing possible modifiers for template options.
+ *
  * @generated from enum virtual_service_template.v1.TemplateOptionModifier
  */
 export enum TemplateOptionModifier {
   /**
+   * Unspecified modifier.
+   *
    * @generated from enum value: TEMPLATE_OPTION_MODIFIER_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * Merge modifier for combining with existing options.
+   *
    * @generated from enum value: TEMPLATE_OPTION_MODIFIER_MERGE = 1;
    */
   MERGE = 1,
 
   /**
+   * Replace modifier to overwrite existing options.
+   *
    * @generated from enum value: TEMPLATE_OPTION_MODIFIER_REPLACE = 2;
    */
   REPLACE = 2,
 
   /**
+   * Delete modifier to remove existing options.
+   *
    * @generated from enum value: TEMPLATE_OPTION_MODIFIER_DELETE = 3;
    */
   DELETE = 3,
@@ -188,10 +242,14 @@ export enum TemplateOptionModifier {
 export declare const TemplateOptionModifierSchema: GenEnum<TemplateOptionModifier>;
 
 /**
+ * Service to manage virtual service templates.
+ *
  * @generated from service virtual_service_template.v1.VirtualServiceTemplateStoreService
  */
 export declare const VirtualServiceTemplateStoreService: GenService<{
   /**
+   * Lists all virtual service templates.
+   *
    * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates
    */
   listVirtualServiceTemplates: {
@@ -200,6 +258,8 @@ export declare const VirtualServiceTemplateStoreService: GenService<{
     output: typeof ListVirtualServiceTemplatesResponseSchema;
   },
   /**
+   * Fills a template with specific configurations and returns the result.
+   *
    * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate
    */
   fillTemplate: {

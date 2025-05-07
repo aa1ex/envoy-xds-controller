@@ -21,13 +21,14 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Type of listener available.
 type ListenerType int32
 
 const (
-	ListenerType_LISTENER_TYPE_UNSPECIFIED ListenerType = 0
-	ListenerType_LISTENER_TYPE_HTTP        ListenerType = 1
-	ListenerType_LISTENER_TYPE_HTTPS       ListenerType = 2
-	ListenerType_LISTENER_TYPE_TCP         ListenerType = 3
+	ListenerType_LISTENER_TYPE_UNSPECIFIED ListenerType = 0 // Default value, unspecified listener type.
+	ListenerType_LISTENER_TYPE_HTTP        ListenerType = 1 // HTTP listener.
+	ListenerType_LISTENER_TYPE_HTTPS       ListenerType = 2 // HTTPS listener.
+	ListenerType_LISTENER_TYPE_TCP         ListenerType = 3 // TCP listener.
 )
 
 // Enum value maps for ListenerType.
@@ -73,11 +74,12 @@ func (ListenerType) EnumDescriptor() ([]byte, []int) {
 	return file_listener_v1_listener_proto_rawDescGZIP(), []int{0}
 }
 
+// Details of a listener.
 type ListenerListItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Type          ListenerType           `protobuf:"varint,3,opt,name=type,proto3,enum=listener.v1.ListenerType" json:"type,omitempty"`
+	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`                                  // Unique identifier for the listener.
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                                // Display name of the listener.
+	Type          ListenerType           `protobuf:"varint,3,opt,name=type,proto3,enum=listener.v1.ListenerType" json:"type,omitempty"` // The type of listener.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -133,9 +135,10 @@ func (x *ListenerListItem) GetType() ListenerType {
 	return ListenerType_LISTENER_TYPE_UNSPECIFIED
 }
 
+// Request message to list listeners.
 type ListListenersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessGroup   string                 `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	AccessGroup   string                 `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"` // The access group to filter the listeners.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -177,9 +180,10 @@ func (x *ListListenersRequest) GetAccessGroup() string {
 	return ""
 }
 
+// Response message containing a list of listeners.
 type ListListenersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*ListenerListItem    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	Items         []*ListenerListItem    `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"` // A list of listener items.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

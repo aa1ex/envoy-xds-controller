@@ -13,15 +13,21 @@ export const file_access_log_config_v1_access_log_config: GenFile = /*@__PURE__*
   fileDesc("CixhY2Nlc3NfbG9nX2NvbmZpZy92MS9hY2Nlc3NfbG9nX2NvbmZpZy5wcm90bxIUYWNjZXNzX2xvZ19jb25maWcudjEiNAoXQWNjZXNzTG9nQ29uZmlnTGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiMwobTGlzdEFjY2Vzc0xvZ0NvbmZpZ3NSZXF1ZXN0EhQKDGFjY2Vzc19ncm91cBgBIAEoCSJcChxMaXN0QWNjZXNzTG9nQ29uZmlnc1Jlc3BvbnNlEjwKBWl0ZW1zGAEgAygLMi0uYWNjZXNzX2xvZ19jb25maWcudjEuQWNjZXNzTG9nQ29uZmlnTGlzdEl0ZW0ynAEKG0FjY2Vzc0xvZ0NvbmZpZ1N0b3JlU2VydmljZRJ9ChRMaXN0QWNjZXNzTG9nQ29uZmlncxIxLmFjY2Vzc19sb2dfY29uZmlnLnYxLkxpc3RBY2Nlc3NMb2dDb25maWdzUmVxdWVzdBoyLmFjY2Vzc19sb2dfY29uZmlnLnYxLkxpc3RBY2Nlc3NMb2dDb25maWdzUmVzcG9uc2VC+AEKGGNvbS5hY2Nlc3NfbG9nX2NvbmZpZy52MUIUQWNjZXNzTG9nQ29uZmlnUHJvdG9QAVpdZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9hY2Nlc3NfbG9nX2NvbmZpZy92MTthY2Nlc3NfbG9nX2NvbmZpZ3YxogIDQVhYqgISQWNjZXNzTG9nQ29uZmlnLlYxygISQWNjZXNzTG9nQ29uZmlnXFYx4gIeQWNjZXNzTG9nQ29uZmlnXFYxXEdQQk1ldGFkYXRh6gITQWNjZXNzTG9nQ29uZmlnOjpWMWIGcHJvdG8z");
 
 /**
+ * Represents an access log configuration item.
+ *
  * @generated from message access_log_config.v1.AccessLogConfigListItem
  */
 export type AccessLogConfigListItem = Message<"access_log_config.v1.AccessLogConfigListItem"> & {
   /**
+   * The unique identifier of the access log configuration.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The name of the access log configuration.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -35,10 +41,14 @@ export const AccessLogConfigListItemSchema: GenMessage<AccessLogConfigListItem> 
   messageDesc(file_access_log_config_v1_access_log_config, 0);
 
 /**
+ * Request message for listing access log configurations.
+ *
  * @generated from message access_log_config.v1.ListAccessLogConfigsRequest
  */
 export type ListAccessLogConfigsRequest = Message<"access_log_config.v1.ListAccessLogConfigsRequest"> & {
   /**
+   * The access group to filter the log configurations.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -52,10 +62,14 @@ export const ListAccessLogConfigsRequestSchema: GenMessage<ListAccessLogConfigsR
   messageDesc(file_access_log_config_v1_access_log_config, 1);
 
 /**
+ * Response message containing a list of access log configuration items.
+ *
  * @generated from message access_log_config.v1.ListAccessLogConfigsResponse
  */
 export type ListAccessLogConfigsResponse = Message<"access_log_config.v1.ListAccessLogConfigsResponse"> & {
   /**
+   * The list of access log configuration items.
+   *
    * @generated from field: repeated access_log_config.v1.AccessLogConfigListItem items = 1;
    */
   items: AccessLogConfigListItem[];
@@ -69,10 +83,14 @@ export const ListAccessLogConfigsResponseSchema: GenMessage<ListAccessLogConfigs
   messageDesc(file_access_log_config_v1_access_log_config, 2);
 
 /**
+ * Service for storing and listing access log configurations.
+ *
  * @generated from service access_log_config.v1.AccessLogConfigStoreService
  */
 export const AccessLogConfigStoreService: GenService<{
   /**
+   * Lists all access log configurations based on the given request.
+   *
    * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs
    */
   listAccessLogConfigs: {

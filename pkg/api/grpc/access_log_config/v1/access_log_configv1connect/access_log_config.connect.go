@@ -42,6 +42,7 @@ const (
 // AccessLogConfigStoreServiceClient is a client for the
 // access_log_config.v1.AccessLogConfigStoreService service.
 type AccessLogConfigStoreServiceClient interface {
+	// Lists all access log configurations based on the given request.
 	ListAccessLogConfigs(context.Context, *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error)
 }
 
@@ -79,6 +80,7 @@ func (c *accessLogConfigStoreServiceClient) ListAccessLogConfigs(ctx context.Con
 // AccessLogConfigStoreServiceHandler is an implementation of the
 // access_log_config.v1.AccessLogConfigStoreService service.
 type AccessLogConfigStoreServiceHandler interface {
+	// Lists all access log configurations based on the given request.
 	ListAccessLogConfigs(context.Context, *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error)
 }
 

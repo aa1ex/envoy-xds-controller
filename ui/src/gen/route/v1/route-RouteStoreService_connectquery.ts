@@ -5,6 +5,8 @@
 import { RouteStoreService } from "./route_pb";
 
 /**
+ * Lists all the routes for the specified access group.
+ *
  * @generated from rpc route.v1.RouteStoreService.ListRoutes
  */
 export const listRoutes = RouteStoreService.method.listRoutes;

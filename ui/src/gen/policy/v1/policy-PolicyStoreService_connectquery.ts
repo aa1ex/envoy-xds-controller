@@ -2,9 +2,13 @@
 // @generated from file policy/v1/policy.proto (package policy.v1, syntax proto3)
 /* eslint-disable */
 
+// Package policy.v1 contains the PolicyStoreService and related messages.
+
 import { PolicyStoreService } from "./policy_pb";
 
 /**
+ * ListPolicies retrieves a list of policies.
+ *
  * @generated from rpc policy.v1.PolicyStoreService.ListPolicies
  */
 export const listPolicies = PolicyStoreService.method.listPolicies;

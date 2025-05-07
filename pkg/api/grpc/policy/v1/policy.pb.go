@@ -4,6 +4,8 @@
 // 	protoc        (unknown)
 // source: policy/v1/policy.proto
 
+// Package policy.v1 contains the PolicyStoreService and related messages.
+
 package policyv1
 
 import (
@@ -21,10 +23,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// PolicyListItem represents an individual policy item with a unique identifier and name.
 type PolicyListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// uid is the unique identifier for the policy.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// name is the name of the policy.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,6 +78,7 @@ func (x *PolicyListItem) GetName() string {
 	return ""
 }
 
+// ListPoliciesRequest is the request message for ListPolicies RPC.
 type ListPoliciesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -109,9 +115,11 @@ func (*ListPoliciesRequest) Descriptor() ([]byte, []int) {
 	return file_policy_v1_policy_proto_rawDescGZIP(), []int{1}
 }
 
+// ListPoliciesResponse is the response message for ListPolicies RPC, containing a list of policy items.
 type ListPoliciesResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*PolicyListItem      `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// items is a list of PolicyListItem objects.
+	Items         []*PolicyListItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

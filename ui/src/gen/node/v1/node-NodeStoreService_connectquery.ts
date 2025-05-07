@@ -5,6 +5,8 @@
 import { NodeStoreService } from "./node_pb";
 
 /**
+ * ListNodes retrieves a list of nodes belonging to the specified access group.
+ *
  * @generated from rpc node.v1.NodeStoreService.ListNodes
  */
 export const listNodes = NodeStoreService.method.listNodes;

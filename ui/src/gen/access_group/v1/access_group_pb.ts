@@ -13,10 +13,14 @@ export const file_access_group_v1_access_group: GenFile = /*@__PURE__*/
   fileDesc("CiJhY2Nlc3NfZ3JvdXAvdjEvYWNjZXNzX2dyb3VwLnByb3RvEg9hY2Nlc3NfZ3JvdXAudjEiIwoTQWNjZXNzR3JvdXBMaXN0SXRlbRIMCgRuYW1lGAEgASgJIhkKF0xpc3RBY2Nlc3NHcm91cHNSZXF1ZXN0Ik8KGExpc3RBY2Nlc3NHcm91cHNSZXNwb25zZRIzCgVpdGVtcxgBIAMoCzIkLmFjY2Vzc19ncm91cC52MS5BY2Nlc3NHcm91cExpc3RJdGVtMoIBChdBY2Nlc3NHcm91cFN0b3JlU2VydmljZRJnChBMaXN0QWNjZXNzR3JvdXBzEiguYWNjZXNzX2dyb3VwLnYxLkxpc3RBY2Nlc3NHcm91cHNSZXF1ZXN0GikuYWNjZXNzX2dyb3VwLnYxLkxpc3RBY2Nlc3NHcm91cHNSZXNwb25zZULVAQoTY29tLmFjY2Vzc19ncm91cC52MUIQQWNjZXNzR3JvdXBQcm90b1ABWlNnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2FjY2Vzc19ncm91cC92MTthY2Nlc3NfZ3JvdXB2MaICA0FYWKoCDkFjY2Vzc0dyb3VwLlYxygIOQWNjZXNzR3JvdXBcVjHiAhpBY2Nlc3NHcm91cFxWMVxHUEJNZXRhZGF0YeoCD0FjY2Vzc0dyb3VwOjpWMWIGcHJvdG8z");
 
 /**
+ * Represents an access group item.
+ *
  * @generated from message access_group.v1.AccessGroupListItem
  */
 export type AccessGroupListItem = Message<"access_group.v1.AccessGroupListItem"> & {
   /**
+   * The name of the access group.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -30,6 +34,8 @@ export const AccessGroupListItemSchema: GenMessage<AccessGroupListItem> = /*@__P
   messageDesc(file_access_group_v1_access_group, 0);
 
 /**
+ * Request message for listing access groups.
+ *
  * @generated from message access_group.v1.ListAccessGroupsRequest
  */
 export type ListAccessGroupsRequest = Message<"access_group.v1.ListAccessGroupsRequest"> & {
@@ -43,10 +49,14 @@ export const ListAccessGroupsRequestSchema: GenMessage<ListAccessGroupsRequest> 
   messageDesc(file_access_group_v1_access_group, 1);
 
 /**
+ * Response message containing a list of access groups.
+ *
  * @generated from message access_group.v1.ListAccessGroupsResponse
  */
 export type ListAccessGroupsResponse = Message<"access_group.v1.ListAccessGroupsResponse"> & {
   /**
+   * The list of access group items.
+   *
    * @generated from field: repeated access_group.v1.AccessGroupListItem items = 1;
    */
   items: AccessGroupListItem[];
@@ -60,10 +70,14 @@ export const ListAccessGroupsResponseSchema: GenMessage<ListAccessGroupsResponse
   messageDesc(file_access_group_v1_access_group, 2);
 
 /**
+ * Service to manage access groups.
+ *
  * @generated from service access_group.v1.AccessGroupStoreService
  */
 export const AccessGroupStoreService: GenService<{
   /**
+   * Lists access groups.
+   *
    * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroups
    */
   listAccessGroups: {

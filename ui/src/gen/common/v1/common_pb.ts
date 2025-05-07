@@ -13,15 +13,21 @@ export const file_common_v1_common: GenFile = /*@__PURE__*/
   fileDesc("ChZjb21tb24vdjEvY29tbW9uLnByb3RvEgljb21tb24udjEiKAoLUmVzb3VyY2VSZWYSCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAlCqgEKDWNvbS5jb21tb24udjFCC0NvbW1vblByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvY29tbW9uL3YxO2NvbW1vbnYxogIDQ1hYqgIJQ29tbW9uLlYxygIJQ29tbW9uXFYx4gIVQ29tbW9uXFYxXEdQQk1ldGFkYXRh6gIKQ29tbW9uOjpWMWIGcHJvdG8z");
 
 /**
+ * ResourceRef represents a reference to a resource with a UID and name.
+ *
  * @generated from message common.v1.ResourceRef
  */
 export type ResourceRef = Message<"common.v1.ResourceRef"> & {
   /**
+   * UID is the unique identifier of the resource.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name is the human-readable name of the resource.
+   *
    * @generated from field: string name = 2;
    */
   name: string;

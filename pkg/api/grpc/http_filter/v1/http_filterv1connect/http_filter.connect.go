@@ -40,6 +40,7 @@ const (
 
 // HTTPFilterStoreServiceClient is a client for the http_filter.v1.HTTPFilterStoreService service.
 type HTTPFilterStoreServiceClient interface {
+	// Lists all HTTP filters for a given access group.
 	ListHTTPFilters(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error)
 }
 
@@ -76,6 +77,7 @@ func (c *hTTPFilterStoreServiceClient) ListHTTPFilters(ctx context.Context, req 
 // HTTPFilterStoreServiceHandler is an implementation of the http_filter.v1.HTTPFilterStoreService
 // service.
 type HTTPFilterStoreServiceHandler interface {
+	// Lists all HTTP filters for a given access group.
 	ListHTTPFilters(context.Context, *connect.Request[v1.ListHTTPFiltersRequest]) (*connect.Response[v1.ListHTTPFiltersResponse], error)
 }
 

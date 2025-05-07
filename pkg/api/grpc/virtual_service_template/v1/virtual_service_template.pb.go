@@ -21,13 +21,18 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Enum describing possible modifiers for template options.
 type TemplateOptionModifier int32
 
 const (
+	// Unspecified modifier.
 	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_UNSPECIFIED TemplateOptionModifier = 0
-	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE       TemplateOptionModifier = 1
-	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE     TemplateOptionModifier = 2
-	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE      TemplateOptionModifier = 3
+	// Merge modifier for combining with existing options.
+	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE TemplateOptionModifier = 1
+	// Replace modifier to overwrite existing options.
+	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE TemplateOptionModifier = 2
+	// Delete modifier to remove existing options.
+	TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE TemplateOptionModifier = 3
 )
 
 // Enum value maps for TemplateOptionModifier.
@@ -73,9 +78,12 @@ func (TemplateOptionModifier) EnumDescriptor() ([]byte, []int) {
 	return file_virtual_service_template_v1_virtual_service_template_proto_rawDescGZIP(), []int{0}
 }
 
+// Represents a single option to be applied to a template.
 type TemplateOption struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Field         string                 `protobuf:"bytes,1,opt,name=field,proto3" json:"field,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The field name of the option.
+	Field string `protobuf:"bytes,1,opt,name=field,proto3" json:"field,omitempty"`
+	// The modifier applied to the field.
 	Modifier      TemplateOptionModifier `protobuf:"varint,2,opt,name=modifier,proto3,enum=virtual_service_template.v1.TemplateOptionModifier" json:"modifier,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -125,9 +133,11 @@ func (x *TemplateOption) GetModifier() TemplateOptionModifier {
 	return TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_UNSPECIFIED
 }
 
+// Request message for listing all virtual service templates.
 type ListVirtualServiceTemplatesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessGroup   string                 `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The access group for filtering templates.
+	AccessGroup   string `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -169,10 +179,13 @@ func (x *ListVirtualServiceTemplatesRequest) GetAccessGroup() string {
 	return ""
 }
 
+// Details of a virtual service template.
 type VirtualServiceTemplateListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier of the template.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// Name of the template.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -221,8 +234,10 @@ func (x *VirtualServiceTemplateListItem) GetName() string {
 	return ""
 }
 
+// Response message containing the list of virtual service templates.
 type ListVirtualServiceTemplatesResponse struct {
-	state         protoimpl.MessageState            `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The list of virtual service templates.
 	Items         []*VirtualServiceTemplateListItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -265,21 +280,31 @@ func (x *ListVirtualServiceTemplatesResponse) GetItems() []*VirtualServiceTempla
 	return nil
 }
 
+// Request message for filling a template with specific configurations.
 type FillTemplateRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	TemplateUid string                 `protobuf:"bytes,1,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
-	ListenerUid string                 `protobuf:"bytes,2,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
-	VirtualHost []byte                 `protobuf:"bytes,3,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier of the template to fill.
+	TemplateUid string `protobuf:"bytes,1,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
+	// Unique identifier of the listener to associate with the template.
+	ListenerUid string `protobuf:"bytes,2,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
+	// Virtual host configuration in binary format.
+	VirtualHost []byte `protobuf:"bytes,3,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	// Access log configuration.
+	//
 	// Types that are valid to be assigned to AccessLogConfig:
 	//
 	//	*FillTemplateRequest_AccessLogConfigUid
-	AccessLogConfig          isFillTemplateRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
-	AdditionalHttpFilterUids []string                              `protobuf:"bytes,5,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
-	AdditionalRouteUids      []string                              `protobuf:"bytes,6,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
-	UseRemoteAddress         *bool                                 `protobuf:"varint,7,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
-	TemplateOptions          []*TemplateOption                     `protobuf:"bytes,8,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	AccessLogConfig isFillTemplateRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
+	// Additional HTTP filter unique identifiers.
+	AdditionalHttpFilterUids []string `protobuf:"bytes,5,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
+	// Additional route unique identifiers.
+	AdditionalRouteUids []string `protobuf:"bytes,6,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
+	// Whether to use the remote address.
+	UseRemoteAddress *bool `protobuf:"varint,7,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
+	// Options to modify the template.
+	TemplateOptions []*TemplateOption `protobuf:"bytes,8,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *FillTemplateRequest) Reset() {
@@ -382,14 +407,17 @@ type isFillTemplateRequest_AccessLogConfig interface {
 }
 
 type FillTemplateRequest_AccessLogConfigUid struct {
+	// Unique identifier of the access log configuration.
 	AccessLogConfigUid string `protobuf:"bytes,4,opt,name=access_log_config_uid,json=accessLogConfigUid,proto3,oneof"`
 }
 
 func (*FillTemplateRequest_AccessLogConfigUid) isFillTemplateRequest_AccessLogConfig() {}
 
+// Response message containing the filled template as a raw string.
 type FillTemplateResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Raw           string                 `protobuf:"bytes,1,opt,name=raw,proto3" json:"raw,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The raw string representation of the filled template.
+	Raw           string `protobuf:"bytes,1,opt,name=raw,proto3" json:"raw,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

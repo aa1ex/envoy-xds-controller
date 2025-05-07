@@ -5,6 +5,8 @@
 import { ListenerStoreService } from "./listener_pb";
 
 /**
+ * Retrieves a list of listeners based on the request.
+ *
  * @generated from rpc listener.v1.ListenerStoreService.ListListeners
  */
 export const listListeners = ListenerStoreService.method.listListeners;

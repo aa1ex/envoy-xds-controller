@@ -13,15 +13,21 @@ export const file_http_filter_v1_http_filter: GenFile = /*@__PURE__*/
   fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiLwoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIi4KFkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIkwKF0xpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlEjEKBWl0ZW1zGAEgAygLMiIuaHR0cF9maWx0ZXIudjEuSFRUUEZpbHRlckxpc3RJdGVtMnwKFkhUVFBGaWx0ZXJTdG9yZVNlcnZpY2USYgoPTGlzdEhUVFBGaWx0ZXJzEiYuaHR0cF9maWx0ZXIudjEuTGlzdEhUVFBGaWx0ZXJzUmVxdWVzdBonLmh0dHBfZmlsdGVyLnYxLkxpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlQs0BChJjb20uaHR0cF9maWx0ZXIudjFCD0h0dHBGaWx0ZXJQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2h0dHBfZmlsdGVyL3YxO2h0dHBfZmlsdGVydjGiAgNIWFiqAg1IdHRwRmlsdGVyLlYxygINSHR0cEZpbHRlclxWMeICGUh0dHBGaWx0ZXJcVjFcR1BCTWV0YWRhdGHqAg5IdHRwRmlsdGVyOjpWMWIGcHJvdG8z");
 
 /**
+ * Represents an individual HTTP filter.
+ *
  * @generated from message http_filter.v1.HTTPFilterListItem
  */
 export type HTTPFilterListItem = Message<"http_filter.v1.HTTPFilterListItem"> & {
   /**
+   * Unique identifier of the HTTP filter.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name of the HTTP filter.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -35,10 +41,14 @@ export const HTTPFilterListItemSchema: GenMessage<HTTPFilterListItem> = /*@__PUR
   messageDesc(file_http_filter_v1_http_filter, 0);
 
 /**
+ * Request message for listing HTTP filters.
+ *
  * @generated from message http_filter.v1.ListHTTPFiltersRequest
  */
 export type ListHTTPFiltersRequest = Message<"http_filter.v1.ListHTTPFiltersRequest"> & {
   /**
+   * Name of the access group to filter HTTP filters by.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -52,10 +62,14 @@ export const ListHTTPFiltersRequestSchema: GenMessage<ListHTTPFiltersRequest> = 
   messageDesc(file_http_filter_v1_http_filter, 1);
 
 /**
+ * Response message containing a list of HTTP filters.
+ *
  * @generated from message http_filter.v1.ListHTTPFiltersResponse
  */
 export type ListHTTPFiltersResponse = Message<"http_filter.v1.ListHTTPFiltersResponse"> & {
   /**
+   * List of HTTP filter items.
+   *
    * @generated from field: repeated http_filter.v1.HTTPFilterListItem items = 1;
    */
   items: HTTPFilterListItem[];
@@ -69,10 +83,14 @@ export const ListHTTPFiltersResponseSchema: GenMessage<ListHTTPFiltersResponse> 
   messageDesc(file_http_filter_v1_http_filter, 2);
 
 /**
+ * Service to manage HTTP filters.
+ *
  * @generated from service http_filter.v1.HTTPFilterStoreService
  */
 export const HTTPFilterStoreService: GenService<{
   /**
+   * Lists all HTTP filters for a given access group.
+   *
    * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilters
    */
   listHTTPFilters: {

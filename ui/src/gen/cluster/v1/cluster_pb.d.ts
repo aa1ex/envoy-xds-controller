@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_cluster_v1_cluster: GenFile;
 
 /**
+ * Represents a list item in the cluster.
+ *
  * @generated from message cluster.v1.ClusterListItem
  */
 export declare type ClusterListItem = Message<"cluster.v1.ClusterListItem"> & {
   /**
+   * The unique identifier of the cluster.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The name of the cluster.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -32,6 +38,8 @@ export declare type ClusterListItem = Message<"cluster.v1.ClusterListItem"> & {
 export declare const ClusterListItemSchema: GenMessage<ClusterListItem>;
 
 /**
+ * Request message for listing clusters.
+ *
  * @generated from message cluster.v1.ListClustersRequest
  */
 export declare type ListClustersRequest = Message<"cluster.v1.ListClustersRequest"> & {
@@ -44,10 +52,14 @@ export declare type ListClustersRequest = Message<"cluster.v1.ListClustersReques
 export declare const ListClustersRequestSchema: GenMessage<ListClustersRequest>;
 
 /**
+ * Response message containing a list of clusters.
+ *
  * @generated from message cluster.v1.ListClustersResponse
  */
 export declare type ListClustersResponse = Message<"cluster.v1.ListClustersResponse"> & {
   /**
+   * The list of cluster items.
+   *
    * @generated from field: repeated cluster.v1.ClusterListItem items = 1;
    */
   items: ClusterListItem[];
@@ -60,10 +72,14 @@ export declare type ListClustersResponse = Message<"cluster.v1.ListClustersRespo
 export declare const ListClustersResponseSchema: GenMessage<ListClustersResponse>;
 
 /**
+ * Service for managing clusters in the store.
+ *
  * @generated from service cluster.v1.ClusterStoreService
  */
 export declare const ClusterStoreService: GenService<{
   /**
+   * Lists all the clusters in the store.
+   *
    * @generated from rpc cluster.v1.ClusterStoreService.ListCluster
    */
   listCluster: {

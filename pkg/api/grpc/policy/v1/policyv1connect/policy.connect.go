@@ -2,6 +2,7 @@
 //
 // Source: policy/v1/policy.proto
 
+// Package policy.v1 contains the PolicyStoreService and related messages.
 package policyv1connect
 
 import (
@@ -40,6 +41,7 @@ const (
 
 // PolicyStoreServiceClient is a client for the policy.v1.PolicyStoreService service.
 type PolicyStoreServiceClient interface {
+	// ListPolicies retrieves a list of policies.
 	ListPolicies(context.Context, *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error)
 }
 
@@ -75,6 +77,7 @@ func (c *policyStoreServiceClient) ListPolicies(ctx context.Context, req *connec
 
 // PolicyStoreServiceHandler is an implementation of the policy.v1.PolicyStoreService service.
 type PolicyStoreServiceHandler interface {
+	// ListPolicies retrieves a list of policies.
 	ListPolicies(context.Context, *connect.Request[v1.ListPoliciesRequest]) (*connect.Response[v1.ListPoliciesResponse], error)
 }
 

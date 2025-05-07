@@ -40,6 +40,7 @@ const (
 
 // ListenerStoreServiceClient is a client for the listener.v1.ListenerStoreService service.
 type ListenerStoreServiceClient interface {
+	// Retrieves a list of listeners based on the request.
 	ListListeners(context.Context, *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error)
 }
 
@@ -75,6 +76,7 @@ func (c *listenerStoreServiceClient) ListListeners(ctx context.Context, req *con
 
 // ListenerStoreServiceHandler is an implementation of the listener.v1.ListenerStoreService service.
 type ListenerStoreServiceHandler interface {
+	// Retrieves a list of listeners based on the request.
 	ListListeners(context.Context, *connect.Request[v1.ListListenersRequest]) (*connect.Response[v1.ListListenersResponse], error)
 }
 

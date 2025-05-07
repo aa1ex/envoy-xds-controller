@@ -40,6 +40,7 @@ const (
 
 // RouteStoreServiceClient is a client for the route.v1.RouteStoreService service.
 type RouteStoreServiceClient interface {
+	// Lists all the routes for the specified access group.
 	ListRoutes(context.Context, *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error)
 }
 
@@ -75,6 +76,7 @@ func (c *routeStoreServiceClient) ListRoutes(ctx context.Context, req *connect.R
 
 // RouteStoreServiceHandler is an implementation of the route.v1.RouteStoreService service.
 type RouteStoreServiceHandler interface {
+	// Lists all the routes for the specified access group.
 	ListRoutes(context.Context, *connect.Request[v1.ListRoutesRequest]) (*connect.Response[v1.ListRoutesResponse], error)
 }
 

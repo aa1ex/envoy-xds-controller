@@ -11,10 +11,14 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_node_v1_node: GenFile;
 
 /**
+ * NodeListItem represents a node with its unique identifier.
+ *
  * @generated from message node.v1.NodeListItem
  */
 export declare type NodeListItem = Message<"node.v1.NodeListItem"> & {
   /**
+   * The unique identifier of the node.
+   *
    * @generated from field: string id = 1;
    */
   id: string;
@@ -27,10 +31,14 @@ export declare type NodeListItem = Message<"node.v1.NodeListItem"> & {
 export declare const NodeListItemSchema: GenMessage<NodeListItem>;
 
 /**
+ * ListNodesRequest represents the request to list nodes.
+ *
  * @generated from message node.v1.ListNodesRequest
  */
 export declare type ListNodesRequest = Message<"node.v1.ListNodesRequest"> & {
   /**
+   * The access group to filter the nodes by.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -43,10 +51,14 @@ export declare type ListNodesRequest = Message<"node.v1.ListNodesRequest"> & {
 export declare const ListNodesRequestSchema: GenMessage<ListNodesRequest>;
 
 /**
+ * ListNodesResponse represents the response containing the list of nodes.
+ *
  * @generated from message node.v1.ListNodesResponse
  */
 export declare type ListNodesResponse = Message<"node.v1.ListNodesResponse"> & {
   /**
+   * The list of nodes items.
+   *
    * @generated from field: repeated node.v1.NodeListItem items = 1;
    */
   items: NodeListItem[];
@@ -59,10 +71,14 @@ export declare type ListNodesResponse = Message<"node.v1.ListNodesResponse"> & {
 export declare const ListNodesResponseSchema: GenMessage<ListNodesResponse>;
 
 /**
+ * NodeStoreService provides operations for managing nodes.
+ *
  * @generated from service node.v1.NodeStoreService
  */
 export declare const NodeStoreService: GenService<{
   /**
+   * ListNodes retrieves a list of nodes belonging to the specified access group.
+   *
    * @generated from rpc node.v1.NodeStoreService.ListNodes
    */
   listNodes: {

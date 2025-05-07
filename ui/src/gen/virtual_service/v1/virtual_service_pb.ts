@@ -17,10 +17,14 @@ export const file_virtual_service_v1_virtual_service: GenFile = /*@__PURE__*/
   fileDesc("Cih2aXJ0dWFsX3NlcnZpY2UvdjEvdmlydHVhbF9zZXJ2aWNlLnByb3RvEhJ2aXJ0dWFsX3NlcnZpY2UudjEiHgoLVmlydHVhbEhvc3QSDwoHZG9tYWlucxgBIAMoCSKvAwobQ3JlYXRlVmlydHVhbFNlcnZpY2VSZXF1ZXN0EgwKBG5hbWUYASABKAkSEAoIbm9kZV9pZHMYAiADKAkSFAoMYWNjZXNzX2dyb3VwGAMgASgJEhQKDHRlbXBsYXRlX3VpZBgEIAEoCRIUCgxsaXN0ZW5lcl91aWQYBSABKAkSNQoMdmlydHVhbF9ob3N0GAYgASgLMh8udmlydHVhbF9zZXJ2aWNlLnYxLlZpcnR1YWxIb3N0Eh8KFWFjY2Vzc19sb2dfY29uZmlnX3VpZBgHIAEoCUgAEiMKG2FkZGl0aW9uYWxfaHR0cF9maWx0ZXJfdWlkcxgIIAMoCRIdChVhZGRpdGlvbmFsX3JvdXRlX3VpZHMYCSADKAkSHwoSdXNlX3JlbW90ZV9hZGRyZXNzGAogASgISAGIAQESRQoQdGVtcGxhdGVfb3B0aW9ucxgLIAMoCzIrLnZpcnR1YWxfc2VydmljZV90ZW1wbGF0ZS52MS5UZW1wbGF0ZU9wdGlvbkITChFhY2Nlc3NfbG9nX2NvbmZpZ0IVChNfdXNlX3JlbW90ZV9hZGRyZXNzIh4KHENyZWF0ZVZpcnR1YWxTZXJ2aWNlUmVzcG9uc2UimAMKG1VwZGF0ZVZpcnR1YWxTZXJ2aWNlUmVxdWVzdBILCgN1aWQYASABKAkSEAoIbm9kZV9pZHMYAiADKAkSFAoMdGVtcGxhdGVfdWlkGAMgASgJEhQKDGxpc3RlbmVyX3VpZBgEIAEoCRI1Cgx2aXJ0dWFsX2hvc3QYBSABKAsyHy52aXJ0dWFsX3NlcnZpY2UudjEuVmlydHVhbEhvc3QSHwoVYWNjZXNzX2xvZ19jb25maWdfdWlkGAYgASgJSAASIwobYWRkaXRpb25hbF9odHRwX2ZpbHRlcl91aWRzGAcgAygJEh0KFWFkZGl0aW9uYWxfcm91dGVfdWlkcxgIIAMoCRIfChJ1c2VfcmVtb3RlX2FkZHJlc3MYCSABKAhIAYgBARJFChB0ZW1wbGF0ZV9vcHRpb25zGAogAygLMisudmlydHVhbF9zZXJ2aWNlX3RlbXBsYXRlLnYxLlRlbXBsYXRlT3B0aW9uQhMKEWFjY2Vzc19sb2dfY29uZmlnQhUKE191c2VfcmVtb3RlX2FkZHJlc3MiHgocVXBkYXRlVmlydHVhbFNlcnZpY2VSZXNwb25zZSIqChtEZWxldGVWaXJ0dWFsU2VydmljZVJlcXVlc3QSCwoDdWlkGAEgASgJIh4KHERlbGV0ZVZpcnR1YWxTZXJ2aWNlUmVzcG9uc2UiJwoYR2V0VmlydHVhbFNlcnZpY2VSZXF1ZXN0EgsKA3VpZBgBIAEoCSLNBAoZR2V0VmlydHVhbFNlcnZpY2VSZXNwb25zZRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCRIQCghub2RlX2lkcxgDIAMoCRIUCgxhY2Nlc3NfZ3JvdXAYBCABKAkSKAoIdGVtcGxhdGUYBSABKAsyFi5jb21tb24udjEuUmVzb3VyY2VSZWYSKAoIbGlzdGVuZXIYBiABKAsyFi5jb21tb24udjEuUmVzb3VyY2VSZWYSNQoMdmlydHVhbF9ob3N0GAcgASgLMh8udmlydHVhbF9zZXJ2aWNlLnYxLlZpcnR1YWxIb3N0EjMKEWFjY2Vzc19sb2dfY29uZmlnGAggASgLMhYuY29tbW9uLnYxLlJlc291cmNlUmVmSAASHwoVYWNjZXNzX2xvZ19jb25maWdfcmF3GAkgASgMSAASNwoXYWRkaXRpb25hbF9odHRwX2ZpbHRlcnMYCiADKAsyFi5jb21tb24udjEuUmVzb3VyY2VSZWYSMQoRYWRkaXRpb25hbF9yb3V0ZXMYCyADKAsyFi5jb21tb24udjEuUmVzb3VyY2VSZWYSHwoSdXNlX3JlbW90ZV9hZGRyZXNzGAwgASgISAGIAQESRQoQdGVtcGxhdGVfb3B0aW9ucxgNIAMoCzIrLnZpcnR1YWxfc2VydmljZV90ZW1wbGF0ZS52MS5UZW1wbGF0ZU9wdGlvbhITCgtpc19lZGl0YWJsZRgOIAEoCEIMCgphY2Nlc3NfbG9nQhUKE191c2VfcmVtb3RlX2FkZHJlc3MiMgoaTGlzdFZpcnR1YWxTZXJ2aWNlc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIpoBChZWaXJ0dWFsU2VydmljZUxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhAKCG5vZGVfaWRzGAMgAygJEhQKDGFjY2Vzc19ncm91cBgEIAEoCRIoCgh0ZW1wbGF0ZRgFIAEoCzIWLmNvbW1vbi52MS5SZXNvdXJjZVJlZhITCgtpc19lZGl0YWJsZRgGIAEoCCJYChtMaXN0VmlydHVhbFNlcnZpY2VzUmVzcG9uc2USOQoFaXRlbXMYASADKAsyKi52aXJ0dWFsX3NlcnZpY2UudjEuVmlydHVhbFNlcnZpY2VMaXN0SXRlbTL3BAoaVmlydHVhbFNlcnZpY2VTdG9yZVNlcnZpY2USeQoUQ3JlYXRlVmlydHVhbFNlcnZpY2USLy52aXJ0dWFsX3NlcnZpY2UudjEuQ3JlYXRlVmlydHVhbFNlcnZpY2VSZXF1ZXN0GjAudmlydHVhbF9zZXJ2aWNlLnYxLkNyZWF0ZVZpcnR1YWxTZXJ2aWNlUmVzcG9uc2USeQoUVXBkYXRlVmlydHVhbFNlcnZpY2USLy52aXJ0dWFsX3NlcnZpY2UudjEuVXBkYXRlVmlydHVhbFNlcnZpY2VSZXF1ZXN0GjAudmlydHVhbF9zZXJ2aWNlLnYxLlVwZGF0ZVZpcnR1YWxTZXJ2aWNlUmVzcG9uc2USeQoURGVsZXRlVmlydHVhbFNlcnZpY2USLy52aXJ0dWFsX3NlcnZpY2UudjEuRGVsZXRlVmlydHVhbFNlcnZpY2VSZXF1ZXN0GjAudmlydHVhbF9zZXJ2aWNlLnYxLkRlbGV0ZVZpcnR1YWxTZXJ2aWNlUmVzcG9uc2UScAoRR2V0VmlydHVhbFNlcnZpY2USLC52aXJ0dWFsX3NlcnZpY2UudjEuR2V0VmlydHVhbFNlcnZpY2VSZXF1ZXN0Gi0udmlydHVhbF9zZXJ2aWNlLnYxLkdldFZpcnR1YWxTZXJ2aWNlUmVzcG9uc2USdgoTTGlzdFZpcnR1YWxTZXJ2aWNlcxIuLnZpcnR1YWxfc2VydmljZS52MS5MaXN0VmlydHVhbFNlcnZpY2VzUmVxdWVzdBovLnZpcnR1YWxfc2VydmljZS52MS5MaXN0VmlydHVhbFNlcnZpY2VzUmVzcG9uc2VC7QEKFmNvbS52aXJ0dWFsX3NlcnZpY2UudjFCE1ZpcnR1YWxTZXJ2aWNlUHJvdG9QAVpZZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy92aXJ0dWFsX3NlcnZpY2UvdjE7dmlydHVhbF9zZXJ2aWNldjGiAgNWWFiqAhFWaXJ0dWFsU2VydmljZS5WMcoCEVZpcnR1YWxTZXJ2aWNlXFYx4gIdVmlydHVhbFNlcnZpY2VcVjFcR1BCTWV0YWRhdGHqAhJWaXJ0dWFsU2VydmljZTo6VjFiBnByb3RvMw", [file_common_v1_common, file_virtual_service_template_v1_virtual_service_template]);
 
 /**
+ * VirtualHost represents a virtual host with a list of domain names.
+ *
  * @generated from message virtual_service.v1.VirtualHost
  */
 export type VirtualHost = Message<"virtual_service.v1.VirtualHost"> & {
   /**
+   * The list of domain names associated with the virtual host.
+   *
    * @generated from field: repeated string domains = 1;
    */
   domains: string[];
@@ -34,44 +38,62 @@ export const VirtualHostSchema: GenMessage<VirtualHost> = /*@__PURE__*/
   messageDesc(file_virtual_service_v1_virtual_service, 0);
 
 /**
+ * CreateVirtualServiceRequest is the request message for creating a virtual service.
+ *
  * @generated from message virtual_service.v1.CreateVirtualServiceRequest
  */
 export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirtualServiceRequest"> & {
   /**
+   * The name of the virtual service.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
 
   /**
+   * The node IDs associated with the virtual service.
+   *
    * @generated from field: repeated string node_ids = 2;
    */
   nodeIds: string[];
 
   /**
+   * The access group of the virtual service.
+   *
    * @generated from field: string access_group = 3;
    */
   accessGroup: string;
 
   /**
+   * The UID of the template used by the virtual service.
+   *
    * @generated from field: string template_uid = 4;
    */
   templateUid: string;
 
   /**
+   * The UID of the listener associated with the virtual service.
+   *
    * @generated from field: string listener_uid = 5;
    */
   listenerUid: string;
 
   /**
+   * The virtual host configuration for the virtual service.
+   *
    * @generated from field: virtual_service.v1.VirtualHost virtual_host = 6;
    */
   virtualHost?: VirtualHost;
 
   /**
+   * The configuration for access logs.
+   *
    * @generated from oneof virtual_service.v1.CreateVirtualServiceRequest.access_log_config
    */
   accessLogConfig: {
     /**
+     * The UID of the access log configuration.
+     *
      * @generated from field: string access_log_config_uid = 7;
      */
     value: string;
@@ -79,21 +101,29 @@ export type CreateVirtualServiceRequest = Message<"virtual_service.v1.CreateVirt
   } | { case: undefined; value?: undefined };
 
   /**
+   * UIDs of additional HTTP filters appended to the virtual service.
+   *
    * @generated from field: repeated string additional_http_filter_uids = 8;
    */
   additionalHttpFilterUids: string[];
 
   /**
+   * UIDs of additional routes appended to the virtual service.
+   *
    * @generated from field: repeated string additional_route_uids = 9;
    */
   additionalRouteUids: string[];
 
   /**
+   * Whether to use the remote address for the virtual service.
+   *
    * @generated from field: optional bool use_remote_address = 10;
    */
   useRemoteAddress?: boolean;
 
   /**
+   * Template options for the virtual service.
+   *
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 11;
    */
   templateOptions: TemplateOption[];
@@ -107,6 +137,8 @@ export const CreateVirtualServiceRequestSchema: GenMessage<CreateVirtualServiceR
   messageDesc(file_virtual_service_v1_virtual_service, 1);
 
 /**
+ * CreateVirtualServiceResponse is the response message for creating a virtual service.
+ *
  * @generated from message virtual_service.v1.CreateVirtualServiceResponse
  */
 export type CreateVirtualServiceResponse = Message<"virtual_service.v1.CreateVirtualServiceResponse"> & {
@@ -120,39 +152,55 @@ export const CreateVirtualServiceResponseSchema: GenMessage<CreateVirtualService
   messageDesc(file_virtual_service_v1_virtual_service, 2);
 
 /**
+ * UpdateVirtualServiceRequest is the request message for updating a virtual service.
+ *
  * @generated from message virtual_service.v1.UpdateVirtualServiceRequest
  */
 export type UpdateVirtualServiceRequest = Message<"virtual_service.v1.UpdateVirtualServiceRequest"> & {
   /**
+   * The UID of the virtual service.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The node IDs associated with the virtual service.
+   *
    * @generated from field: repeated string node_ids = 2;
    */
   nodeIds: string[];
 
   /**
+   * The UID of the template used by the virtual service.
+   *
    * @generated from field: string template_uid = 3;
    */
   templateUid: string;
 
   /**
+   * The UID of the listener associated with the virtual service.
+   *
    * @generated from field: string listener_uid = 4;
    */
   listenerUid: string;
 
   /**
+   * The virtual host configuration for the virtual service.
+   *
    * @generated from field: virtual_service.v1.VirtualHost virtual_host = 5;
    */
   virtualHost?: VirtualHost;
 
   /**
+   * The configuration for access logs.
+   *
    * @generated from oneof virtual_service.v1.UpdateVirtualServiceRequest.access_log_config
    */
   accessLogConfig: {
     /**
+     * The UID of the access log configuration.
+     *
      * @generated from field: string access_log_config_uid = 6;
      */
     value: string;
@@ -160,21 +208,29 @@ export type UpdateVirtualServiceRequest = Message<"virtual_service.v1.UpdateVirt
   } | { case: undefined; value?: undefined };
 
   /**
+   * UIDs of additional HTTP filters appended to the virtual service.
+   *
    * @generated from field: repeated string additional_http_filter_uids = 7;
    */
   additionalHttpFilterUids: string[];
 
   /**
+   * UIDs of additional routes appended to the virtual service.
+   *
    * @generated from field: repeated string additional_route_uids = 8;
    */
   additionalRouteUids: string[];
 
   /**
+   * Whether to use the remote address for the virtual service.
+   *
    * @generated from field: optional bool use_remote_address = 9;
    */
   useRemoteAddress?: boolean;
 
   /**
+   * Template options for the virtual service.
+   *
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 10;
    */
   templateOptions: TemplateOption[];
@@ -188,6 +244,8 @@ export const UpdateVirtualServiceRequestSchema: GenMessage<UpdateVirtualServiceR
   messageDesc(file_virtual_service_v1_virtual_service, 3);
 
 /**
+ * UpdateVirtualServiceResponse is the response message for updating a virtual service.
+ *
  * @generated from message virtual_service.v1.UpdateVirtualServiceResponse
  */
 export type UpdateVirtualServiceResponse = Message<"virtual_service.v1.UpdateVirtualServiceResponse"> & {
@@ -201,10 +259,14 @@ export const UpdateVirtualServiceResponseSchema: GenMessage<UpdateVirtualService
   messageDesc(file_virtual_service_v1_virtual_service, 4);
 
 /**
+ * DeleteVirtualServiceRequest is the request message for deleting a virtual service.
+ *
  * @generated from message virtual_service.v1.DeleteVirtualServiceRequest
  */
 export type DeleteVirtualServiceRequest = Message<"virtual_service.v1.DeleteVirtualServiceRequest"> & {
   /**
+   * The UID of the virtual service to delete.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
@@ -218,6 +280,8 @@ export const DeleteVirtualServiceRequestSchema: GenMessage<DeleteVirtualServiceR
   messageDesc(file_virtual_service_v1_virtual_service, 5);
 
 /**
+ * DeleteVirtualServiceResponse is the response message for deleting a virtual service.
+ *
  * @generated from message virtual_service.v1.DeleteVirtualServiceResponse
  */
 export type DeleteVirtualServiceResponse = Message<"virtual_service.v1.DeleteVirtualServiceResponse"> & {
@@ -231,10 +295,14 @@ export const DeleteVirtualServiceResponseSchema: GenMessage<DeleteVirtualService
   messageDesc(file_virtual_service_v1_virtual_service, 6);
 
 /**
+ * GetVirtualServiceRequest is the request message for retrieving a virtual service.
+ *
  * @generated from message virtual_service.v1.GetVirtualServiceRequest
  */
 export type GetVirtualServiceRequest = Message<"virtual_service.v1.GetVirtualServiceRequest"> & {
   /**
+   * The UID of the virtual service to retrieve.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
@@ -248,55 +316,77 @@ export const GetVirtualServiceRequestSchema: GenMessage<GetVirtualServiceRequest
   messageDesc(file_virtual_service_v1_virtual_service, 7);
 
 /**
+ * GetVirtualServiceResponse is the response message for retrieving a virtual service.
+ *
  * @generated from message virtual_service.v1.GetVirtualServiceResponse
  */
 export type GetVirtualServiceResponse = Message<"virtual_service.v1.GetVirtualServiceResponse"> & {
   /**
+   * The UID of the virtual service.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The name of the virtual service.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * The node IDs associated with the virtual service.
+   *
    * @generated from field: repeated string node_ids = 3;
    */
   nodeIds: string[];
 
   /**
+   * The access group of the virtual service.
+   *
    * @generated from field: string access_group = 4;
    */
   accessGroup: string;
 
   /**
+   * A reference to the template used by the virtual service.
+   *
    * @generated from field: common.v1.ResourceRef template = 5;
    */
   template?: ResourceRef;
 
   /**
+   * A reference to the listener associated with the virtual service.
+   *
    * @generated from field: common.v1.ResourceRef listener = 6;
    */
   listener?: ResourceRef;
 
   /**
+   * The virtual host configuration for the virtual service.
+   *
    * @generated from field: virtual_service.v1.VirtualHost virtual_host = 7;
    */
   virtualHost?: VirtualHost;
 
   /**
+   * The configuration of access logs.
+   *
    * @generated from oneof virtual_service.v1.GetVirtualServiceResponse.access_log
    */
   accessLog: {
     /**
+     * A reference to the access log configuration.
+     *
      * @generated from field: common.v1.ResourceRef access_log_config = 8;
      */
     value: ResourceRef;
     case: "accessLogConfig";
   } | {
     /**
+     * Raw configuration for access logs.
+     *
      * @generated from field: bytes access_log_config_raw = 9;
      */
     value: Uint8Array;
@@ -304,26 +394,36 @@ export type GetVirtualServiceResponse = Message<"virtual_service.v1.GetVirtualSe
   } | { case: undefined; value?: undefined };
 
   /**
+   * Additional HTTP filters associated with the virtual service.
+   *
    * @generated from field: repeated common.v1.ResourceRef additional_http_filters = 10;
    */
   additionalHttpFilters: ResourceRef[];
 
   /**
+   * Additional routes associated with the virtual service.
+   *
    * @generated from field: repeated common.v1.ResourceRef additional_routes = 11;
    */
   additionalRoutes: ResourceRef[];
 
   /**
+   * Whether the virtual service uses the remote address.
+   *
    * @generated from field: optional bool use_remote_address = 12;
    */
   useRemoteAddress?: boolean;
 
   /**
+   * Template options for the virtual service.
+   *
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 13;
    */
   templateOptions: TemplateOption[];
 
   /**
+   * Indicates whether the virtual service is editable.
+   *
    * @generated from field: bool is_editable = 14;
    */
   isEditable: boolean;
@@ -337,10 +437,14 @@ export const GetVirtualServiceResponseSchema: GenMessage<GetVirtualServiceRespon
   messageDesc(file_virtual_service_v1_virtual_service, 8);
 
 /**
+ * ListVirtualServicesRequest is the request message for listing virtual services.
+ *
  * @generated from message virtual_service.v1.ListVirtualServicesRequest
  */
 export type ListVirtualServicesRequest = Message<"virtual_service.v1.ListVirtualServicesRequest"> & {
   /**
+   * The access group for which to list virtual services.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -354,35 +458,49 @@ export const ListVirtualServicesRequestSchema: GenMessage<ListVirtualServicesReq
   messageDesc(file_virtual_service_v1_virtual_service, 9);
 
 /**
+ * VirtualServiceListItem represents a single virtual service in a list response.
+ *
  * @generated from message virtual_service.v1.VirtualServiceListItem
  */
 export type VirtualServiceListItem = Message<"virtual_service.v1.VirtualServiceListItem"> & {
   /**
+   * The UID of the virtual service.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The name of the virtual service.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * The node IDs associated with the virtual service.
+   *
    * @generated from field: repeated string node_ids = 3;
    */
   nodeIds: string[];
 
   /**
+   * The access group of the virtual service.
+   *
    * @generated from field: string access_group = 4;
    */
   accessGroup: string;
 
   /**
+   * A reference to the template used by the virtual service.
+   *
    * @generated from field: common.v1.ResourceRef template = 5;
    */
   template?: ResourceRef;
 
   /**
+   * Indicates whether the virtual service is editable.
+   *
    * @generated from field: bool is_editable = 6;
    */
   isEditable: boolean;
@@ -396,10 +514,14 @@ export const VirtualServiceListItemSchema: GenMessage<VirtualServiceListItem> = 
   messageDesc(file_virtual_service_v1_virtual_service, 10);
 
 /**
+ * ListVirtualServicesResponse is the response message for listing virtual services.
+ *
  * @generated from message virtual_service.v1.ListVirtualServicesResponse
  */
 export type ListVirtualServicesResponse = Message<"virtual_service.v1.ListVirtualServicesResponse"> & {
   /**
+   * The list of virtual services.
+   *
    * @generated from field: repeated virtual_service.v1.VirtualServiceListItem items = 1;
    */
   items: VirtualServiceListItem[];
@@ -413,10 +535,14 @@ export const ListVirtualServicesResponseSchema: GenMessage<ListVirtualServicesRe
   messageDesc(file_virtual_service_v1_virtual_service, 11);
 
 /**
+ * The VirtualServiceStoreService defines operations for managing virtual services.
+ *
  * @generated from service virtual_service.v1.VirtualServiceStoreService
  */
 export const VirtualServiceStoreService: GenService<{
   /**
+   * CreateVirtualService creates a new virtual service.
+   *
    * @generated from rpc virtual_service.v1.VirtualServiceStoreService.CreateVirtualService
    */
   createVirtualService: {
@@ -425,6 +551,8 @@ export const VirtualServiceStoreService: GenService<{
     output: typeof CreateVirtualServiceResponseSchema;
   },
   /**
+   * UpdateVirtualService updates an existing virtual service.
+   *
    * @generated from rpc virtual_service.v1.VirtualServiceStoreService.UpdateVirtualService
    */
   updateVirtualService: {
@@ -433,6 +561,8 @@ export const VirtualServiceStoreService: GenService<{
     output: typeof UpdateVirtualServiceResponseSchema;
   },
   /**
+   * DeleteVirtualService deletes a virtual service by its UID.
+   *
    * @generated from rpc virtual_service.v1.VirtualServiceStoreService.DeleteVirtualService
    */
   deleteVirtualService: {
@@ -441,6 +571,8 @@ export const VirtualServiceStoreService: GenService<{
     output: typeof DeleteVirtualServiceResponseSchema;
   },
   /**
+   * GetVirtualService retrieves a virtual service by its UID.
+   *
    * @generated from rpc virtual_service.v1.VirtualServiceStoreService.GetVirtualService
    */
   getVirtualService: {
@@ -449,6 +581,8 @@ export const VirtualServiceStoreService: GenService<{
     output: typeof GetVirtualServiceResponseSchema;
   },
   /**
+   * ListVirtualServices retrieves a list of virtual services for the specified access group.
+   *
    * @generated from rpc virtual_service.v1.VirtualServiceStoreService.ListVirtualServices
    */
   listVirtualServices: {

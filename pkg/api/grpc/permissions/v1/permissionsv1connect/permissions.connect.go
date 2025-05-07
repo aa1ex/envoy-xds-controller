@@ -40,6 +40,7 @@ const (
 
 // PermissionsServiceClient is a client for the permissions.v1.PermissionsService service.
 type PermissionsServiceClient interface {
+	// Lists the permissions associated with a specific access group.
 	ListPermissions(context.Context, *connect.Request[v1.ListPermissionsRequest]) (*connect.Response[v1.ListPermissionsResponse], error)
 }
 
@@ -75,6 +76,7 @@ func (c *permissionsServiceClient) ListPermissions(ctx context.Context, req *con
 
 // PermissionsServiceHandler is an implementation of the permissions.v1.PermissionsService service.
 type PermissionsServiceHandler interface {
+	// Lists the permissions associated with a specific access group.
 	ListPermissions(context.Context, *connect.Request[v1.ListPermissionsRequest]) (*connect.Response[v1.ListPermissionsResponse], error)
 }
 

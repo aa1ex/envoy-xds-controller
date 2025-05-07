@@ -11,20 +11,28 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_listener_v1_listener: GenFile;
 
 /**
+ * Details of a listener.
+ *
  * @generated from message listener.v1.ListenerListItem
  */
 export declare type ListenerListItem = Message<"listener.v1.ListenerListItem"> & {
   /**
+   * Unique identifier for the listener.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Display name of the listener.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
 
   /**
+   * The type of listener.
+   *
    * @generated from field: listener.v1.ListenerType type = 3;
    */
   type: ListenerType;
@@ -37,10 +45,14 @@ export declare type ListenerListItem = Message<"listener.v1.ListenerListItem"> &
 export declare const ListenerListItemSchema: GenMessage<ListenerListItem>;
 
 /**
+ * Request message to list listeners.
+ *
  * @generated from message listener.v1.ListListenersRequest
  */
 export declare type ListListenersRequest = Message<"listener.v1.ListListenersRequest"> & {
   /**
+   * The access group to filter the listeners.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -53,10 +65,14 @@ export declare type ListListenersRequest = Message<"listener.v1.ListListenersReq
 export declare const ListListenersRequestSchema: GenMessage<ListListenersRequest>;
 
 /**
+ * Response message containing a list of listeners.
+ *
  * @generated from message listener.v1.ListListenersResponse
  */
 export declare type ListListenersResponse = Message<"listener.v1.ListListenersResponse"> & {
   /**
+   * A list of listener items.
+   *
    * @generated from field: repeated listener.v1.ListenerListItem items = 1;
    */
   items: ListenerListItem[];
@@ -69,25 +85,35 @@ export declare type ListListenersResponse = Message<"listener.v1.ListListenersRe
 export declare const ListListenersResponseSchema: GenMessage<ListListenersResponse>;
 
 /**
+ * Type of listener available.
+ *
  * @generated from enum listener.v1.ListenerType
  */
 export enum ListenerType {
   /**
+   * Default value, unspecified listener type.
+   *
    * @generated from enum value: LISTENER_TYPE_UNSPECIFIED = 0;
    */
   UNSPECIFIED = 0,
 
   /**
+   * HTTP listener.
+   *
    * @generated from enum value: LISTENER_TYPE_HTTP = 1;
    */
   HTTP = 1,
 
   /**
+   * HTTPS listener.
+   *
    * @generated from enum value: LISTENER_TYPE_HTTPS = 2;
    */
   HTTPS = 2,
 
   /**
+   * TCP listener.
+   *
    * @generated from enum value: LISTENER_TYPE_TCP = 3;
    */
   TCP = 3,
@@ -99,10 +125,14 @@ export enum ListenerType {
 export declare const ListenerTypeSchema: GenEnum<ListenerType>;
 
 /**
+ * Service for managing listeners.
+ *
  * @generated from service listener.v1.ListenerStoreService
  */
 export declare const ListenerStoreService: GenService<{
   /**
+   * Retrieves a list of listeners based on the request.
+   *
    * @generated from rpc listener.v1.ListenerStoreService.ListListeners
    */
   listListeners: {

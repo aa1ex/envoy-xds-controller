@@ -21,10 +21,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Represents a list item in the cluster.
 type ClusterListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The unique identifier of the cluster.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// The name of the cluster.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,6 +76,7 @@ func (x *ClusterListItem) GetName() string {
 	return ""
 }
 
+// Request message for listing clusters.
 type ListClustersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -109,9 +113,11 @@ func (*ListClustersRequest) Descriptor() ([]byte, []int) {
 	return file_cluster_v1_cluster_proto_rawDescGZIP(), []int{1}
 }
 
+// Response message containing a list of clusters.
 type ListClustersResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*ClusterListItem     `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The list of cluster items.
+	Items         []*ClusterListItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

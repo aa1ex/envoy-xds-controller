@@ -21,10 +21,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Represents a permission item with an action and associated objects.
 type PermissionsItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Action        string                 `protobuf:"bytes,1,opt,name=action,proto3" json:"action,omitempty"`
-	Objects       []string               `protobuf:"bytes,2,rep,name=objects,proto3" json:"objects,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The action of the permission.
+	Action string `protobuf:"bytes,1,opt,name=action,proto3" json:"action,omitempty"`
+	// The objects associated with the permission.
+	Objects       []string `protobuf:"bytes,2,rep,name=objects,proto3" json:"objects,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,9 +76,11 @@ func (x *PermissionsItem) GetObjects() []string {
 	return nil
 }
 
+// Request message for listing permissions.
 type ListPermissionsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessGroup   string                 `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The access group for which permissions are being requested.
+	AccessGroup   string `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -117,9 +122,11 @@ func (x *ListPermissionsRequest) GetAccessGroup() string {
 	return ""
 }
 
+// Response message containing a list of permission items.
 type ListPermissionsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*PermissionsItem     `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The list of permission items.
+	Items         []*PermissionsItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

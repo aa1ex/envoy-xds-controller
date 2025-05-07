@@ -21,10 +21,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Represents an individual HTTP filter.
 type HTTPFilterListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Unique identifier of the HTTP filter.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// Name of the HTTP filter.
+	Name          string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,9 +76,11 @@ func (x *HTTPFilterListItem) GetName() string {
 	return ""
 }
 
+// Request message for listing HTTP filters.
 type ListHTTPFiltersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessGroup   string                 `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Name of the access group to filter HTTP filters by.
+	AccessGroup   string `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -117,9 +122,11 @@ func (x *ListHTTPFiltersRequest) GetAccessGroup() string {
 	return ""
 }
 
+// Response message containing a list of HTTP filters.
 type ListHTTPFiltersResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Items         []*HTTPFilterListItem  `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// List of HTTP filter items.
+	Items         []*HTTPFilterListItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

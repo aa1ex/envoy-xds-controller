@@ -5,6 +5,8 @@
 import { AccessLogConfigStoreService } from "./access_log_config_pb";
 
 /**
+ * Lists all access log configurations based on the given request.
+ *
  * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs
  */
 export const listAccessLogConfigs = AccessLogConfigStoreService.method.listAccessLogConfigs;

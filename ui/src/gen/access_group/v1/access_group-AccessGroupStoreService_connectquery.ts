@@ -5,6 +5,8 @@
 import { AccessGroupStoreService } from "./access_group_pb";
 
 /**
+ * Lists access groups.
+ *
  * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroups
  */
 export const listAccessGroups = AccessGroupStoreService.method.listAccessGroups;

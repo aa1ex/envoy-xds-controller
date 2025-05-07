@@ -11,10 +11,14 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_access_group_v1_access_group: GenFile;
 
 /**
+ * Represents an access group item.
+ *
  * @generated from message access_group.v1.AccessGroupListItem
  */
 export declare type AccessGroupListItem = Message<"access_group.v1.AccessGroupListItem"> & {
   /**
+   * The name of the access group.
+   *
    * @generated from field: string name = 1;
    */
   name: string;
@@ -27,6 +31,8 @@ export declare type AccessGroupListItem = Message<"access_group.v1.AccessGroupLi
 export declare const AccessGroupListItemSchema: GenMessage<AccessGroupListItem>;
 
 /**
+ * Request message for listing access groups.
+ *
  * @generated from message access_group.v1.ListAccessGroupsRequest
  */
 export declare type ListAccessGroupsRequest = Message<"access_group.v1.ListAccessGroupsRequest"> & {
@@ -39,10 +45,14 @@ export declare type ListAccessGroupsRequest = Message<"access_group.v1.ListAcces
 export declare const ListAccessGroupsRequestSchema: GenMessage<ListAccessGroupsRequest>;
 
 /**
+ * Response message containing a list of access groups.
+ *
  * @generated from message access_group.v1.ListAccessGroupsResponse
  */
 export declare type ListAccessGroupsResponse = Message<"access_group.v1.ListAccessGroupsResponse"> & {
   /**
+   * The list of access group items.
+   *
    * @generated from field: repeated access_group.v1.AccessGroupListItem items = 1;
    */
   items: AccessGroupListItem[];
@@ -55,10 +65,14 @@ export declare type ListAccessGroupsResponse = Message<"access_group.v1.ListAcce
 export declare const ListAccessGroupsResponseSchema: GenMessage<ListAccessGroupsResponse>;
 
 /**
+ * Service to manage access groups.
+ *
  * @generated from service access_group.v1.AccessGroupStoreService
  */
 export declare const AccessGroupStoreService: GenService<{
   /**
+   * Lists access groups.
+   *
    * @generated from rpc access_group.v1.AccessGroupStoreService.ListAccessGroups
    */
   listAccessGroups: {

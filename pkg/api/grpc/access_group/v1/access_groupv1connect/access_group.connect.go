@@ -41,6 +41,7 @@ const (
 // AccessGroupStoreServiceClient is a client for the access_group.v1.AccessGroupStoreService
 // service.
 type AccessGroupStoreServiceClient interface {
+	// Lists access groups.
 	ListAccessGroups(context.Context, *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error)
 }
 
@@ -77,6 +78,7 @@ func (c *accessGroupStoreServiceClient) ListAccessGroups(ctx context.Context, re
 // AccessGroupStoreServiceHandler is an implementation of the
 // access_group.v1.AccessGroupStoreService service.
 type AccessGroupStoreServiceHandler interface {
+	// Lists access groups.
 	ListAccessGroups(context.Context, *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error)
 }
 

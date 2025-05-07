@@ -13,15 +13,21 @@ export const file_cluster_v1_cluster: GenFile = /*@__PURE__*/
   fileDesc("ChhjbHVzdGVyL3YxL2NsdXN0ZXIucHJvdG8SCmNsdXN0ZXIudjEiLAoPQ2x1c3Rlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIhUKE0xpc3RDbHVzdGVyc1JlcXVlc3QiQgoUTGlzdENsdXN0ZXJzUmVzcG9uc2USKgoFaXRlbXMYASADKAsyGy5jbHVzdGVyLnYxLkNsdXN0ZXJMaXN0SXRlbTJnChNDbHVzdGVyU3RvcmVTZXJ2aWNlElAKC0xpc3RDbHVzdGVyEh8uY2x1c3Rlci52MS5MaXN0Q2x1c3RlcnNSZXF1ZXN0GiAuY2x1c3Rlci52MS5MaXN0Q2x1c3RlcnNSZXNwb25zZUKyAQoOY29tLmNsdXN0ZXIudjFCDENsdXN0ZXJQcm90b1ABWklnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2NsdXN0ZXIvdjE7Y2x1c3RlcnYxogIDQ1hYqgIKQ2x1c3Rlci5WMcoCCkNsdXN0ZXJcVjHiAhZDbHVzdGVyXFYxXEdQQk1ldGFkYXRh6gILQ2x1c3Rlcjo6VjFiBnByb3RvMw");
 
 /**
+ * Represents a list item in the cluster.
+ *
  * @generated from message cluster.v1.ClusterListItem
  */
 export type ClusterListItem = Message<"cluster.v1.ClusterListItem"> & {
   /**
+   * The unique identifier of the cluster.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The name of the cluster.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -35,6 +41,8 @@ export const ClusterListItemSchema: GenMessage<ClusterListItem> = /*@__PURE__*/
   messageDesc(file_cluster_v1_cluster, 0);
 
 /**
+ * Request message for listing clusters.
+ *
  * @generated from message cluster.v1.ListClustersRequest
  */
 export type ListClustersRequest = Message<"cluster.v1.ListClustersRequest"> & {
@@ -48,10 +56,14 @@ export const ListClustersRequestSchema: GenMessage<ListClustersRequest> = /*@__P
   messageDesc(file_cluster_v1_cluster, 1);
 
 /**
+ * Response message containing a list of clusters.
+ *
  * @generated from message cluster.v1.ListClustersResponse
  */
 export type ListClustersResponse = Message<"cluster.v1.ListClustersResponse"> & {
   /**
+   * The list of cluster items.
+   *
    * @generated from field: repeated cluster.v1.ClusterListItem items = 1;
    */
   items: ClusterListItem[];
@@ -65,10 +77,14 @@ export const ListClustersResponseSchema: GenMessage<ListClustersResponse> = /*@_
   messageDesc(file_cluster_v1_cluster, 2);
 
 /**
+ * Service for managing clusters in the store.
+ *
  * @generated from service cluster.v1.ClusterStoreService
  */
 export const ClusterStoreService: GenService<{
   /**
+   * Lists all the clusters in the store.
+   *
    * @generated from rpc cluster.v1.ClusterStoreService.ListCluster
    */
   listCluster: {

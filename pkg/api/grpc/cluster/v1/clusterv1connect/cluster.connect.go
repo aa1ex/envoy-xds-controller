@@ -40,6 +40,7 @@ const (
 
 // ClusterStoreServiceClient is a client for the cluster.v1.ClusterStoreService service.
 type ClusterStoreServiceClient interface {
+	// Lists all the clusters in the store.
 	ListCluster(context.Context, *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error)
 }
 
@@ -75,6 +76,7 @@ func (c *clusterStoreServiceClient) ListCluster(ctx context.Context, req *connec
 
 // ClusterStoreServiceHandler is an implementation of the cluster.v1.ClusterStoreService service.
 type ClusterStoreServiceHandler interface {
+	// Lists all the clusters in the store.
 	ListCluster(context.Context, *connect.Request[v1.ListClustersRequest]) (*connect.Response[v1.ListClustersResponse], error)
 }
 

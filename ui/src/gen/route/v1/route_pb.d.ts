@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_route_v1_route: GenFile;
 
 /**
+ * Represents a route in the route list.
+ *
  * @generated from message route.v1.RouteListItem
  */
 export declare type RouteListItem = Message<"route.v1.RouteListItem"> & {
   /**
+   * Unique identifier for the route.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name of the route.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -32,10 +38,14 @@ export declare type RouteListItem = Message<"route.v1.RouteListItem"> & {
 export declare const RouteListItemSchema: GenMessage<RouteListItem>;
 
 /**
+ * Request message for listing routes.
+ *
  * @generated from message route.v1.ListRoutesRequest
  */
 export declare type ListRoutesRequest = Message<"route.v1.ListRoutesRequest"> & {
   /**
+   * Access group to filter the routes.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -48,10 +58,14 @@ export declare type ListRoutesRequest = Message<"route.v1.ListRoutesRequest"> & 
 export declare const ListRoutesRequestSchema: GenMessage<ListRoutesRequest>;
 
 /**
+ * Response message containing the list of routes.
+ *
  * @generated from message route.v1.ListRoutesResponse
  */
 export declare type ListRoutesResponse = Message<"route.v1.ListRoutesResponse"> & {
   /**
+   * List of route items.
+   *
    * @generated from field: repeated route.v1.RouteListItem items = 1;
    */
   items: RouteListItem[];
@@ -64,10 +78,14 @@ export declare type ListRoutesResponse = Message<"route.v1.ListRoutesResponse"> 
 export declare const ListRoutesResponseSchema: GenMessage<ListRoutesResponse>;
 
 /**
+ * Service to manage routes.
+ *
  * @generated from service route.v1.RouteStoreService
  */
 export declare const RouteStoreService: GenService<{
   /**
+   * Lists all the routes for the specified access group.
+   *
    * @generated from rpc route.v1.RouteStoreService.ListRoutes
    */
   listRoutes: {

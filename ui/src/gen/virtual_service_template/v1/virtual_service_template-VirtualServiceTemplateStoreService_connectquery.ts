@@ -5,11 +5,15 @@
 import { VirtualServiceTemplateStoreService } from "./virtual_service_template_pb";
 
 /**
+ * Lists all virtual service templates.
+ *
  * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates
  */
 export const listVirtualServiceTemplates = VirtualServiceTemplateStoreService.method.listVirtualServiceTemplates;
 
 /**
+ * Fills a template with specific configurations and returns the result.
+ *
  * @generated from rpc virtual_service_template.v1.VirtualServiceTemplateStoreService.FillTemplate
  */
 export const fillTemplate = VirtualServiceTemplateStoreService.method.fillTemplate;

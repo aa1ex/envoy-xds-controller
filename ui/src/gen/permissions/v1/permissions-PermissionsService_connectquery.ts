@@ -5,6 +5,8 @@
 import { PermissionsService } from "./permissions_pb";
 
 /**
+ * Lists the permissions associated with a specific access group.
+ *
  * @generated from rpc permissions.v1.PermissionsService.ListPermissions
  */
 export const listPermissions = PermissionsService.method.listPermissions;

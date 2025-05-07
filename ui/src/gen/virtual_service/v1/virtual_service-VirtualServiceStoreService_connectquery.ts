@@ -5,26 +5,36 @@
 import { VirtualServiceStoreService } from "./virtual_service_pb";
 
 /**
+ * CreateVirtualService creates a new virtual service.
+ *
  * @generated from rpc virtual_service.v1.VirtualServiceStoreService.CreateVirtualService
  */
 export const createVirtualService = VirtualServiceStoreService.method.createVirtualService;
 
 /**
+ * UpdateVirtualService updates an existing virtual service.
+ *
  * @generated from rpc virtual_service.v1.VirtualServiceStoreService.UpdateVirtualService
  */
 export const updateVirtualService = VirtualServiceStoreService.method.updateVirtualService;
 
 /**
+ * DeleteVirtualService deletes a virtual service by its UID.
+ *
  * @generated from rpc virtual_service.v1.VirtualServiceStoreService.DeleteVirtualService
  */
 export const deleteVirtualService = VirtualServiceStoreService.method.deleteVirtualService;
 
 /**
+ * GetVirtualService retrieves a virtual service by its UID.
+ *
  * @generated from rpc virtual_service.v1.VirtualServiceStoreService.GetVirtualService
  */
 export const getVirtualService = VirtualServiceStoreService.method.getVirtualService;
 
 /**
+ * ListVirtualServices retrieves a list of virtual services for the specified access group.
+ *
  * @generated from rpc virtual_service.v1.VirtualServiceStoreService.ListVirtualServices
  */
 export const listVirtualServices = VirtualServiceStoreService.method.listVirtualServices;

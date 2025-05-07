@@ -2,6 +2,8 @@
 // @generated from file policy/v1/policy.proto (package policy.v1, syntax proto3)
 /* eslint-disable */
 
+// Package policy.v1 contains the PolicyStoreService and related messages.
+
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
@@ -13,15 +15,21 @@ export const file_policy_v1_policy: GenFile = /*@__PURE__*/
   fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiKwoOUG9saWN5TGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiFQoTTGlzdFBvbGljaWVzUmVxdWVzdCJAChRMaXN0UG9saWNpZXNSZXNwb25zZRIoCgVpdGVtcxgBIAMoCzIZLnBvbGljeS52MS5Qb2xpY3lMaXN0SXRlbTJlChJQb2xpY3lTdG9yZVNlcnZpY2USTwoMTGlzdFBvbGljaWVzEh4ucG9saWN5LnYxLkxpc3RQb2xpY2llc1JlcXVlc3QaHy5wb2xpY3kudjEuTGlzdFBvbGljaWVzUmVzcG9uc2VCqgEKDWNvbS5wb2xpY3kudjFCC1BvbGljeVByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvcG9saWN5L3YxO3BvbGljeXYxogIDUFhYqgIJUG9saWN5LlYxygIJUG9saWN5XFYx4gIVUG9saWN5XFYxXEdQQk1ldGFkYXRh6gIKUG9saWN5OjpWMWIGcHJvdG8z");
 
 /**
+ * PolicyListItem represents an individual policy item with a unique identifier and name.
+ *
  * @generated from message policy.v1.PolicyListItem
  */
 export type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
   /**
+   * uid is the unique identifier for the policy.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * name is the name of the policy.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -35,6 +43,8 @@ export const PolicyListItemSchema: GenMessage<PolicyListItem> = /*@__PURE__*/
   messageDesc(file_policy_v1_policy, 0);
 
 /**
+ * ListPoliciesRequest is the request message for ListPolicies RPC.
+ *
  * @generated from message policy.v1.ListPoliciesRequest
  */
 export type ListPoliciesRequest = Message<"policy.v1.ListPoliciesRequest"> & {
@@ -48,10 +58,14 @@ export const ListPoliciesRequestSchema: GenMessage<ListPoliciesRequest> = /*@__P
   messageDesc(file_policy_v1_policy, 1);
 
 /**
+ * ListPoliciesResponse is the response message for ListPolicies RPC, containing a list of policy items.
+ *
  * @generated from message policy.v1.ListPoliciesResponse
  */
 export type ListPoliciesResponse = Message<"policy.v1.ListPoliciesResponse"> & {
   /**
+   * items is a list of PolicyListItem objects.
+   *
    * @generated from field: repeated policy.v1.PolicyListItem items = 1;
    */
   items: PolicyListItem[];
@@ -65,10 +79,14 @@ export const ListPoliciesResponseSchema: GenMessage<ListPoliciesResponse> = /*@_
   messageDesc(file_policy_v1_policy, 2);
 
 /**
+ * PolicyStoreService provides operations related to policy management.
+ *
  * @generated from service policy.v1.PolicyStoreService
  */
 export const PolicyStoreService: GenService<{
   /**
+   * ListPolicies retrieves a list of policies.
+   *
    * @generated from rpc policy.v1.PolicyStoreService.ListPolicies
    */
   listPolicies: {

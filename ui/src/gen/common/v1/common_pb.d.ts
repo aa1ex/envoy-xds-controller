@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_common_v1_common: GenFile;
 
 /**
+ * ResourceRef represents a reference to a resource with a UID and name.
+ *
  * @generated from message common.v1.ResourceRef
  */
 export declare type ResourceRef = Message<"common.v1.ResourceRef"> & {
   /**
+   * UID is the unique identifier of the resource.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name is the human-readable name of the resource.
+   *
    * @generated from field: string name = 2;
    */
   name: string;

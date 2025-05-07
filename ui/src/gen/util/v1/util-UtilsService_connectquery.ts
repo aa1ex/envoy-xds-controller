@@ -5,6 +5,8 @@
 import { UtilsService } from "./util_pb";
 
 /**
+ * Verifies the SSL certificates of the provided domains.
+ *
  * @generated from rpc util.v1.UtilsService.VerifyDomains
  */
 export const verifyDomains = UtilsService.method.verifyDomains;

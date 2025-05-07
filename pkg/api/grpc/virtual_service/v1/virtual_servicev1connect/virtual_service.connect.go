@@ -54,10 +54,15 @@ const (
 // VirtualServiceStoreServiceClient is a client for the
 // virtual_service.v1.VirtualServiceStoreService service.
 type VirtualServiceStoreServiceClient interface {
+	// CreateVirtualService creates a new virtual service.
 	CreateVirtualService(context.Context, *connect.Request[v1.CreateVirtualServiceRequest]) (*connect.Response[v1.CreateVirtualServiceResponse], error)
+	// UpdateVirtualService updates an existing virtual service.
 	UpdateVirtualService(context.Context, *connect.Request[v1.UpdateVirtualServiceRequest]) (*connect.Response[v1.UpdateVirtualServiceResponse], error)
+	// DeleteVirtualService deletes a virtual service by its UID.
 	DeleteVirtualService(context.Context, *connect.Request[v1.DeleteVirtualServiceRequest]) (*connect.Response[v1.DeleteVirtualServiceResponse], error)
+	// GetVirtualService retrieves a virtual service by its UID.
 	GetVirtualService(context.Context, *connect.Request[v1.GetVirtualServiceRequest]) (*connect.Response[v1.GetVirtualServiceResponse], error)
+	// ListVirtualServices retrieves a list of virtual services for the specified access group.
 	ListVirtualServices(context.Context, *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error)
 }
 
@@ -143,10 +148,15 @@ func (c *virtualServiceStoreServiceClient) ListVirtualServices(ctx context.Conte
 // VirtualServiceStoreServiceHandler is an implementation of the
 // virtual_service.v1.VirtualServiceStoreService service.
 type VirtualServiceStoreServiceHandler interface {
+	// CreateVirtualService creates a new virtual service.
 	CreateVirtualService(context.Context, *connect.Request[v1.CreateVirtualServiceRequest]) (*connect.Response[v1.CreateVirtualServiceResponse], error)
+	// UpdateVirtualService updates an existing virtual service.
 	UpdateVirtualService(context.Context, *connect.Request[v1.UpdateVirtualServiceRequest]) (*connect.Response[v1.UpdateVirtualServiceResponse], error)
+	// DeleteVirtualService deletes a virtual service by its UID.
 	DeleteVirtualService(context.Context, *connect.Request[v1.DeleteVirtualServiceRequest]) (*connect.Response[v1.DeleteVirtualServiceResponse], error)
+	// GetVirtualService retrieves a virtual service by its UID.
 	GetVirtualService(context.Context, *connect.Request[v1.GetVirtualServiceRequest]) (*connect.Response[v1.GetVirtualServiceResponse], error)
+	// ListVirtualServices retrieves a list of virtual services for the specified access group.
 	ListVirtualServices(context.Context, *connect.Request[v1.ListVirtualServicesRequest]) (*connect.Response[v1.ListVirtualServicesResponse], error)
 }
 

@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_permissions_v1_permissions: GenFile;
 
 /**
+ * Represents a permission item with an action and associated objects.
+ *
  * @generated from message permissions.v1.PermissionsItem
  */
 export declare type PermissionsItem = Message<"permissions.v1.PermissionsItem"> & {
   /**
+   * The action of the permission.
+   *
    * @generated from field: string action = 1;
    */
   action: string;
 
   /**
+   * The objects associated with the permission.
+   *
    * @generated from field: repeated string objects = 2;
    */
   objects: string[];
@@ -32,10 +38,14 @@ export declare type PermissionsItem = Message<"permissions.v1.PermissionsItem"> 
 export declare const PermissionsItemSchema: GenMessage<PermissionsItem>;
 
 /**
+ * Request message for listing permissions.
+ *
  * @generated from message permissions.v1.ListPermissionsRequest
  */
 export declare type ListPermissionsRequest = Message<"permissions.v1.ListPermissionsRequest"> & {
   /**
+   * The access group for which permissions are being requested.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -48,10 +58,14 @@ export declare type ListPermissionsRequest = Message<"permissions.v1.ListPermiss
 export declare const ListPermissionsRequestSchema: GenMessage<ListPermissionsRequest>;
 
 /**
+ * Response message containing a list of permission items.
+ *
  * @generated from message permissions.v1.ListPermissionsResponse
  */
 export declare type ListPermissionsResponse = Message<"permissions.v1.ListPermissionsResponse"> & {
   /**
+   * The list of permission items.
+   *
    * @generated from field: repeated permissions.v1.PermissionsItem items = 1;
    */
   items: PermissionsItem[];
@@ -68,6 +82,8 @@ export declare const ListPermissionsResponseSchema: GenMessage<ListPermissionsRe
  */
 export declare const PermissionsService: GenService<{
   /**
+   * Lists the permissions associated with a specific access group.
+   *
    * @generated from rpc permissions.v1.PermissionsService.ListPermissions
    */
   listPermissions: {

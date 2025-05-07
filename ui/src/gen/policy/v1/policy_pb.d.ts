@@ -2,6 +2,8 @@
 // @generated from file policy/v1/policy.proto (package policy.v1, syntax proto3)
 /* eslint-disable */
 
+// Package policy.v1 contains the PolicyStoreService and related messages.
+
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
 
@@ -11,15 +13,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_policy_v1_policy: GenFile;
 
 /**
+ * PolicyListItem represents an individual policy item with a unique identifier and name.
+ *
  * @generated from message policy.v1.PolicyListItem
  */
 export declare type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
   /**
+   * uid is the unique identifier for the policy.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * name is the name of the policy.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -32,6 +40,8 @@ export declare type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
 export declare const PolicyListItemSchema: GenMessage<PolicyListItem>;
 
 /**
+ * ListPoliciesRequest is the request message for ListPolicies RPC.
+ *
  * @generated from message policy.v1.ListPoliciesRequest
  */
 export declare type ListPoliciesRequest = Message<"policy.v1.ListPoliciesRequest"> & {
@@ -44,10 +54,14 @@ export declare type ListPoliciesRequest = Message<"policy.v1.ListPoliciesRequest
 export declare const ListPoliciesRequestSchema: GenMessage<ListPoliciesRequest>;
 
 /**
+ * ListPoliciesResponse is the response message for ListPolicies RPC, containing a list of policy items.
+ *
  * @generated from message policy.v1.ListPoliciesResponse
  */
 export declare type ListPoliciesResponse = Message<"policy.v1.ListPoliciesResponse"> & {
   /**
+   * items is a list of PolicyListItem objects.
+   *
    * @generated from field: repeated policy.v1.PolicyListItem items = 1;
    */
   items: PolicyListItem[];
@@ -60,10 +74,14 @@ export declare type ListPoliciesResponse = Message<"policy.v1.ListPoliciesRespon
 export declare const ListPoliciesResponseSchema: GenMessage<ListPoliciesResponse>;
 
 /**
+ * PolicyStoreService provides operations related to policy management.
+ *
  * @generated from service policy.v1.PolicyStoreService
  */
 export declare const PolicyStoreService: GenService<{
   /**
+   * ListPolicies retrieves a list of policies.
+   *
    * @generated from rpc policy.v1.PolicyStoreService.ListPolicies
    */
   listPolicies: {

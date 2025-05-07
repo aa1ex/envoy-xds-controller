@@ -13,15 +13,21 @@ export const file_route_v1_route: GenFile = /*@__PURE__*/
   fileDesc("ChRyb3V0ZS92MS9yb3V0ZS5wcm90bxIIcm91dGUudjEiKgoNUm91dGVMaXN0SXRlbRILCgN1aWQYASABKAkSDAoEbmFtZRgCIAEoCSIpChFMaXN0Um91dGVzUmVxdWVzdBIUCgxhY2Nlc3NfZ3JvdXAYASABKAkiPAoSTGlzdFJvdXRlc1Jlc3BvbnNlEiYKBWl0ZW1zGAEgAygLMhcucm91dGUudjEuUm91dGVMaXN0SXRlbTJcChFSb3V0ZVN0b3JlU2VydmljZRJHCgpMaXN0Um91dGVzEhsucm91dGUudjEuTGlzdFJvdXRlc1JlcXVlc3QaHC5yb3V0ZS52MS5MaXN0Um91dGVzUmVzcG9uc2VCogEKDGNvbS5yb3V0ZS52MUIKUm91dGVQcm90b1ABWkVnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL3JvdXRlL3YxO3JvdXRldjGiAgNSWFiqAghSb3V0ZS5WMcoCCFJvdXRlXFYx4gIUUm91dGVcVjFcR1BCTWV0YWRhdGHqAglSb3V0ZTo6VjFiBnByb3RvMw");
 
 /**
+ * Represents a route in the route list.
+ *
  * @generated from message route.v1.RouteListItem
  */
 export type RouteListItem = Message<"route.v1.RouteListItem"> & {
   /**
+   * Unique identifier for the route.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * Name of the route.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -35,10 +41,14 @@ export const RouteListItemSchema: GenMessage<RouteListItem> = /*@__PURE__*/
   messageDesc(file_route_v1_route, 0);
 
 /**
+ * Request message for listing routes.
+ *
  * @generated from message route.v1.ListRoutesRequest
  */
 export type ListRoutesRequest = Message<"route.v1.ListRoutesRequest"> & {
   /**
+   * Access group to filter the routes.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -52,10 +62,14 @@ export const ListRoutesRequestSchema: GenMessage<ListRoutesRequest> = /*@__PURE_
   messageDesc(file_route_v1_route, 1);
 
 /**
+ * Response message containing the list of routes.
+ *
  * @generated from message route.v1.ListRoutesResponse
  */
 export type ListRoutesResponse = Message<"route.v1.ListRoutesResponse"> & {
   /**
+   * List of route items.
+   *
    * @generated from field: repeated route.v1.RouteListItem items = 1;
    */
   items: RouteListItem[];
@@ -69,10 +83,14 @@ export const ListRoutesResponseSchema: GenMessage<ListRoutesResponse> = /*@__PUR
   messageDesc(file_route_v1_route, 2);
 
 /**
+ * Service to manage routes.
+ *
  * @generated from service route.v1.RouteStoreService
  */
 export const RouteStoreService: GenService<{
   /**
+   * Lists all the routes for the specified access group.
+   *
    * @generated from rpc route.v1.RouteStoreService.ListRoutes
    */
   listRoutes: {

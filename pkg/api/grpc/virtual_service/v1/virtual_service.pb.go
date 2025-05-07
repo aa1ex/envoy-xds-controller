@@ -23,9 +23,11 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// VirtualHost represents a virtual host with a list of domain names.
 type VirtualHost struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Domains       []string               `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The list of domain names associated with the virtual host.
+	Domains       []string `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,24 +69,37 @@ func (x *VirtualHost) GetDomains() []string {
 	return nil
 }
 
+// CreateVirtualServiceRequest is the request message for creating a virtual service.
 type CreateVirtualServiceRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	NodeIds     []string               `protobuf:"bytes,2,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
-	AccessGroup string                 `protobuf:"bytes,3,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
-	TemplateUid string                 `protobuf:"bytes,4,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
-	ListenerUid string                 `protobuf:"bytes,5,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
-	VirtualHost *VirtualHost           `protobuf:"bytes,6,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the virtual service.
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The node IDs associated with the virtual service.
+	NodeIds []string `protobuf:"bytes,2,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
+	// The access group of the virtual service.
+	AccessGroup string `protobuf:"bytes,3,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	// The UID of the template used by the virtual service.
+	TemplateUid string `protobuf:"bytes,4,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
+	// The UID of the listener associated with the virtual service.
+	ListenerUid string `protobuf:"bytes,5,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
+	// The virtual host configuration for the virtual service.
+	VirtualHost *VirtualHost `protobuf:"bytes,6,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	// The configuration for access logs.
+	//
 	// Types that are valid to be assigned to AccessLogConfig:
 	//
 	//	*CreateVirtualServiceRequest_AccessLogConfigUid
-	AccessLogConfig          isCreateVirtualServiceRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
-	AdditionalHttpFilterUids []string                                      `protobuf:"bytes,8,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
-	AdditionalRouteUids      []string                                      `protobuf:"bytes,9,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
-	UseRemoteAddress         *bool                                         `protobuf:"varint,10,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
-	TemplateOptions          []*v1.TemplateOption                          `protobuf:"bytes,11,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	AccessLogConfig isCreateVirtualServiceRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
+	// UIDs of additional HTTP filters appended to the virtual service.
+	AdditionalHttpFilterUids []string `protobuf:"bytes,8,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
+	// UIDs of additional routes appended to the virtual service.
+	AdditionalRouteUids []string `protobuf:"bytes,9,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
+	// Whether to use the remote address for the virtual service.
+	UseRemoteAddress *bool `protobuf:"varint,10,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
+	// Template options for the virtual service.
+	TemplateOptions []*v1.TemplateOption `protobuf:"bytes,11,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CreateVirtualServiceRequest) Reset() {
@@ -208,12 +223,14 @@ type isCreateVirtualServiceRequest_AccessLogConfig interface {
 }
 
 type CreateVirtualServiceRequest_AccessLogConfigUid struct {
+	// The UID of the access log configuration.
 	AccessLogConfigUid string `protobuf:"bytes,7,opt,name=access_log_config_uid,json=accessLogConfigUid,proto3,oneof"`
 }
 
 func (*CreateVirtualServiceRequest_AccessLogConfigUid) isCreateVirtualServiceRequest_AccessLogConfig() {
 }
 
+// CreateVirtualServiceResponse is the response message for creating a virtual service.
 type CreateVirtualServiceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -250,23 +267,35 @@ func (*CreateVirtualServiceResponse) Descriptor() ([]byte, []int) {
 	return file_virtual_service_v1_virtual_service_proto_rawDescGZIP(), []int{2}
 }
 
+// UpdateVirtualServiceRequest is the request message for updating a virtual service.
 type UpdateVirtualServiceRequest struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Uid         string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	NodeIds     []string               `protobuf:"bytes,2,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
-	TemplateUid string                 `protobuf:"bytes,3,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
-	ListenerUid string                 `protobuf:"bytes,4,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
-	VirtualHost *VirtualHost           `protobuf:"bytes,5,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The UID of the virtual service.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// The node IDs associated with the virtual service.
+	NodeIds []string `protobuf:"bytes,2,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
+	// The UID of the template used by the virtual service.
+	TemplateUid string `protobuf:"bytes,3,opt,name=template_uid,json=templateUid,proto3" json:"template_uid,omitempty"`
+	// The UID of the listener associated with the virtual service.
+	ListenerUid string `protobuf:"bytes,4,opt,name=listener_uid,json=listenerUid,proto3" json:"listener_uid,omitempty"`
+	// The virtual host configuration for the virtual service.
+	VirtualHost *VirtualHost `protobuf:"bytes,5,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	// The configuration for access logs.
+	//
 	// Types that are valid to be assigned to AccessLogConfig:
 	//
 	//	*UpdateVirtualServiceRequest_AccessLogConfigUid
-	AccessLogConfig          isUpdateVirtualServiceRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
-	AdditionalHttpFilterUids []string                                      `protobuf:"bytes,7,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
-	AdditionalRouteUids      []string                                      `protobuf:"bytes,8,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
-	UseRemoteAddress         *bool                                         `protobuf:"varint,9,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
-	TemplateOptions          []*v1.TemplateOption                          `protobuf:"bytes,10,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
-	unknownFields            protoimpl.UnknownFields
-	sizeCache                protoimpl.SizeCache
+	AccessLogConfig isUpdateVirtualServiceRequest_AccessLogConfig `protobuf_oneof:"access_log_config"`
+	// UIDs of additional HTTP filters appended to the virtual service.
+	AdditionalHttpFilterUids []string `protobuf:"bytes,7,rep,name=additional_http_filter_uids,json=additionalHttpFilterUids,proto3" json:"additional_http_filter_uids,omitempty"`
+	// UIDs of additional routes appended to the virtual service.
+	AdditionalRouteUids []string `protobuf:"bytes,8,rep,name=additional_route_uids,json=additionalRouteUids,proto3" json:"additional_route_uids,omitempty"`
+	// Whether to use the remote address for the virtual service.
+	UseRemoteAddress *bool `protobuf:"varint,9,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
+	// Template options for the virtual service.
+	TemplateOptions []*v1.TemplateOption `protobuf:"bytes,10,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *UpdateVirtualServiceRequest) Reset() {
@@ -383,12 +412,14 @@ type isUpdateVirtualServiceRequest_AccessLogConfig interface {
 }
 
 type UpdateVirtualServiceRequest_AccessLogConfigUid struct {
+	// The UID of the access log configuration.
 	AccessLogConfigUid string `protobuf:"bytes,6,opt,name=access_log_config_uid,json=accessLogConfigUid,proto3,oneof"`
 }
 
 func (*UpdateVirtualServiceRequest_AccessLogConfigUid) isUpdateVirtualServiceRequest_AccessLogConfig() {
 }
 
+// UpdateVirtualServiceResponse is the response message for updating a virtual service.
 type UpdateVirtualServiceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -425,9 +456,11 @@ func (*UpdateVirtualServiceResponse) Descriptor() ([]byte, []int) {
 	return file_virtual_service_v1_virtual_service_proto_rawDescGZIP(), []int{4}
 }
 
+// DeleteVirtualServiceRequest is the request message for deleting a virtual service.
 type DeleteVirtualServiceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The UID of the virtual service to delete.
+	Uid           string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -469,6 +502,7 @@ func (x *DeleteVirtualServiceRequest) GetUid() string {
 	return ""
 }
 
+// DeleteVirtualServiceResponse is the response message for deleting a virtual service.
 type DeleteVirtualServiceResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -505,9 +539,11 @@ func (*DeleteVirtualServiceResponse) Descriptor() ([]byte, []int) {
 	return file_virtual_service_v1_virtual_service_proto_rawDescGZIP(), []int{6}
 }
 
+// GetVirtualServiceRequest is the request message for retrieving a virtual service.
 type GetVirtualServiceRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The UID of the virtual service to retrieve.
+	Uid           string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -549,27 +585,42 @@ func (x *GetVirtualServiceRequest) GetUid() string {
 	return ""
 }
 
+// GetVirtualServiceResponse is the response message for retrieving a virtual service.
 type GetVirtualServiceResponse struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Uid         string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	NodeIds     []string               `protobuf:"bytes,3,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
-	AccessGroup string                 `protobuf:"bytes,4,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
-	Template    *v11.ResourceRef       `protobuf:"bytes,5,opt,name=template,proto3" json:"template,omitempty"`
-	Listener    *v11.ResourceRef       `protobuf:"bytes,6,opt,name=listener,proto3" json:"listener,omitempty"`
-	VirtualHost *VirtualHost           `protobuf:"bytes,7,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The UID of the virtual service.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// The name of the virtual service.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The node IDs associated with the virtual service.
+	NodeIds []string `protobuf:"bytes,3,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
+	// The access group of the virtual service.
+	AccessGroup string `protobuf:"bytes,4,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	// A reference to the template used by the virtual service.
+	Template *v11.ResourceRef `protobuf:"bytes,5,opt,name=template,proto3" json:"template,omitempty"`
+	// A reference to the listener associated with the virtual service.
+	Listener *v11.ResourceRef `protobuf:"bytes,6,opt,name=listener,proto3" json:"listener,omitempty"`
+	// The virtual host configuration for the virtual service.
+	VirtualHost *VirtualHost `protobuf:"bytes,7,opt,name=virtual_host,json=virtualHost,proto3" json:"virtual_host,omitempty"`
+	// The configuration of access logs.
+	//
 	// Types that are valid to be assigned to AccessLog:
 	//
 	//	*GetVirtualServiceResponse_AccessLogConfig
 	//	*GetVirtualServiceResponse_AccessLogConfigRaw
-	AccessLog             isGetVirtualServiceResponse_AccessLog `protobuf_oneof:"access_log"`
-	AdditionalHttpFilters []*v11.ResourceRef                    `protobuf:"bytes,10,rep,name=additional_http_filters,json=additionalHttpFilters,proto3" json:"additional_http_filters,omitempty"`
-	AdditionalRoutes      []*v11.ResourceRef                    `protobuf:"bytes,11,rep,name=additional_routes,json=additionalRoutes,proto3" json:"additional_routes,omitempty"`
-	UseRemoteAddress      *bool                                 `protobuf:"varint,12,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
-	TemplateOptions       []*v1.TemplateOption                  `protobuf:"bytes,13,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
-	IsEditable            bool                                  `protobuf:"varint,14,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	AccessLog isGetVirtualServiceResponse_AccessLog `protobuf_oneof:"access_log"`
+	// Additional HTTP filters associated with the virtual service.
+	AdditionalHttpFilters []*v11.ResourceRef `protobuf:"bytes,10,rep,name=additional_http_filters,json=additionalHttpFilters,proto3" json:"additional_http_filters,omitempty"`
+	// Additional routes associated with the virtual service.
+	AdditionalRoutes []*v11.ResourceRef `protobuf:"bytes,11,rep,name=additional_routes,json=additionalRoutes,proto3" json:"additional_routes,omitempty"`
+	// Whether the virtual service uses the remote address.
+	UseRemoteAddress *bool `protobuf:"varint,12,opt,name=use_remote_address,json=useRemoteAddress,proto3,oneof" json:"use_remote_address,omitempty"`
+	// Template options for the virtual service.
+	TemplateOptions []*v1.TemplateOption `protobuf:"bytes,13,rep,name=template_options,json=templateOptions,proto3" json:"template_options,omitempty"`
+	// Indicates whether the virtual service is editable.
+	IsEditable    bool `protobuf:"varint,14,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetVirtualServiceResponse) Reset() {
@@ -716,10 +767,12 @@ type isGetVirtualServiceResponse_AccessLog interface {
 }
 
 type GetVirtualServiceResponse_AccessLogConfig struct {
+	// A reference to the access log configuration.
 	AccessLogConfig *v11.ResourceRef `protobuf:"bytes,8,opt,name=access_log_config,json=accessLogConfig,proto3,oneof"`
 }
 
 type GetVirtualServiceResponse_AccessLogConfigRaw struct {
+	// Raw configuration for access logs.
 	AccessLogConfigRaw []byte `protobuf:"bytes,9,opt,name=access_log_config_raw,json=accessLogConfigRaw,proto3,oneof"`
 }
 
@@ -727,9 +780,11 @@ func (*GetVirtualServiceResponse_AccessLogConfig) isGetVirtualServiceResponse_Ac
 
 func (*GetVirtualServiceResponse_AccessLogConfigRaw) isGetVirtualServiceResponse_AccessLog() {}
 
+// ListVirtualServicesRequest is the request message for listing virtual services.
 type ListVirtualServicesRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessGroup   string                 `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The access group for which to list virtual services.
+	AccessGroup   string `protobuf:"bytes,1,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -771,14 +826,21 @@ func (x *ListVirtualServicesRequest) GetAccessGroup() string {
 	return ""
 }
 
+// VirtualServiceListItem represents a single virtual service in a list response.
 type VirtualServiceListItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uid           string                 `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	NodeIds       []string               `protobuf:"bytes,3,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
-	AccessGroup   string                 `protobuf:"bytes,4,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
-	Template      *v11.ResourceRef       `protobuf:"bytes,5,opt,name=template,proto3" json:"template,omitempty"`
-	IsEditable    bool                   `protobuf:"varint,6,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The UID of the virtual service.
+	Uid string `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	// The name of the virtual service.
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// The node IDs associated with the virtual service.
+	NodeIds []string `protobuf:"bytes,3,rep,name=node_ids,json=nodeIds,proto3" json:"node_ids,omitempty"`
+	// The access group of the virtual service.
+	AccessGroup string `protobuf:"bytes,4,opt,name=access_group,json=accessGroup,proto3" json:"access_group,omitempty"`
+	// A reference to the template used by the virtual service.
+	Template *v11.ResourceRef `protobuf:"bytes,5,opt,name=template,proto3" json:"template,omitempty"`
+	// Indicates whether the virtual service is editable.
+	IsEditable    bool `protobuf:"varint,6,opt,name=is_editable,json=isEditable,proto3" json:"is_editable,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -855,8 +917,10 @@ func (x *VirtualServiceListItem) GetIsEditable() bool {
 	return false
 }
 
+// ListVirtualServicesResponse is the response message for listing virtual services.
 type ListVirtualServicesResponse struct {
-	state         protoimpl.MessageState    `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The list of virtual services.
 	Items         []*VirtualServiceListItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

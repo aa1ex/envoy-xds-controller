@@ -23,8 +23,9 @@ const (
 )
 
 type VerifyDomainsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Domains       []string               `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// A list of domains to verify SSL certificates for.
+	Domains       []string `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -67,15 +68,21 @@ func (x *VerifyDomainsRequest) GetDomains() []string {
 }
 
 type DomainVerificationResult struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Domain            string                 `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
-	ValidCertificate  bool                   `protobuf:"varint,2,opt,name=valid_certificate,json=validCertificate,proto3" json:"valid_certificate,omitempty"`
-	Issuer            string                 `protobuf:"bytes,3,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	ExpiresAt         *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
-	MatchedByWildcard bool                   `protobuf:"varint,5,opt,name=matched_by_wildcard,json=matchedByWildcard,proto3" json:"matched_by_wildcard,omitempty"`
-	Error             string                 `protobuf:"bytes,6,opt,name=error,proto3" json:"error,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The domain being verified.
+	Domain string `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	// Indicates if the domain has a valid SSL certificate.
+	ValidCertificate bool `protobuf:"varint,2,opt,name=valid_certificate,json=validCertificate,proto3" json:"valid_certificate,omitempty"`
+	// The issuer of the SSL certificate.
+	Issuer string `protobuf:"bytes,3,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	// The expiration timestamp of the SSL certificate.
+	ExpiresAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	// Indicates if the domain was matched using a wildcard certificate.
+	MatchedByWildcard bool `protobuf:"varint,5,opt,name=matched_by_wildcard,json=matchedByWildcard,proto3" json:"matched_by_wildcard,omitempty"`
+	// Any error messages related to the domain's verification.
+	Error         string `protobuf:"bytes,6,opt,name=error,proto3" json:"error,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DomainVerificationResult) Reset() {
@@ -151,7 +158,8 @@ func (x *DomainVerificationResult) GetError() string {
 }
 
 type VerifyDomainsResponse struct {
-	state         protoimpl.MessageState      `protogen:"open.v1"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// A list of the results for each domain verification.
 	Results       []*DomainVerificationResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

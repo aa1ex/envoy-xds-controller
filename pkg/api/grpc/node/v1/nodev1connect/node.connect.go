@@ -40,6 +40,7 @@ const (
 
 // NodeStoreServiceClient is a client for the node.v1.NodeStoreService service.
 type NodeStoreServiceClient interface {
+	// ListNodes retrieves a list of nodes belonging to the specified access group.
 	ListNodes(context.Context, *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error)
 }
 
@@ -75,6 +76,7 @@ func (c *nodeStoreServiceClient) ListNodes(ctx context.Context, req *connect.Req
 
 // NodeStoreServiceHandler is an implementation of the node.v1.NodeStoreService service.
 type NodeStoreServiceHandler interface {
+	// ListNodes retrieves a list of nodes belonging to the specified access group.
 	ListNodes(context.Context, *connect.Request[v1.ListNodesRequest]) (*connect.Response[v1.ListNodesResponse], error)
 }
 

@@ -11,15 +11,21 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_access_log_config_v1_access_log_config: GenFile;
 
 /**
+ * Represents an access log configuration item.
+ *
  * @generated from message access_log_config.v1.AccessLogConfigListItem
  */
 export declare type AccessLogConfigListItem = Message<"access_log_config.v1.AccessLogConfigListItem"> & {
   /**
+   * The unique identifier of the access log configuration.
+   *
    * @generated from field: string uid = 1;
    */
   uid: string;
 
   /**
+   * The name of the access log configuration.
+   *
    * @generated from field: string name = 2;
    */
   name: string;
@@ -32,10 +38,14 @@ export declare type AccessLogConfigListItem = Message<"access_log_config.v1.Acce
 export declare const AccessLogConfigListItemSchema: GenMessage<AccessLogConfigListItem>;
 
 /**
+ * Request message for listing access log configurations.
+ *
  * @generated from message access_log_config.v1.ListAccessLogConfigsRequest
  */
 export declare type ListAccessLogConfigsRequest = Message<"access_log_config.v1.ListAccessLogConfigsRequest"> & {
   /**
+   * The access group to filter the log configurations.
+   *
    * @generated from field: string access_group = 1;
    */
   accessGroup: string;
@@ -48,10 +58,14 @@ export declare type ListAccessLogConfigsRequest = Message<"access_log_config.v1.
 export declare const ListAccessLogConfigsRequestSchema: GenMessage<ListAccessLogConfigsRequest>;
 
 /**
+ * Response message containing a list of access log configuration items.
+ *
  * @generated from message access_log_config.v1.ListAccessLogConfigsResponse
  */
 export declare type ListAccessLogConfigsResponse = Message<"access_log_config.v1.ListAccessLogConfigsResponse"> & {
   /**
+   * The list of access log configuration items.
+   *
    * @generated from field: repeated access_log_config.v1.AccessLogConfigListItem items = 1;
    */
   items: AccessLogConfigListItem[];
@@ -64,10 +78,14 @@ export declare type ListAccessLogConfigsResponse = Message<"access_log_config.v1
 export declare const ListAccessLogConfigsResponseSchema: GenMessage<ListAccessLogConfigsResponse>;
 
 /**
+ * Service for storing and listing access log configurations.
+ *
  * @generated from service access_log_config.v1.AccessLogConfigStoreService
  */
 export declare const AccessLogConfigStoreService: GenService<{
   /**
+   * Lists all access log configurations based on the given request.
+   *
    * @generated from rpc access_log_config.v1.AccessLogConfigStoreService.ListAccessLogConfigs
    */
   listAccessLogConfigs: {

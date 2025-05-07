@@ -19,6 +19,8 @@ export const file_util_v1_util: GenFile = /*@__PURE__*/
  */
 export type VerifyDomainsRequest = Message<"util.v1.VerifyDomainsRequest"> & {
   /**
+   * A list of domains to verify SSL certificates for.
+   *
    * @generated from field: repeated string domains = 1;
    */
   domains: string[];
@@ -36,31 +38,43 @@ export const VerifyDomainsRequestSchema: GenMessage<VerifyDomainsRequest> = /*@_
  */
 export type DomainVerificationResult = Message<"util.v1.DomainVerificationResult"> & {
   /**
+   * The domain being verified.
+   *
    * @generated from field: string domain = 1;
    */
   domain: string;
 
   /**
+   * Indicates if the domain has a valid SSL certificate.
+   *
    * @generated from field: bool valid_certificate = 2;
    */
   validCertificate: boolean;
 
   /**
+   * The issuer of the SSL certificate.
+   *
    * @generated from field: string issuer = 3;
    */
   issuer: string;
 
   /**
+   * The expiration timestamp of the SSL certificate.
+   *
    * @generated from field: google.protobuf.Timestamp expires_at = 4;
    */
   expiresAt?: Timestamp;
 
   /**
+   * Indicates if the domain was matched using a wildcard certificate.
+   *
    * @generated from field: bool matched_by_wildcard = 5;
    */
   matchedByWildcard: boolean;
 
   /**
+   * Any error messages related to the domain's verification.
+   *
    * @generated from field: string error = 6;
    */
   error: string;
@@ -78,6 +92,8 @@ export const DomainVerificationResultSchema: GenMessage<DomainVerificationResult
  */
 export type VerifyDomainsResponse = Message<"util.v1.VerifyDomainsResponse"> & {
   /**
+   * A list of the results for each domain verification.
+   *
    * @generated from field: repeated util.v1.DomainVerificationResult results = 1;
    */
   results: DomainVerificationResult[];
@@ -95,6 +111,8 @@ export const VerifyDomainsResponseSchema: GenMessage<VerifyDomainsResponse> = /*
  */
 export const UtilsService: GenService<{
   /**
+   * Verifies the SSL certificates of the provided domains.
+   *
    * @generated from rpc util.v1.UtilsService.VerifyDomains
    */
   verifyDomains: {

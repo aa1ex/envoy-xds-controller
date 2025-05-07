@@ -5,6 +5,8 @@
 import { HTTPFilterStoreService } from "./http_filter_pb";
 
 /**
+ * Lists all HTTP filters for a given access group.
+ *
  * @generated from rpc http_filter.v1.HTTPFilterStoreService.ListHTTPFilters
  */
 export const listHTTPFilters = HTTPFilterStoreService.method.listHTTPFilters;

@@ -40,6 +40,7 @@ const (
 
 // UtilsServiceClient is a client for the util.v1.UtilsService service.
 type UtilsServiceClient interface {
+	// Verifies the SSL certificates of the provided domains.
 	VerifyDomains(context.Context, *connect.Request[v1.VerifyDomainsRequest]) (*connect.Response[v1.VerifyDomainsResponse], error)
 }
 
@@ -75,6 +76,7 @@ func (c *utilsServiceClient) VerifyDomains(ctx context.Context, req *connect.Req
 
 // UtilsServiceHandler is an implementation of the util.v1.UtilsService service.
 type UtilsServiceHandler interface {
+	// Verifies the SSL certificates of the provided domains.
 	VerifyDomains(context.Context, *connect.Request[v1.VerifyDomainsRequest]) (*connect.Response[v1.VerifyDomainsResponse], error)
 }
 

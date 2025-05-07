@@ -45,7 +45,9 @@ const (
 // VirtualServiceTemplateStoreServiceClient is a client for the
 // virtual_service_template.v1.VirtualServiceTemplateStoreService service.
 type VirtualServiceTemplateStoreServiceClient interface {
+	// Lists all virtual service templates.
 	ListVirtualServiceTemplates(context.Context, *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error)
+	// Fills a template with specific configurations and returns the result.
 	FillTemplate(context.Context, *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error)
 }
 
@@ -96,7 +98,9 @@ func (c *virtualServiceTemplateStoreServiceClient) FillTemplate(ctx context.Cont
 // VirtualServiceTemplateStoreServiceHandler is an implementation of the
 // virtual_service_template.v1.VirtualServiceTemplateStoreService service.
 type VirtualServiceTemplateStoreServiceHandler interface {
+	// Lists all virtual service templates.
 	ListVirtualServiceTemplates(context.Context, *connect.Request[v1.ListVirtualServiceTemplatesRequest]) (*connect.Response[v1.ListVirtualServiceTemplatesResponse], error)
+	// Fills a template with specific configurations and returns the result.
 	FillTemplate(context.Context, *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error)
 }
 

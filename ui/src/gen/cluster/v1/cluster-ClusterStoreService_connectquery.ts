@@ -5,6 +5,8 @@
 import { ClusterStoreService } from "./cluster_pb";
 
 /**
+ * Lists all the clusters in the store.
+ *
  * @generated from rpc cluster.v1.ClusterStoreService.ListCluster
  */
 export const listCluster = ClusterStoreService.method.listCluster;
