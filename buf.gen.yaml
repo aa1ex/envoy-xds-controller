@@ -24,5 +24,9 @@ plugins:
     include_imports: true
     opt: target=dts
     out: ui/src/gen
+  - local: ["go", "run", "github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v1.5.1"]
+    strategy: all
+    out: docs
+    opt: dev/docgen/grpc-md.tmpl,docs/api/grpc.md
 inputs:
   - directory: proto
