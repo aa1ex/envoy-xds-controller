@@ -45,7 +45,7 @@ import (
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds/api/v1/handlers"
 
-	docs "github.com/kaasops/envoy-xds-controller/docs/cacheRestAPI"
+	docs "github.com/kaasops/envoy-xds-controller/docs/api/cacheRestAPI"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )

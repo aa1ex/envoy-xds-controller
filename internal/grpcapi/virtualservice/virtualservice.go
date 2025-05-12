@@ -3,6 +3,7 @@ package virtualservice
 import (
 	"context"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/internal/grpcapi"
 
 	"connectrpc.com/connect"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
@@ -42,6 +43,14 @@ func (s *VirtualServiceStore) DeleteVirtualService(ctx context.Context, req *con
 	}
 	if !vs.IsEditable() {
 		return nil, fmt.Errorf("virtual service uid '%s' is not editable", req.Msg.Uid)
+	}
+	authorizer := grpcapi.GetAuthorizerFromContext(ctx)
+	ok, err := authorizer.Authorize(vs.GetAccessGroup(), vs.Name)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, fmt.Errorf("user is not authorized to delete virtual service")
 	}
 	if err := s.client.Delete(ctx, vs); err != nil {
 		return nil, err
