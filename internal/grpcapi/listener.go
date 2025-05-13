@@ -35,12 +35,16 @@ func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[
 	}
 
 	for _, v := range m {
+		listenerAG := v.GetAccessGroup()
+		if listenerAG != req.Msg.AccessGroup && listenerAG != DomainGeneral {
+			continue
+		}
 		item := &v1.ListenerListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 			Type: listenerType(v),
 		}
-		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
+		isAllowed, err := authorizer.Authorize(listenerAG, item.Name)
 		if err != nil {
 			return nil, err
 		}

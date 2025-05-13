@@ -121,3 +121,11 @@ func (a *AccessLogConfig) IsEqual(other *AccessLogConfig) bool {
 
 	return true
 }
+
+func (a *AccessLogConfig) GetAccessGroup() string {
+	accessGroup := a.GetLabels()[LabelAccessGroup]
+	if accessGroup == "" {
+		return GeneralAccessGroup
+	}
+	return accessGroup
+}

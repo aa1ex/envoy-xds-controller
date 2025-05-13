@@ -74,3 +74,11 @@ func (h *HttpFilter) IsEqual(other *HttpFilter) bool {
 	}
 	return true
 }
+
+func (h *HttpFilter) GetAccessGroup() string {
+	accessGroup := h.GetLabels()[LabelAccessGroup]
+	if accessGroup == "" {
+		return GeneralAccessGroup
+	}
+	return accessGroup
+}

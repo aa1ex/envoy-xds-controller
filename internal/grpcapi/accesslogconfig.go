@@ -32,11 +32,15 @@ func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *co
 	m := s.store.MapAccessLogs()
 	list := make([]*v1.AccessLogConfigListItem, 0, len(m))
 	for _, v := range m {
+		accessLogAG := v.GetAccessGroup()
+		if accessLogAG != req.Msg.AccessGroup && accessLogAG != DomainGeneral {
+			continue
+		}
 		item := &v1.AccessLogConfigListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
+		isAllowed, err := authorizer.Authorize(accessLogAG, item.Name)
 		if err != nil {
 			return nil, err
 		}

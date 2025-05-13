@@ -201,6 +201,13 @@ auth:
     g, developers, role:reader, _
     g, developers, role:reader, dev
     g, testers,, test
+    g, testers,, _
+    
+    p, testers, _, *, list-virtual-service-templates
+    p, testers, _, *, list-listeners
+    p, testers, _, *, list-access-log-configs
+    p, testers, _, *, list-http-filters
+    p, testers, _, *, list-routes
     
     p, testers, test, *, list-virtual-services
     p, testers, test, *, list-virtual-service-templates

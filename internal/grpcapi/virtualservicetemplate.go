@@ -58,15 +58,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 }
 
 func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
-	//authorizer := GetAuthorizerFromContext(ctx)
-	//isAllowed, err := authorizer.Authorize(DomainGeneral, "*")
-	//if err != nil {
-	//	return nil, err
-	//}
-	//if !isAllowed {
-	//	return nil, authn.Errorf("forbidden")
-	//}
-	// TODO:
+	authorizer := GetAuthorizerFromContext(ctx)
 	if req.Msg.TemplateUid == "" {
 		return nil, fmt.Errorf("template uid is required")
 	}
@@ -74,6 +66,14 @@ func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *con
 	if template == nil {
 		return nil, fmt.Errorf("template not found")
 	}
+	ok, err := authorizer.Authorize(template.GetAccessGroup(), template.Name)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, fmt.Errorf("access group '%s' is not allowed to fill template '%s'", template.GetAccessGroup(), template.Name)
+	}
+
 	vs := &v1alpha1.VirtualService{}
 	vs.Spec.Template = &v1alpha1.ResourceRef{
 		Name:      template.Name,

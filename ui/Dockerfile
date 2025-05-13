@@ -1,4 +1,4 @@
-FROM node:18.16-alpine as build
+FROM node:22.11.0-alpine as build
 
 RUN npm install -g vite
 WORKDIR /app

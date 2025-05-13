@@ -63,7 +63,11 @@ func (vs *VirtualService) SetLabelName(name string) {
 }
 
 func (vs *VirtualService) GetAccessGroup() string {
-	return vs.GetLabels()[LabelAccessGroup]
+	accessGroup := vs.GetLabels()[LabelAccessGroup]
+	if accessGroup == "" {
+		return GeneralAccessGroup
+	}
+	return accessGroup
 }
 
 func (vs *VirtualService) SetAccessGroup(accessGroup string) {

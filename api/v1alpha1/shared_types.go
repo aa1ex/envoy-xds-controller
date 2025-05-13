@@ -1,6 +1,7 @@
 package v1alpha1
 
 const AnnotationSecretDomains = "envoy.kaasops.io/domains"
+const GeneralAccessGroup = "_"
 
 type Message string
 

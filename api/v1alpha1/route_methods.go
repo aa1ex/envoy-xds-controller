@@ -57,3 +57,11 @@ func (r *Route) IsEqual(other *Route) bool {
 	}
 	return true
 }
+
+func (r *Route) GetAccessGroup() string {
+	accessGroup := r.GetLabels()[LabelAccessGroup]
+	if accessGroup == "" {
+		return GeneralAccessGroup
+	}
+	return accessGroup
+}

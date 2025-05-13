@@ -33,11 +33,15 @@ func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, req *connect.Requ
 	}
 
 	for _, v := range m {
+		httpFilterAG := v.GetAccessGroup()
+		if httpFilterAG != req.Msg.AccessGroup && httpFilterAG != DomainGeneral {
+			continue
+		}
 		item := &v1.HTTPFilterListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
+		isAllowed, err := authorizer.Authorize(httpFilterAG, item.Name)
 		if err != nil {
 			return nil, err
 		}

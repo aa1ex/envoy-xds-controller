@@ -32,11 +32,15 @@ func (s *RouteStore) ListRoutes(ctx context.Context, req *connect.Request[v1.Lis
 	}
 
 	for _, v := range m {
+		routeAG := v.GetAccessGroup()
+		if routeAG != req.Msg.AccessGroup && routeAG != DomainGeneral {
+			continue
+		}
 		item := &v1.RouteListItem{
 			Uid:  string(v.UID),
 			Name: v.Name,
 		}
-		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
+		isAllowed, err := authorizer.Authorize(routeAG, item.Name)
 		if err != nil {
 			return nil, err
 		}
