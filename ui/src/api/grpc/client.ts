@@ -10,6 +10,7 @@ import { RouteStoreService } from '../../gen/route/v1/route_pb.ts'
 import { AccessGroupStoreService } from '../../gen/access_group/v1/access_group_pb.ts'
 import { NodeStoreService } from '../../gen/node/v1/node_pb.ts'
 import { getAuth } from '../../utils/helpers/authBridge.ts'
+import { UtilsService } from '../../gen/util/v1/util_pb.ts'
 
 export const tokenInterceptor: Interceptor = next => async req => {
 	if (env.VITE_OIDC_ENABLED === 'true') {
@@ -58,3 +59,5 @@ export const routeServiceClient = createClient(RouteStoreService, transport)
 export const accessGroupsServiceClient = createClient(AccessGroupStoreService, transport)
 
 export const nodeServiceClient = createClient(NodeStoreService, transport)
+
+export const utilServiceClient = createClient(UtilsService, transport)

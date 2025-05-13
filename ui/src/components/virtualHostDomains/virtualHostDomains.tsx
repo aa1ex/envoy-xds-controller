@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
 	Control,
 	Controller,
@@ -25,6 +25,7 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import Checkbox from '@mui/material/Checkbox'
+import { useVerifyDomains } from '../../api/grpc/hooks/useVirtualService.ts'
 
 interface IVirtualHostDomainsProps {
 	control: Control<IVirtualServiceForm>
@@ -48,6 +49,10 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 	const [selectedDomains, setSelectedDomains] = useState<number[]>([])
 
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
+
+	const domains = watch(nameField)
+	const stableDomains = useMemo(() => [...domains], [domains])
+	const { data: verifyDomains } = useVerifyDomains(stableDomains)
 
 	const addDomain = () => {
 		if (newDomain.trim() === '') return
@@ -210,25 +215,34 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 				display='flex'
 				flexDirection='column'
 				gap={0.7}
-				sx={{ overflowY: 'auto', paddingRight: '10px' }}
+				sx={{ overflowY: 'auto', padding: '1px 10px 10px 1px' }}
 			>
-				{watch(nameField).map((domain, index) => (
-					<Card key={index} sx={{ flexShrink: 0 }}>
-						<CustomCardContent sx={{ display: 'flex', alignItems: 'center' }}>
-							<Checkbox
-								checked={selectedDomains.includes(index)}
-								onChange={() => toggleSelectDomain(index)}
-								disabled={readMode}
-							/>
-							<Typography padding={1.2} sx={{ flexGrow: 1 }}>
-								{domain}
-							</Typography>
-							<IconButton onClick={() => removeDomain(index)} disabled={readMode}>
-								<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
-							</IconButton>
-						</CustomCardContent>
-					</Card>
-				))}
+				{watch(nameField).map((domain, index) => {
+					const isVerified = verifyDomains?.results?.[index]?.validCertificate
+					const errorText = verifyDomains?.results?.[index]?.error
+
+					return (
+						<Card key={index} sx={{ flexShrink: 0 }}>
+							<CustomCardContent sx={{ display: 'flex', alignItems: 'center' }}>
+								<Checkbox
+									checked={selectedDomains.includes(index)}
+									onChange={() => toggleSelectDomain(index)}
+									disabled={readMode}
+								/>
+								{isVerified ? ' ✅' : ' ❌'}
+								<Typography padding={1.2} sx={{ flexGrow: 1 }}>
+									{domain}
+								</Typography>
+								<Typography padding={1.2} sx={{ flexGrow: 1 }} color='warning'>
+									{errorText}
+								</Typography>
+								<IconButton onClick={() => removeDomain(index)} disabled={readMode}>
+									<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
+								</IconButton>
+							</CustomCardContent>
+						</Card>
+					)
+				})}
 			</Box>
 		</Box>
 	)

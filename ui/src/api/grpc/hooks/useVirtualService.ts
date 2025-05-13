@@ -7,6 +7,7 @@ import {
 	nodeServiceClient,
 	routeServiceClient,
 	templateServiceClient,
+	utilServiceClient,
 	virtualServiceClient
 } from '../client.ts'
 import {
@@ -133,5 +134,14 @@ export const useNodeListVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['nodeListVs'],
 		queryFn: () => nodeServiceClient.listNodes({ accessGroup: accessGroup || '' }, metadata)
+	})
+}
+
+export const useVerifyDomains = (domains: string[]) => {
+	return useQuery({
+		queryKey: ['verifyDomains', domains],
+		queryFn: () => utilServiceClient.verifyDomains({ domains: domains }),
+		select: data => data,
+		enabled: !!domains
 	})
 }
