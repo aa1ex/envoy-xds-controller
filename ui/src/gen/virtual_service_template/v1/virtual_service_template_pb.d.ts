@@ -174,6 +174,13 @@ export declare type FillTemplateRequest = Message<"virtual_service_template.v1.F
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 8;
    */
   templateOptions: TemplateOption[];
+
+  /**
+   * Virtual service name
+   *
+   * @generated from field: string name = 9;
+   */
+  name: string;
 };
 
 /**

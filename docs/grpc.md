@@ -530,6 +530,7 @@ Request message for filling a template with specific configurations.
 | additional_route_uids | [repeated string](#string) | Additional route unique identifiers. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) _use_remote_address.use_remote_address | [optional bool](#bool) | Whether to use the remote address. |
 | template_options | [repeated TemplateOption](#templateoption) | Options to modify the template. |
+| name | [ string](#string) | Virtual service name |
 
 
 

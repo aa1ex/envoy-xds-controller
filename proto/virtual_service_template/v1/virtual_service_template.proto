@@ -88,6 +88,9 @@ message FillTemplateRequest {
 
   // Options to modify the template.
   repeated virtual_service_template.v1.TemplateOption template_options = 8;
+
+  // Virtual service name
+  string name = 9;
 }
 
 // Response message containing the filled template as a raw string.

@@ -90,6 +90,12 @@ func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *con
 		}
 	}
 
+	if req.Msg.Name != "" {
+		vs.Name = req.Msg.Name
+	} else {
+		vs.Name = template.Name + "-vs"
+	}
+
 	if req.Msg.VirtualHost != nil {
 		virtualHost := &routev3.VirtualHost{
 			Name:    vs.Name + "-virtual-host",
