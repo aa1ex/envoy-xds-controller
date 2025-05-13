@@ -29,6 +29,7 @@
 - [ListClustersRequest](#listclustersrequest)
 - [ListClustersResponse](#listclustersresponse)
 - [ResourceRef](#resourceref)
+- [VirtualHost](#virtualhost)
 - [HTTPFilterListItem](#httpfilterlistitem)
 - [ListHTTPFiltersRequest](#listhttpfiltersrequest)
 - [ListHTTPFiltersResponse](#listhttpfiltersresponse)
@@ -66,7 +67,6 @@
 - [ListVirtualServicesResponse](#listvirtualservicesresponse)
 - [UpdateVirtualServiceRequest](#updatevirtualservicerequest)
 - [UpdateVirtualServiceResponse](#updatevirtualserviceresponse)
-- [VirtualHost](#virtualhost)
 - [VirtualServiceListItem](#virtualservicelistitem)
 
 ### Enums
@@ -287,6 +287,16 @@ ResourceRef represents a reference to a resource with a UID and name.
 | ----- | ---- | ----------- |
 | uid | [ string](#string) | UID is the unique identifier of the resource. |
 | name | [ string](#string) | Name is the human-readable name of the resource. |
+
+
+
+### VirtualHost {#virtualhost}
+VirtualHost represents a virtual host with a list of domain names.
+
+
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| domains | [repeated string](#string) | The list of domain names associated with the virtual host. |
 
 
 
@@ -514,7 +524,7 @@ Request message for filling a template with specific configurations.
 | ----- | ---- | ----------- |
 | template_uid | [ string](#string) | Unique identifier of the template to fill. |
 | listener_uid | [ string](#string) | Unique identifier of the listener to associate with the template. |
-| virtual_host | [ bytes](#bytes) | Virtual host configuration in binary format. |
+| virtual_host | [ common.v1.VirtualHost](#commonv1virtualhost) | The virtual host configuration for the virtual service. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) access_log_config.access_log_config_uid | [ string](#string) | Unique identifier of the access log configuration. |
 | additional_http_filter_uids | [repeated string](#string) | Additional HTTP filter unique identifiers. |
 | additional_route_uids | [repeated string](#string) | Additional route unique identifiers. |
@@ -586,7 +596,7 @@ CreateVirtualServiceRequest is the request message for creating a virtual servic
 | access_group | [ string](#string) | The access group of the virtual service. |
 | template_uid | [ string](#string) | The UID of the template used by the virtual service. |
 | listener_uid | [ string](#string) | The UID of the listener associated with the virtual service. |
-| virtual_host | [ VirtualHost](#virtualhost) | The virtual host configuration for the virtual service. |
+| virtual_host | [ common.v1.VirtualHost](#commonv1virtualhost) | The virtual host configuration for the virtual service. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) access_log_config.access_log_config_uid | [ string](#string) | The UID of the access log configuration. |
 | additional_http_filter_uids | [repeated string](#string) | UIDs of additional HTTP filters appended to the virtual service. |
 | additional_route_uids | [repeated string](#string) | UIDs of additional routes appended to the virtual service. |
@@ -637,7 +647,7 @@ GetVirtualServiceResponse is the response message for retrieving a virtual servi
 | access_group | [ string](#string) | The access group of the virtual service. |
 | template | [ common.v1.ResourceRef](#commonv1resourceref) | A reference to the template used by the virtual service. |
 | listener | [ common.v1.ResourceRef](#commonv1resourceref) | A reference to the listener associated with the virtual service. |
-| virtual_host | [ VirtualHost](#virtualhost) | The virtual host configuration for the virtual service. |
+| virtual_host | [ common.v1.VirtualHost](#commonv1virtualhost) | The virtual host configuration for the virtual service. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) access_log.access_log_config | [ common.v1.ResourceRef](#commonv1resourceref) | A reference to the access log configuration. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) access_log.access_log_config_raw | [ bytes](#bytes) | Raw configuration for access logs. |
 | additional_http_filters | [repeated common.v1.ResourceRef](#commonv1resourceref) | Additional HTTP filters associated with the virtual service. |
@@ -678,7 +688,7 @@ UpdateVirtualServiceRequest is the request message for updating a virtual servic
 | node_ids | [repeated string](#string) | The node IDs associated with the virtual service. |
 | template_uid | [ string](#string) | The UID of the template used by the virtual service. |
 | listener_uid | [ string](#string) | The UID of the listener associated with the virtual service. |
-| virtual_host | [ VirtualHost](#virtualhost) | The virtual host configuration for the virtual service. |
+| virtual_host | [ common.v1.VirtualHost](#commonv1virtualhost) | The virtual host configuration for the virtual service. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) access_log_config.access_log_config_uid | [ string](#string) | The UID of the access log configuration. |
 | additional_http_filter_uids | [repeated string](#string) | UIDs of additional HTTP filters appended to the virtual service. |
 | additional_route_uids | [repeated string](#string) | UIDs of additional routes appended to the virtual service. |
@@ -689,16 +699,6 @@ UpdateVirtualServiceRequest is the request message for updating a virtual servic
 
 ### UpdateVirtualServiceResponse {#updatevirtualserviceresponse}
 UpdateVirtualServiceResponse is the response message for updating a virtual service.
-
-
-
-### VirtualHost {#virtualhost}
-VirtualHost represents a virtual host with a list of domain names.
-
-
-| Field | Type | Description |
-| ----- | ---- | ----------- |
-| domains | [repeated string](#string) | The list of domain names associated with the virtual host. |
 
 
 

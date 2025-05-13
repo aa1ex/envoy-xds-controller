@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file common/v1/common.proto.
  */
 export const file_common_v1_common: GenFile = /*@__PURE__*/
-  fileDesc("ChZjb21tb24vdjEvY29tbW9uLnByb3RvEgljb21tb24udjEiKAoLUmVzb3VyY2VSZWYSCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAlCqgEKDWNvbS5jb21tb24udjFCC0NvbW1vblByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvY29tbW9uL3YxO2NvbW1vbnYxogIDQ1hYqgIJQ29tbW9uLlYxygIJQ29tbW9uXFYx4gIVQ29tbW9uXFYxXEdQQk1ldGFkYXRh6gIKQ29tbW9uOjpWMWIGcHJvdG8z");
+  fileDesc("ChZjb21tb24vdjEvY29tbW9uLnByb3RvEgljb21tb24udjEiKAoLUmVzb3VyY2VSZWYSCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiHgoLVmlydHVhbEhvc3QSDwoHZG9tYWlucxgBIAMoCUKqAQoNY29tLmNvbW1vbi52MUILQ29tbW9uUHJvdG9QAVpHZ2l0aHViLmNvbS9rYWFzb3BzL2Vudm95LXhkcy1jb250cm9sbGVyL3BrZy9hcGkvZ3JwYy9jb21tb24vdjE7Y29tbW9udjGiAgNDWFiqAglDb21tb24uVjHKAglDb21tb25cVjHiAhVDb21tb25cVjFcR1BCTWV0YWRhdGHqAgpDb21tb246OlYxYgZwcm90bzM");
 
 /**
  * ResourceRef represents a reference to a resource with a UID and name.
@@ -39,4 +39,25 @@ export type ResourceRef = Message<"common.v1.ResourceRef"> & {
  */
 export const ResourceRefSchema: GenMessage<ResourceRef> = /*@__PURE__*/
   messageDesc(file_common_v1_common, 0);
+
+/**
+ * VirtualHost represents a virtual host with a list of domain names.
+ *
+ * @generated from message common.v1.VirtualHost
+ */
+export type VirtualHost = Message<"common.v1.VirtualHost"> & {
+  /**
+   * The list of domain names associated with the virtual host.
+   *
+   * @generated from field: repeated string domains = 1;
+   */
+  domains: string[];
+};
+
+/**
+ * Describes the message common.v1.VirtualHost.
+ * Use `create(VirtualHostSchema)` to create a new message.
+ */
+export const VirtualHostSchema: GenMessage<VirtualHost> = /*@__PURE__*/
+  messageDesc(file_common_v1_common, 1);
 

@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
+	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"sort"
 
-	"connectrpc.com/authn"
 	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
@@ -57,15 +58,15 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 }
 
 func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *connect.Request[v1.FillTemplateRequest]) (*connect.Response[v1.FillTemplateResponse], error) {
-	authorizer := GetAuthorizerFromContext(ctx)
-	isAllowed, err := authorizer.Authorize(DomainGeneral, "*")
-	if err != nil {
-		return nil, err
-	}
-	if !isAllowed {
-		return nil, authn.Errorf("forbidden")
-	}
-
+	//authorizer := GetAuthorizerFromContext(ctx)
+	//isAllowed, err := authorizer.Authorize(DomainGeneral, "*")
+	//if err != nil {
+	//	return nil, err
+	//}
+	//if !isAllowed {
+	//	return nil, authn.Errorf("forbidden")
+	//}
+	// TODO:
 	if req.Msg.TemplateUid == "" {
 		return nil, fmt.Errorf("template uid is required")
 	}
@@ -89,12 +90,16 @@ func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *con
 		}
 	}
 
-	if len(req.Msg.VirtualHost) > 0 {
-		var tmp runtime.RawExtension
-		if err := tmp.UnmarshalJSON(req.Msg.VirtualHost); err != nil {
-			return nil, fmt.Errorf("unmarshal virtual host failed: %v", err)
+	if req.Msg.VirtualHost != nil {
+		virtualHost := &routev3.VirtualHost{
+			Name:    vs.Name + "-virtual-host",
+			Domains: req.Msg.VirtualHost.Domains,
 		}
-		vs.Spec.VirtualHost = &tmp
+		vhData, err := protoutil.Marshaler.Marshal(virtualHost)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal virtual host: %w", err)
+		}
+		vs.Spec.VirtualHost = &runtime.RawExtension{Raw: vhData}
 	}
 
 	if req.Msg.AccessLogConfig != nil {

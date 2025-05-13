@@ -12,3 +12,9 @@ message ResourceRef {
   // Name is the human-readable name of the resource.
   string name = 2;
 }
+
+// VirtualHost represents a virtual host with a list of domain names.
+message VirtualHost {
+  // The list of domain names associated with the virtual host.
+  repeated string domains = 1;
+}

@@ -4,6 +4,7 @@
 
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
+import type { VirtualHost } from "../../common/v1/common_pb";
 
 /**
  * Describes the file virtual_service_template/v1/virtual_service_template.proto.
@@ -125,11 +126,11 @@ export declare type FillTemplateRequest = Message<"virtual_service_template.v1.F
   listenerUid: string;
 
   /**
-   * Virtual host configuration in binary format.
+   * The virtual host configuration for the virtual service.
    *
-   * @generated from field: bytes virtual_host = 3;
+   * @generated from field: common.v1.VirtualHost virtual_host = 3;
    */
-  virtualHost: Uint8Array;
+  virtualHost?: VirtualHost;
 
   /**
    * Access log configuration.

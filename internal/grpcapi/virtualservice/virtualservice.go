@@ -102,7 +102,7 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 		if err != nil {
 			return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
 		}
-		resp.VirtualHost = &v1.VirtualHost{Domains: virtualHost.Domains}
+		resp.VirtualHost = &commonv1.VirtualHost{Domains: virtualHost.Domains}
 	}
 	if vs.Spec.AccessLogConfig != nil {
 		alc := s.store.GetAccessLog(helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Spec.AccessLogConfig.Name})

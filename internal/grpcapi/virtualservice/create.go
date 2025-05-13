@@ -3,6 +3,7 @@ package virtualservice
 import (
 	"context"
 	"fmt"
+	commonv1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/common/v1"
 
 	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 
@@ -160,7 +161,7 @@ func (s *VirtualServiceStore) processListener(
 }
 
 func (s *VirtualServiceStore) processVirtualHost(
-	vh *v1.VirtualHost,
+	vh *commonv1.VirtualHost,
 	vs *v1alpha1.VirtualService,
 ) error {
 	if vh == nil {

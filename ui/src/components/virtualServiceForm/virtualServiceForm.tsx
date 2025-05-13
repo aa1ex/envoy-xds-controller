@@ -4,10 +4,9 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import {
 	CreateVirtualServiceRequest,
-	UpdateVirtualServiceRequest,
-	VirtualHost
+	UpdateVirtualServiceRequest
 } from '../../gen/virtual_service/v1/virtual_service_pb'
-import { ResourceRef } from '../../gen/common/v1/common_pb.ts'
+import { ResourceRef, VirtualHost } from '../../gen/common/v1/common_pb.ts'
 
 import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
@@ -103,7 +102,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		const virtualHostData: VirtualHost = {
-			$typeName: 'virtual_service.v1.VirtualHost',
+			$typeName: 'common.v1.VirtualHost',
 			domains: data.virtualHostDomains || []
 		}
 

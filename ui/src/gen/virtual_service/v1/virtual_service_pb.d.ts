@@ -4,33 +4,13 @@
 
 import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
 import type { Message } from "@bufbuild/protobuf";
+import type { ResourceRef, VirtualHost } from "../../common/v1/common_pb";
 import type { TemplateOption } from "../../virtual_service_template/v1/virtual_service_template_pb";
-import type { ResourceRef } from "../../common/v1/common_pb";
 
 /**
  * Describes the file virtual_service/v1/virtual_service.proto.
  */
 export declare const file_virtual_service_v1_virtual_service: GenFile;
-
-/**
- * VirtualHost represents a virtual host with a list of domain names.
- *
- * @generated from message virtual_service.v1.VirtualHost
- */
-export declare type VirtualHost = Message<"virtual_service.v1.VirtualHost"> & {
-  /**
-   * The list of domain names associated with the virtual host.
-   *
-   * @generated from field: repeated string domains = 1;
-   */
-  domains: string[];
-};
-
-/**
- * Describes the message virtual_service.v1.VirtualHost.
- * Use `create(VirtualHostSchema)` to create a new message.
- */
-export declare const VirtualHostSchema: GenMessage<VirtualHost>;
 
 /**
  * CreateVirtualServiceRequest is the request message for creating a virtual service.
@@ -76,7 +56,7 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
   /**
    * The virtual host configuration for the virtual service.
    *
-   * @generated from field: virtual_service.v1.VirtualHost virtual_host = 6;
+   * @generated from field: common.v1.VirtualHost virtual_host = 6;
    */
   virtualHost?: VirtualHost;
 
@@ -181,7 +161,7 @@ export declare type UpdateVirtualServiceRequest = Message<"virtual_service.v1.Up
   /**
    * The virtual host configuration for the virtual service.
    *
-   * @generated from field: virtual_service.v1.VirtualHost virtual_host = 5;
+   * @generated from field: common.v1.VirtualHost virtual_host = 5;
    */
   virtualHost?: VirtualHost;
 
@@ -354,7 +334,7 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
   /**
    * The virtual host configuration for the virtual service.
    *
-   * @generated from field: virtual_service.v1.VirtualHost virtual_host = 7;
+   * @generated from field: common.v1.VirtualHost virtual_host = 7;
    */
   virtualHost?: VirtualHost;
 

@@ -37,3 +37,23 @@ export declare type ResourceRef = Message<"common.v1.ResourceRef"> & {
  */
 export declare const ResourceRefSchema: GenMessage<ResourceRef>;
 
+/**
+ * VirtualHost represents a virtual host with a list of domain names.
+ *
+ * @generated from message common.v1.VirtualHost
+ */
+export declare type VirtualHost = Message<"common.v1.VirtualHost"> & {
+  /**
+   * The list of domain names associated with the virtual host.
+   *
+   * @generated from field: repeated string domains = 1;
+   */
+  domains: string[];
+};
+
+/**
+ * Describes the message common.v1.VirtualHost.
+ * Use `create(VirtualHostSchema)` to create a new message.
+ */
+export declare const VirtualHostSchema: GenMessage<VirtualHost>;
+

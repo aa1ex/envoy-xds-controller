@@ -4,6 +4,8 @@ package virtual_service_template.v1;
 
 option go_package = "virtualservicetemplatev1";
 
+import "common/v1/common.proto";
+
 // Service to manage virtual service templates.
 service VirtualServiceTemplateStoreService {
   // Lists all virtual service templates.
@@ -66,8 +68,8 @@ message FillTemplateRequest {
   // Unique identifier of the listener to associate with the template.
   string listener_uid = 2;
 
-  // Virtual host configuration in binary format.
-  bytes virtual_host = 3;
+  // The virtual host configuration for the virtual service.
+  common.v1.VirtualHost virtual_host = 3;
 
   // Access log configuration.
   oneof access_log_config {

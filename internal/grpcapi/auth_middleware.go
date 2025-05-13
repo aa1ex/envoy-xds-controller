@@ -159,6 +159,7 @@ const (
 	ActionListListeners               = "list-listeners"
 	ActionListPermissions             = "list-permissions"
 	ActionVerifyDomains               = "verify-domains"
+	ActionFillTemplate                = "fill-template"
 )
 
 func lookupAction(route string) string {
@@ -193,6 +194,8 @@ func lookupAction(route string) string {
 		return ActionListPermissions
 	case utilv1connect.UtilsServiceVerifyDomainsProcedure:
 		return ActionVerifyDomains
+	case virtual_service_templatev1connect.VirtualServiceTemplateStoreServiceFillTemplateProcedure:
+		return ActionFillTemplate
 	default:
 		return ""
 	}

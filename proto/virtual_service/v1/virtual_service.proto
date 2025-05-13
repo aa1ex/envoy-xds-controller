@@ -25,12 +25,6 @@ service VirtualServiceStoreService {
   rpc ListVirtualServices(ListVirtualServicesRequest) returns (ListVirtualServicesResponse);
 }
 
-// VirtualHost represents a virtual host with a list of domain names.
-message VirtualHost {
-  // The list of domain names associated with the virtual host.
-  repeated string domains = 1;
-}
-
 // CreateVirtualServiceRequest is the request message for creating a virtual service.
 message CreateVirtualServiceRequest {
   // The name of the virtual service.
@@ -49,7 +43,7 @@ message CreateVirtualServiceRequest {
   string listener_uid = 5;
 
   // The virtual host configuration for the virtual service.
-  VirtualHost virtual_host = 6;
+  common.v1.VirtualHost virtual_host = 6;
 
   // The configuration for access logs.
   oneof access_log_config {
@@ -88,7 +82,7 @@ message UpdateVirtualServiceRequest {
   string listener_uid = 4;
 
   // The virtual host configuration for the virtual service.
-  VirtualHost virtual_host = 5;
+  common.v1.VirtualHost virtual_host = 5;
 
   // The configuration for access logs.
   oneof access_log_config {
@@ -148,7 +142,7 @@ message GetVirtualServiceResponse {
   common.v1.ResourceRef listener = 6;
 
   // The virtual host configuration for the virtual service.
-  VirtualHost virtual_host = 7;
+  common.v1.VirtualHost virtual_host = 7;
 
   // The configuration of access logs.
   oneof access_log {
