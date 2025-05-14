@@ -15,8 +15,8 @@ func TestGetWildcardDomain(t *testing.T) {
 	}{
 		{
 			name:     "Simple domain",
-			domain:   "my.example.com",
-			expected: "*.example.com",
+			domain:   "example.com",
+			expected: "*.com",
 		},
 		{
 			name:     "Subdomain",
