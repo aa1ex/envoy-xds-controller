@@ -1,6 +1,6 @@
 # Security Guide: Envoy XDS Controller
 
-This document provides a comprehensive overview of the security features and mechanisms implemented in the Envoy XDS Controller.
+This document provides a comprehensive overview of the security features and mechanisms implemented in the Envoy XDS Controller. For a detailed explanation of the authentication flow and ACL implementation, see the [Authentication and Authorization Implementation](auth.md) document.
 
 ## Table of Contents
 
@@ -10,6 +10,8 @@ This document provides a comprehensive overview of the security features and mec
 4. [API Security](#api-security)
 5. [Best Practices](#best-practices)
 6. [Configuration](#configuration)
+7. [Troubleshooting](#troubleshooting)
+8. [Support](#support)
 
 ## Authentication
 
@@ -354,3 +356,9 @@ APP_DEV_MODE=true
 For security-related issues or questions:
 - GitHub Issues: [Security Issues](https://github.com/kaasops/envoy-xds-controller/issues)
 - Documentation: [Security Documentation](https://github.com/kaasops/envoy-xds-controller/tree/main/docs)
+
+## Related Documentation
+
+- [Authentication and Authorization Implementation](auth.md): Detailed explanation of the authentication flow and ACL implementation
+- [Configuration Guide](configuration.md): Configuration options for the Envoy XDS Controller
+- [Troubleshooting Guide](troubleshooting.md): Help with common issues

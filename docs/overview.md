@@ -1,4 +1,14 @@
-# Project Overview: Envoy XDS Controller
+# Overview Guide: Envoy XDS Controller
+
+This document provides a high-level overview of the Envoy XDS Controller project, its purpose, features, and components.
+
+## Table of Contents
+
+1. [Purpose](#purpose)
+2. [Key Features](#key-features)
+3. [Use Cases](#use-cases)
+4. [Components at a Glance](#components-at-a-glance)
+5. [Project Status](#project-status)
 
 ## Purpose
 

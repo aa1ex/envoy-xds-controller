@@ -1,13 +1,10 @@
 # Architecture: Envoy XDS Controller
 
-## Overview
+## Architecture Overview
 
-`envoy-xds-controller` is a Kubernetes controller for managing Envoy proxy configuration through the xDS API.
-The controller allows defining Envoy configuration as Kubernetes Custom Resources (CRs) and automatically transforms 
-them into Envoy configuration, which is delivered to proxies via the xDS protocol.
+This document describes the internal architecture of the Envoy XDS Controller. For a general project overview, see the [Overview](overview.md) document.
 
-It is built as a modular, extensible Kubernetes controller that embeds a full-featured xDS (v3) server. 
-It observes the Kubernetes API and propagates changes to Envoy proxies through the xDS protocol in real time.
+The Envoy XDS Controller architecture follows a Kubernetes controller pattern with an embedded xDS server. It consists of several key components that work together to transform Kubernetes Custom Resources into Envoy proxy configurations.
 
 ## High-Level Architecture Diagram
 

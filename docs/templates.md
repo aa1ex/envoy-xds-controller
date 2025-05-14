@@ -1,4 +1,14 @@
-# Virtual service templates
+# Templates Guide: Envoy XDS Controller
+
+This document provides guidance on using virtual service templates to reuse common configurations across multiple virtual services.
+
+## Table of Contents
+
+1. [How Templates Work](#how-templates-work)
+2. [Template Options](#template-options)
+3. [Examples](#examples)
+4. [Nested Fields and Merging Behavior](#nested-fields-and-merging-behavior)
+5. [Best Practices](#best-practices)
 
 Virtual service templates provide a way to reuse common configurations across multiple virtual services. Templates define a base configuration that can be extended or modified by individual virtual services. This mechanism helps maintain consistency and reduces duplication in your Envoy configuration.
 

@@ -1,8 +1,13 @@
-# xDS Server Overview
+# xDS Server Guide: Envoy XDS Controller
 
-This document explains how the internal xDS server is implemented in `envoy-xds-controller`, including its responsibilities, structure, and integration with Kubernetes.
+This document explains how the internal xDS server is implemented in the Envoy XDS Controller, including its responsibilities, structure, and integration with Kubernetes.
 
----
+## Table of Contents
+
+1. [What is xDS?](#what-is-xds)
+2. [Implementation Overview](#implementation-overview)
+3. [Flow of Updates](#flow-of-updates)
+4. [Dynamic Configuration](#dynamic-configuration)
 
 ## 📡 What is xDS?
 

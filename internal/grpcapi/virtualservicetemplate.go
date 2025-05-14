@@ -155,7 +155,7 @@ func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *con
 		return nil, err
 	}
 
-	data, err := json.MarshalIndent(vs.Spec, "", "\t")
+	data, err := json.Marshal(vs.Spec)
 	if err != nil {
 		return nil, err
 	}
