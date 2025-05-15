@@ -81,7 +81,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const { fillTemplate, rawData, isLoadingFillTemplate } = useFillTemplate()
 
 	const transformForm = (formValues: any) => {
-		const { nodeIds, virtualHostDomains, accessLogConfigUid, ...rest } = formValues
+		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, ...rest } = formValues
 
 		return {
 			...rest,
@@ -92,7 +92,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			accessLogConfig: {
 				value: accessLogConfigUid || '',
 				case: 'accessLogConfigUid'
-			}
+			},
+			templateOptions: templateOptions
 		}
 	}
 
@@ -105,7 +106,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			const fullForm = getValues()
 			const templateUid = fullForm.templateUid
 			if (!templateUid) return
-
+			console.log(transformForm(fullForm))
 			if (changedField === 'name' || changedField === 'virtualHostDomains') {
 				debouncedFillTemplate(fullForm)
 			} else {
@@ -219,7 +220,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						<Tab label='General' {...a11yProps(0, 'vertical')} />
 						<Tab label='Domains' {...a11yProps(1, 'vertical')} />
 						<Tab label='Settings' {...a11yProps(2, 'vertical')} />
-						{/*<Tab label='Template' {...a11yProps(3, 'vertical')} />*/}
+						<Tab label='Template' {...a11yProps(3, 'vertical')} />
 					</Tabs>
 					<Box
 						display='flex'
