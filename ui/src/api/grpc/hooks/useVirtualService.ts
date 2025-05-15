@@ -14,6 +14,7 @@ import {
 	CreateVirtualServiceRequest,
 	UpdateVirtualServiceRequest
 } from '../../../gen/virtual_service/v1/virtual_service_pb.ts'
+import { FillTemplateRequest } from '../../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 
 const metadata = {
 	headers: undefined
@@ -144,4 +145,18 @@ export const useVerifyDomains = (domains: string[]) => {
 		select: data => data,
 		enabled: !!domains
 	})
+}
+
+export const useFillTemplate = () => {
+	const fillTemplateMutation = useMutation({
+		mutationKey: ['fillTemplate'],
+		mutationFn: (data: FillTemplateRequest) => templateServiceClient.fillTemplate(data)
+	})
+
+	return {
+		fillTemplate: fillTemplateMutation.mutateAsync,
+		isLoadingFillTemplate: fillTemplateMutation.isPending,
+		rawData: fillTemplateMutation.data,
+		error: fillTemplateMutation.error
+	}
 }

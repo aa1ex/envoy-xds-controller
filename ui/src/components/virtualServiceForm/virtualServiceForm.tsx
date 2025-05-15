@@ -1,28 +1,38 @@
 import React, { useCallback, useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { SubmitHandler, useForm } from 'react-hook-form'
+
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import CircularProgress from '@mui/material/CircularProgress'
+import Divider from '@mui/material/Divider'
+import Fade from '@mui/material/Fade'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import Typography from '@mui/material/Typography'
+import { debounce } from '@mui/material'
+
 import {
 	CreateVirtualServiceRequest,
 	UpdateVirtualServiceRequest
 } from '../../gen/virtual_service/v1/virtual_service_pb'
 import { ResourceRef, VirtualHost } from '../../gen/common/v1/common_pb.ts'
 
-import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import { a11yProps } from '../customTabPanel/style.ts'
+import { useCreateVs, useFillTemplate, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
+
+import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
-import Divider from '@mui/material/Divider'
-import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
+import { a11yProps } from '../customTabPanel/style.ts'
+import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
+import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains/virtualHostDomains.tsx'
-import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+
 import { useTabStore } from '../../store/tabIndexStore.ts'
-import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
+import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+
+import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
@@ -67,6 +77,47 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			templateOptions: [{ field: '', modifier: 0 }]
 		}
 	})
+	console.log(errors)
+	const { fillTemplate, rawData, isLoadingFillTemplate } = useFillTemplate()
+
+	const transformForm = (formValues: any) => {
+		const { nodeIds, virtualHostDomains, accessLogConfigUid, ...rest } = formValues
+
+		return {
+			...rest,
+			virtualHost: {
+				$typeName: 'common.v1.VirtualHost',
+				domains: virtualHostDomains || []
+			},
+			accessLogConfig: {
+				value: accessLogConfigUid || '',
+				case: 'accessLogConfigUid'
+			}
+		}
+	}
+
+	useEffect(() => {
+		const debouncedFillTemplate = debounce(formValues => {
+			void fillTemplate(transformForm(formValues))
+		}, 500)
+
+		const subscription = watch((_formValues, { name: changedField }) => {
+			const fullForm = getValues()
+			const templateUid = fullForm.templateUid
+			if (!templateUid) return
+
+			if (changedField === 'name' || changedField === 'virtualHostDomains') {
+				debouncedFillTemplate(fullForm)
+			} else {
+				void fillTemplate(transformForm(fullForm))
+			}
+		})
+
+		return () => {
+			subscription.unsubscribe()
+			debouncedFillTemplate.clear()
+		}
+	}, [watch, getValues, fillTemplate])
 
 	const handleSetDefaultValues = useCallback(() => {
 		if (isCreate || !virtualServiceInfo) return
@@ -273,10 +324,28 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 							</Box>
 
 							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
-							<Box display='flex' className='vsLeftLeft' width='40%' p={1}>
-								<Box border='1px solid gray' borderRadius={1} p={2} height='100%' width='100%' mr={1}>
-									для наглядности
-								</Box>
+							<Box
+								display='flex'
+								className='vsLeftLeft'
+								width='40%'
+								p={1}
+								justifyContent='center'
+								alignItems='center'
+								minHeight={200}
+							>
+								{!watch('templateUid') ? (
+									<Typography align='center' variant='h3'>
+										To display, select Template in the form
+									</Typography>
+								) : isLoadingFillTemplate ? (
+									<CircularProgress />
+								) : rawData ? (
+									<Fade in timeout={300}>
+										<div style={{ width: '100%', height: '100%' }}>
+											<CodeBlockVs raw={rawData} />
+										</div>
+									</Fade>
+								) : null}
 							</Box>
 						</Box>
 					</Box>

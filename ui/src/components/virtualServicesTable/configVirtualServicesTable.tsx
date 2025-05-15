@@ -129,7 +129,7 @@ export const useConfigTable = ({
 
 		state: {
 			showGlobalFilter: true,
-			isLoading: isFetching,
+			isLoadingFillTemplate: isFetching,
 			showAlertBanner: isError,
 			showProgressBars: isFetching,
 			showSkeletons: isFetching
