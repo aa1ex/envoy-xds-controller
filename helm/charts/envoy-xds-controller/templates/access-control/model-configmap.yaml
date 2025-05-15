@@ -44,6 +44,19 @@ data:
     p, role:editor, *, *, fill-template
     p, role:editor, *, *, create-virtual-service
     p, role:editor, *, *, update-virtual-service
-    p, role:editor, *, *, delete-virtual-service
+
+    p, role:admin, *, *, list-virtual-services
+    p, role:admin, *, *, list-virtual-service-templates
+    p, role:admin, *, *, list-listeners
+    p, role:admin, *, *, list-nodes
+    p, role:admin, *, *, list-access-log-configs
+    p, role:admin, *, *, list-http-filters
+    p, role:admin, *, *, list-routes
+    p, role:admin, *, *, get-virtual-service
+    p, role:admin, *, *, fill-template
+    p, role:admin, *, *, create-virtual-service
+    p, role:admin, *, *, update-virtual-service
+    p, role:admin, *, *, delete-virtual-service
+
     {{- .Values.auth.rbacPolicy | nindent 4 -}}
 {{- end }}

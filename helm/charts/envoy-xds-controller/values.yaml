@@ -195,11 +195,13 @@ auth:
       testers:
         - "test"
   rbacPolicy: |-
-    g, admins, role:editor, _
-    g, admins, role:editor, dev
-    g, admins, role:editor, test
+    g, admins, role:admin, _
+    g, admins, role:admin, dev
+    g, admins, role:admin, test
+
     g, developers, role:reader, _
     g, developers, role:reader, dev
+
     g, testers,, test
     g, testers,, _
     
