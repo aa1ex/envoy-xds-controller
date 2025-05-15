@@ -208,6 +208,7 @@ auth:
     p, testers, _, *, list-access-log-configs
     p, testers, _, *, list-http-filters
     p, testers, _, *, list-routes
+    p, testers, _, *, fill-template
     
     p, testers, test, *, list-virtual-services
     p, testers, test, *, list-virtual-service-templates
