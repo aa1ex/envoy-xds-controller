@@ -6,9 +6,11 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/util/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/util/v1/utilv1connect"
+	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	corev1 "k8s.io/api/core/v1"
 	"strings"
@@ -91,4 +93,28 @@ func verifyDomainFromSecrets(domain string, secrets map[string]corev1.Secret) *v
 
 	result.ValidCertificate = true
 	return result
+}
+
+func ParseTemplateOptionModifier(modifier virtual_service_templatev1.TemplateOptionModifier) v1alpha1.Modifier {
+	switch modifier {
+	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE:
+		return v1alpha1.ModifierMerge
+	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE:
+		return v1alpha1.ModifierReplace
+	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE:
+		return v1alpha1.ModifierDelete
+	}
+	return ""
+}
+
+func ParseModifierToTemplateOption(modifier v1alpha1.Modifier) virtual_service_templatev1.TemplateOptionModifier {
+	switch modifier {
+	case v1alpha1.ModifierMerge:
+		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE
+	case v1alpha1.ModifierReplace:
+		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE
+	case v1alpha1.ModifierDelete:
+		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE
+	}
+	return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_UNSPECIFIED
 }

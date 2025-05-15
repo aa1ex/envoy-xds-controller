@@ -151,7 +151,18 @@ func (s *VirtualServiceTemplateStore) FillTemplate(ctx context.Context, req *con
 		vs.Spec.UseRemoteAddress = req.Msg.UseRemoteAddress
 	}
 
-	if err := vs.FillFromTemplate(template); err != nil {
+	if len(req.Msg.TemplateOptions) > 0 {
+		tOpts := make([]v1alpha1.TemplateOpts, 0, len(req.Msg.TemplateOptions))
+		for _, opt := range req.Msg.TemplateOptions {
+			tOpts = append(tOpts, v1alpha1.TemplateOpts{
+				Field:    opt.Field,
+				Modifier: ParseTemplateOptionModifier(opt.Modifier),
+			})
+		}
+		vs.Spec.TemplateOptions = tOpts
+	}
+
+	if err := vs.FillFromTemplate(template, vs.Spec.TemplateOptions...); err != nil {
 		return nil, err
 	}
 

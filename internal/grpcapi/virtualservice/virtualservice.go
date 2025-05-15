@@ -7,7 +7,6 @@ import (
 
 	"connectrpc.com/connect"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
-	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
@@ -84,7 +83,7 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 			for _, opt := range vs.Spec.TemplateOptions {
 				resp.TemplateOptions = append(resp.TemplateOptions, &virtual_service_templatev1.TemplateOption{
 					Field:    opt.Field,
-					Modifier: parseModifierToTemplateOption(opt.Modifier),
+					Modifier: grpcapi.ParseModifierToTemplateOption(opt.Modifier),
 				})
 			}
 		}
@@ -135,28 +134,4 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 		resp.UseRemoteAddress = vs.Spec.UseRemoteAddress
 	}
 	return connect.NewResponse(resp), nil
-}
-
-func parseTemplateOptionModifier(modifier virtual_service_templatev1.TemplateOptionModifier) v1alpha1.Modifier {
-	switch modifier {
-	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE:
-		return v1alpha1.ModifierMerge
-	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE:
-		return v1alpha1.ModifierReplace
-	case virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE:
-		return v1alpha1.ModifierDelete
-	}
-	return ""
-}
-
-func parseModifierToTemplateOption(modifier v1alpha1.Modifier) virtual_service_templatev1.TemplateOptionModifier {
-	switch modifier {
-	case v1alpha1.ModifierMerge:
-		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_MERGE
-	case v1alpha1.ModifierReplace:
-		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_REPLACE
-	case v1alpha1.ModifierDelete:
-		return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_DELETE
-	}
-	return virtual_service_templatev1.TemplateOptionModifier_TEMPLATE_OPTION_MODIFIER_UNSPECIFIED
 }

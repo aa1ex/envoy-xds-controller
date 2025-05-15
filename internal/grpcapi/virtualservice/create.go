@@ -122,7 +122,7 @@ func (s *VirtualServiceStore) processTemplate(
 		for _, opt := range templateOpts {
 			tOpts = append(tOpts, v1alpha1.TemplateOpts{
 				Field:    opt.Field,
-				Modifier: parseTemplateOptionModifier(opt.Modifier),
+				Modifier: grpcapi.ParseTemplateOptionModifier(opt.Modifier),
 			})
 		}
 		vs.Spec.TemplateOptions = tOpts
