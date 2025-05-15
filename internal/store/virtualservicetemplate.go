@@ -10,8 +10,26 @@ import (
 func (s *Store) SetVirtualServiceTemplate(vst *v1alpha1.VirtualServiceTemplate) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	s.normalizeVirtualServiceTemplate(vst)
 	s.virtualServiceTemplates[helpers.NamespacedName{Namespace: vst.Namespace, Name: vst.Name}] = vst
 	s.updateVirtualServiceTemplateByUIDMap()
+}
+
+func (s *Store) normalizeVirtualServiceTemplate(vst *v1alpha1.VirtualServiceTemplate) {
+	if len(vst.Spec.AdditionalHttpFilters) > 0 {
+		for _, httpFilter := range vst.Spec.AdditionalHttpFilters {
+			if httpFilter.Namespace == nil {
+				httpFilter.Namespace = &vst.Namespace
+			}
+		}
+	}
+	if len(vst.Spec.AdditionalRoutes) > 0 {
+		for _, route := range vst.Spec.AdditionalRoutes {
+			if route.Namespace == nil {
+				route.Namespace = &vst.Namespace
+			}
+		}
+	}
 }
 
 func (s *Store) GetVirtualServiceTemplate(name helpers.NamespacedName) *v1alpha1.VirtualServiceTemplate {
