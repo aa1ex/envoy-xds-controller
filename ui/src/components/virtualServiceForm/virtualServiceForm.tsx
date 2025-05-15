@@ -360,7 +360,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 							>
 								{!watch('templateUid') ? (
 									<Typography align='center' variant='h3'>
-										To display, select Template in the form
+										For a preview, select a template
 									</Typography>
 								) : isLoadingFillTemplate ? (
 									<CircularProgress />
