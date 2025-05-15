@@ -61,23 +61,17 @@ type Resources struct {
 	Domains     []string
 }
 
-// nolint: gocyclo
 func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources, error) {
 	var err error
 	nn := helpers.NamespacedName{Namespace: vs.Namespace, Name: vs.Name}
 
-	if vs.Spec.Template != nil {
-		vst := store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace), Name: vs.Spec.Template.Name})
-		if vst == nil {
-			return nil, fmt.Errorf("virtual service template %s/%s not found", helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace), vs.Spec.Template.Name)
-		}
-		vs = vs.DeepCopy()
-		err = vs.FillFromTemplate(vst, vs.Spec.TemplateOptions...)
-		if err != nil {
-			return nil, err
-		}
+	// Apply template if specified
+	vs, err = applyVirtualServiceTemplate(vs, store)
+	if err != nil {
+		return nil, err
 	}
 
+	// Build listener
 	listenerNN, err := vs.GetListenerNamespacedName()
 	if err != nil {
 		return nil, err
@@ -88,99 +82,191 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		return nil, err
 	}
 
+	// If listener already has filter chains, use them
 	if len(xdsListener.FilterChains) > 0 {
-
-		if vs.Spec.VirtualHost != nil {
-			return nil, fmt.Errorf("conflict: virtual host is set, but filter chains are found in listener")
-		}
-
-		if len(vs.Spec.AdditionalRoutes) > 0 {
-			return nil, fmt.Errorf("conflict: additional routes are set, but filter chains are found in listener")
-		}
-
-		if len(vs.Spec.HTTPFilters) > 0 {
-			return nil, fmt.Errorf("conflict: http filters are set, but filter chains are found in listener")
-		}
-
-		if len(vs.Spec.AdditionalHttpFilters) > 0 {
-			return nil, fmt.Errorf("conflict: additional http filters are set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.TlsConfig != nil {
-			return nil, fmt.Errorf("conflict: tls config is set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.RBAC != nil {
-			return nil, fmt.Errorf("conflict: rbac is set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.UseRemoteAddress != nil {
-			return nil, fmt.Errorf("conflict: use remote address is set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.XFFNumTrustedHops != nil {
-			return nil, fmt.Errorf("conflict: xff_num_trusted_hops is set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.UpgradeConfigs != nil {
-			return nil, fmt.Errorf("conflict: upgrade configs is set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.AccessLog != nil {
-			return nil, fmt.Errorf("conflict: access log is set, but filter chains are found in listener")
-		}
-
-		if vs.Spec.AccessLogConfig != nil {
-			return nil, fmt.Errorf("conflict: access log config is set, but filter chains are found in listener")
-		}
-
-		if len(xdsListener.FilterChains) > 1 {
-			return nil, fmt.Errorf("multiple filter chains found")
-		}
-
-		clusters := make([]*cluster.Cluster, 0)
-		for _, fc := range xdsListener.FilterChains {
-			for _, filter := range fc.Filters {
-				if tc := filter.GetTypedConfig(); tc != nil {
-					if tc.TypeUrl != "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy" {
-						return nil, fmt.Errorf("unexpected filter type: %s", tc.TypeUrl)
-					}
-					var tcpProxy tcpProxyv3.TcpProxy
-					if err := tc.UnmarshalTo(&tcpProxy); err != nil {
-						return nil, err
-					}
-					clusterName := tcpProxy.GetCluster()
-					cl := store.GetSpecCluster(clusterName)
-					if cl == nil {
-						return nil, fmt.Errorf("cluster %s not found", clusterName)
-					}
-					xdsCluster, err := cl.UnmarshalV3AndValidate()
-					if err != nil {
-						return nil, fmt.Errorf("failed to unmarshal cluster %s: %w", clusterName, err)
-					}
-					clusters = append(clusters, xdsCluster)
-				}
-			}
-		}
-
-		return &Resources{
-			Listener:    listenerNN,
-			FilterChain: xdsListener.FilterChains,
-			Clusters:    clusters,
-		}, nil
+		return buildResourcesFromExistingFilterChains(vs, xdsListener, listenerNN, store)
 	}
 
-	listenerIsTLS := isTLSListener(xdsListener)
+	// Otherwise, build resources from virtual service configuration
+	return buildResourcesFromVirtualService(vs, xdsListener, listenerNN, nn, store)
+}
 
-	// Route config ---
+// applyVirtualServiceTemplate applies a template to the virtual service if specified
+func applyVirtualServiceTemplate(vs *v1alpha1.VirtualService, store *store.Store) (*v1alpha1.VirtualService, error) {
+	if vs.Spec.Template == nil {
+		return vs, nil
+	}
 
-	virtualHost, err := buildVirtualHost(vs, store)
+	templateNamespace := helpers.GetNamespace(vs.Spec.Template.Namespace, vs.Namespace)
+	templateName := vs.Spec.Template.Name
+	templateNN := helpers.NamespacedName{Namespace: templateNamespace, Name: templateName}
+
+	vst := store.GetVirtualServiceTemplate(templateNN)
+	if vst == nil {
+		return nil, fmt.Errorf("virtual service template %s/%s not found", templateNamespace, templateName)
+	}
+
+	vsCopy := vs.DeepCopy()
+	if err := vsCopy.FillFromTemplate(vst, vs.Spec.TemplateOptions...); err != nil {
+		return nil, err
+	}
+
+	return vsCopy, nil
+}
+
+// buildResourcesFromExistingFilterChains builds resources using existing filter chains from the listener
+func buildResourcesFromExistingFilterChains(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener, listenerNN helpers.NamespacedName, store *store.Store) (*Resources, error) {
+	// Check for conflicts with virtual service configuration
+	if err := checkFilterChainsConflicts(vs); err != nil {
+		return nil, err
+	}
+
+	if len(xdsListener.FilterChains) > 1 {
+		return nil, fmt.Errorf("multiple filter chains found")
+	}
+
+	// Extract clusters from filter chains
+	clusters, err := extractClustersFromFilterChains(xdsListener.FilterChains, store)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := checkAllDomainsUnique(virtualHost.Domains); err != nil {
+	return &Resources{
+		Listener:    listenerNN,
+		FilterChain: xdsListener.FilterChains,
+		Clusters:    clusters,
+	}, nil
+}
+
+// checkFilterChainsConflicts checks for conflicts between existing filter chains and virtual service configuration
+func checkFilterChainsConflicts(vs *v1alpha1.VirtualService) error {
+	conflicts := []struct {
+		condition bool
+		message   string
+	}{
+		{vs.Spec.VirtualHost != nil, "virtual host is set, but filter chains are found in listener"},
+		{len(vs.Spec.AdditionalRoutes) > 0, "additional routes are set, but filter chains are found in listener"},
+		{len(vs.Spec.HTTPFilters) > 0, "http filters are set, but filter chains are found in listener"},
+		{len(vs.Spec.AdditionalHttpFilters) > 0, "additional http filters are set, but filter chains are found in listener"},
+		{vs.Spec.TlsConfig != nil, "tls config is set, but filter chains are found in listener"},
+		{vs.Spec.RBAC != nil, "rbac is set, but filter chains are found in listener"},
+		{vs.Spec.UseRemoteAddress != nil, "use remote address is set, but filter chains are found in listener"},
+		{vs.Spec.XFFNumTrustedHops != nil, "xff_num_trusted_hops is set, but filter chains are found in listener"},
+		{vs.Spec.UpgradeConfigs != nil, "upgrade configs is set, but filter chains are found in listener"},
+		{vs.Spec.AccessLog != nil, "access log is set, but filter chains are found in listener"},
+		{vs.Spec.AccessLogConfig != nil, "access log config is set, but filter chains are found in listener"},
+	}
+
+	for _, conflict := range conflicts {
+		if conflict.condition {
+			return fmt.Errorf("conflict: %s", conflict.message)
+		}
+	}
+
+	return nil
+}
+
+// extractClustersFromFilterChains extracts clusters from filter chains
+func extractClustersFromFilterChains(filterChains []*listenerv3.FilterChain, store *store.Store) ([]*cluster.Cluster, error) {
+	clusters := make([]*cluster.Cluster, 0)
+
+	for _, fc := range filterChains {
+		for _, filter := range fc.Filters {
+			if tc := filter.GetTypedConfig(); tc != nil {
+				if tc.TypeUrl != "type.googleapis.com/envoy.extensions.filters.network.tcp_proxy.v3.TcpProxy" {
+					return nil, fmt.Errorf("unexpected filter type: %s", tc.TypeUrl)
+				}
+
+				var tcpProxy tcpProxyv3.TcpProxy
+				if err := tc.UnmarshalTo(&tcpProxy); err != nil {
+					return nil, err
+				}
+
+				clusterName := tcpProxy.GetCluster()
+				cl := store.GetSpecCluster(clusterName)
+				if cl == nil {
+					return nil, fmt.Errorf("cluster %s not found", clusterName)
+				}
+
+				xdsCluster, err := cl.UnmarshalV3AndValidate()
+				if err != nil {
+					return nil, fmt.Errorf("failed to unmarshal cluster %s: %w", clusterName, err)
+				}
+
+				clusters = append(clusters, xdsCluster)
+			}
+		}
+	}
+
+	return clusters, nil
+}
+
+// buildResourcesFromVirtualService builds resources from virtual service configuration
+func buildResourcesFromVirtualService(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener, listenerNN helpers.NamespacedName, nn helpers.NamespacedName, store *store.Store) (*Resources, error) {
+	listenerIsTLS := isTLSListener(xdsListener)
+
+	// Build virtual host and route configuration
+	virtualHost, routeConfiguration, err := buildRouteConfiguration(vs, xdsListener, nn, store)
+	if err != nil {
 		return nil, err
+	}
+
+	// Build HTTP filters
+	httpFilters, err := buildHTTPFilters(vs, store)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build filter chain parameters
+	filterChainParams, err := buildFilterChainParams(vs, xdsListener, nn, httpFilters, listenerIsTLS, virtualHost, store)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build filter chains
+	fcs, err := buildFilterChains(filterChainParams)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update listener with filter chains
+	xdsListener.FilterChains = fcs
+	if err := xdsListener.ValidateAll(); err != nil {
+		return nil, err
+	}
+
+	// Build clusters
+	clusters, err := buildClusters(virtualHost, httpFilters, store)
+	if err != nil {
+		return nil, err
+	}
+
+	// Build secrets
+	secrets, usedSecrets, err := buildSecrets(httpFilters, filterChainParams.SecretNameToDomains, store)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build secrets: %w", err)
+	}
+
+	return &Resources{
+		Listener:    listenerNN,
+		FilterChain: fcs,
+		RouteConfig: routeConfiguration,
+		Clusters:    clusters,
+		Secrets:     secrets,
+		UsedSecrets: usedSecrets,
+		Domains:     virtualHost.Domains,
+	}, nil
+}
+
+// buildRouteConfiguration builds the route configuration from the virtual service
+func buildRouteConfiguration(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener, nn helpers.NamespacedName, store *store.Store) (*routev3.VirtualHost, *routev3.RouteConfiguration, error) {
+	virtualHost, err := buildVirtualHost(vs, store)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := checkAllDomainsUnique(virtualHost.Domains); err != nil {
+		return nil, nil, err
 	}
 
 	routeConfiguration := &routev3.RouteConfiguration{
@@ -192,7 +278,10 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 			RequestHeadersToAdd: virtualHost.RequestHeadersToAdd,
 		}},
 	}
+
+	// Add fallback route for TLS listeners
 	// https://github.com/envoyproxy/envoy/issues/37810
+	listenerIsTLS := isTLSListener(xdsListener)
 	if listenerIsTLS && !(len(virtualHost.Domains) == 1 && virtualHost.Domains[0] == "*") {
 		routeConfiguration.VirtualHosts = append(routeConfiguration.VirtualHosts, &routev3.VirtualHost{
 			Name:    "421vh",
@@ -209,17 +298,16 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 			},
 		})
 	}
+
 	if err = routeConfiguration.ValidateAll(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	// Listener ---
+	return virtualHost, routeConfiguration, nil
+}
 
-	httpFilters, err := buildHTTPFilters(vs, store)
-	if err != nil {
-		return nil, err
-	}
-
+// buildFilterChainParams builds the filter chain parameters
+func buildFilterChainParams(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener, nn helpers.NamespacedName, httpFilters []*hcmv3.HttpFilter, listenerIsTLS bool, virtualHost *routev3.VirtualHost, store *store.Store) (*FilterChainsParams, error) {
 	filterChainParams := &FilterChainsParams{
 		VSName:            nn.String(),
 		UseRemoteAddress:  helpers.BoolFromPtr(vs.Spec.UseRemoteAddress),
@@ -230,16 +318,21 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		XFFNumTrustedHops: vs.Spec.XFFNumTrustedHops,
 	}
 
-	filterChainParams.UpgradeConfigs, err = buildUpgradeConfigs(vs.Spec.UpgradeConfigs)
+	// Build upgrade configs
+	upgradeConfigs, err := buildUpgradeConfigs(vs.Spec.UpgradeConfigs)
 	if err != nil {
 		return nil, err
 	}
+	filterChainParams.UpgradeConfigs = upgradeConfigs
 
-	filterChainParams.AccessLog, err = buildAccessLogConfig(vs, store)
+	// Build access log config
+	accessLog, err := buildAccessLogConfig(vs, store)
 	if err != nil {
 		return nil, err
 	}
+	filterChainParams.AccessLog = accessLog
 
+	// Check TLS configuration
 	if listenerIsTLS && vs.Spec.TlsConfig == nil {
 		return nil, fmt.Errorf("tls listener not configured, virtual service has not tls config")
 	}
@@ -247,13 +340,12 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		return nil, fmt.Errorf("listener is not tls, virtual service has tls config")
 	}
 
+	// Process TLS configuration
 	if vs.Spec.TlsConfig != nil {
 		tlsType, err := getTLSType(vs.Spec.TlsConfig)
 		if err != nil {
 			return nil, err
 		}
-
-		// { "secret_namespace/secret_name" : ["domain"] }
 
 		switch tlsType {
 		case SecretRefType:
@@ -266,38 +358,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 		}
 	}
 
-	fcs, err := buildFilterChains(filterChainParams)
-	if err != nil {
-		return nil, err
-	}
-
-	xdsListener.FilterChains = fcs
-	if err := xdsListener.ValidateAll(); err != nil { // for validation
-		return nil, err
-	}
-
-	// Clusters ---
-
-	clusters, err := buildClusters(virtualHost, httpFilters, store)
-	if err != nil {
-		return nil, err
-	}
-
-	// Secrets
-	secrets, usedSecrets, err := buildSecrets(httpFilters, filterChainParams.SecretNameToDomains, store)
-	if err != nil {
-		return nil, fmt.Errorf("failed to build secrets: %w", err)
-	}
-
-	return &Resources{
-		Listener:    listenerNN,
-		FilterChain: fcs,
-		RouteConfig: routeConfiguration,
-		Clusters:    clusters,
-		Secrets:     secrets,
-		UsedSecrets: usedSecrets,
-		Domains:     virtualHost.Domains,
-	}, nil
+	return filterChainParams, nil
 }
 
 func buildListener(listenerNN helpers.NamespacedName, store *store.Store) (*listenerv3.Listener, error) {
