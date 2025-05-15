@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo } from 'react'
-import { MRT_ColumnDef, MRT_Row, useMaterialReactTable } from 'material-react-table'
+import React, { useCallback, useMemo, useState } from 'react'
+import { MRT_ColumnDef, MRT_Row, MRT_VisibilityState, useMaterialReactTable } from 'material-react-table'
 import { VirtualServiceListItem } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
 import { NodeIdsChip } from '../nodeIdsChip/nodeIdsChip.tsx'
 import Box from '@mui/material/Box'
@@ -42,6 +42,7 @@ export const useConfigTable = ({
 	const setVsInfo = useVirtualServiceStore(state => state.setVirtualService)
 	const setViewMode = useViewModeStore(state => state.setViewMode)
 	const setTabIndex = useTabStore(state => state.setTabIndex)
+	const [columnVisibility, setColumnVisibility] = useState<MRT_VisibilityState>({ uid: false })
 
 	const handleDeleteVS = useCallback(
 		(row: MRT_Row<VirtualServiceListItem>) => {
@@ -132,9 +133,11 @@ export const useConfigTable = ({
 			isLoading: isFetching,
 			showAlertBanner: isError,
 			showProgressBars: isFetching,
-			showSkeletons: isFetching
+			showSkeletons: isFetching,
+			columnVisibility: columnVisibility
 		},
 
+		onColumnVisibilityChange: setColumnVisibility,
 		enableGlobalFilterModes: true,
 		globalFilterModeOptions: ['fuzzy', 'startsWith'],
 
