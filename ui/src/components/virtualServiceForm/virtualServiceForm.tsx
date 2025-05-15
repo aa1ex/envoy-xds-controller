@@ -284,43 +284,50 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										/>
 									</CustomTabPanel>
 								</Box>
-								<Box
-									display='flex'
-									alignItems='center'
-									justifyContent='flex-start'
-									gap={3}
-									mt={1}
-									marginX={2}
-								>
-									<Button
-										variant='outlined'
-										loading={isFetchingCreateVs || isFetchingUpdateVs}
-										disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-										onClick={() => navigate(-1)}
+								<Box display='flex' justifyContent='space-between'>
+									<Box
+										display='flex'
+										alignItems='center'
+										justifyContent='flex-start'
+										gap={3}
+										marginX={2}
 									>
-										Back to Table
-									</Button>
-									<Button
-										variant='contained'
-										type='submit'
-										loading={isFetchingCreateVs || isFetchingUpdateVs}
-										disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-									>
-										{isCreate
-											? 'Create Virtual Service'
-											: viewMode === 'read'
-												? 'Read-Only Virtual Service'
-												: 'Update Virtual Service'}
-									</Button>
-									<Button
-										variant='outlined'
-										color='warning'
-										loading={isFetchingCreateVs || isFetchingUpdateVs}
-										disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-										onClick={handleResetForm}
-									>
-										Reset form
-									</Button>
+										<Button
+											variant='outlined'
+											loading={isFetchingCreateVs || isFetchingUpdateVs}
+											disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
+											onClick={() => navigate(-1)}
+										>
+											Back to Table
+										</Button>
+										<Button
+											variant='contained'
+											type='submit'
+											loading={isFetchingCreateVs || isFetchingUpdateVs}
+											disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
+										>
+											{isCreate
+												? 'Create Virtual Service'
+												: viewMode === 'read'
+													? 'Read-Only Virtual Service'
+													: 'Update Virtual Service'}
+										</Button>
+										<Button
+											variant='outlined'
+											color='warning'
+											loading={isFetchingCreateVs || isFetchingUpdateVs}
+											disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
+											onClick={handleResetForm}
+										>
+											Reset form
+										</Button>
+									</Box>
+
+									{viewMode === 'read' && (
+										<Button variant='outlined' color='warning' onClick={() => setViewMode('edit')}>
+											Enable Edit Form
+										</Button>
+									)}
 								</Box>
 							</Box>
 
