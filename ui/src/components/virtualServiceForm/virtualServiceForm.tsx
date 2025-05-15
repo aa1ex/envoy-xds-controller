@@ -73,15 +73,20 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			accessGroup: isCreate ? groupId : '',
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
-			useRemoteAddress: undefined,
-			templateOptions: [{ field: '', modifier: 0 }]
+			useRemoteAddress: undefined
+			// templateOptions: []
 		}
 	})
-	console.log(errors)
+
 	const { fillTemplate, rawData, isLoadingFillTemplate } = useFillTemplate()
 
 	const transformForm = (formValues: any) => {
-		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, ...rest } = formValues
+		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, ...rest } = formValues || {}
+
+		const cleanedTemplateOptions =
+			Array.isArray(templateOptions) && templateOptions.some(opt => opt.field === '' && opt.modifier === 0)
+				? []
+				: templateOptions
 
 		return {
 			...rest,
@@ -93,22 +98,34 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				value: accessLogConfigUid || '',
 				case: 'accessLogConfigUid'
 			},
-			templateOptions: templateOptions
+			templateOptions: cleanedTemplateOptions
 		}
 	}
 
 	useEffect(() => {
-		const debouncedFillTemplate = debounce(formValues => {
+		const debouncedFillTemplate = debounce((formValues: IVirtualServiceForm) => {
 			void fillTemplate(transformForm(formValues))
 		}, 500)
 
 		const subscription = watch((_formValues, { name: changedField }) => {
 			const fullForm = getValues()
-			const templateUid = fullForm.templateUid
+			const { templateUid, templateOptions } = fullForm
 			if (!templateUid) return
-			console.log(transformForm(fullForm))
+
+			const hasUnselectedField = templateOptions?.some(opt => opt.field === '' && opt.modifier !== 0)
+			const hasUnselectedModifier = templateOptions?.some(opt => opt.field !== '' && opt.modifier === 0)
+			const allOptionsValid = templateOptions?.every(opt => opt.field && opt.modifier && opt.modifier !== 0)
+
+			const shouldSendTemplateOptions =
+				Array.isArray(templateOptions) &&
+				(templateOptions.length === 0 || (allOptionsValid && !hasUnselectedField && !hasUnselectedModifier))
+
 			if (changedField === 'name' || changedField === 'virtualHostDomains') {
 				debouncedFillTemplate(fullForm)
+			} else if (changedField?.startsWith('templateOptions')) {
+				if (shouldSendTemplateOptions) {
+					debouncedFillTemplate(fullForm)
+				}
 			} else {
 				void fillTemplate(transformForm(fullForm))
 			}
