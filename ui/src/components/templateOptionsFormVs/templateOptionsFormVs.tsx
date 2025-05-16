@@ -84,7 +84,18 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 			<Typography fontSize={15} color='gray' mt={1} display='flex' alignItems='center' gap={0.5}>
 				Template options
 				<Tooltip
-					title='Specify the property and select the modification parameter.'
+					title={
+						<>
+							<p>Specify the property path and select the modifier parameter.</p>
+							<p><strong>Modifiers:</strong></p>
+							<ul>
+								<li><strong>merge</strong> (default) - Merges objects, appends to lists</li>
+								<li><strong>replace</strong> - Completely replaces objects or lists</li>
+								<li><strong>delete</strong> - Removes the field from configuration</li>
+							</ul>
+							<p><strong>Example:</strong> path - virtualHost.domains, modifier - replace</p>
+						</>
+					}
 					placement='bottom-start'
 					enterDelay={500}
 					slotProps={{ ...styleTooltip }}
@@ -115,14 +126,14 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 							}}
 							render={({ field }) => (
 								<FormControl fullWidth error={!!errors.templateOptions?.[index]?.modifier}>
-									<InputLabel>Modification</InputLabel>
+									<InputLabel>Modifier</InputLabel>
 									<Select
 										{...field}
 										value={field.value === 0 ? '' : field.value}
 										error={!!errors.templateOptions?.[index]?.modifier}
 										fullWidth
 										disabled={readMode}
-										label='Modification'
+										label='Modifier'
 									>
 										{enumOptionsModifier
 											.filter(option => option.value !== 0)
