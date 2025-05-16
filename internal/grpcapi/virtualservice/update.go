@@ -94,5 +94,12 @@ func (s *VirtualServiceStore) validateUpdateVirtualServiceRequest(_ context.Cont
 	if req.Msg.TemplateUid == "" {
 		return fmt.Errorf("template uid is required")
 	}
+	if req.Msg.VirtualHost != nil && len(req.Msg.VirtualHost.Domains) > 0 {
+		for _, domain := range req.Msg.VirtualHost.Domains {
+			if err := validateDomain(domain); err != nil {
+				return fmt.Errorf("domain %s is invalid: %w", domain, err)
+			}
+		}
+	}
 	return nil
 }

@@ -16,6 +16,12 @@ func (s *Store) SetVirtualServiceTemplate(vst *v1alpha1.VirtualServiceTemplate) 
 }
 
 func (s *Store) normalizeVirtualServiceTemplate(vst *v1alpha1.VirtualServiceTemplate) {
+	if vst.Spec.Listener != nil && vst.Spec.Listener.Namespace == nil {
+		vst.Spec.Listener.Namespace = &vst.Namespace
+	}
+	if vst.Spec.AccessLogConfig != nil && vst.Spec.AccessLogConfig.Namespace == nil {
+		vst.Spec.AccessLogConfig.Namespace = &vst.Namespace
+	}
 	if len(vst.Spec.AdditionalHttpFilters) > 0 {
 		for _, httpFilter := range vst.Spec.AdditionalHttpFilters {
 			if httpFilter.Namespace == nil {

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	commonv1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/common/v1"
+	"regexp"
+	"strings"
 
 	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 
@@ -299,10 +301,98 @@ func (s *VirtualServiceStore) validateCreateVirtualServiceRequest(req *connect.R
 		return fmt.Errorf("access group is required")
 	}
 	if req.Msg.AccessGroup == grpcapi.DomainGeneral {
-		return fmt.Errorf("forbidden to create virtual service in group '-'")
+		return fmt.Errorf("forbidden to create virtual service in general access group")
 	}
 	if req.Msg.TemplateUid == "" {
 		return fmt.Errorf("template uid is required")
 	}
+	if req.Msg.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+	if err := validateName(req.Msg.Name); err != nil {
+		return fmt.Errorf("name is invalid: %w", err)
+	}
+	if req.Msg.VirtualHost != nil && len(req.Msg.VirtualHost.Domains) > 0 {
+		for _, domain := range req.Msg.VirtualHost.Domains {
+			if err := validateDomain(domain); err != nil {
+				return fmt.Errorf("domain %s is invalid: %w", domain, err)
+			}
+		}
+	}
+	return nil
+}
+
+func validateName(name string) error {
+	// Name must:
+	// - Contain only lowercase letters, numbers, and hyphens
+	// - Start and end with alphanumeric character
+	// - Be no longer than 200 characters
+	const maxLength = 200
+	if len(name) > maxLength {
+		return fmt.Errorf("name cannot be longer than %d characters", maxLength)
+	}
+	// Validate using regex pattern
+	matched, err := regexp.MatchString(`^[a-z0-9][a-z0-9-]*[a-z0-9]$`, name)
+	if err != nil {
+		return fmt.Errorf("error validating name: %w", err)
+	}
+	if !matched {
+		return fmt.Errorf("name must contain only lowercase letters, numbers and hyphens, and must start and end with alphanumeric character")
+	}
+	return nil
+}
+
+func validateDomain(domain string) error {
+	// Check for empty domain
+	if domain == "" {
+		return fmt.Errorf("domain cannot be empty")
+	}
+
+	// Check total domain length
+	if len(domain) > 255 {
+		return fmt.Errorf("domain name too long")
+	}
+
+	// Check for a wildcard special case
+	if domain == "*" {
+		return nil // Allow a single wildcard character
+	}
+
+	// Handle wildcard domain prefix
+	if strings.HasPrefix(domain, "*.") {
+		domain = domain[2:] // Remove "*." for further validation
+	}
+
+	// Split domain into parts
+	parts := strings.Split(domain, ".")
+
+	// Validate each domain part
+	for _, part := range parts {
+		if len(part) == 0 {
+			return fmt.Errorf("empty label in domain name")
+		}
+		if len(part) > 63 {
+			return fmt.Errorf("domain label too long")
+		}
+
+		// Check characters in each part
+		for i, char := range part {
+			// The first and last characters cannot be hyphened
+			if i == 0 || i == len(part)-1 {
+				if char == '-' {
+					return fmt.Errorf("domain label cannot start or end with hyphen")
+				}
+			}
+
+			// Only allow letters, numbers and hyphens
+			if !((char >= 'a' && char <= 'z') ||
+				(char >= 'A' && char <= 'Z') ||
+				(char >= '0' && char <= '9') ||
+				char == '-') {
+				return fmt.Errorf("invalid character in domain name")
+			}
+		}
+	}
+
 	return nil
 }

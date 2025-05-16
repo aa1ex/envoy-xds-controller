@@ -2,7 +2,7 @@
 
 # Check if domain argument is provided
 if [ -z "$1" ]; then
-  echo "Usage: $0 <domain> [namespace]"
+  echo "Usage: $0 <domain>"
   exit 1
 fi
 
@@ -62,4 +62,4 @@ kubectl create secret tls "${SECRET_NAME//./-}" \
 rm "$CERT_NAME.crt"
 rm "$CERT_NAME.key"
 
-echo "TLS Secret YAML created: $SECRET_NAME.yaml"
+echo "TLS Secret YAML created: secret-${SECRET_NAME//./-}.yaml"
