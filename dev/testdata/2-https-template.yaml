@@ -2,6 +2,8 @@ apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualServiceTemplate
 metadata:
   name: https-template
+  annotations:
+    envoy.kaasops.io/description: "HTTPS virtual service template with TLS auto-discovery"
 spec:
   listener:
     name: https

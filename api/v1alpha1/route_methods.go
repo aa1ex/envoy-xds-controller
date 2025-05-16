@@ -65,3 +65,7 @@ func (r *Route) GetAccessGroup() string {
 	}
 	return accessGroup
 }
+
+func (r *Route) GetDescription() string {
+	return r.Annotations[annotationDescription]
+}

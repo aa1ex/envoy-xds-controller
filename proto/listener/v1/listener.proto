@@ -17,6 +17,8 @@ message ListenerListItem {
   string uid = 1;         // Unique identifier for the listener.
   string name = 2;        // Display name of the listener.
   ListenerType type = 3;  // The type of listener.
+  // Description is the human-readable description of the resource
+  string description = 4;
 }
 
 // Service for managing listeners.

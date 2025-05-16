@@ -36,6 +36,13 @@ export declare type ListenerListItem = Message<"listener.v1.ListenerListItem"> &
    * @generated from field: listener.v1.ListenerType type = 3;
    */
   type: ListenerType;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 4;
+   */
+  description: string;
 };
 
 /**

@@ -82,3 +82,7 @@ func (h *HttpFilter) GetAccessGroup() string {
 	}
 	return accessGroup
 }
+
+func (h *HttpFilter) GetDescription() string {
+	return h.Annotations[annotationDescription]
+}

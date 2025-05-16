@@ -2,6 +2,8 @@ apiVersion: envoy.kaasops.io/v1alpha1
 kind: Listener
 metadata:
   name: https
+  annotations:
+    envoy.kaasops.io/description: "HTTPS listener on port 10443 with TLS inspector"
 spec:
   name: https
   address:

@@ -5,6 +5,7 @@ metadata:
   annotations:
     envoy.kaasops.io/node-id: dev
     envoy.kaasops.io/editable: "true"
+    envoy.kaasops.io/description: "Editable HTTPS virtual service with TLS auto-discovery for dev environment"
   labels:
     exc-name: virtual-service
     exc-access-group: dev

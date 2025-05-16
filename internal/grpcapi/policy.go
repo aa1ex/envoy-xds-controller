@@ -27,8 +27,9 @@ func (s *PolicyStore) ListPolicies(ctx context.Context, _ *connect.Request[v1.Li
 	authorizer := GetAuthorizerFromContext(ctx)
 	for _, v := range m {
 		item := &v1.PolicyListItem{
-			Uid:  string(v.UID),
-			Name: v.Name,
+			Uid:         string(v.UID),
+			Name:        v.Name,
+			Description: v.GetDescription(),
 		}
 		isAllowed, err := authorizer.Authorize(DomainGeneral, item.Name)
 		if err != nil {

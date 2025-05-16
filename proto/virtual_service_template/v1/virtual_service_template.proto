@@ -52,6 +52,9 @@ message VirtualServiceTemplateListItem {
 
   // Name of the template.
   string name = 2;
+
+  // Description is the human-readable description of the resource
+  string description = 3;
 }
 
 // Response message containing the list of virtual service templates.
@@ -91,6 +94,9 @@ message FillTemplateRequest {
 
   // Virtual service name
   string name = 9;
+
+  // Description is the human-readable description of the resource
+  string description = 10;
 }
 
 // Response message containing the filled template as a raw string.

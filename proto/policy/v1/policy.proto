@@ -11,6 +11,8 @@ message PolicyListItem  {
   string uid = 1;
   // name is the name of the policy.
   string name = 2;
+  // Description is the human-readable description of the resource
+  string description = 3;
 }
 
 // PolicyStoreService provides operations related to policy management.

@@ -50,3 +50,7 @@ func (l *Listener) GetAccessGroup() string {
 	}
 	return accessGroup
 }
+
+func (l *Listener) GetDescription() string {
+	return l.Annotations[annotationDescription]
+}

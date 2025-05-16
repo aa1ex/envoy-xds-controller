@@ -2,6 +2,8 @@ apiVersion: envoy.kaasops.io/v1alpha1
 kind: HttpFilter
 metadata:
   name: http-filter
+  annotations:
+    envoy.kaasops.io/description: "Basic Envoy router HTTP filter"
 spec:
   - name: envoy.filters.http.router
     typed_config:

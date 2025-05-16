@@ -5,6 +5,7 @@ metadata:
   annotations:
     envoy.kaasops.io/node-id: dev
     envoy.kaasops.io/editable: "true"
+    envoy.kaasops.io/description: "Editable virtual service based on https-template for dev environment"
   labels:
     exc-name: vs-from-template
     exc-access-group: dev

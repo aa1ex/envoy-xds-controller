@@ -40,9 +40,10 @@ func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[
 			continue
 		}
 		item := &v1.ListenerListItem{
-			Uid:  string(v.UID),
-			Name: v.Name,
-			Type: listenerType(v),
+			Uid:         string(v.UID),
+			Name:        v.Name,
+			Type:        listenerType(v),
+			Description: v.GetDescription(),
 		}
 		isAllowed, err := authorizer.Authorize(listenerAG, item.Name)
 		if err != nil {

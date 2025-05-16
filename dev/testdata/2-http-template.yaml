@@ -2,6 +2,8 @@ apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualServiceTemplate
 metadata:
   name: http-template
+  annotations:
+    envoy.kaasops.io/description: "HTTP virtual service template with direct response"
 spec:
   listener:
     name: http

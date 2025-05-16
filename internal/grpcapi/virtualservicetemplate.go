@@ -39,8 +39,9 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 
 	for _, v := range m {
 		item := &v1.VirtualServiceTemplateListItem{
-			Uid:  string(v.UID),
-			Name: v.Name,
+			Uid:         string(v.UID),
+			Name:        v.Name,
+			Description: v.GetDescription(),
 		}
 		isAllowed, err := authorizer.Authorize(accessGroup, item.Name)
 		if err != nil {

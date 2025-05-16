@@ -5,6 +5,7 @@ metadata:
   annotations:
     envoy.kaasops.io/node-id: test
     envoy.kaasops.io/editable: "true"
+    envoy.kaasops.io/description: "Editable HTTP virtual service with multiple routes for test environment"
   labels:
     exc-name: vs-http
     exc-access-group: test

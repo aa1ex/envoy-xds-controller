@@ -6,9 +6,10 @@ This document provides an overview of the authentication and authorization imple
 
 1. [Components](#components)
 2. [Authentication Flow](#authentication-flow)
-3. [API Requests with Access Token](#api-requests-with-access-token)
-4. [ACL](#acl)
-5. [Libraries and Tools Used](#libraries-and-tools-used)
+3. [Machine Authentication](#machine-authentication)
+4. [API Requests with Access Token](#api-requests-with-access-token)
+5. [ACL](#acl)
+6. [Libraries and Tools Used](#libraries-and-tools-used)
 
 ## Components
 
@@ -44,13 +45,83 @@ The authentication flow follows the Authorization Code Grant with Proof Key for 
    - The Web UI stores the tokens in Session storage in browser
    - The user's authenticated state is updated in the application
 
+## Machine Authentication
+
+In addition to the web-based authentication flow, Dex supports machine authentication, which allows systems to obtain tokens programmatically without going through the web flow. This is useful for:
+
+- Integration with third-party systems
+- Automated scripts and CI/CD pipelines
+- Development and testing
+
+### Configuration
+
+To enable machine authentication, add the following configuration to your Dex setup:
+
+```yaml
+config:
+  # ... other configuration ...
+  enablePasswordDB: true
+  oauth2:
+    passwordConnector: local
+  staticPasswords:
+    - email: "sa@example.com"
+      # bcrypt hash of the string "password": $(echo password | htpasswd -BinC 10 admin | cut -d: -f2)
+      hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"
+      username: "sa"
+      userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+```
+
+This configuration:
+- Enables the password database (`enablePasswordDB: true`)
+- Sets the password connector to "local" (`passwordConnector: local`)
+- Creates a static user with credentials that can be used for machine authentication
+
+### Obtaining Tokens
+
+Once configured, you can obtain tokens using the Resource Owner Password Credentials grant type:
+
+```bash
+curl -L -X POST 'http://localhost:5556/token' \
+-u 'envoy-xds-controller:' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'scope=openid' \
+--data-urlencode 'username=sa@example.com' \
+--data-urlencode 'password=password'
+```
+
+The response will contain the access token and ID token:
+
+```json
+{
+  "access_token": "eyJhbGc....",
+  "token_type": "bearer",
+  "expires_in": 86399,
+  "id_token": "eyJhbGciOiJSUzI1N..."
+}
+```
+
+These tokens can be used in the same way as tokens obtained through the web flow, as described in the [API Requests with Access Token](#api-requests-with-access-token) section.
+
+### Security Considerations
+
+When using machine authentication:
+- Use strong, unique passwords for service accounts
+- Rotate credentials regularly
+- Limit the permissions of service accounts to only what is necessary
+- Consider using IP restrictions or other security measures to protect the token endpoint
+
+For more information, see:
+- [Dex Token Exchange Guide](https://dexidp.io/docs/guides/token-exchange/)
+- [Dex Local Connector Documentation](https://dexidp.io/docs/connectors/local/)
+
 ## API Requests with Access Token
 
 When the Web UI needs to make API requests to the backend server:
 
 1. **Include Access Token**
    - The Web UI includes the Access Token in the Authorization header of HTTP requests to the backend API server, using the Bearer scheme:
-   
+
      ```
      Authorization: Bearer <access_token>
      ```

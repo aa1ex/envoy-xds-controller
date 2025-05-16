@@ -4,6 +4,7 @@ metadata:
   name: demo-virtual-service
   annotations:
     envoy.kaasops.io/node-id: test
+    envoy.kaasops.io/description: "Virtual service based on https-template with custom access log configuration"
 spec:
   template:
     name: https-template

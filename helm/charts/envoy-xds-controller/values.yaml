@@ -223,6 +223,9 @@ auth:
     p, testers, test, *, fill-template
     p, testers, test, *, create-virtual-service
     p, testers, test, *, update-virtual-service
+    
+    g, sa, developers, _
+    g, sa, developers, dev
 
 config:
   nodeIds:

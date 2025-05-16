@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file policy/v1/policy.proto.
  */
 export const file_policy_v1_policy: GenFile = /*@__PURE__*/
-  fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiKwoOUG9saWN5TGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkiFQoTTGlzdFBvbGljaWVzUmVxdWVzdCJAChRMaXN0UG9saWNpZXNSZXNwb25zZRIoCgVpdGVtcxgBIAMoCzIZLnBvbGljeS52MS5Qb2xpY3lMaXN0SXRlbTJlChJQb2xpY3lTdG9yZVNlcnZpY2USTwoMTGlzdFBvbGljaWVzEh4ucG9saWN5LnYxLkxpc3RQb2xpY2llc1JlcXVlc3QaHy5wb2xpY3kudjEuTGlzdFBvbGljaWVzUmVzcG9uc2VCqgEKDWNvbS5wb2xpY3kudjFCC1BvbGljeVByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvcG9saWN5L3YxO3BvbGljeXYxogIDUFhYqgIJUG9saWN5LlYxygIJUG9saWN5XFYx4gIVUG9saWN5XFYxXEdQQk1ldGFkYXRh6gIKUG9saWN5OjpWMWIGcHJvdG8z");
+  fileDesc("ChZwb2xpY3kvdjEvcG9saWN5LnByb3RvEglwb2xpY3kudjEiQAoOUG9saWN5TGlzdEl0ZW0SCwoDdWlkGAEgASgJEgwKBG5hbWUYAiABKAkSEwoLZGVzY3JpcHRpb24YAyABKAkiFQoTTGlzdFBvbGljaWVzUmVxdWVzdCJAChRMaXN0UG9saWNpZXNSZXNwb25zZRIoCgVpdGVtcxgBIAMoCzIZLnBvbGljeS52MS5Qb2xpY3lMaXN0SXRlbTJlChJQb2xpY3lTdG9yZVNlcnZpY2USTwoMTGlzdFBvbGljaWVzEh4ucG9saWN5LnYxLkxpc3RQb2xpY2llc1JlcXVlc3QaHy5wb2xpY3kudjEuTGlzdFBvbGljaWVzUmVzcG9uc2VCqgEKDWNvbS5wb2xpY3kudjFCC1BvbGljeVByb3RvUAFaR2dpdGh1Yi5jb20va2Fhc29wcy9lbnZveS14ZHMtY29udHJvbGxlci9wa2cvYXBpL2dycGMvcG9saWN5L3YxO3BvbGljeXYxogIDUFhYqgIJUG9saWN5LlYxygIJUG9saWN5XFYx4gIVUG9saWN5XFYxXEdQQk1ldGFkYXRh6gIKUG9saWN5OjpWMWIGcHJvdG8z");
 
 /**
  * PolicyListItem represents an individual policy item with a unique identifier and name.
@@ -33,6 +33,13 @@ export type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
    * @generated from field: string name = 2;
    */
   name: string;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 3;
+   */
+  description: string;
 };
 
 /**
