@@ -1,11 +1,13 @@
 import { Alert, Snackbar } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { FieldErrors } from 'react-hook-form'
+import { useTabStore } from '../../store/tabIndexStore.ts'
 
 interface IErrorSnackBarVsProps {
 	errors: FieldErrors<any>
 	errorUpdateVs: Error | null
 	errorCreateVs: Error | null
+	errorFillTemplate: Error | null
 	isSubmitted: boolean
 	isFormReady: boolean
 }
@@ -14,6 +16,7 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 	errors,
 	errorUpdateVs,
 	errorCreateVs,
+	errorFillTemplate,
 	isSubmitted,
 	isFormReady
 }) => {
@@ -21,6 +24,7 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 	const [message, setMessage] = useState('')
 	const [severity, setSeverity] = useState<'error' | 'warning'>('warning')
 	const [autoHideDuration, setAutoHideDuration] = useState<number | null>(3000)
+	const setTabIndex = useTabStore(state => state.setTabIndex)
 
 	useEffect(() => {
 		if (isSubmitted) {
@@ -33,6 +37,12 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 				setSeverity('warning')
 				setAutoHideDuration(3000)
 				setOpen(true)
+				setTabIndex(0)
+			} else if (errorFillTemplate) {
+				setMessage(errorFillTemplate.message.replace(/^\[unknown]\s*/, ''))
+				setSeverity('warning')
+				setAutoHideDuration(3000)
+				setOpen(true)
 			} else if (errorUpdateVs || errorCreateVs) {
 				setMessage(errorUpdateVs?.message || errorCreateVs?.message || 'An error occurred')
 				setSeverity('error')
@@ -40,7 +50,7 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 				setOpen(true)
 			}
 		}
-	}, [errors, errorUpdateVs, errorCreateVs, isSubmitted, isFormReady])
+	}, [errors, errorUpdateVs, errorCreateVs, isSubmitted, isFormReady, errorFillTemplate, setTabIndex])
 
 	const handleClose = () => setOpen(false)
 

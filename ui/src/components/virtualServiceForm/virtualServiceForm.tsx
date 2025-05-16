@@ -73,12 +73,12 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			accessGroup: isCreate ? groupId : '',
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
-			useRemoteAddress: undefined
-			// templateOptions: []
+			useRemoteAddress: undefined,
+			templateOptions: []
 		}
 	})
 
-	const { fillTemplate, rawData, isLoadingFillTemplate } = useFillTemplate()
+	const { fillTemplate, rawData, isLoadingFillTemplate, errorFillTemplate } = useFillTemplate()
 	const [name, nodeIds, templateUid] = watch(['name', 'nodeIds', 'templateUid'])
 
 	const isFormReady =
@@ -114,7 +114,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		const subscription = watch((_formValues, { name: changedField }) => {
 			const fullForm = getValues()
 			const { templateUid, templateOptions } = fullForm
-			if (!templateUid) return
 
 			const hasUnselectedField = templateOptions?.some(opt => opt.field === '' && opt.modifier !== 0)
 			const hasUnselectedModifier = templateOptions?.some(opt => opt.field !== '' && opt.modifier === 0)
@@ -123,14 +122,20 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			const shouldSendTemplateOptions =
 				Array.isArray(templateOptions) &&
 				(templateOptions.length === 0 || (allOptionsValid && !hasUnselectedField && !hasUnselectedModifier))
+			if (!templateUid) return
 
 			if (changedField === 'name' || changedField === 'virtualHostDomains') {
 				debouncedFillTemplate(fullForm)
 			} else if (changedField?.startsWith('templateOptions')) {
 				if (shouldSendTemplateOptions) {
+					console.log(1)
 					debouncedFillTemplate(fullForm)
 				}
 			} else {
+				if (!allOptionsValid) {
+					setTabIndex(3)
+					return
+				}
 				void fillTemplate(transformForm(fullForm))
 			}
 		})
@@ -139,7 +144,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			subscription.unsubscribe()
 			debouncedFillTemplate.clear()
 		}
-	}, [watch, getValues, fillTemplate])
+	}, [watch, getValues, fillTemplate, setTabIndex])
 
 	const handleSetDefaultValues = useCallback(() => {
 		if (isCreate || !virtualServiceInfo) return
@@ -379,7 +384,11 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 											<CodeBlockVs raw={rawData} />
 										</div>
 									</Fade>
-								) : null}
+								) : (
+									<Typography align='center' variant='h4' color='warning'>
+										Error in OptionsTemplate! No path or modification selected
+									</Typography>
+								)}
 							</Box>
 						</Box>
 					</Box>
@@ -390,6 +399,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					isFormReady={isFormReady}
 					errorCreateVs={errorCreateVs}
 					errorUpdateVs={errorUpdateVs}
+					errorFillTemplate={errorFillTemplate}
 					isSubmitted={isSubmitting}
 				/>
 			</form>
