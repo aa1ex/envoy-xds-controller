@@ -13,6 +13,7 @@ export interface ITemplateOption {
 
 export interface IVirtualServiceForm {
 	name: string
+	description: string
 	nodeIds: string[]
 	accessGroup: string
 	templateUid: string

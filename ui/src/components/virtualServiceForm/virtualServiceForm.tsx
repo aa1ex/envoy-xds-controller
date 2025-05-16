@@ -157,7 +157,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			templateOptions: virtualServiceInfo.templateOptions,
 			virtualHostDomains: vhDomains,
 			additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
-			additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || []
+			additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || [],
+			description: virtualServiceInfo.description,
 		})
 	}, [reset, isCreate, virtualServiceInfo])
 
