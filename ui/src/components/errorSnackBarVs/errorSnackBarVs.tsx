@@ -7,13 +7,15 @@ interface IErrorSnackBarVsProps {
 	errorUpdateVs: Error | null
 	errorCreateVs: Error | null
 	isSubmitted: boolean
+	isFormReady: boolean
 }
 
 export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 	errors,
 	errorUpdateVs,
 	errorCreateVs,
-	isSubmitted
+	isSubmitted,
+	isFormReady
 }) => {
 	const [open, setOpen] = useState(false)
 	const [message, setMessage] = useState('')
@@ -22,12 +24,12 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 
 	useEffect(() => {
 		if (isSubmitted) {
-			if (Object.keys(errors).length > 0) {
+			if (Object.keys(errors).length > 0 || !isFormReady) {
 				const errorMessages = Object.values(errors)
 					.map((error: any) => error.message)
 					.join('\n')
 
-				setMessage(errorMessages)
+				setMessage(!isFormReady ? 'Fields Name, NodeIds and Template is required' : errorMessages)
 				setSeverity('warning')
 				setAutoHideDuration(3000)
 				setOpen(true)
@@ -38,7 +40,7 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 				setOpen(true)
 			}
 		}
-	}, [errors, errorUpdateVs, errorCreateVs, isSubmitted])
+	}, [errors, errorUpdateVs, errorCreateVs, isSubmitted, isFormReady])
 
 	const handleClose = () => setOpen(false)
 

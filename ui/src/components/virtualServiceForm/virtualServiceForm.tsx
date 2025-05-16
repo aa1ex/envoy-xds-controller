@@ -57,7 +57,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting },
+		formState: { errors, isSubmitting, isValid },
 		setValue,
 		control,
 		setError,
@@ -79,6 +79,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	})
 
 	const { fillTemplate, rawData, isLoadingFillTemplate } = useFillTemplate()
+	const [name, nodeIds, templateUid] = watch(['name', 'nodeIds', 'templateUid'])
+
+	const isFormReady =
+		isValid && Boolean(name?.length) && Array.isArray(nodeIds) && nodeIds.length > 0 && Boolean(templateUid)
 
 	const transformForm = (formValues: any) => {
 		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, ...rest } = formValues || {}
@@ -170,6 +174,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	}
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
+		if (!isFormReady) return
+
 		const virtualHostData: VirtualHost = {
 			$typeName: 'common.v1.VirtualHost',
 			domains: data.virtualHostDomains || []
@@ -223,6 +229,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		// navigate(`/accessGroups/${groupId}/virtualServices`)
 		await refetch()
 	}
+
+	// tabColor(errors)
+
 	return (
 		<>
 			<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
@@ -375,8 +384,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 						</Box>
 					</Box>
 				</Box>
+
 				<ErrorSnackBarVs
 					errors={errors}
+					isFormReady={isFormReady}
 					errorCreateVs={errorCreateVs}
 					errorUpdateVs={errorUpdateVs}
 					isSubmitted={isSubmitting}
