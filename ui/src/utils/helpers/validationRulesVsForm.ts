@@ -80,10 +80,10 @@ export const validationRulesVsForm: Record<
 				// }
 
 				if (option.field && option.modifier === 0) {
-					return 'You specified the path but did not select the modification.'
+					return 'You specified the path but did not select the modifier.'
 				}
 				if (option.modifier && !option.field) {
-					return 'You have selected a modification but have not specified the path.'
+					return 'You have selected a modifier but have not specified the path.'
 				}
 			}
 		} else {

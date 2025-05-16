@@ -387,7 +387,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									</Fade>
 								) : (
 									<Typography align='center' variant='h4' color='warning'>
-										Error in OptionsTemplate! No path or modification selected
+										Some template options are incomplete. Please finish configuring them to preview
 									</Typography>
 								)}
 							</Box>

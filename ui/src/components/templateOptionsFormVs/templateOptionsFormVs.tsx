@@ -82,7 +82,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 	return (
 		<Box sx={{ ...styleBox }}>
 			<Typography fontSize={15} color='gray' mt={1} display='flex' alignItems='center' gap={0.5}>
-				Template Modifier
+				Template options
 				<Tooltip
 					title='Specify the property and select the modification parameter.'
 					placement='bottom-start'
@@ -145,7 +145,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 				))}
 			</Box>
 			<Button onClick={() => append({ field: '', modifier: 0 })} variant='contained' disabled={readMode}>
-				Add Template Modifier
+				Add Template option
 			</Button>
 		</Box>
 	)
