@@ -184,3 +184,14 @@ func (vs *VirtualService) IsEditable() bool {
 	}
 	return editable == "true"
 }
+
+func (vs *VirtualService) GetDescription() string {
+	return vs.Annotations[annotationDescription]
+}
+
+func (vs *VirtualService) SetDescription(description string) {
+	if vs.Annotations == nil {
+		vs.Annotations = make(map[string]string)
+	}
+	vs.Annotations[annotationDescription] = description
+}

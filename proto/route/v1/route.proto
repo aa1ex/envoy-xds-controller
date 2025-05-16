@@ -17,6 +17,9 @@ message RouteListItem {
 
   // Name of the route.
   string name = 2;
+
+  // Description is the human-readable description of the resource
+  string description = 3;
 }
 
 // Request message for listing routes.

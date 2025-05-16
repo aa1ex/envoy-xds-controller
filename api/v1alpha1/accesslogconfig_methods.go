@@ -129,3 +129,7 @@ func (a *AccessLogConfig) GetAccessGroup() string {
 	}
 	return accessGroup
 }
+
+func (a *AccessLogConfig) GetDescription() string {
+	return a.Annotations[annotationDescription]
+}

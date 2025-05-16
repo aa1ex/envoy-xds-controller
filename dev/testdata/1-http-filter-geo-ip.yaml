@@ -2,6 +2,8 @@ apiVersion: envoy.kaasops.io/v1alpha1
 kind: HttpFilter
 metadata:
   name: http-filter-geo-ip
+  annotations:
+    envoy.kaasops.io/description: "GeoIP HTTP filter using MaxMind for adding location headers"
 spec:
   - name: envoy.filters.http.geoip
     typed_config:

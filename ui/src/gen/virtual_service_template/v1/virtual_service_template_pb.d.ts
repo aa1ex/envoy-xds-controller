@@ -77,6 +77,13 @@ export declare type VirtualServiceTemplateListItem = Message<"virtual_service_te
    * @generated from field: string name = 2;
    */
   name: string;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 3;
+   */
+  description: string;
 };
 
 /**
@@ -181,6 +188,13 @@ export declare type FillTemplateRequest = Message<"virtual_service_template.v1.F
    * @generated from field: string name = 9;
    */
   name: string;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 10;
+   */
+  description: string;
 };
 
 /**

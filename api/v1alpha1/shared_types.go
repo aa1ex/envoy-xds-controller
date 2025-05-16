@@ -1,6 +1,7 @@
 package v1alpha1
 
-const AnnotationSecretDomains = "envoy.kaasops.io/domains"
+const AnnotationSecretDomains = "envoy.kaasops.io/domains" // TODO: make private, access via getter
+const annotationDescription = "envoy.kaasops.io/description"
 const GeneralAccessGroup = "_"
 
 type Message string

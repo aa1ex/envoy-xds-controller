@@ -66,6 +66,7 @@ func (s *VirtualServiceStore) CreateVirtualService(
 		return nil, err
 	}
 
+	vs.SetDescription(req.Msg.Description)
 	vs.Spec.UseRemoteAddress = req.Msg.UseRemoteAddress
 
 	if err := s.buildAndCreateVirtualService(ctx, vs); err != nil {

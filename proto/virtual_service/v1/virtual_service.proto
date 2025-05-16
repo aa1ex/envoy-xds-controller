@@ -62,6 +62,9 @@ message CreateVirtualServiceRequest {
 
   // Template options for the virtual service.
   repeated virtual_service_template.v1.TemplateOption template_options = 11;
+
+  // Description is the human-readable description of the resource
+  string description = 12;
 }
 
 // CreateVirtualServiceResponse is the response message for creating a virtual service.
@@ -101,6 +104,9 @@ message UpdateVirtualServiceRequest {
 
   // Template options for the virtual service.
   repeated virtual_service_template.v1.TemplateOption template_options = 10;
+
+  // Description is the human-readable description of the resource
+  string description = 11;
 }
 
 // UpdateVirtualServiceResponse is the response message for updating a virtual service.
@@ -167,6 +173,9 @@ message GetVirtualServiceResponse {
 
   // Indicates whether the virtual service is editable.
   bool is_editable = 14;
+
+  // Description is the human-readable description of the resource
+  string description = 15;
 }
 
 // ListVirtualServicesRequest is the request message for listing virtual services.
@@ -194,6 +203,9 @@ message VirtualServiceListItem {
 
   // Indicates whether the virtual service is editable.
   bool is_editable = 6;
+
+  // Description is the human-readable description of the resource
+  string description = 7;
 }
 
 // ListVirtualServicesResponse is the response message for listing virtual services.

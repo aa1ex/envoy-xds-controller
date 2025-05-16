@@ -11,6 +11,9 @@ export const validationRulesVsForm: Record<
 		if (!/^[a-zA-Z0-9_-]+$/.test(value)) return 'Name must contain only letters, numbers, hyphens, and underscores'
 		return true
 	},
+	description: () => {
+		return true
+	},
 	nodeIds: value => {
 		if (!Array.isArray(value)) return 'Invalid value for NodeIds, expected an array'
 		if (value.length === 0) return 'The NodeIds field is required, enter at least one node'

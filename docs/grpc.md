@@ -308,6 +308,7 @@ Represents an individual HTTP filter.
 | ----- | ---- | ----------- |
 | uid | [ string](#string) | Unique identifier of the HTTP filter. |
 | name | [ string](#string) | Name of the HTTP filter. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -360,6 +361,7 @@ Details of a listener.
 | uid | [ string](#string) | Unique identifier for the listener. |
 | name | [ string](#string) | Display name of the listener. |
 | type | [ ListenerType](#listenertype) | The type of listener. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -447,6 +449,7 @@ PolicyListItem represents an individual policy item with a unique identifier and
 | ----- | ---- | ----------- |
 | uid | [ string](#string) | uid is the unique identifier for the policy. |
 | name | [ string](#string) | name is the name of the policy. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -478,6 +481,7 @@ Represents a route in the route list.
 | ----- | ---- | ----------- |
 | uid | [ string](#string) | Unique identifier for the route. |
 | name | [ string](#string) | Name of the route. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -531,6 +535,7 @@ Request message for filling a template with specific configurations.
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) _use_remote_address.use_remote_address | [optional bool](#bool) | Whether to use the remote address. |
 | template_options | [repeated TemplateOption](#templateoption) | Options to modify the template. |
 | name | [ string](#string) | Virtual service name |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -583,6 +588,7 @@ Details of a virtual service template.
 | ----- | ---- | ----------- |
 | uid | [ string](#string) | Unique identifier of the template. |
 | name | [ string](#string) | Name of the template. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -603,6 +609,7 @@ CreateVirtualServiceRequest is the request message for creating a virtual servic
 | additional_route_uids | [repeated string](#string) | UIDs of additional routes appended to the virtual service. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) _use_remote_address.use_remote_address | [optional bool](#bool) | Whether to use the remote address for the virtual service. |
 | template_options | [repeated virtual_service_template.v1.TemplateOption](#virtual_service_templatev1templateoption) | Template options for the virtual service. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -656,6 +663,7 @@ GetVirtualServiceResponse is the response message for retrieving a virtual servi
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) _use_remote_address.use_remote_address | [optional bool](#bool) | Whether the virtual service uses the remote address. |
 | template_options | [repeated virtual_service_template.v1.TemplateOption](#virtual_service_templatev1templateoption) | Template options for the virtual service. |
 | is_editable | [ bool](#bool) | Indicates whether the virtual service is editable. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -695,6 +703,7 @@ UpdateVirtualServiceRequest is the request message for updating a virtual servic
 | additional_route_uids | [repeated string](#string) | UIDs of additional routes appended to the virtual service. |
 | [**oneof**](https://developers.google.com/protocol-buffers/docs/proto3#oneof) _use_remote_address.use_remote_address | [optional bool](#bool) | Whether to use the remote address for the virtual service. |
 | template_options | [repeated virtual_service_template.v1.TemplateOption](#virtual_service_templatev1templateoption) | Template options for the virtual service. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 
@@ -715,6 +724,7 @@ VirtualServiceListItem represents a single virtual service in a list response.
 | access_group | [ string](#string) | The access group of the virtual service. |
 | template | [ common.v1.ResourceRef](#commonv1resourceref) | A reference to the template used by the virtual service. |
 | is_editable | [ bool](#bool) | Indicates whether the virtual service is editable. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 

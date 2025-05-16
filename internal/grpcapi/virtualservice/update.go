@@ -52,6 +52,8 @@ func (s *VirtualServiceStore) UpdateVirtualService(ctx context.Context, req *con
 		return nil, err
 	}
 
+	vs.SetDescription(req.Msg.Description)
+
 	if len(req.Msg.AdditionalRouteUids) > 0 {
 		vs.Spec.AdditionalRoutes = vs.Spec.AdditionalRoutes[:0]
 		if err := s.processAdditionalRoutes(ctx, accessGroup, req.Msg.AdditionalRouteUids, vs, authorizer); err != nil {

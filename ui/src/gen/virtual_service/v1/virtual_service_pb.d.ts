@@ -102,6 +102,13 @@ export declare type CreateVirtualServiceRequest = Message<"virtual_service.v1.Cr
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 11;
    */
   templateOptions: TemplateOption[];
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 12;
+   */
+  description: string;
 };
 
 /**
@@ -207,6 +214,13 @@ export declare type UpdateVirtualServiceRequest = Message<"virtual_service.v1.Up
    * @generated from field: repeated virtual_service_template.v1.TemplateOption template_options = 10;
    */
   templateOptions: TemplateOption[];
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 11;
+   */
+  description: string;
 };
 
 /**
@@ -395,6 +409,13 @@ export declare type GetVirtualServiceResponse = Message<"virtual_service.v1.GetV
    * @generated from field: bool is_editable = 14;
    */
   isEditable: boolean;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 15;
+   */
+  description: string;
 };
 
 /**
@@ -470,6 +491,13 @@ export declare type VirtualServiceListItem = Message<"virtual_service.v1.Virtual
    * @generated from field: bool is_editable = 6;
    */
   isEditable: boolean;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 7;
+   */
+  description: string;
 };
 
 /**

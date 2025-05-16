@@ -31,6 +31,13 @@ export declare type PolicyListItem = Message<"policy.v1.PolicyListItem"> & {
    * @generated from field: string name = 2;
    */
   name: string;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 3;
+   */
+  description: string;
 };
 
 /**

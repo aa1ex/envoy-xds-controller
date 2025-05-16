@@ -17,3 +17,7 @@ func (vst *VirtualServiceTemplate) GetAccessGroup() string {
 	}
 	return accessGroup
 }
+
+func (vst *VirtualServiceTemplate) GetDescription() string {
+	return vst.Annotations[annotationDescription]
+}

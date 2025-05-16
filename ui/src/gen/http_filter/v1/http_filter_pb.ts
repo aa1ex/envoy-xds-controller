@@ -10,7 +10,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file http_filter/v1/http_filter.proto.
  */
 export const file_http_filter_v1_http_filter: GenFile = /*@__PURE__*/
-  fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiLwoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJIi4KFkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIkwKF0xpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlEjEKBWl0ZW1zGAEgAygLMiIuaHR0cF9maWx0ZXIudjEuSFRUUEZpbHRlckxpc3RJdGVtMnwKFkhUVFBGaWx0ZXJTdG9yZVNlcnZpY2USYgoPTGlzdEhUVFBGaWx0ZXJzEiYuaHR0cF9maWx0ZXIudjEuTGlzdEhUVFBGaWx0ZXJzUmVxdWVzdBonLmh0dHBfZmlsdGVyLnYxLkxpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlQs0BChJjb20uaHR0cF9maWx0ZXIudjFCD0h0dHBGaWx0ZXJQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2h0dHBfZmlsdGVyL3YxO2h0dHBfZmlsdGVydjGiAgNIWFiqAg1IdHRwRmlsdGVyLlYxygINSHR0cEZpbHRlclxWMeICGUh0dHBGaWx0ZXJcVjFcR1BCTWV0YWRhdGHqAg5IdHRwRmlsdGVyOjpWMWIGcHJvdG8z");
+  fileDesc("CiBodHRwX2ZpbHRlci92MS9odHRwX2ZpbHRlci5wcm90bxIOaHR0cF9maWx0ZXIudjEiRAoSSFRUUEZpbHRlckxpc3RJdGVtEgsKA3VpZBgBIAEoCRIMCgRuYW1lGAIgASgJEhMKC2Rlc2NyaXB0aW9uGAMgASgJIi4KFkxpc3RIVFRQRmlsdGVyc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIkwKF0xpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlEjEKBWl0ZW1zGAEgAygLMiIuaHR0cF9maWx0ZXIudjEuSFRUUEZpbHRlckxpc3RJdGVtMnwKFkhUVFBGaWx0ZXJTdG9yZVNlcnZpY2USYgoPTGlzdEhUVFBGaWx0ZXJzEiYuaHR0cF9maWx0ZXIudjEuTGlzdEhUVFBGaWx0ZXJzUmVxdWVzdBonLmh0dHBfZmlsdGVyLnYxLkxpc3RIVFRQRmlsdGVyc1Jlc3BvbnNlQs0BChJjb20uaHR0cF9maWx0ZXIudjFCD0h0dHBGaWx0ZXJQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL2h0dHBfZmlsdGVyL3YxO2h0dHBfZmlsdGVydjGiAgNIWFiqAg1IdHRwRmlsdGVyLlYxygINSHR0cEZpbHRlclxWMeICGUh0dHBGaWx0ZXJcVjFcR1BCTWV0YWRhdGHqAg5IdHRwRmlsdGVyOjpWMWIGcHJvdG8z");
 
 /**
  * Represents an individual HTTP filter.
@@ -31,6 +31,13 @@ export type HTTPFilterListItem = Message<"http_filter.v1.HTTPFilterListItem"> & 
    * @generated from field: string name = 2;
    */
   name: string;
+
+  /**
+   * Description is the human-readable description of the resource
+   *
+   * @generated from field: string description = 3;
+   */
+  description: string;
 };
 
 /**

@@ -2,6 +2,8 @@ apiVersion: envoy.kaasops.io/v1alpha1
 kind: HttpFilter
 metadata:
   name: http-filter-white-list
+  annotations:
+    envoy.kaasops.io/description: "RBAC HTTP filter allowing traffic from 192.168.0.0/16 subnet"
 spec:
   - name: envoy.filters.http.rbac
     typed_config:

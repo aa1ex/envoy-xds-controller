@@ -4,6 +4,7 @@ metadata:
   name: access-log-config
   annotations:
     envoy.kaasops.io/auto-generated-filename: "true"
+    envoy.kaasops.io/description: "JSON format file access logger configuration for Envoy"
 spec:
   name: envoy.access_loggers
   typed_config:
