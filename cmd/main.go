@@ -22,10 +22,11 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/kaasops/envoy-xds-controller/internal/filewatcher"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/kaasops/envoy-xds-controller/internal/filewatcher"
 
 	mgrCache "sigs.k8s.io/controller-runtime/pkg/cache"
 

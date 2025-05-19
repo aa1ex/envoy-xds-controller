@@ -27,11 +27,6 @@ func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, req *connect.Requ
 
 	authorizer := GetAuthorizerFromContext(ctx)
 
-	accessGroup := req.Msg.AccessGroup
-	if accessGroup == "" {
-		accessGroup = GeneralAccessGroup
-	}
-
 	for _, v := range m {
 		httpFilterAG := v.GetAccessGroup()
 		if httpFilterAG != req.Msg.AccessGroup && httpFilterAG != GeneralAccessGroup {

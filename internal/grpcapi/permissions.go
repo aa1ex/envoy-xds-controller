@@ -1,8 +1,9 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
+
+	"connectrpc.com/connect"
 	"github.com/casbin/casbin/v2"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/permissions/v1"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/permissions/v1/permissionsv1connect"
@@ -41,7 +42,7 @@ func (p *PermissionsService) ListPermissions(ctx context.Context, req *connect.R
 	}
 	for _, permItem := range permItems {
 		vals := permissions[permItem.Action]
-		for val, _ := range vals {
+		for val := range vals {
 			permItem.Objects = append(permItem.Objects, val)
 		}
 	}

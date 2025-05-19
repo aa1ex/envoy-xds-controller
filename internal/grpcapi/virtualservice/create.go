@@ -3,9 +3,10 @@ package virtualservice
 import (
 	"context"
 	"fmt"
-	commonv1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/common/v1"
 	"regexp"
 	"strings"
+
+	commonv1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/common/v1"
 
 	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 
@@ -360,9 +361,7 @@ func validateDomain(domain string) error {
 	}
 
 	// Handle wildcard domain prefix
-	if strings.HasPrefix(domain, "*.") {
-		domain = domain[2:] // Remove "*." for further validation
-	}
+	domain = strings.TrimPrefix(domain, "*.")
 
 	// Split domain into parts
 	parts := strings.Split(domain, ".")

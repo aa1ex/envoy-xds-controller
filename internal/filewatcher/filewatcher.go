@@ -83,7 +83,7 @@ func (fw *FileWatcher) Remove(file string) {
 func (fw *FileWatcher) Cancel() {
 	fw.cancelFunc()
 	fw.wg.Wait()
-	fw.watcher.Close()
+	_ = fw.watcher.Close()
 }
 
 func (fw *FileWatcher) run(ctx context.Context) {

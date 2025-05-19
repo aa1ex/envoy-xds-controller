@@ -26,11 +26,6 @@ func (s *RouteStore) ListRoutes(ctx context.Context, req *connect.Request[v1.Lis
 	list := make([]*v1.RouteListItem, 0, len(m))
 	authorizer := GetAuthorizerFromContext(ctx)
 
-	accessGroup := req.Msg.AccessGroup
-	if accessGroup == "" {
-		accessGroup = GeneralAccessGroup
-	}
-
 	for _, v := range m {
 		routeAG := v.GetAccessGroup()
 		if routeAG != req.Msg.AccessGroup && routeAG != GeneralAccessGroup {

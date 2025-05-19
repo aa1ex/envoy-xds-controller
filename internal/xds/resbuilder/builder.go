@@ -218,7 +218,7 @@ func buildResourcesFromVirtualService(vs *v1alpha1.VirtualService, xdsListener *
 	}
 
 	// Build filter chain parameters
-	filterChainParams, err := buildFilterChainParams(vs, xdsListener, nn, httpFilters, listenerIsTLS, virtualHost, store)
+	filterChainParams, err := buildFilterChainParams(vs, nn, httpFilters, listenerIsTLS, virtualHost, store)
 	if err != nil {
 		return nil, err
 	}
@@ -307,7 +307,7 @@ func buildRouteConfiguration(vs *v1alpha1.VirtualService, xdsListener *listenerv
 }
 
 // buildFilterChainParams builds the filter chain parameters
-func buildFilterChainParams(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener, nn helpers.NamespacedName, httpFilters []*hcmv3.HttpFilter, listenerIsTLS bool, virtualHost *routev3.VirtualHost, store *store.Store) (*FilterChainsParams, error) {
+func buildFilterChainParams(vs *v1alpha1.VirtualService, nn helpers.NamespacedName, httpFilters []*hcmv3.HttpFilter, listenerIsTLS bool, virtualHost *routev3.VirtualHost, store *store.Store) (*FilterChainsParams, error) {
 	filterChainParams := &FilterChainsParams{
 		VSName:            nn.String(),
 		UseRemoteAddress:  helpers.BoolFromPtr(vs.Spec.UseRemoteAddress),

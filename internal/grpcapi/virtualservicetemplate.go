@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
+
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
-	"sort"
 
 	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"

@@ -24,11 +24,6 @@ func NewAccessLogConfigStore(s *store.Store) *AccessLogConfigStore {
 func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *connect.Request[v1.ListAccessLogConfigsRequest]) (*connect.Response[v1.ListAccessLogConfigsResponse], error) {
 	authorizer := GetAuthorizerFromContext(ctx)
 
-	accessGroup := req.Msg.AccessGroup
-	if accessGroup == "" {
-		accessGroup = GeneralAccessGroup
-	}
-
 	m := s.store.MapAccessLogs()
 	list := make([]*v1.AccessLogConfigListItem, 0, len(m))
 	for _, v := range m {

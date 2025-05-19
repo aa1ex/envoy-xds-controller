@@ -44,6 +44,7 @@ func (c *CacheUpdater) InitFromKubernetes(ctx context.Context, cl client.Client)
 	return c.rebuildSnapshot(ctx)
 }
 
+// nolint: gocyclo
 func (c *CacheUpdater) rebuildSnapshot(ctx context.Context) error {
 	errs := make([]error, 0)
 

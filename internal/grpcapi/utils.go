@@ -1,11 +1,14 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"strings"
+	"time"
+
+	"connectrpc.com/connect"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/util/v1"
@@ -13,8 +16,6 @@ import (
 	virtual_service_templatev1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	corev1 "k8s.io/api/core/v1"
-	"strings"
-	"time"
 )
 
 type UtilsService struct {
@@ -27,7 +28,7 @@ func NewUtilsService(s *store.Store) *UtilsService {
 }
 
 func (s *UtilsService) VerifyDomains(_ context.Context, req *connect.Request[v1.VerifyDomainsRequest]) (*connect.Response[v1.VerifyDomainsResponse], error) {
-	var results []*v1.DomainVerificationResult
+	results := make([]*v1.DomainVerificationResult, 0, len(req.Msg.Domains))
 	for _, domain := range req.Msg.Domains {
 		res := verifyDomainFromSecrets(domain, s.store.MapDomainSecrets())
 		results = append(results, res)

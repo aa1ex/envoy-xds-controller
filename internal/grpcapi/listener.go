@@ -29,11 +29,6 @@ func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[
 	list := make([]*v1.ListenerListItem, 0, len(m))
 	authorizer := GetAuthorizerFromContext(ctx)
 
-	accessGroup := req.Msg.AccessGroup
-	if accessGroup == "" {
-		accessGroup = GeneralAccessGroup
-	}
-
 	for _, v := range m {
 		listenerAG := v.GetAccessGroup()
 		if listenerAG != req.Msg.AccessGroup && listenerAG != GeneralAccessGroup {
