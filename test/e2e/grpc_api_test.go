@@ -143,12 +143,97 @@ func grpcAPIContext() {
 		}
 		Eventually(verifyConfigUpdated).Should(Succeed())
 	})
+
+	It("should update and delete virtual service via grpc api", func() {
+		// Apply listener and template manifests first to ensure they exist
+		err := utils.ApplyManifests("test/testdata/e2e/grpc/listener.yaml")
+		Expect(err).NotTo(HaveOccurred())
+
+		err = utils.ApplyManifests("test/testdata/e2e/grpc/virtual-service-template.yaml")
+		Expect(err).NotTo(HaveOccurred())
+
+		// Get the listener UID
+		response := fetchDataViaGRPC(`{}`, "listener.v1.ListenerStoreService.ListListeners")
+		listenerUID := gjson.Get(response, "items.#(name==\"test-listener\").uid").String()
+		Expect(listenerUID).NotTo(BeEmpty())
+
+		// Get the template UID
+		response = fetchDataViaGRPC(`{}`, "virtual_service_template.v1.VirtualServiceTemplateStoreService.ListVirtualServiceTemplates")
+		templateUID := gjson.Get(response, "items.#(name==\"test-virtual-service-template\").uid").String()
+		Expect(templateUID).NotTo(BeEmpty())
+
+		// Create virtual service via API
+		createVSRequest := fmt.Sprintf(`{
+			"name": "update-delete-test-vs",
+			"node_ids": ["test"],
+			"access_group": "test",
+			"template_uid": "%s",
+			"listener_uid": "%s",
+			"virtual_host": {
+				"domains": ["test2.example.com"]
+			}
+		}`, templateUID, listenerUID)
+
+		By("creating the virtual service")
+		response = fetchDataViaGRPC(createVSRequest, "virtual_service.v1.VirtualServiceStoreService.CreateVirtualService")
+		Expect(response).NotTo(BeEmpty())
+
+		// Verify the virtual service was created
+		By("verifying the virtual service was created")
+		verifyVSCreated := func(g Gomega) {
+			response = fetchDataViaGRPC(`{"accessGroup": "test"}`, "virtual_service.v1.VirtualServiceStoreService.ListVirtualServices")
+			_, _ = GinkgoWriter.Write([]byte(response))
+			g.Expect(gjson.Get(response, "items.#(name==\"update-delete-test-vs\").uid").String()).NotTo(BeEmpty())
+		}
+		Eventually(verifyVSCreated).Should(Succeed())
+
+		By("verifying the virtual service was created")
+		// Get the virtual service UID
+		response = fetchDataViaGRPC(`{"accessGroup": "test"}`, "virtual_service.v1.VirtualServiceStoreService.ListVirtualServices")
+		vsUID := gjson.Get(response, "items.#(name==\"update-delete-test-vs\").uid").String()
+		Expect(vsUID).NotTo(BeEmpty())
+
+		By("updating the virtual service")
+		// Update the virtual service
+		updateVSRequest := fmt.Sprintf(`{
+			"uid": "%s",
+			"node_ids": ["test"],
+			"template_uid": "%s",
+			"listener_uid": "%s",
+			"virtual_host": {
+				"domains": ["updated.example.com"]
+			}
+		}`, vsUID, templateUID, listenerUID)
+
+		response = fetchDataViaGRPC(updateVSRequest, "virtual_service.v1.VirtualServiceStoreService.UpdateVirtualService")
+		Expect(response).NotTo(BeEmpty())
+
+		By("verifying the virtual service was updated")
+		// Verify the virtual service was updated
+		verifyVSUpdated := func(g Gomega) {
+			response = fetchDataViaGRPC(fmt.Sprintf(`{"uid": "%s"}`, vsUID), "virtual_service.v1.VirtualServiceStoreService.GetVirtualService")
+			_, _ = GinkgoWriter.Write([]byte(response))
+			g.Expect(gjson.Get(response, "virtualHost.domains.0").String()).To(Equal("updated.example.com"))
+		}
+		Eventually(verifyVSUpdated).Should(Succeed())
+
+		By("deleting the virtual service")
+		// Delete the virtual service
+		deleteVSRequest := fmt.Sprintf(`{"uid": "%s"}`, vsUID)
+		response = fetchDataViaGRPC(deleteVSRequest, "virtual_service.v1.VirtualServiceStoreService.DeleteVirtualService")
+		Expect(response).NotTo(BeEmpty())
+
+		By("verifying the virtual service was deleted")
+		// Verify the virtual service was deleted
+		response = fetchDataViaGRPC(`{"accessGroup": "test"}`, "virtual_service.v1.VirtualServiceStoreService.ListVirtualServices")
+		Expect(gjson.Get(response, "items.#.name").String()).To(Equal(`["test-virtual-service"]`))
+	})
 }
 
 func fetchDataViaGRPC(params string, endpoint string) string {
 	podName := "grpcurl"
 
-	By("creating the grpcurl pod to fetch data")
+	By("creating the grpcurl pod to fetch or send data")
 	cmd := exec.Command("kubectl", "run", podName, "-n", namespace, "--restart=Never",
 		"--image=fullstorydev/grpcurl:v1.9.3-alpine",
 		"--", "-plaintext", "-d", params,
