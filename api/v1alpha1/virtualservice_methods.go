@@ -169,7 +169,7 @@ func (vs *VirtualService) GetListenerNamespacedName() (helpers.NamespacedName, e
 		return helpers.NamespacedName{}, fmt.Errorf("listener is nil")
 	}
 	return helpers.NamespacedName{
-		Namespace: vs.Namespace,
+		Namespace: helpers.GetNamespace(vs.Spec.Listener.Namespace, vs.Namespace),
 		Name:      vs.Spec.Listener.Name,
 	}, nil
 }

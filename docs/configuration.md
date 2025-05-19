@@ -20,7 +20,6 @@ The Envoy XDS Controller is primarily configured through its Helm chart. Below a
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `replicaCount` | Number of controller replicas | `1` |
 | `development` | Enable development mode | `false` |
 | `watchNamespaces` | List of namespaces to watch (empty means all) | `[]` |
 | `createCRD` | Enable CRD creation and management | `true` |

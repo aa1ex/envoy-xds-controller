@@ -46,7 +46,14 @@ func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connec
 			AccessGroup: vsAccessGroup,
 		}
 		if v.Spec.Template != nil {
-			template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{Namespace: v.Namespace, Name: v.Spec.Template.Name})
+			template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{
+				Namespace: helpers.GetNamespace(v.Spec.Template.Namespace, v.Namespace),
+				Name:      v.Spec.Template.Name,
+			})
+			if template == nil {
+				// TODO: log
+				continue
+			}
 			vs.Template = &commonv1.ResourceRef{
 				Uid:  string(template.UID),
 				Name: template.Name,
