@@ -26,14 +26,14 @@ func (s *AccessLogConfigStore) ListAccessLogConfigs(ctx context.Context, req *co
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = DomainGeneral
+		accessGroup = GeneralAccessGroup
 	}
 
 	m := s.store.MapAccessLogs()
 	list := make([]*v1.AccessLogConfigListItem, 0, len(m))
 	for _, v := range m {
 		accessLogAG := v.GetAccessGroup()
-		if accessLogAG != req.Msg.AccessGroup && accessLogAG != DomainGeneral {
+		if accessLogAG != req.Msg.AccessGroup && accessLogAG != GeneralAccessGroup {
 			continue
 		}
 		item := &v1.AccessLogConfigListItem{

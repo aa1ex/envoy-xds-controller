@@ -301,7 +301,7 @@ func (s *VirtualServiceStore) validateCreateVirtualServiceRequest(req *connect.R
 	if req.Msg.AccessGroup == "" {
 		return fmt.Errorf("access group is required")
 	}
-	if req.Msg.AccessGroup == grpcapi.DomainGeneral {
+	if req.Msg.AccessGroup == grpcapi.GeneralAccessGroup {
 		return fmt.Errorf("forbidden to create virtual service in general access group")
 	}
 	if req.Msg.TemplateUid == "" {

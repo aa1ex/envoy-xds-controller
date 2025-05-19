@@ -29,12 +29,12 @@ func (s *HTTPFilterStore) ListHTTPFilters(ctx context.Context, req *connect.Requ
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = DomainGeneral
+		accessGroup = GeneralAccessGroup
 	}
 
 	for _, v := range m {
 		httpFilterAG := v.GetAccessGroup()
-		if httpFilterAG != req.Msg.AccessGroup && httpFilterAG != DomainGeneral {
+		if httpFilterAG != req.Msg.AccessGroup && httpFilterAG != GeneralAccessGroup {
 			continue
 		}
 		item := &v1.HTTPFilterListItem{

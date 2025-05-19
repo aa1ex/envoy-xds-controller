@@ -25,7 +25,7 @@ func (s *VirtualServiceStore) ListVirtualServices(ctx context.Context, r *connec
 	for _, v := range m {
 		vsAccessGroup := v.GetAccessGroup()
 		if vsAccessGroup == "" {
-			vsAccessGroup = grpcapi.DomainGeneral
+			vsAccessGroup = grpcapi.GeneralAccessGroup
 		}
 
 		isAllowed, err := authorizer.Authorize(vsAccessGroup, v.Name)

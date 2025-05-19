@@ -34,7 +34,7 @@ func (s *VirtualServiceTemplateStore) ListVirtualServiceTemplates(ctx context.Co
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = DomainGeneral
+		accessGroup = GeneralAccessGroup
 	}
 
 	for _, v := range m {

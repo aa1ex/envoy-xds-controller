@@ -28,12 +28,12 @@ func (s *RouteStore) ListRoutes(ctx context.Context, req *connect.Request[v1.Lis
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = DomainGeneral
+		accessGroup = GeneralAccessGroup
 	}
 
 	for _, v := range m {
 		routeAG := v.GetAccessGroup()
-		if routeAG != req.Msg.AccessGroup && routeAG != DomainGeneral {
+		if routeAG != req.Msg.AccessGroup && routeAG != GeneralAccessGroup {
 			continue
 		}
 		item := &v1.RouteListItem{

@@ -176,7 +176,7 @@ The system supports dynamic policy updates:
 
 1. **Group Types**:
    - Regular access groups
-   - General domain (`_`)
+   - General domain (`general`)
    - Wildcard access (`*`)
 
 2. **Access Levels**:

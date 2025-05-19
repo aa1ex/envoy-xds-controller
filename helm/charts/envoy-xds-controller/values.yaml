@@ -195,22 +195,22 @@ auth:
       testers:
         - "test"
   rbacPolicy: |-
-    g, admins, role:admin, _
+    g, admins, role:admin, general
     g, admins, role:admin, dev
     g, admins, role:admin, test
 
-    g, developers, role:reader, _
+    g, developers, role:reader, general
     g, developers, role:reader, dev
 
     g, testers,, test
-    g, testers,, _
+    g, testers,, general
     
-    p, testers, _, *, list-virtual-service-templates
-    p, testers, _, *, list-listeners
-    p, testers, _, *, list-access-log-configs
-    p, testers, _, *, list-http-filters
-    p, testers, _, *, list-routes
-    p, testers, _, *, fill-template
+    p, testers, general, *, list-virtual-service-templates
+    p, testers, general, *, list-listeners
+    p, testers, general, *, list-access-log-configs
+    p, testers, general, *, list-http-filters
+    p, testers, general, *, list-routes
+    p, testers, general, *, fill-template
     
     p, testers, test, *, list-virtual-services
     p, testers, test, *, list-virtual-service-templates
@@ -224,7 +224,7 @@ auth:
     p, testers, test, *, create-virtual-service
     p, testers, test, *, update-virtual-service
     
-    g, sa, developers, _
+    g, sa, developers, general
     g, sa, developers, dev
 
 config:

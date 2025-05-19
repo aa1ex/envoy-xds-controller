@@ -31,12 +31,12 @@ func (s *ListenerStore) ListListeners(ctx context.Context, req *connect.Request[
 
 	accessGroup := req.Msg.AccessGroup
 	if accessGroup == "" {
-		accessGroup = DomainGeneral
+		accessGroup = GeneralAccessGroup
 	}
 
 	for _, v := range m {
 		listenerAG := v.GetAccessGroup()
-		if listenerAG != req.Msg.AccessGroup && listenerAG != DomainGeneral {
+		if listenerAG != req.Msg.AccessGroup && listenerAG != GeneralAccessGroup {
 			continue
 		}
 		item := &v1.ListenerListItem{

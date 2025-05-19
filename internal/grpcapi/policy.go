@@ -31,7 +31,7 @@ func (s *PolicyStore) ListPolicies(ctx context.Context, _ *connect.Request[v1.Li
 			Name:        v.Name,
 			Description: v.GetDescription(),
 		}
-		isAllowed, err := authorizer.Authorize(DomainGeneral, item.Name)
+		isAllowed, err := authorizer.Authorize(GeneralAccessGroup, item.Name)
 		if err != nil {
 			return nil, err
 		}
