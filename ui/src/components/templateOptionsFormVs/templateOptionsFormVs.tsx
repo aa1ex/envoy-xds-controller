@@ -53,7 +53,7 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 	const enumOptionsModifier = Object.entries(TemplateOptionModifier)
 		.filter(([_, value]) => typeof value === 'number')
 		.map(([key, value]) => ({
-			label: `TEMPLATE_OPTION_MODIFIER_${key.toUpperCase()}`,
+			label: key.toUpperCase(),
 			value: value
 		}))
 
@@ -87,13 +87,23 @@ export const TemplateOptionsFormVs: React.FC<ITemplateOptionsFormVsProps> = ({
 					title={
 						<>
 							<p>Specify the property path and select the modifier parameter.</p>
-							<p><strong>Modifiers:</strong></p>
+							<p>
+								<strong>Modifiers:</strong>
+							</p>
 							<ul>
-								<li><strong>merge</strong> (default) - Merges objects, appends to lists</li>
-								<li><strong>replace</strong> - Completely replaces objects or lists</li>
-								<li><strong>delete</strong> - Removes the field from configuration</li>
+								<li>
+									<strong>merge</strong> (default) - Merges objects, appends to lists
+								</li>
+								<li>
+									<strong>replace</strong> - Completely replaces objects or lists
+								</li>
+								<li>
+									<strong>delete</strong> - Removes the field from configuration
+								</li>
 							</ul>
-							<p><strong>Example:</strong> path - virtualHost.domains, modifier - replace</p>
+							<p>
+								<strong>Example:</strong> path - virtualHost.domains, modifier - replace
+							</p>
 						</>
 					}
 					placement='bottom-start'

@@ -128,7 +128,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				debouncedFillTemplate(fullForm)
 			} else if (changedField?.startsWith('templateOptions')) {
 				if (shouldSendTemplateOptions) {
-					console.log(1)
 					debouncedFillTemplate(fullForm)
 				}
 			} else {
@@ -163,7 +162,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			virtualHostDomains: vhDomains,
 			additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
 			additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || [],
-			description: virtualServiceInfo.description,
+			description: virtualServiceInfo.description
 		})
 	}, [reset, isCreate, virtualServiceInfo])
 

@@ -81,7 +81,8 @@ export const useDeleteVs = () => {
 	})
 
 	return {
-		deleteVirtualService: deleteVirtualServiceMutation.mutateAsync
+		deleteVirtualService: deleteVirtualServiceMutation.mutateAsync,
+		errorDeleteVs: deleteVirtualServiceMutation.error
 	}
 }
 

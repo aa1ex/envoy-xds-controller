@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'
 import Dialog from '@mui/material/Dialog'
-import { Button, DialogActions, DialogTitle } from '@mui/material'
+import { Alert, Button, DialogActions, DialogTitle } from '@mui/material'
 import DialogContent from '@mui/material/DialogContent'
 import { ListVirtualServicesResponse } from '../../gen/virtual_service/v1/virtual_service_pb.ts'
 
 import { useDeleteVs } from '../../api/grpc/hooks/useVirtualService.ts'
+import Snackbar from '@mui/material/Snackbar'
 
 interface IDialogDeleteVSProps {
 	serviceName: string
@@ -26,16 +27,29 @@ const DialogDeleteVS: React.FC<IDialogDeleteVSProps> = ({
 	selectedUid,
 	setSelectedUid
 }) => {
-	//TODO тут хук удаления
 	const { deleteVirtualService } = useDeleteVs()
+	const [openSnackBar, setOpenSnackBar] = useState(false)
+	const [snackMessage, setSnackMessage] = useState<string | null>(null)
+	const [isError, setIsError] = useState(false)
 
 	const handleConfirmDelete = async () => {
 		if (!selectedUid.trim()) return
 
-		await deleteVirtualService(selectedUid)
-		setOpenDialog(false)
-		await refetchServices()
-		setSelectedUid('')
+		try {
+			await deleteVirtualService(selectedUid)
+			await refetchServices()
+			setSnackMessage(`Virtual service: ${serviceName.toUpperCase()} deleted successfully.`)
+			setOpenSnackBar(true)
+			setIsError(false)
+		} catch (error) {
+			console.log(error)
+			setSnackMessage(`${error}`)
+			setIsError(true)
+			setOpenSnackBar(true)
+		} finally {
+			setOpenDialog(false)
+			setSelectedUid('')
+		}
 	}
 
 	const handleCloseDialog = () => {
@@ -57,6 +71,22 @@ const DialogDeleteVS: React.FC<IDialogDeleteVSProps> = ({
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			<Snackbar
+				open={openSnackBar}
+				autoHideDuration={4000}
+				onClose={() => setOpenSnackBar(false)}
+				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+			>
+				<Alert
+					onClose={() => setOpenSnackBar(false)}
+					severity={isError ? 'error' : 'success'}
+					variant='filled'
+					sx={{ width: '50%' }}
+				>
+					{snackMessage}
+				</Alert>
+			</Snackbar>
 		</>
 	)
 }

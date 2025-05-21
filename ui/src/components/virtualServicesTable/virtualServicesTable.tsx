@@ -23,6 +23,7 @@ const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
 
 	const location = useLocation()
 	const navigate = useNavigate()
+
 	const [openSnackBar, setOpenSnackBar] = useState(false)
 	const [snackMessage, setSnackMessage] = useState<string | null>(null)
 
@@ -76,7 +77,7 @@ const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
 			/>
 			<Snackbar
 				open={openSnackBar}
-				autoHideDuration={3000}
+				autoHideDuration={3500}
 				onClose={() => setOpenSnackBar(false)}
 				anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
 			>
