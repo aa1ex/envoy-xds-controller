@@ -31,7 +31,7 @@ type Item = ListenerListItem | VirtualServiceTemplateListItem | AccessLogConfigL
 
 interface ISelectFormVsProps {
 	nameField: nameFieldKeys
-	control: Control<IVirtualServiceForm, any>
+	control: Control<IVirtualServiceForm>
 	data:
 		| ListListenersResponse
 		| ListVirtualServiceTemplatesResponse
@@ -73,7 +73,7 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 					</Box>
 					<Box sx={{ width: '75%' }}>
 						<Typography variant='body2' sx={{ wordWrap: 'break-word' }} color='textDisabled'>
-							{'description' in item && item.description ? item.description : ''}
+							{('description' in item && item.description) || ''}
 						</Typography>
 					</Box>
 				</Box>

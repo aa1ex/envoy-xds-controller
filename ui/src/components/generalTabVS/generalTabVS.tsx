@@ -6,6 +6,7 @@ import { SelectNodeVs } from '../selectNodeVs/selectNodeVs.tsx'
 import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { useListenerVs, useNodeListVs, useTemplatesVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { useParams } from 'react-router-dom'
+import { TextAreaFomVs } from '../textAreaFomVs/textAreaFomVs.tsx'
 
 interface IGeneralTabVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -48,6 +49,7 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				isFetching={isFetchingListeners}
 				isErrorFetch={isErrorListeners}
 			/>
+			<TextAreaFomVs register={register} nameField='description' errors={errors} />
 		</>
 	)
 }

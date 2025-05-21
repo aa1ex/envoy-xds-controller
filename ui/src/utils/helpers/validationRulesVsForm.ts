@@ -11,7 +11,11 @@ export const validationRulesVsForm: Record<
 		if (!/^[a-zA-Z0-9_-]+$/.test(value)) return 'Name must contain only letters, numbers, hyphens, and underscores'
 		return true
 	},
-	description: () => {
+	description: value => {
+		if (typeof value !== 'string') return 'Invalid description'
+		if (value.length > 120) return 'Description must be at most 120 characters long'
+		if (!/^[a-zA-Zа-яА-ЯёЁ0-9\s\-_:;!]+$/.test(value))
+			return 'Description must contain only letters, numbers, hyphens, and underscores'
 		return true
 	},
 	nodeIds: value => {

@@ -99,7 +99,7 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 											sx={{ wordWrap: 'break-word' }}
 											color='textDisabled'
 										>
-											{'description' in option && option.description ? option.description : ''}
+											{('description' in option && option.description) || ''}
 										</Typography>
 									</Box>
 								</Box>
