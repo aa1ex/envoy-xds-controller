@@ -230,6 +230,7 @@ Represents an access log configuration item.
 | ----- | ---- | ----------- |
 | uid | [ string](#string) | The unique identifier of the access log configuration. |
 | name | [ string](#string) | The name of the access log configuration. |
+| description | [ string](#string) | Description is the human-readable description of the resource |
 
 
 

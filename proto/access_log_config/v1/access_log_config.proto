@@ -16,6 +16,8 @@ message AccessLogConfigListItem {
   string uid = 1;
   // The name of the access log configuration.
   string name = 2;
+  // Description is the human-readable description of the resource
+  string description = 3;
 }
 
 // Request message for listing access log configurations.
