@@ -19,6 +19,8 @@ import {
 import { AccessGroupListItem, ListAccessGroupsResponse } from '../../gen/access_group/v1/access_group_pb'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
 type nameFieldKeys = Extract<
 	keyof IVirtualServiceForm,
@@ -65,7 +67,16 @@ export const SelectFormVs: React.FC<ISelectFormVsProps> = ({
 
 		return (
 			<MenuItem key={key} value={value}>
-				{item.name}
+				<Box display='flex' justifyContent='space-between' width='100%'>
+					<Box sx={{ width: '25%' }}>
+						<Typography>{item.name}</Typography>
+					</Box>
+					<Box sx={{ width: '75%' }}>
+						<Typography variant='body2' sx={{ wordWrap: 'break-word' }} color='textDisabled'>
+							{'description' in item && item.description ? item.description : ''}
+						</Typography>
+					</Box>
+				</Box>
 			</MenuItem>
 		)
 	}

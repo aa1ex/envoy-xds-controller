@@ -22,16 +22,9 @@ import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
-interface mockData {
-	items: {
-		uid: string
-		name: string
-	}[]
-}
-
 interface IdNdSelectFormVsProps {
 	nameField: nameFieldKeys
-	data: ListHTTPFiltersResponse | ListRoutesResponse | mockData | undefined
+	data: ListHTTPFiltersResponse | ListRoutesResponse | undefined
 	watch: UseFormWatch<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm, any>
 	setValue: UseFormSetValue<IVirtualServiceForm>
@@ -86,6 +79,32 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 					<Autocomplete
 						multiple
 						options={data?.items || []}
+						renderOption={(props, option) => {
+							const { key, ...optionProps } = props
+							return (
+								<Box
+									key={key}
+									component='li'
+									display='flex'
+									justifyContent='space-between'
+									width='100%'
+									{...optionProps}
+								>
+									<Box sx={{ width: '25%' }}>
+										<Typography>{option.name}</Typography>
+									</Box>
+									<Box sx={{ width: '75%' }}>
+										<Typography
+											variant='body2'
+											sx={{ wordWrap: 'break-word' }}
+											color='textDisabled'
+										>
+											{'description' in option && option.description ? option.description : ''}
+										</Typography>
+									</Box>
+								</Box>
+							)
+						}}
 						getOptionLabel={option => option.name}
 						value={(data?.items || []).filter(item => field.value.includes(item.uid))}
 						onChange={(_, newValue) => field.onChange(newValue.map(item => item.uid))}
