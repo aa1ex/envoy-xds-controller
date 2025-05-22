@@ -2,12 +2,14 @@ package e2e
 
 import (
 	"fmt"
-	"github.com/tidwall/gjson"
 	"os/exec"
 	"strings"
 	"time"
 
+	"github.com/tidwall/gjson"
+
 	"github.com/kaasops/envoy-xds-controller/test/utils"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
