@@ -39,6 +39,11 @@ export const useConfigTable = ({
 	setSelectedUid
 }: IConfigVirtualServicesTable) => {
 	const navigate = useNavigate()
+
+	//TODO Once the endpoint is ready, add permission functionality
+	// const { data } = useGetPermissions(groupId)
+	// if (data) console.log({ data })
+
 	const setVsInfo = useVirtualServiceStore(state => state.setVirtualService)
 	const setViewMode = useViewModeStore(state => state.setViewMode)
 	const setTabIndex = useTabStore(state => state.setTabIndex)
@@ -109,6 +114,16 @@ export const useConfigTable = ({
 				size: 300,
 				Cell: ({ renderedCellValue }) =>
 					Array.isArray(renderedCellValue) && <NodeIdsChip nodeIsData={renderedCellValue} />
+			},
+			{
+				accessorFn: row => row?.template?.name || '',
+				header: 'Template',
+				minSize: 250
+			},
+			{
+				accessorFn: row => row?.description || '',
+				header: 'Description',
+				minSize: 500
 			}
 		],
 		[]

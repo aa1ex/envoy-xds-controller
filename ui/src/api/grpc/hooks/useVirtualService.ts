@@ -5,6 +5,7 @@ import {
 	httpFilterServiceClient,
 	listenerServiceClient,
 	nodeServiceClient,
+	permissionsServiceClient,
 	routeServiceClient,
 	templateServiceClient,
 	utilServiceClient,
@@ -15,10 +16,6 @@ import {
 	UpdateVirtualServiceRequest
 } from '../../../gen/virtual_service/v1/virtual_service_pb.ts'
 import { FillTemplateRequest } from '../../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
-
-const metadata = {
-	headers: undefined
-}
 
 export const useListVs = (flag: boolean, accessGroup?: string) => {
 	const safeAccessGroup = accessGroup ?? ''
@@ -39,7 +36,7 @@ export const useListVs = (flag: boolean, accessGroup?: string) => {
 export const useGetVs = (uid: string) => {
 	return useQuery({
 		queryKey: ['getVs', uid],
-		queryFn: () => virtualServiceClient.getVirtualService({ uid }, metadata),
+		queryFn: () => virtualServiceClient.getVirtualService({ uid }),
 		gcTime: 0
 	})
 }
@@ -48,7 +45,7 @@ export const useCreateVs = () => {
 	const createVirtualServiceMutation = useMutation({
 		mutationKey: ['createVs'],
 		mutationFn: (vsCreateData: CreateVirtualServiceRequest) =>
-			virtualServiceClient.createVirtualService(vsCreateData, metadata)
+			virtualServiceClient.createVirtualService(vsCreateData)
 	})
 
 	return {
@@ -62,7 +59,7 @@ export const useUpdateVs = () => {
 	const updateVsMutations = useMutation({
 		mutationKey: ['update'],
 		mutationFn: (vsUpdateData: UpdateVirtualServiceRequest) =>
-			virtualServiceClient.updateVirtualService(vsUpdateData, metadata)
+			virtualServiceClient.updateVirtualService(vsUpdateData)
 	})
 
 	return {
@@ -77,7 +74,7 @@ export const useUpdateVs = () => {
 export const useDeleteVs = () => {
 	const deleteVirtualServiceMutation = useMutation({
 		mutationKey: ['deleteVs'],
-		mutationFn: (uid: string) => virtualServiceClient.deleteVirtualService({ uid }, metadata)
+		mutationFn: (uid: string) => virtualServiceClient.deleteVirtualService({ uid })
 	})
 
 	return {
@@ -89,53 +86,49 @@ export const useDeleteVs = () => {
 export const useAccessGroupsVs = () => {
 	return useQuery({
 		queryKey: ['accessGroupsVs'],
-		queryFn: () =>
-			accessGroupsServiceClient.listAccessGroups(
-				{}
-				// metadata
-			)
+		queryFn: () => accessGroupsServiceClient.listAccessGroups({})
 	})
 }
 
 export const useAccessLogsVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['accessLogsVs'],
-		queryFn: () => accessLogServiceClient.listAccessLogConfigs({ accessGroup: accessGroup || '' }, metadata)
+		queryFn: () => accessLogServiceClient.listAccessLogConfigs({ accessGroup: accessGroup || '' })
 	})
 }
 
 export const useHttpFilterVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['httpFilterVs'],
-		queryFn: () => httpFilterServiceClient.listHTTPFilters({ accessGroup: accessGroup || '' }, metadata)
+		queryFn: () => httpFilterServiceClient.listHTTPFilters({ accessGroup: accessGroup || '' })
 	})
 }
 
 export const useListenerVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['listenerVs'],
-		queryFn: () => listenerServiceClient.listListeners({ accessGroup: accessGroup || '' }, metadata)
+		queryFn: () => listenerServiceClient.listListeners({ accessGroup: accessGroup || '' })
 	})
 }
 
 export const useRouteVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['routeVs'],
-		queryFn: () => routeServiceClient.listRoutes({ accessGroup: accessGroup || '' }, metadata)
+		queryFn: () => routeServiceClient.listRoutes({ accessGroup: accessGroup || '' })
 	})
 }
 
 export const useTemplatesVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['templatesVs'],
-		queryFn: () => templateServiceClient.listVirtualServiceTemplates({ accessGroup: accessGroup || '' }, metadata)
+		queryFn: () => templateServiceClient.listVirtualServiceTemplates({ accessGroup: accessGroup || '' })
 	})
 }
 
 export const useNodeListVs = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['nodeListVs'],
-		queryFn: () => nodeServiceClient.listNodes({ accessGroup: accessGroup || '' }, metadata)
+		queryFn: () => nodeServiceClient.listNodes({ accessGroup: accessGroup || '' })
 	})
 }
 
@@ -160,4 +153,11 @@ export const useFillTemplate = () => {
 		rawData: fillTemplateMutation.data,
 		errorFillTemplate: fillTemplateMutation.error
 	}
+}
+
+export const useGetPermissions = (accessGroup?: string) => {
+	return useQuery({
+		queryKey: ['getPermissions', accessGroup],
+		queryFn: () => permissionsServiceClient.listPermissions({ accessGroup: accessGroup })
+	})
 }
