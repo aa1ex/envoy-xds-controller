@@ -26,6 +26,8 @@ import (
 	"os"
 	"strconv"
 
+	xdsClients "github.com/kaasops/envoy-xds-controller/internal/xds/clients"
+
 	"github.com/kaasops/envoy-xds-controller/internal/filewatcher"
 
 	mgrCache "sigs.k8s.io/controller-runtime/pkg/cache"
@@ -42,7 +44,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	"github.com/envoyproxy/go-control-plane/pkg/server/v3"
-	"github.com/envoyproxy/go-control-plane/pkg/test/v3"
 	"github.com/kelseyhightower/envconfig"
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds"
@@ -426,8 +427,13 @@ func main() {
 			return fmt.Errorf("unable to init cache updater: %w", err)
 		}
 
+		connectedClients := xdsClients.NewRegistry()
+
 		go func() {
-			srv := server.NewServer(ctx, snapshotCache, &test.Callbacks{Debug: true})
+			srv := server.NewServer(ctx, snapshotCache, xds.NewCallbacks(
+				ctrl.Log.WithName("xds.server.callbacks"),
+				connectedClients),
+			)
 			if err = xds.RunServer(srv, cfg.XDS.Port); err != nil {
 				setupServers.Error(err, "cannot run xDS server")
 				os.Exit(1)
@@ -518,6 +524,15 @@ func main() {
 					data, err := json.MarshalIndent(m, "", "\t")
 					if err != nil {
 						dLog.Error(err, "failed to marshal used secrets")
+						w.WriteHeader(http.StatusInternalServerError)
+						return
+					}
+					_, _ = w.Write(data)
+				})
+				http.HandleFunc("/debug/connected-clients", func(w http.ResponseWriter, r *http.Request) {
+					data, err := json.MarshalIndent(connectedClients.List(), "", "\t")
+					if err != nil {
+						dLog.Error(err, "failed to marshal connected clients")
 						w.WriteHeader(http.StatusInternalServerError)
 						return
 					}
