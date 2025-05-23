@@ -39,6 +39,7 @@
 - [ListNodesRequest](#listnodesrequest)
 - [ListNodesResponse](#listnodesresponse)
 - [NodeListItem](#nodelistitem)
+- [AccessGroupPermissions](#accessgrouppermissions)
 - [ListPermissionsRequest](#listpermissionsrequest)
 - [ListPermissionsResponse](#listpermissionsresponse)
 - [PermissionsItem](#permissionsitem)
@@ -396,13 +397,19 @@ NodeListItem represents a node with its unique identifier.
 
 
 
-### ListPermissionsRequest {#listpermissionsrequest}
-Request message for listing permissions.
+### AccessGroupPermissions {#accessgrouppermissions}
+
 
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
-| access_group | [ string](#string) | The access group for which permissions are being requested. |
+| access_group | [ string](#string) | Access group name |
+| permissions | [repeated PermissionsItem](#permissionsitem) | Permission items associated with access group. |
+
+
+
+### ListPermissionsRequest {#listpermissionsrequest}
+Request message for listing permissions.
 
 
 
@@ -412,7 +419,7 @@ Response message containing a list of permission items.
 
 | Field | Type | Description |
 | ----- | ---- | ----------- |
-| items | [repeated PermissionsItem](#permissionsitem) | The list of permission items. |
+| items | [repeated AccessGroupPermissions](#accessgrouppermissions) | The list of permission items. |
 
 
 

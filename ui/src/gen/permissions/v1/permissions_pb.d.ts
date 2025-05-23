@@ -11,6 +11,31 @@ import type { Message } from "@bufbuild/protobuf";
 export declare const file_permissions_v1_permissions: GenFile;
 
 /**
+ * @generated from message permissions.v1.AccessGroupPermissions
+ */
+export declare type AccessGroupPermissions = Message<"permissions.v1.AccessGroupPermissions"> & {
+  /**
+   * Access group name
+   *
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
+
+  /**
+   * Permission items associated with access group.
+   *
+   * @generated from field: repeated permissions.v1.PermissionsItem permissions = 2;
+   */
+  permissions: PermissionsItem[];
+};
+
+/**
+ * Describes the message permissions.v1.AccessGroupPermissions.
+ * Use `create(AccessGroupPermissionsSchema)` to create a new message.
+ */
+export declare const AccessGroupPermissionsSchema: GenMessage<AccessGroupPermissions>;
+
+/**
  * Represents a permission item with an action and associated objects.
  *
  * @generated from message permissions.v1.PermissionsItem
@@ -43,12 +68,6 @@ export declare const PermissionsItemSchema: GenMessage<PermissionsItem>;
  * @generated from message permissions.v1.ListPermissionsRequest
  */
 export declare type ListPermissionsRequest = Message<"permissions.v1.ListPermissionsRequest"> & {
-  /**
-   * The access group for which permissions are being requested.
-   *
-   * @generated from field: string access_group = 1;
-   */
-  accessGroup: string;
 };
 
 /**
@@ -66,9 +85,9 @@ export declare type ListPermissionsResponse = Message<"permissions.v1.ListPermis
   /**
    * The list of permission items.
    *
-   * @generated from field: repeated permissions.v1.PermissionsItem items = 1;
+   * @generated from field: repeated permissions.v1.AccessGroupPermissions items = 1;
    */
-  items: PermissionsItem[];
+  items: AccessGroupPermissions[];
 };
 
 /**

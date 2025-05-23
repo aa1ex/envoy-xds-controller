@@ -158,6 +158,6 @@ export const useFillTemplate = () => {
 export const useGetPermissions = (accessGroup?: string) => {
 	return useQuery({
 		queryKey: ['getPermissions', accessGroup],
-		queryFn: () => permissionsServiceClient.listPermissions({ accessGroup: accessGroup })
+		queryFn: () => permissionsServiceClient.listPermissions({})
 	})
 }

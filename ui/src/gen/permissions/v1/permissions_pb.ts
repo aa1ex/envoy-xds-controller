@@ -10,7 +10,33 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file permissions/v1/permissions.proto.
  */
 export const file_permissions_v1_permissions: GenFile = /*@__PURE__*/
-  fileDesc("CiBwZXJtaXNzaW9ucy92MS9wZXJtaXNzaW9ucy5wcm90bxIOcGVybWlzc2lvbnMudjEiMgoPUGVybWlzc2lvbnNJdGVtEg4KBmFjdGlvbhgBIAEoCRIPCgdvYmplY3RzGAIgAygJIi4KFkxpc3RQZXJtaXNzaW9uc1JlcXVlc3QSFAoMYWNjZXNzX2dyb3VwGAEgASgJIkkKF0xpc3RQZXJtaXNzaW9uc1Jlc3BvbnNlEi4KBWl0ZW1zGAEgAygLMh8ucGVybWlzc2lvbnMudjEuUGVybWlzc2lvbnNJdGVtMngKElBlcm1pc3Npb25zU2VydmljZRJiCg9MaXN0UGVybWlzc2lvbnMSJi5wZXJtaXNzaW9ucy52MS5MaXN0UGVybWlzc2lvbnNSZXF1ZXN0GicucGVybWlzc2lvbnMudjEuTGlzdFBlcm1pc3Npb25zUmVzcG9uc2VC0gEKEmNvbS5wZXJtaXNzaW9ucy52MUIQUGVybWlzc2lvbnNQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL3Blcm1pc3Npb25zL3YxO3Blcm1pc3Npb25zdjGiAgNQWFiqAg5QZXJtaXNzaW9ucy5WMcoCDlBlcm1pc3Npb25zXFYx4gIaUGVybWlzc2lvbnNcVjFcR1BCTWV0YWRhdGHqAg9QZXJtaXNzaW9uczo6VjFiBnByb3RvMw");
+  fileDesc("CiBwZXJtaXNzaW9ucy92MS9wZXJtaXNzaW9ucy5wcm90bxIOcGVybWlzc2lvbnMudjEiZAoWQWNjZXNzR3JvdXBQZXJtaXNzaW9ucxIUCgxhY2Nlc3NfZ3JvdXAYASABKAkSNAoLcGVybWlzc2lvbnMYAiADKAsyHy5wZXJtaXNzaW9ucy52MS5QZXJtaXNzaW9uc0l0ZW0iMgoPUGVybWlzc2lvbnNJdGVtEg4KBmFjdGlvbhgBIAEoCRIPCgdvYmplY3RzGAIgAygJIhgKFkxpc3RQZXJtaXNzaW9uc1JlcXVlc3QiUAoXTGlzdFBlcm1pc3Npb25zUmVzcG9uc2USNQoFaXRlbXMYASADKAsyJi5wZXJtaXNzaW9ucy52MS5BY2Nlc3NHcm91cFBlcm1pc3Npb25zMngKElBlcm1pc3Npb25zU2VydmljZRJiCg9MaXN0UGVybWlzc2lvbnMSJi5wZXJtaXNzaW9ucy52MS5MaXN0UGVybWlzc2lvbnNSZXF1ZXN0GicucGVybWlzc2lvbnMudjEuTGlzdFBlcm1pc3Npb25zUmVzcG9uc2VC0gEKEmNvbS5wZXJtaXNzaW9ucy52MUIQUGVybWlzc2lvbnNQcm90b1ABWlFnaXRodWIuY29tL2thYXNvcHMvZW52b3kteGRzLWNvbnRyb2xsZXIvcGtnL2FwaS9ncnBjL3Blcm1pc3Npb25zL3YxO3Blcm1pc3Npb25zdjGiAgNQWFiqAg5QZXJtaXNzaW9ucy5WMcoCDlBlcm1pc3Npb25zXFYx4gIaUGVybWlzc2lvbnNcVjFcR1BCTWV0YWRhdGHqAg9QZXJtaXNzaW9uczo6VjFiBnByb3RvMw");
+
+/**
+ * @generated from message permissions.v1.AccessGroupPermissions
+ */
+export type AccessGroupPermissions = Message<"permissions.v1.AccessGroupPermissions"> & {
+  /**
+   * Access group name
+   *
+   * @generated from field: string access_group = 1;
+   */
+  accessGroup: string;
+
+  /**
+   * Permission items associated with access group.
+   *
+   * @generated from field: repeated permissions.v1.PermissionsItem permissions = 2;
+   */
+  permissions: PermissionsItem[];
+};
+
+/**
+ * Describes the message permissions.v1.AccessGroupPermissions.
+ * Use `create(AccessGroupPermissionsSchema)` to create a new message.
+ */
+export const AccessGroupPermissionsSchema: GenMessage<AccessGroupPermissions> = /*@__PURE__*/
+  messageDesc(file_permissions_v1_permissions, 0);
 
 /**
  * Represents a permission item with an action and associated objects.
@@ -38,7 +64,7 @@ export type PermissionsItem = Message<"permissions.v1.PermissionsItem"> & {
  * Use `create(PermissionsItemSchema)` to create a new message.
  */
 export const PermissionsItemSchema: GenMessage<PermissionsItem> = /*@__PURE__*/
-  messageDesc(file_permissions_v1_permissions, 0);
+  messageDesc(file_permissions_v1_permissions, 1);
 
 /**
  * Request message for listing permissions.
@@ -46,12 +72,6 @@ export const PermissionsItemSchema: GenMessage<PermissionsItem> = /*@__PURE__*/
  * @generated from message permissions.v1.ListPermissionsRequest
  */
 export type ListPermissionsRequest = Message<"permissions.v1.ListPermissionsRequest"> & {
-  /**
-   * The access group for which permissions are being requested.
-   *
-   * @generated from field: string access_group = 1;
-   */
-  accessGroup: string;
 };
 
 /**
@@ -59,7 +79,7 @@ export type ListPermissionsRequest = Message<"permissions.v1.ListPermissionsRequ
  * Use `create(ListPermissionsRequestSchema)` to create a new message.
  */
 export const ListPermissionsRequestSchema: GenMessage<ListPermissionsRequest> = /*@__PURE__*/
-  messageDesc(file_permissions_v1_permissions, 1);
+  messageDesc(file_permissions_v1_permissions, 2);
 
 /**
  * Response message containing a list of permission items.
@@ -70,9 +90,9 @@ export type ListPermissionsResponse = Message<"permissions.v1.ListPermissionsRes
   /**
    * The list of permission items.
    *
-   * @generated from field: repeated permissions.v1.PermissionsItem items = 1;
+   * @generated from field: repeated permissions.v1.AccessGroupPermissions items = 1;
    */
-  items: PermissionsItem[];
+  items: AccessGroupPermissions[];
 };
 
 /**
@@ -80,7 +100,7 @@ export type ListPermissionsResponse = Message<"permissions.v1.ListPermissionsRes
  * Use `create(ListPermissionsResponseSchema)` to create a new message.
  */
 export const ListPermissionsResponseSchema: GenMessage<ListPermissionsResponse> = /*@__PURE__*/
-  messageDesc(file_permissions_v1_permissions, 2);
+  messageDesc(file_permissions_v1_permissions, 3);
 
 /**
  * @generated from service permissions.v1.PermissionsService

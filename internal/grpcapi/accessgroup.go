@@ -23,28 +23,31 @@ func NewAccessGroupStore(svc AccessGroupService) *AccessGroupStore {
 }
 
 func (s *AccessGroupStore) ListAccessGroups(ctx context.Context, _ *connect.Request[v1.ListAccessGroupsRequest]) (*connect.Response[v1.ListAccessGroupsResponse], error) {
-	authorizer := GetAuthorizerFromContext(ctx)
+	accessGroups := getAvailableAccessGroups(GetAuthorizerFromContext(ctx), s.accessGroupSvc)
+	list := make([]*v1.AccessGroupListItem, 0, len(accessGroups))
+	for _, v := range accessGroups {
+		list = append(list, &v1.AccessGroupListItem{
+			Name: v,
+		})
+	}
+	return connect.NewResponse(&v1.ListAccessGroupsResponse{Items: list}), nil
+}
+
+func getAvailableAccessGroups(authorizer IAuthorizer, accessGroupSvc AccessGroupService) []string {
 	availableGroups := authorizer.GetAvailableAccessGroups()
 	isAllGroupAvailable := len(availableGroups) == 1 && availableGroups["*"]
 
-	accessGroups := s.accessGroupSvc.GetAccessGroups()
+	accessGroups := accessGroupSvc.GetAccessGroups()
 
-	list := make([]*v1.AccessGroupListItem, 0, len(accessGroups))
+	list := make([]string, 0, len(accessGroups))
 	for _, v := range accessGroups {
-		item := &v1.AccessGroupListItem{
-			Name: v,
-		}
 		if isAllGroupAvailable || availableGroups[v] {
-			list = append(list, item)
+			list = append(list, v)
 		}
 	}
 	if isAllGroupAvailable || availableGroups[GeneralAccessGroup] {
-		list = append(list, &v1.AccessGroupListItem{
-			Name: GeneralAccessGroup,
-		})
+		list = append(list, GeneralAccessGroup)
 	}
-	sort.Slice(list, func(i, j int) bool {
-		return list[i].Name < list[j].Name
-	})
-	return connect.NewResponse(&v1.ListAccessGroupsResponse{Items: list}), nil
+	sort.Strings(list)
+	return list
 }

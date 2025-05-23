@@ -1,9 +1,10 @@
 package grpcapi
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"fmt"
+
+	"connectrpc.com/connect"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/constant"
 	v1 "github.com/kaasops/envoy-xds-controller/pkg/api/grpc/permissions/v1"
@@ -11,44 +12,53 @@ import (
 )
 
 type PermissionsService struct {
-	e *casbin.Enforcer
+	e              *casbin.Enforcer
+	accessGroupSvc AccessGroupService
 	permissionsv1connect.UnimplementedPermissionsServiceHandler
 }
 
-func NewPermissionsService(e *casbin.Enforcer) *PermissionsService {
-	return &PermissionsService{e: e}
+func NewPermissionsService(e *casbin.Enforcer, accessGroupSvc AccessGroupService) *PermissionsService {
+	return &PermissionsService{e: e, accessGroupSvc: accessGroupSvc}
 }
 
 func (p *PermissionsService) ListPermissions(ctx context.Context, req *connect.Request[v1.ListPermissionsRequest]) (*connect.Response[v1.ListPermissionsResponse], error) {
 	authorizer := GetAuthorizerFromContext(ctx)
-	permissions := make(map[string]map[string]struct{})
-	var permItems []*v1.PermissionsItem
-	for _, sub := range authorizer.GetSubjects() {
-		result, _ := getPermissionsForUserInDomain(p.e, sub, req.Msg.AccessGroup)
-		//result := p.e.GetPermissionsForUserInDomain(sub, req.Msg.AccessGroup)
-		if len(result) > 0 {
-			for _, perm := range result {
-				if len(perm) == 4 {
-					action := perm[3]
-					items := perm[2]
-					if permissions[action] == nil {
-						permissions[action] = make(map[string]struct{})
-						permItems = append(permItems, &v1.PermissionsItem{
-							Action: action,
-						})
+	availableAccessGroups := getAvailableAccessGroups(authorizer, p.accessGroupSvc)
+	accessGroupsPermissions := make([]*v1.AccessGroupPermissions, 0, len(availableAccessGroups))
+	for _, accessGroup := range availableAccessGroups {
+		permissions := make(map[string]map[string]struct{})
+		var permItems []*v1.PermissionsItem
+		for _, sub := range authorizer.GetSubjects() {
+			result, _ := getPermissionsForUserInDomain(p.e, sub, accessGroup)
+			if len(result) > 0 {
+				for _, perm := range result {
+					if len(perm) == 4 {
+						action := perm[3]
+						items := perm[2]
+						if permissions[action] == nil {
+							permissions[action] = make(map[string]struct{})
+							permItems = append(permItems, &v1.PermissionsItem{
+								Action: action,
+							})
+						}
+						permissions[action][items] = struct{}{}
 					}
-					permissions[action][items] = struct{}{}
 				}
 			}
 		}
-	}
-	for _, permItem := range permItems {
-		vals := permissions[permItem.Action]
-		for val := range vals {
-			permItem.Objects = append(permItem.Objects, val)
+		for _, permItem := range permItems {
+			vals := permissions[permItem.Action]
+			for val := range vals {
+				permItem.Objects = append(permItem.Objects, val)
+			}
 		}
+		accessGroupsPermissions = append(accessGroupsPermissions, &v1.AccessGroupPermissions{
+			AccessGroup: accessGroup,
+			Permissions: permItems,
+		})
 	}
-	return connect.NewResponse(&v1.ListPermissionsResponse{Items: permItems}), nil
+
+	return connect.NewResponse(&v1.ListPermissionsResponse{Items: accessGroupsPermissions}), nil
 }
 
 func getPermissionsForUserInDomain(e *casbin.Enforcer, user string, domain string) ([][]string, error) {
@@ -72,6 +82,9 @@ func getPermissionsForUserInDomain(e *casbin.Enforcer, user string, domain strin
 	}
 
 	domainIndex, err := e.GetFieldIndex(ptype, constant.DomainIndex)
+	if err != nil {
+		return nil, err
+	}
 	for _, rule := range e.GetModel()["p"][ptype].Policy {
 		ruleDomain := rule[domainIndex]
 		if ruleDomain != "*" {

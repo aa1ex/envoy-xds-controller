@@ -9,6 +9,13 @@ service PermissionsService {
   rpc ListPermissions(ListPermissionsRequest) returns (ListPermissionsResponse);
 }
 
+message AccessGroupPermissions {
+  // Access group name
+  string access_group = 1;
+  // Permission items associated with access group.
+  repeated PermissionsItem permissions = 2;
+}
+
 // Represents a permission item with an action and associated objects.
 message PermissionsItem {
   // The action of the permission.
@@ -19,13 +26,10 @@ message PermissionsItem {
 }
 
 // Request message for listing permissions.
-message ListPermissionsRequest {
-  // The access group for which permissions are being requested.
-  string access_group = 1;
-}
+message ListPermissionsRequest {}
 
 // Response message containing a list of permission items.
 message ListPermissionsResponse {
   // The list of permission items.
-  repeated PermissionsItem items = 1;
+  repeated AccessGroupPermissions items = 1;
 }

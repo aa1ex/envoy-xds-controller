@@ -194,7 +194,7 @@ func (c *Client) RunGRPC(port int, s *store.Store, mgrClient client.Client, targ
 		if err != nil {
 			return err
 		}
-		path, handler = permissionsv1connect.NewPermissionsServiceHandler(grpcapi.NewPermissionsService(enforcer))
+		path, handler = permissionsv1connect.NewPermissionsServiceHandler(grpcapi.NewPermissionsService(enforcer, c))
 		mux.Handle(path, handler)
 		handler = mux
 
