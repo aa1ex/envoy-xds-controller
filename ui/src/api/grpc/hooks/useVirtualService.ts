@@ -155,9 +155,13 @@ export const useFillTemplate = () => {
 	}
 }
 
-export const useGetPermissions = (accessGroup?: string) => {
-	return useQuery({
-		queryKey: ['getPermissions', accessGroup],
-		queryFn: () => permissionsServiceClient.listPermissions({})
+export const useGetPermissions = () => {
+	const getPermissionsMutation = useMutation({
+		mutationKey: ['permissions'],
+		mutationFn: () => permissionsServiceClient.listPermissions({})
 	})
+
+	return {
+		getPermissions: getPermissionsMutation.mutateAsync
+	}
 }

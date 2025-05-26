@@ -33,6 +33,8 @@ import { useTabStore } from '../../store/tabIndexStore.ts'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
+import { usePermissionsStore } from '../../store/permissionsStore.ts'
+import { PermissionAction } from '../../utils/helpers/permissionsActions.ts'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
@@ -77,7 +79,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			templateOptions: []
 		}
 	})
-
+	const canEdit = usePermissionsStore(state =>
+		state.hasPermission(groupId as string, PermissionAction.UpdateVirtualService)
+	)
 	const { fillTemplate, rawData, isLoadingFillTemplate, errorFillTemplate } = useFillTemplate()
 	const [name, nodeIds, templateUid] = watch(['name', 'nodeIds', 'templateUid'])
 
@@ -354,7 +358,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										</Button>
 									</Box>
 
-									{viewMode === 'read' && (
+									{viewMode === 'read' && canEdit && virtualServiceInfo?.isEditable && (
 										<Button variant='outlined' color='warning' onClick={() => setViewMode('edit')}>
 											Enable Edit Form
 										</Button>

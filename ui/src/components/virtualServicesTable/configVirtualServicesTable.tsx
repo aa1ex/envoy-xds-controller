@@ -16,6 +16,8 @@ import TravelExploreIcon from '@mui/icons-material/TravelExplore'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { useTabStore } from '../../store/tabIndexStore.ts'
+import { usePermissionsStore } from '../../store/permissionsStore.ts'
+import { PermissionAction } from '../../utils/helpers/permissionsActions.ts'
 
 interface IConfigVirtualServicesTable {
 	groupId: string
@@ -40,9 +42,10 @@ export const useConfigTable = ({
 }: IConfigVirtualServicesTable) => {
 	const navigate = useNavigate()
 
-	//TODO Once the endpoint is ready, add permission functionality
-	// const { data } = useGetPermissions(groupId)
-	// if (data) console.log({ data })
+	const canView = usePermissionsStore(state => state.hasPermission(groupId, PermissionAction.GetVirtualService))
+	const canEdit = usePermissionsStore(state => state.hasPermission(groupId, PermissionAction.UpdateVirtualService))
+	const canDelete = usePermissionsStore(state => state.hasPermission(groupId, PermissionAction.DeleteVirtualService))
+	const canCreate = usePermissionsStore(state => state.hasPermission(groupId, PermissionAction.CreateVirtualService))
 
 	const setVsInfo = useVirtualServiceStore(state => state.setVirtualService)
 	const setViewMode = useViewModeStore(state => state.setViewMode)
@@ -181,35 +184,47 @@ export const useConfigTable = ({
 			<Box display='flex' gap={1}>
 				{row.original.isEditable ? (
 					<>
-						<Tooltip placement='top-end' title='View Virtual Service'>
-							<IconButton onClick={() => openReadOnlyVsPage(row)}>
-								<RemoveRedEyeIcon />
-							</IconButton>
-						</Tooltip>
-						<Tooltip placement='top-end' title='Edit Virtual Service'>
-							<IconButton onClick={() => openEditVsPage(row)}>
-								<Edit />
-							</IconButton>
-						</Tooltip>
+						{canView && (
+							<Tooltip placement='top-end' title='View Virtual Service'>
+								<IconButton onClick={() => openReadOnlyVsPage(row)}>
+									<RemoveRedEyeIcon />
+								</IconButton>
+							</Tooltip>
+						)}
+						{canEdit && (
+							<>
+								<Tooltip placement='top-end' title='Edit Virtual Service'>
+									<IconButton onClick={() => openEditVsPage(row)}>
+										<Edit />
+									</IconButton>
+								</Tooltip>
 
-						<Tooltip placement='top-end' title='Edit Domain Virtual Service'>
-							<IconButton onClick={() => openEditDomainVsPage(row)}>
-								<TravelExploreIcon color='warning' />
-							</IconButton>
-						</Tooltip>
+								<Tooltip placement='top-end' title='Edit Domain Virtual Service'>
+									<IconButton onClick={() => openEditDomainVsPage(row)}>
+										<TravelExploreIcon color='warning' />
+									</IconButton>
+								</Tooltip>
+							</>
+						)}
 
-						<Tooltip placement='top-end' title='Remove Virtual Service'>
-							<IconButton onClick={() => handleDeleteVS(row)}>
-								<Delete color='error' />
-							</IconButton>
-						</Tooltip>
+						{canDelete && (
+							<Tooltip placement='top-end' title='Remove Virtual Service'>
+								<IconButton onClick={() => handleDeleteVS(row)}>
+									<Delete color='error' />
+								</IconButton>
+							</Tooltip>
+						)}
 					</>
 				) : (
-					<Tooltip placement='top-end' title='View Virtual Service'>
-						<IconButton onClick={() => openReadOnlyVsPage(row)}>
-							<RemoveRedEyeIcon />
-						</IconButton>
-					</Tooltip>
+					<>
+						{canView && (
+							<Tooltip placement='top-end' title='View Virtual Service'>
+								<IconButton onClick={() => openReadOnlyVsPage(row)}>
+									<RemoveRedEyeIcon />
+								</IconButton>
+							</Tooltip>
+						)}
+					</>
 				)}
 			</Box>
 		),
@@ -222,16 +237,18 @@ export const useConfigTable = ({
 					</IconButton>
 				</Tooltip>
 
-				<Button
-					color='primary'
-					onClick={handeCreateVs}
-					variant='contained'
-					disabled={isFetching}
-					size='small'
-					sx={{ fontSize: 15, height: 36 }}
-				>
-					Create VirtualService
-				</Button>
+				{canCreate && (
+					<Button
+						color='primary'
+						onClick={handeCreateVs}
+						variant='contained'
+						disabled={isFetching}
+						size='small'
+						sx={{ fontSize: 15, height: 36 }}
+					>
+						Create VirtualService
+					</Button>
+				)}
 			</Box>
 		)
 	})

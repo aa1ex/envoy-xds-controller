@@ -13,6 +13,8 @@ import { env } from './env.ts'
 import { provideAuth } from './utils/helpers/authBridge.ts'
 import ErrorMessage from './components/errorMessage/ErrorMessage.tsx'
 import { ThemedWrapper } from './components/themeWrapper/themeWrapper.tsx'
+import { useGetPermissions } from './api/grpc/hooks/useVirtualService.ts'
+import { usePermissionsStore } from './store/permissionsStore.ts'
 
 const HomePage = lazy(() => import('./pages/home/Home'))
 const NodeInfoPage = lazy(() => import('./pages/nodeInfo/NodeInfo'))
@@ -25,12 +27,24 @@ const Page404 = lazy(() => import('./pages/page404/page404'))
 function App() {
 	const [theme, colorMode] = useThemeMode()
 	const auth = useAuth()
+	const { getPermissions } = useGetPermissions()
+	const setPermissions = usePermissionsStore(state => state.setPermissions)
 
 	useEffect(() => {
 		if (env.VITE_OIDC_ENABLED === 'true' && auth.isAuthenticated && auth.user) {
-			provideAuth(auth)
+			const fetchPermissions = async () => {
+				provideAuth(auth)
+				try {
+					const permissions = await getPermissions()
+					setPermissions(permissions.items)
+				} catch (error) {
+					console.error('Error while getting permissions:', error)
+				}
+			}
+
+			void fetchPermissions()
 		}
-	}, [auth, auth?.isAuthenticated, auth?.user])
+	}, [auth, auth?.isAuthenticated, auth?.user, getPermissions, setPermissions])
 
 	if (env.VITE_OIDC_ENABLED === 'true') {
 		if (auth.isLoading) {

@@ -6,13 +6,19 @@ import DialogDeleteVS from '../dialogDeleteVs/dialogDeleteVs.tsx'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Snackbar from '@mui/material/Snackbar'
 import { Alert } from '@mui/material'
+import { usePermissionsStore } from '../../store/permissionsStore.ts'
+import { PermissionAction } from '../../utils/helpers/permissionsActions.ts'
+import ForbiddenPage from '../../pages/forbiddenPage/forbiddenPage.tsx'
 
 interface VirtualServicesTable {
 	groupId: string
 }
 
 const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
-	const { data: virtualServices, isError, isFetching, refetch } = useListVs(true, groupId)
+	const canGetListVs = usePermissionsStore(state =>
+		state.hasPermission(groupId, PermissionAction.ListVirtualServices)
+	)
+	const { data: virtualServices, isError, isFetching, refetch } = useListVs(canGetListVs, groupId)
 
 	const isFirstRender = useRef(true)
 
@@ -64,9 +70,14 @@ const VirtualServicesTable: React.FC<VirtualServicesTable> = ({ groupId }) => {
 		localStorage.setItem('columnVisibility_VS', JSON.stringify(columnVisibility))
 	}, [columnVisibility])
 
+	if (!canGetListVs) {
+		return <ForbiddenPage />
+	}
+
 	return (
 		<>
 			<MaterialReactTable table={table} />
+
 			<DialogDeleteVS
 				openDialog={openDialog}
 				serviceName={nameForDialog}
