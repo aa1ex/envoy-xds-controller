@@ -107,7 +107,6 @@ export const useConfigTable = ({
 				minSize: 200
 			},
 			{
-				//TODO их может быт несколько
 				accessorKey: 'nodeIds',
 				header: 'Node IDs',
 				minSize: 250,

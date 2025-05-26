@@ -12,6 +12,7 @@ export const validationRulesVsForm: Record<
 		return true
 	},
 	description: value => {
+		if (!value) return true
 		if (typeof value !== 'string') return 'Invalid description'
 		if (value.length > 120) return 'Description must be at most 120 characters long'
 		if (!/^[a-zA-Zа-яА-ЯёЁ0-9\s\-_:;!]+$/.test(value))
