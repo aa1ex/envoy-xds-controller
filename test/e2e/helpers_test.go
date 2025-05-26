@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -74,13 +75,13 @@ func getEnvoyConfigDump(queryParams string) json.RawMessage {
 		_, _ = utils.Run(cmd)
 	}()
 
-	url := "http://envoy.default.svc.cluster.local:19000/config_dump"
+	address := "http://envoy.default.svc.cluster.local:19000/config_dump"
 	if queryParams != "" {
-		url += "?" + queryParams
+		address += "?" + queryParams
 	}
 	cmd := exec.Command("kubectl", "run", podName, "--restart=Never",
 		"--image=curlimages/curl:7.78.0",
-		"--", "/bin/sh", "-c", "curl -s "+url)
+		"--", "/bin/sh", "-c", "curl -s "+address)
 	_, err := utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to create curl-config-dump pod")
 
@@ -101,8 +102,10 @@ func getEnvoyConfigDump(queryParams string) json.RawMessage {
 	Expect(err).NotTo(HaveOccurred(), "Failed to unmarshal config dump")
 	return dump
 }
-func fetchDataFromEnvoy(address, domain string) string {
+func fetchDataFromEnvoy(address string) string {
 	podName := "curl-fetch-data"
+
+	parsed, _ := url.Parse(address)
 
 	By("resolve ip address of the envoy pod")
 	// nolint: lll
@@ -114,7 +117,8 @@ func fetchDataFromEnvoy(address, domain string) string {
 	By("creating the curl-config-dump pod to access config dump")
 	cmd = exec.Command("kubectl", "run", podName, "--restart=Never",
 		"--image=curlimages/curl:7.78.0",
-		"--", "/bin/sh", "-c", "curl -s -k "+address+" --resolve "+domain+":"+envoyIP)
+		"--", "/bin/sh", "-c", "curl -s -k "+address+" --resolve "+
+			parsed.Host+":"+envoyIP, " -H 'Host: "+parsed.Hostname()+"'")
 	_, err = utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to create curl-fetch-data pod")
 

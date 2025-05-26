@@ -340,3 +340,7 @@ dev-local-with-auth: dev-auth set-auth-env dev-local
 .PHONY: helm-template
 helm-template:
 	helm template exc -n envoy-xds-controller ./helm/charts/envoy-xds-controller/
+
+.PHONY: dev-envoy
+dev-envoy:
+	kubectl apply -f dev/envoy

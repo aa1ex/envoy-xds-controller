@@ -115,7 +115,7 @@ func envoyContext() {
 			},
 			{
 				manifest:        "test/testdata/conformance/virtualservice-empty-object-virtualhost.yaml",
-				expectedErrText: "invalid VirtualHost.Name: value length must be at least 1 runes",
+				expectedErrText: "invalid VirtualHost.Domains: value must contain at least 1 item(s)",
 			},
 			{
 				applyBefore:     []string{"test/testdata/certificates/exc-kaasops-io.yaml"},
@@ -342,7 +342,7 @@ func envoyContext() {
 	})
 
 	It("should ensure the envoy return expected response", func() {
-		response := fetchDataFromEnvoy("https://exc.kaasops.io:10443/", "exc.kaasops.io:10443")
+		response := fetchDataFromEnvoy("https://exc.kaasops.io:10443/")
 		Expect(strings.TrimSpace(response)).To(Equal("{\"message\":\"Hello\"}"))
 	})
 
@@ -398,7 +398,7 @@ func envoyContext() {
 	})
 
 	It("should ensure the envoy return expected response", func() {
-		response := fetchDataFromEnvoy("https://exc.kaasops.io:10443/", "exc.kaasops.io:10443")
+		response := fetchDataFromEnvoy("https://exc.kaasops.io:10443/")
 		Expect(strings.TrimSpace(response)).To(Equal("{\"message\":\"Hello from template\"}"))
 	})
 
@@ -538,7 +538,7 @@ func envoyContext() {
 		Eventually(verifyConfigUpdated).Should(Succeed())
 
 		By("ensure the envoy return expected response")
-		response := fetchDataFromEnvoy("http://test.kaasops.io:8080/", "test.kaasops.io:8080")
+		response := fetchDataFromEnvoy("http://test.kaasops.io:8080/")
 		Expect(strings.TrimSpace(response)).To(Equal(`{"message":"test"}`))
 	})
 

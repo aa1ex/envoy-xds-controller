@@ -3,9 +3,7 @@ package resbuilder
 import (
 	"encoding/json"
 	"fmt"
-	"net"
 	"slices"
-	"strconv"
 	"strings"
 
 	oauth2v3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/oauth2/v3"
@@ -259,24 +257,20 @@ func buildResourcesFromVirtualService(vs *v1alpha1.VirtualService, xdsListener *
 }
 
 // buildRouteConfiguration builds the route configuration from the virtual service
-func buildRouteConfiguration(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener, nn helpers.NamespacedName, store *store.Store) (*routev3.VirtualHost, *routev3.RouteConfiguration, error) {
-	virtualHost, err := buildVirtualHost(vs, store)
+func buildRouteConfiguration(
+	vs *v1alpha1.VirtualService,
+	xdsListener *listenerv3.Listener,
+	nn helpers.NamespacedName,
+	store *store.Store,
+) (*routev3.VirtualHost, *routev3.RouteConfiguration, error) {
+	virtualHost, err := buildVirtualHost(vs, nn, store)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	if err := checkAllDomainsUnique(virtualHost.Domains); err != nil {
-		return nil, nil, err
-	}
-
 	routeConfiguration := &routev3.RouteConfiguration{
-		Name: nn.String(),
-		VirtualHosts: []*routev3.VirtualHost{{
-			Name:                nn.String(),
-			Domains:             domainsWithPorts(virtualHost.Domains, xdsListener),
-			Routes:              virtualHost.Routes,
-			RequestHeadersToAdd: virtualHost.RequestHeadersToAdd,
-		}},
+		Name:         nn.String(),
+		VirtualHosts: []*routev3.VirtualHost{virtualHost},
 	}
 
 	// Add fallback route for TLS listeners
@@ -374,7 +368,7 @@ func buildListener(listenerNN helpers.NamespacedName, store *store.Store) (*list
 	return xdsListener, nil
 }
 
-func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3.VirtualHost, error) {
+func buildVirtualHost(vs *v1alpha1.VirtualService, nn helpers.NamespacedName, store *store.Store) (*routev3.VirtualHost, error) {
 	if vs.Spec.VirtualHost == nil {
 		return nil, fmt.Errorf("virtual host is empty")
 	}
@@ -383,6 +377,7 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 	if err := protoutil.Unmarshaler.Unmarshal(vs.Spec.VirtualHost.Raw, virtualHost); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal virtual host: %w", err)
 	}
+	virtualHost.Name = nn.String()
 
 	for _, routeRef := range vs.Spec.AdditionalRoutes {
 		routeRefNs := helpers.GetNamespace(routeRef.Namespace, vs.Namespace)
@@ -428,6 +423,11 @@ func buildVirtualHost(vs *v1alpha1.VirtualService, store *store.Store) (*routev3
 	if err := virtualHost.ValidateAll(); err != nil {
 		return nil, fmt.Errorf("failed to validate virtual host: %w", err)
 	}
+
+	if err := checkAllDomainsUnique(virtualHost.Domains); err != nil {
+		return nil, err
+	}
+
 	return virtualHost, nil
 }
 
@@ -503,25 +503,6 @@ func buildHTTPFilters(vs *v1alpha1.VirtualService, store *store.Store) ([]*hcmv3
 	}
 
 	return httpFilters, nil
-}
-
-func domainsWithPorts(domains []string, listener *listenerv3.Listener) []string {
-	if listener == nil || listener.Address == nil || listener.Address.GetSocketAddress() == nil {
-		return domains
-	}
-	portStr := strconv.Itoa(int(listener.Address.GetSocketAddress().GetPortValue()))
-	if portStr == "80" || portStr == "443" {
-		return domains
-	}
-	newList := make([]string, 0, len(domains))
-	newList = append(newList, domains...)
-	for _, domain := range domains {
-		if strings.Contains(domain, ":") || strings.Contains(domain, "*") {
-			continue
-		}
-		newList = append(newList, net.JoinHostPort(domain, portStr))
-	}
-	return newList
 }
 
 func buildClusters(virtualHost *routev3.VirtualHost, httpFilters []*hcmv3.HttpFilter, store *store.Store) ([]*cluster.Cluster, error) {
