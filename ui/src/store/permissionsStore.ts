@@ -15,6 +15,7 @@ type PermissionsMap = Record<string, PermissionsItem[]>
 
 interface PermissionsStore {
 	permissionsMap: PermissionsMap
+	hasAccess: boolean
 	setPermissions: (items: AccessGroupPermissions[]) => void
 	getGroupPermissions: (group: string) => PermissionsItem[] | undefined
 	hasPermission: (group: string, action: string) => boolean
@@ -22,16 +23,26 @@ interface PermissionsStore {
 
 export const usePermissionsStore = create<PermissionsStore>((set, get) => ({
 	permissionsMap: {},
+	hasAccess: false,
+
 	setPermissions: items => {
+		if (!Array.isArray(items) || items.length === 0) {
+			set({ hasAccess: false, permissionsMap: {} })
+			return
+		}
+
 		const map: PermissionsMap = {}
 		for (const item of items) {
 			map[item.accessGroup] = item.permissions
 		}
-		set({ permissionsMap: map })
+
+		set({ permissionsMap: map, hasAccess: true })
 	},
+
 	getGroupPermissions: group => {
 		return get().permissionsMap[group]
 	},
+
 	hasPermission: (group, action) => {
 		const permissions = get().permissionsMap[group]
 		if (!permissions) return false

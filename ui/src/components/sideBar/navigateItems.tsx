@@ -12,14 +12,9 @@ const navMenuItems = [
 		id: 2,
 		name: 'Access Groups',
 		icon: <VirtualServicesIcon />,
-		path: '/accessGroups'
+		path: '/accessGroups',
+		requiresAccess: true
 	}
-	// {
-	// 	id: 2,
-	// 	name: 'VirtualServices',
-	// 	icon: <VirtualServicesIcon />,
-	// 	path: '/virtualServices'
-	// }
 ]
 
 export default navMenuItems

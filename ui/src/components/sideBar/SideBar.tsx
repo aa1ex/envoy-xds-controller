@@ -21,6 +21,7 @@ import { useColors } from '../../utils/hooks/useColors'
 import navMenuItems from './navigateItems'
 import { DrawerHeader, DrawerLogo, ListItemButtonNav } from './style'
 import { useAuth } from 'react-oidc-context'
+import { usePermissionsStore } from '../../store/permissionsStore.ts'
 
 interface ISideBarProps {
 	isSmallScreen: boolean
@@ -33,6 +34,7 @@ function SideBar({ isSmallScreen }: ISideBarProps) {
 
 	const toggleSideBar = useSideBarState(state => state.toggleSideBar)
 	const isOpenSideBar = useSideBarState(state => state.isOpenSideBar)
+	const hasAccess = usePermissionsStore(state => state.hasAccess)
 
 	const { pathname } = useLocation()
 	const navigate = useNavigate()
@@ -47,16 +49,18 @@ function SideBar({ isSmallScreen }: ISideBarProps) {
 		toggleSideBar(isSmallScreen)
 	}, [isSmallScreen, toggleSideBar])
 
-	const renderNavMenu = navMenuItems.map(menuItem => (
-		<ListItemButtonNav
-			key={menuItem.id}
-			onClick={() => navigate(menuItem.path)}
-			className={activePage.includes(menuItem.path) ? 'active' : ''}
-		>
-			<ListItemIcon sx={{ color: colors.gray[400] }}>{menuItem.icon}</ListItemIcon>
-			<ListItemText primary={menuItem.name} />
-		</ListItemButtonNav>
-	))
+	const renderNavMenu = navMenuItems
+		.filter(item => !item.requiresAccess || hasAccess)
+		.map(menuItem => (
+			<ListItemButtonNav
+				key={menuItem.id}
+				onClick={() => navigate(menuItem.path)}
+				className={activePage.includes(menuItem.path) ? 'active' : ''}
+			>
+				<ListItemIcon sx={{ color: colors.gray[400] }}>{menuItem.icon}</ListItemIcon>
+				<ListItemText primary={menuItem.name} />
+			</ListItemButtonNav>
+		))
 
 	return (
 		<Box component={'nav'}>
