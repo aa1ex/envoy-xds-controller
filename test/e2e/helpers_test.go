@@ -118,7 +118,7 @@ func fetchDataFromEnvoy(address string) string {
 	cmd = exec.Command("kubectl", "run", podName, "--restart=Never",
 		"--image=curlimages/curl:7.78.0",
 		"--", "/bin/sh", "-c", "curl -s -k "+address+" --resolve "+
-			parsed.Host+":"+envoyIP, " -H 'Host: "+parsed.Hostname()+"'")
+			parsed.Host+":"+envoyIP+" -H 'Host: "+parsed.Hostname()+"'")
 	_, err = utils.Run(cmd)
 	Expect(err).NotTo(HaveOccurred(), "Failed to create curl-fetch-data pod")
 

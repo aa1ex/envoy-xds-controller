@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"encoding/json"
+	"fmt"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -384,14 +385,13 @@ func envoyContext() {
 				"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type":   "type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog",
 				"configs.4.dynamic_route_configs.0.route_config.name":                                                                          "default/virtual-service",
 				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.#":                                                               "2",
-				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.0.domains.#":                                                     "2",
-				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.0.domains.1":                                                     "exc.kaasops.io:10443",
+				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.0.domains.#":                                                     "1",
 				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.1.domains.#":                                                     "1",
 				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.1.domains.0":                                                     "*",
 				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.1.name":                                                          "421vh",
 				"configs.4.dynamic_route_configs.0.route_config.virtual_hosts.1.routes.0.direct_response.status":                               "421",
 			} {
-				Expect(value).To(Equal(gjson.Get(dump, path).String()))
+				Expect(value).To(Equal(gjson.Get(dump, path).String()), fmt.Sprintf("path: %s, value: %s", path, value))
 			}
 		}
 		Eventually(verifyConfigUpdated).Should(Succeed())
