@@ -130,29 +130,17 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			const fullForm = getValues()
 			const { templateUid, templateOptions } = fullForm
 
-			const hasUnselectedField = templateOptions?.some(opt => opt.field === '' && opt.modifier !== 0)
-			const hasUnselectedModifier = templateOptions?.some(opt => opt.field !== '' && opt.modifier === 0)
 			const allOptionsValid = templateOptions?.every(opt => opt.field && opt.modifier && opt.modifier !== 0)
-
-			const shouldSendTemplateOptions =
-				Array.isArray(templateOptions) &&
-				(templateOptions.length === 0 || (allOptionsValid && !hasUnselectedField && !hasUnselectedModifier))
 
 			if (!templateUid) return
 
 			if (changedField === 'name' || changedField === 'virtualHostDomains') {
 				debouncedFillTemplate(fullForm)
 			} else if (changedField?.startsWith('templateOptions')) {
-				console.log({ allOptionsValid })
-				console.log({ shouldSendTemplateOptions })
-				if (shouldSendTemplateOptions) {
+				if (allOptionsValid) {
 					debouncedFillTemplate(fullForm)
 				}
 			} else {
-				if (!allOptionsValid) {
-					setTabIndex(3)
-					return
-				}
 				void fillTemplate(transformForm(fullForm))
 			}
 		})
