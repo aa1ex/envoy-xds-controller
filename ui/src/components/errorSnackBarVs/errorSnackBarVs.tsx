@@ -32,7 +32,6 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 				const errorMessages = Object.values(errors)
 					.map((error: any) => error.message)
 					.join('\n')
-
 				setMessage(!isFormReady ? 'Fields Name, NodeIds and Template is required' : errorMessages)
 				setSeverity('warning')
 				setAutoHideDuration(3000)
@@ -44,7 +43,9 @@ export const ErrorSnackBarVs: React.FC<IErrorSnackBarVsProps> = ({
 				setAutoHideDuration(3000)
 				setOpen(true)
 			} else if (errorUpdateVs || errorCreateVs) {
-				setMessage(errorUpdateVs?.message || errorCreateVs?.message || 'An error occurred')
+				const rawMessage = errorUpdateVs?.message || errorCreateVs?.message || 'An error occurred'
+				const cleanMessage = rawMessage.replace(/^\[unknown]\s*/, '')
+				setMessage(cleanMessage)
 				setSeverity('error')
 				setAutoHideDuration(null)
 				setOpen(true)

@@ -70,6 +70,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
 		defaultValues: {
+			name: '',
 			nodeIds: [],
 			virtualHostDomains: [],
 			accessGroup: isCreate ? groupId : '',
@@ -77,12 +78,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
 			templateOptions: []
-		}
+		},
+		shouldUnregister: false
 	})
 	const canEdit = usePermissionsStore(state =>
 		state.hasPermission(groupId as string, PermissionAction.UpdateVirtualService)
 	)
 	const { fillTemplate, rawData, isLoadingFillTemplate, errorFillTemplate } = useFillTemplate()
+
 	const [name, nodeIds, templateUid] = watch(['name', 'nodeIds', 'templateUid'])
 
 	const isFormReady =
@@ -107,7 +110,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				case: 'accessLogConfigUid'
 			},
 			templateOptions: cleanedTemplateOptions,
-			expandReferences: false
+			expandReferences: true
 		}
 	}
 
@@ -127,11 +130,14 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			const shouldSendTemplateOptions =
 				Array.isArray(templateOptions) &&
 				(templateOptions.length === 0 || (allOptionsValid && !hasUnselectedField && !hasUnselectedModifier))
+
 			if (!templateUid) return
 
 			if (changedField === 'name' || changedField === 'virtualHostDomains') {
 				debouncedFillTemplate(fullForm)
 			} else if (changedField?.startsWith('templateOptions')) {
+				console.log({ allOptionsValid })
+				console.log({ shouldSendTemplateOptions })
 				if (shouldSendTemplateOptions) {
 					debouncedFillTemplate(fullForm)
 				}
@@ -167,7 +173,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			virtualHostDomains: vhDomains,
 			additionalHttpFilterUids: virtualServiceInfo.additionalHttpFilters?.map(filter => filter.uid) || [],
 			additionalRouteUids: virtualServiceInfo.additionalRoutes?.map(router => router.uid) || [],
-			description: virtualServiceInfo.description,
+			description: virtualServiceInfo.description
 		})
 	}, [reset, isCreate, virtualServiceInfo])
 
@@ -239,8 +245,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		// navigate(`/accessGroups/${groupId}/virtualServices`)
 		await refetch()
 	}
-
-	// tabColor(errors)
 
 	return (
 		<>
