@@ -3,14 +3,9 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { SubmitHandler, useForm } from 'react-hook-form'
 
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import CircularProgress from '@mui/material/CircularProgress'
 import Divider from '@mui/material/Divider'
-import Fade from '@mui/material/Fade'
-import Tab from '@mui/material/Tab'
 import Tabs from '@mui/material/Tabs'
-import Typography from '@mui/material/Typography'
-import { debounce } from '@mui/material'
+import { debounce, Tab } from '@mui/material'
 
 import {
 	CreateVirtualServiceRequest,
@@ -19,8 +14,6 @@ import {
 import { ResourceRef, VirtualHost } from '../../gen/common/v1/common_pb.ts'
 
 import { useCreateVs, useFillTemplate, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
-
-import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
 import { a11yProps } from '../customTabPanel/style.ts'
 import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
@@ -33,14 +26,15 @@ import { useTabStore } from '../../store/tabIndexStore.ts'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
-import { usePermissionsStore } from '../../store/permissionsStore.ts'
-import { PermissionAction } from '../../utils/helpers/permissionsActions.ts'
+import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
+import { boxForm, tabsStyle, vsForm, vsFormLeftColumn, vsFormWrapper } from './style.ts'
+import { ActionButtonsVs } from '../actionButtonsVs/actionButtonsVs.tsx'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
 	const { groupId } = useParams()
 	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
-	const viewMode = useViewModeStore(state => state.viewMode)
+
 	const setViewMode = useViewModeStore(state => state.setViewMode)
 
 	useEffect(() => {
@@ -82,9 +76,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		},
 		shouldUnregister: false
 	})
-	const canEdit = usePermissionsStore(state =>
-		state.hasPermission(groupId as string, PermissionAction.UpdateVirtualService)
-	)
+
 	const { fillTemplate, rawData, isLoadingFillTemplate, errorFillTemplate } = useFillTemplate()
 
 	const [name, nodeIds, templateUid] = watch(['name', 'nodeIds', 'templateUid'])
@@ -92,7 +84,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const isFormReady =
 		isValid && Boolean(name?.length) && Array.isArray(nodeIds) && nodeIds.length > 0 && Boolean(templateUid)
 
-	const transformForm = (formValues: any) => {
+	const prepareTemplateRequestData = (formValues: any, expandMode: boolean = false) => {
 		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, ...rest } = formValues || {}
 
 		const cleanedTemplateOptions =
@@ -111,7 +103,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				case: 'accessLogConfigUid'
 			},
 			templateOptions: cleanedTemplateOptions,
-			expandReferences: true
+			expandReferences: expandMode
 		}
 	}
 
@@ -123,7 +115,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 	useEffect(() => {
 		const debouncedFillTemplate = debounce((formValues: IVirtualServiceForm) => {
-			void fillTemplate(transformForm(formValues))
+			void fillTemplate(prepareTemplateRequestData(formValues))
 		}, 500)
 
 		const subscription = watch((_formValues, { name: changedField }) => {
@@ -141,7 +133,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					debouncedFillTemplate(fullForm)
 				}
 			} else {
-				void fillTemplate(transformForm(fullForm))
+				void fillTemplate(prepareTemplateRequestData(fullForm))
 			}
 		})
 
@@ -244,42 +236,23 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	return (
 		<>
 			<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
-				<Box display='flex' height='100%' overflow='auto' flexGrow={1} className='vsForm'>
+				<Box className='vsForm' sx={{ ...vsForm }}>
 					<Tabs
 						orientation='vertical'
 						value={tabIndex}
 						onChange={handleChangeTabIndex}
 						aria-label='formTabMEnu'
-						sx={{ borderRight: 1, borderColor: 'divider' }}
+						sx={{ ...tabsStyle }}
 					>
 						<Tab label='General' {...a11yProps(0, 'vertical')} />
 						<Tab label='Domains' {...a11yProps(1, 'vertical')} />
 						<Tab label='Settings' {...a11yProps(2, 'vertical')} />
 						<Tab label='Template' {...a11yProps(3, 'vertical')} />
 					</Tabs>
-					<Box
-						display='flex'
-						flexDirection='column'
-						flexGrow={1}
-						justifyContent='space-between'
-						className='vsFormWrapper'
-					>
+					<Box className='vsFormWrapper' sx={{ ...vsFormWrapper }}>
 						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
-							<Box
-								display='flex'
-								className='vsLeftColumn'
-								width='60%'
-								height='100%'
-								flexDirection='column'
-								justifyContent='space-between'
-							>
-								<Box
-									className='boxForm'
-									display='flex'
-									flexDirection='column'
-									height='90%'
-									flexGrow={1}
-								>
+							<Box className='vsFormLeftColumn' sx={{ ...vsFormLeftColumn }}>
+								<Box className='boxForm' sx={{ boxForm }}>
 									<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
 										<GeneralTabVs
 											register={register}
@@ -319,81 +292,24 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										/>
 									</CustomTabPanel>
 								</Box>
-								<Box display='flex' justifyContent='space-between'>
-									<Box
-										display='flex'
-										alignItems='center'
-										justifyContent='flex-start'
-										gap={3}
-										marginX={2}
-									>
-										<Button
-											variant='outlined'
-											loading={isFetchingCreateVs || isFetchingUpdateVs}
-											disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-											onClick={() => navigate(-1)}
-										>
-											Back to Table
-										</Button>
-										<Button
-											variant='contained'
-											type='submit'
-											loading={isFetchingCreateVs || isFetchingUpdateVs}
-											disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-										>
-											{isCreate
-												? 'Create Virtual Service'
-												: viewMode === 'read'
-													? 'Read-Only Virtual Service'
-													: 'Update Virtual Service'}
-										</Button>
-										<Button
-											variant='outlined'
-											color='warning'
-											loading={isFetchingCreateVs || isFetchingUpdateVs}
-											disabled={virtualServiceInfo?.isEditable === false || viewMode === 'read'}
-											onClick={handleResetForm}
-										>
-											Reset form
-										</Button>
-									</Box>
 
-									{viewMode === 'read' && canEdit && virtualServiceInfo?.isEditable && (
-										<Button variant='outlined' color='warning' onClick={() => setViewMode('edit')}>
-											Enable Edit Form
-										</Button>
-									)}
-								</Box>
+								<ActionButtonsVs
+									isCreateMode={isCreate}
+									isEditable={isCreate ? true : !!virtualServiceInfo?.isEditable}
+									isFetchingCreateVs={isFetchingCreateVs}
+									isFetchingUpdateVs={isFetchingUpdateVs}
+									handleResetForm={handleResetForm}
+								/>
 							</Box>
 
 							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
-							<Box
-								display='flex'
-								className='vsLeftLeft'
-								width='40%'
-								p={1}
-								justifyContent='center'
-								alignItems='center'
-								minHeight={200}
-							>
-								{!watch('templateUid') ? (
-									<Typography align='center' variant='h3'>
-										For a preview, select a template
-									</Typography>
-								) : isLoadingFillTemplate ? (
-									<CircularProgress />
-								) : rawData ? (
-									<Fade in timeout={300}>
-										<div style={{ width: '100%', height: '100%' }}>
-											<CodeBlockVs raw={rawData} />
-										</div>
-									</Fade>
-								) : (
-									<Typography align='center' variant='h4' color='warning'>
-										Some template options are incomplete. Please finish configuring them to preview
-									</Typography>
-								)}
-							</Box>
+
+							<CodeBlockVs
+								rawData={rawData}
+								watch={watch}
+								isLoadingFillTemplate={isLoadingFillTemplate}
+								isCreateMode={isCreate}
+							/>
 						</Box>
 					</Box>
 				</Box>

@@ -1,57 +1,42 @@
-import useTheme from '@mui/material/styles/useTheme'
-import React, { memo, useLayoutEffect, useRef, useState } from 'react'
-import { convertRawToFullYaml } from '../../utils/helpers/convertToYaml.ts'
-import { Editor } from '@monaco-editor/react'
+import React from 'react'
+import Typography from '@mui/material/Typography'
+import CircularProgress from '@mui/material/CircularProgress'
+import Fade from '@mui/material/Fade'
+import { CodeEditorVs } from '../codeEditorVs/codeEditorVs.tsx'
 import Box from '@mui/material/Box'
+import { codeBlockVs } from './style.ts'
+import { FillTemplateResponse } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
+import { UseFormWatch } from 'react-hook-form'
+import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 
 interface ICodeBlockVsProps {
-	raw: { raw: string }
+	rawData: FillTemplateResponse | undefined
+	isLoadingFillTemplate: boolean
+	watch: UseFormWatch<IVirtualServiceForm>
+	isCreateMode: boolean
 }
 
-export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(({ raw }) => {
-	const theme = useTheme()
-
-	const [height, setHeight] = useState<number | null>(null)
-	const elementRef = useRef<HTMLDivElement>(null)
-	const updateHeight = () => {
-		if (elementRef.current) {
-			setHeight(elementRef.current.getBoundingClientRect().height)
-		}
-	}
-
-	useLayoutEffect(() => {
-		updateHeight() // Устанавливаем начальную высоту
-		window.addEventListener('resize', updateHeight) // Обновляем при изменении размера окна
-
-		return () => {
-			window.removeEventListener('resize', updateHeight) // Чистим обработчик
-		}
-	}, [])
-
-	const yamlData = convertRawToFullYaml(raw.raw)
-
+export const CodeBlockVs: React.FC<ICodeBlockVsProps> = ({ rawData, isLoadingFillTemplate, watch, isCreateMode }) => {
+	console.log(isCreateMode)
 	return (
-		<Box
-			border='1px solid gray'
-			borderRadius={1}
-			p={2}
-			height='100%'
-			width='100%'
-			mr={1}
-			ref={elementRef}
-			sx={{ overflow: 'auto' }}
-		>
-			<Editor
-				height={`calc(${height}px - 40px)`}
-				defaultLanguage='yaml'
-				value={yamlData}
-				theme={theme.palette.mode === 'light' ? 'light' : 'vs-dark'}
-				options={{
-					readOnly: true,
-					minimap: { enabled: false }
-				}}
-				loading
-			/>
+		<Box className='codeBlockVs' sx={{ ...codeBlockVs }}>
+			{!watch('templateUid') ? (
+				<Typography align='center' variant='h3'>
+					For a preview, select a template
+				</Typography>
+			) : isLoadingFillTemplate ? (
+				<CircularProgress />
+			) : rawData ? (
+				<Fade in timeout={300}>
+					<div style={{ width: '100%', height: '100%' }}>
+						<CodeEditorVs raw={rawData} />
+					</div>
+				</Fade>
+			) : (
+				<Typography align='center' variant='h4' color='warning'>
+					Some template options are incomplete. Please finish configuring them to preview
+				</Typography>
+			)}
 		</Box>
 	)
-})
+}
