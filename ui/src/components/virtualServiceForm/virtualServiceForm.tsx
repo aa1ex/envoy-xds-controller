@@ -59,14 +59,15 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isSubmitting, isValid },
+		formState: { errors, isSubmitting, isValid, isSubmitted },
 		setValue,
 		control,
 		setError,
 		clearErrors,
 		watch,
 		getValues,
-		reset
+		reset,
+		trigger
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
 		defaultValues: {
@@ -113,6 +114,12 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			expandReferences: true
 		}
 	}
+
+	useEffect(() => {
+		if (tabIndex === 0 && isSubmitted) {
+			void trigger('name')
+		}
+	}, [tabIndex, trigger, isSubmitted])
 
 	useEffect(() => {
 		const debouncedFillTemplate = debounce((formValues: IVirtualServiceForm) => {
@@ -409,7 +416,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					errorCreateVs={errorCreateVs}
 					errorUpdateVs={errorUpdateVs}
 					errorFillTemplate={errorFillTemplate}
-					isSubmitted={isSubmitting}
+					isSubmitting={isSubmitting}
 				/>
 			</form>
 		</>
