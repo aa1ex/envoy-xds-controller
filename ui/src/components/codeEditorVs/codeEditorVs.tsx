@@ -5,7 +5,7 @@ import { Editor } from '@monaco-editor/react'
 import Box from '@mui/material/Box'
 
 interface ICodeBlockVsProps {
-	raw: { raw: string }
+	raw: string
 }
 
 export const CodeEditorVs: React.FC<ICodeBlockVsProps> = memo(({ raw }) => {
@@ -28,7 +28,7 @@ export const CodeEditorVs: React.FC<ICodeBlockVsProps> = memo(({ raw }) => {
 		}
 	}, [])
 
-	const yamlData = convertRawToFullYaml(raw.raw)
+	const yamlData = convertRawToFullYaml(raw)
 
 	return (
 		<Box

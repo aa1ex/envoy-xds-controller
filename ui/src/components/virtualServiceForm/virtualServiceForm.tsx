@@ -305,8 +305,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
 
 							<CodeBlockVs
-								rawData={rawData}
-								watch={watch}
+								rawDataTemplate={rawData?.raw}
+								rawDataPreview={virtualServiceInfo?.raw}
+								control={control}
 								isLoadingFillTemplate={isLoadingFillTemplate}
 								isCreateMode={isCreate}
 							/>
