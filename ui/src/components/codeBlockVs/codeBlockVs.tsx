@@ -5,8 +5,10 @@ import Fade from '@mui/material/Fade'
 import { CodeEditorVs } from '../codeEditorVs/codeEditorVs.tsx'
 import Box from '@mui/material/Box'
 import { codeBlockVs } from './style.ts'
-import { Control, useWatch } from 'react-hook-form'
+import { Control, UseFormSetValue, useWatch } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
+import { ButtonGroup } from '@mui/material'
+import Button from '@mui/material/Button'
 
 interface ICodeBlockVsProps {
 	rawDataTemplate: string | undefined
@@ -14,13 +16,25 @@ interface ICodeBlockVsProps {
 	isLoadingFillTemplate: boolean
 	control: Control<IVirtualServiceForm>
 	isCreateMode: boolean
+	setValue: UseFormSetValue<IVirtualServiceForm>
+	// isExpanded: boolean
+	// onToggle: (value: boolean) => void
 }
 
 export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(
-	({ rawDataTemplate, rawDataPreview, isLoadingFillTemplate, isCreateMode, control }) => {
+	({
+		rawDataTemplate,
+		rawDataPreview,
+		isLoadingFillTemplate,
+		isCreateMode,
+		control,
+		setValue
+		// isExpanded, onToggle
+	}) => {
 		const templateUid = useWatch({ control, name: 'templateUid' })
+		const isExpanded = useWatch({ control, name: 'viewTemplateMode', defaultValue: false })
 
-		const renderContent = () => {
+		const renderCodeBlock = () => {
 			if (isCreateMode && !templateUid) {
 				return (
 					<Typography align='center' variant='h3'>
@@ -50,9 +64,32 @@ export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(
 			}
 		}
 
+		const renderViewTemplateMode = () => {
+			if (isCreateMode && !templateUid) return null
+			if (!isCreateMode && !templateUid) return null
+
+			return (
+				<ButtonGroup variant='contained' size='small' sx={{ position: 'absolute', top: '35px', right: '45px' }}>
+					<Button
+						onClick={() => setValue('viewTemplateMode', true)}
+						color={isExpanded ? 'primary' : 'inherit'}
+					>
+						Expanded
+					</Button>
+					<Button
+						onClick={() => setValue('viewTemplateMode', false)}
+						color={!isExpanded ? 'primary' : 'inherit'}
+					>
+						Compact
+					</Button>
+				</ButtonGroup>
+			)
+		}
+
 		return (
 			<Box className='codeBlockVs' sx={{ ...codeBlockVs }}>
-				{renderContent()}
+				{renderCodeBlock()}
+				{renderViewTemplateMode()}
 			</Box>
 		)
 	}

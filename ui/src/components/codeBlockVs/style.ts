@@ -4,5 +4,6 @@ export const codeBlockVs = {
 	alignItems: 'center',
 	width: '40%',
 	minHeight: 200,
-	padding: 1
+	padding: 1,
+	position: 'relative'
 }

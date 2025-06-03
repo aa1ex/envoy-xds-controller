@@ -34,6 +34,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const navigate = useNavigate()
 	const { groupId } = useParams()
 	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
+	// const [viewTemplateMode, setViewTemplateMode] = useState<boolean>(false)
 
 	const setViewMode = useViewModeStore(state => state.setViewMode)
 
@@ -72,7 +73,8 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			additionalHttpFilterUids: [],
 			additionalRouteUids: [],
 			useRemoteAddress: undefined,
-			templateOptions: []
+			templateOptions: [],
+			viewTemplateMode: false
 		},
 		shouldUnregister: false
 	})
@@ -84,8 +86,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const isFormReady =
 		isValid && Boolean(name?.length) && Array.isArray(nodeIds) && nodeIds.length > 0 && Boolean(templateUid)
 
-	const prepareTemplateRequestData = (formValues: any, expandMode: boolean = false) => {
-		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, ...rest } = formValues || {}
+	const prepareTemplateRequestData = useCallback((formValues: any) => {
+		const { nodeIds, virtualHostDomains, templateOptions, accessLogConfigUid, viewTemplateMode, ...rest } =
+			formValues || {}
 
 		const cleanedTemplateOptions =
 			Array.isArray(templateOptions) && templateOptions.some(opt => opt.field === '' && opt.modifier === 0)
@@ -103,9 +106,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				case: 'accessLogConfigUid'
 			},
 			templateOptions: cleanedTemplateOptions,
-			expandReferences: expandMode
+			expandReferences: viewTemplateMode
 		}
-	}
+	}, [])
 
 	useEffect(() => {
 		if (tabIndex === 0 && isSubmitted) {
@@ -141,7 +144,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			subscription.unsubscribe()
 			debouncedFillTemplate.clear()
 		}
-	}, [watch, getValues, fillTemplate, setTabIndex])
+	}, [watch, getValues, fillTemplate, setTabIndex, prepareTemplateRequestData])
 
 	const handleSetDefaultValues = useCallback(() => {
 		if (isCreate || !virtualServiceInfo) return
@@ -179,22 +182,24 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		if (!isFormReady) return
 
+		const { viewTemplateMode, ...cleanedData } = data
+
 		const virtualHostData: VirtualHost = {
 			$typeName: 'common.v1.VirtualHost',
-			domains: data.virtualHostDomains || []
+			domains: cleanedData.virtualHostDomains || []
 		}
 
 		const baseVSData = {
-			...data,
+			...cleanedData,
 			virtualHost: virtualHostData,
-			templateOptions: data.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
-				? data.templateOptions.map(option => ({
+			templateOptions: cleanedData.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
+				? cleanedData.templateOptions.map(option => ({
 						...option,
 						$typeName: 'virtual_service_template.v1.TemplateOption' as const
 					}))
 				: [],
-			accessLogConfig: data.accessLogConfigUid
-				? { case: 'accessLogConfigUid' as const, value: data.accessLogConfigUid }
+			accessLogConfig: cleanedData.accessLogConfigUid
+				? { case: 'accessLogConfigUid' as const, value: cleanedData.accessLogConfigUid }
 				: { case: undefined }
 		}
 
@@ -208,7 +213,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			await createVirtualService(createVSData)
 			navigate(`/accessGroups/${groupId}/virtualServices`, {
 				state: {
-					successMessage: `Virtual Service ${data.name.toUpperCase()} created successfully`
+					successMessage: `Virtual Service ${cleanedData.name.toUpperCase()} created successfully`
 				}
 			})
 		}
@@ -225,7 +230,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			resetQueryUpdateVs()
 			navigate(`/accessGroups/${groupId}/virtualServices`, {
 				state: {
-					successMessage: `Virtual Service ${data.name.toUpperCase()} update successfully`
+					successMessage: `Virtual Service ${cleanedData.name.toUpperCase()} update successfully`
 				}
 			})
 		}
@@ -301,15 +306,16 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									handleResetForm={handleResetForm}
 								/>
 							</Box>
-
 							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
-
 							<CodeBlockVs
 								rawDataTemplate={rawData?.raw}
 								rawDataPreview={virtualServiceInfo?.raw}
 								control={control}
 								isLoadingFillTemplate={isLoadingFillTemplate}
 								isCreateMode={isCreate}
+								setValue={setValue}
+								// isExpanded={viewTemplateMode}
+								// onToggle={setViewTemplateMode}
 							/>
 						</Box>
 					</Box>
