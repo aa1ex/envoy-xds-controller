@@ -7,6 +7,7 @@ import { useListenerVs, useNodeListVs, useTemplatesVs } from '../../api/grpc/hoo
 import { useParams } from 'react-router-dom'
 import { TextAreaFomVs } from '../textAreaFomVs/textAreaFomVs.tsx'
 import { NodeIdsVs } from '../nodeIdsVs/nodeIdsVs.tsx'
+import { AutocompleteVs } from '../autocompleteVs/autocompleteVs.tsx'
 
 interface IGeneralTabVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -41,7 +42,7 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				isFetching={isFetchingNodeList}
 				isErrorFetch={isErrorNodeList}
 			/>
-			<SelectFormVs
+			<AutocompleteVs
 				nameField={'templateUid'}
 				data={templates}
 				control={control}
@@ -49,6 +50,14 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				isFetching={isFetchingTemplates}
 				isErrorFetch={isErrorTemplates}
 			/>
+			{/*<SelectFormVs*/}
+			{/*	nameField={'templateUid'}*/}
+			{/*	data={templates}*/}
+			{/*	control={control}*/}
+			{/*	errors={errors}*/}
+			{/*	isFetching={isFetchingTemplates}*/}
+			{/*	isErrorFetch={isErrorTemplates}*/}
+			{/*/>*/}
 			<SelectFormVs
 				nameField={'listenerUid'}
 				data={listeners}
