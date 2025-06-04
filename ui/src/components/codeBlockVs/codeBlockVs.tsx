@@ -33,7 +33,7 @@ export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(
 	}) => {
 		const templateUid = useWatch({ control, name: 'templateUid' })
 		const isExpanded = useWatch({ control, name: 'viewTemplateMode', defaultValue: false })
-
+		console.log(rawDataPreview)
 		const renderCodeBlock = () => {
 			if (isCreateMode && !templateUid) {
 				return (
@@ -46,6 +46,13 @@ export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(
 				return <CircularProgress size={100} />
 			}
 
+			if (!isCreateMode && !templateUid && rawDataPreview) {
+				return (
+					<div style={{ width: '100%', height: '100%' }}>
+						<CodeEditorVs raw={rawDataPreview} />
+					</div>
+				)
+			}
 			if (rawDataTemplate) {
 				return (
 					<Fade in timeout={300}>
@@ -53,13 +60,6 @@ export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(
 							<CodeEditorVs raw={rawDataTemplate} />
 						</div>
 					</Fade>
-				)
-			}
-			if (!isCreateMode && !templateUid && rawDataPreview) {
-				return (
-					<div style={{ width: '100%', height: '100%' }}>
-						<CodeEditorVs raw={rawDataPreview} />
-					</div>
 				)
 			}
 		}
