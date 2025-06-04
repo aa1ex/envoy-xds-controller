@@ -17,23 +17,13 @@ interface ICodeBlockVsProps {
 	control: Control<IVirtualServiceForm>
 	isCreateMode: boolean
 	setValue: UseFormSetValue<IVirtualServiceForm>
-	// isExpanded: boolean
-	// onToggle: (value: boolean) => void
 }
 
 export const CodeBlockVs: React.FC<ICodeBlockVsProps> = memo(
-	({
-		rawDataTemplate,
-		rawDataPreview,
-		isLoadingFillTemplate,
-		isCreateMode,
-		control,
-		setValue
-		// isExpanded, onToggle
-	}) => {
+	({ rawDataTemplate, rawDataPreview, isLoadingFillTemplate, isCreateMode, control, setValue }) => {
 		const templateUid = useWatch({ control, name: 'templateUid' })
 		const isExpanded = useWatch({ control, name: 'viewTemplateMode', defaultValue: false })
-		console.log(rawDataPreview)
+
 		const renderCodeBlock = () => {
 			if (isCreateMode && !templateUid) {
 				return (

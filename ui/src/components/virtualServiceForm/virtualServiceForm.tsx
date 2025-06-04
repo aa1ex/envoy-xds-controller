@@ -234,102 +234,98 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 				}
 			})
 		}
-		// navigate(`/accessGroups/${groupId}/virtualServices`)
+
 		await refetch()
 	}
 
 	return (
-		<>
-			<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
-				<Box className='vsForm' sx={{ ...vsForm }}>
-					<Tabs
-						orientation='vertical'
-						value={tabIndex}
-						onChange={handleChangeTabIndex}
-						aria-label='formTabMEnu'
-						sx={{ ...tabsStyle }}
-					>
-						<Tab label='General' {...a11yProps(0, 'vertical')} />
-						<Tab label='Domains' {...a11yProps(1, 'vertical')} />
-						<Tab label='Settings' {...a11yProps(2, 'vertical')} />
-						<Tab label='Template' {...a11yProps(3, 'vertical')} />
-					</Tabs>
-					<Box className='vsFormWrapper' sx={{ ...vsFormWrapper }}>
-						<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
-							<Box className='vsFormLeftColumn' sx={{ ...vsFormLeftColumn }}>
-								<Box className='boxForm' sx={{ boxForm }}>
-									<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
-										<GeneralTabVs
-											register={register}
-											control={control}
-											errors={errors}
-											isEdit={!isCreate}
-										/>
-									</CustomTabPanel>
+		<form onSubmit={handleSubmit(onSubmit)} style={{ height: '100%' }}>
+			<Box className='vsForm' sx={{ ...vsForm }}>
+				<Tabs
+					orientation='vertical'
+					value={tabIndex}
+					onChange={handleChangeTabIndex}
+					aria-label='formTabMEnu'
+					sx={{ ...tabsStyle }}
+				>
+					<Tab label='General' {...a11yProps(0, 'vertical')} />
+					<Tab label='Domains' {...a11yProps(1, 'vertical')} />
+					<Tab label='Settings' {...a11yProps(2, 'vertical')} />
+					<Tab label='Template' {...a11yProps(3, 'vertical')} />
+				</Tabs>
+				<Box className='vsFormWrapper' sx={{ ...vsFormWrapper }}>
+					<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
+						<Box className='vsFormLeftColumn' sx={{ ...vsFormLeftColumn }}>
+							<Box className='boxForm' sx={{ boxForm }}>
+								<CustomTabPanel value={tabIndex} index={0} variant={'vertical'}>
+									<GeneralTabVs
+										register={register}
+										control={control}
+										errors={errors}
+										isEdit={!isCreate}
+									/>
+								</CustomTabPanel>
 
-									<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
-										<VirtualHostDomains
-											control={control}
-											setValue={setValue}
-											errors={errors}
-											setError={setError}
-											clearErrors={clearErrors}
-											watch={watch}
-										/>
-									</CustomTabPanel>
+								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
+									<VirtualHostDomains
+										control={control}
+										setValue={setValue}
+										errors={errors}
+										setError={setError}
+										clearErrors={clearErrors}
+										watch={watch}
+									/>
+								</CustomTabPanel>
 
-									<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
-										<SettingsTabVs
-											control={control}
-											setValue={setValue}
-											errors={errors}
-											watch={watch}
-										/>
-									</CustomTabPanel>
+								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
+									<SettingsTabVs
+										control={control}
+										setValue={setValue}
+										errors={errors}
+										watch={watch}
+									/>
+								</CustomTabPanel>
 
-									<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
-										<TemplateOptionsFormVs
-											register={register}
-											control={control}
-											errors={errors}
-											getValues={getValues}
-											clearErrors={clearErrors}
-										/>
-									</CustomTabPanel>
-								</Box>
-
-								<ActionButtonsVs
-									isCreateMode={isCreate}
-									isEditable={isCreate ? true : !!virtualServiceInfo?.isEditable}
-									isFetchingCreateVs={isFetchingCreateVs}
-									isFetchingUpdateVs={isFetchingUpdateVs}
-									handleResetForm={handleResetForm}
-								/>
+								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
+									<TemplateOptionsFormVs
+										register={register}
+										control={control}
+										errors={errors}
+										getValues={getValues}
+										clearErrors={clearErrors}
+									/>
+								</CustomTabPanel>
 							</Box>
-							<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
-							<CodeBlockVs
-								rawDataTemplate={rawData?.raw}
-								rawDataPreview={virtualServiceInfo?.raw}
-								control={control}
-								isLoadingFillTemplate={isLoadingFillTemplate}
+
+							<ActionButtonsVs
 								isCreateMode={isCreate}
-								setValue={setValue}
-								// isExpanded={viewTemplateMode}
-								// onToggle={setViewTemplateMode}
+								isEditable={isCreate ? true : !!virtualServiceInfo?.isEditable}
+								isFetchingCreateVs={isFetchingCreateVs}
+								isFetchingUpdateVs={isFetchingUpdateVs}
+								handleResetForm={handleResetForm}
 							/>
 						</Box>
+						<Divider orientation='vertical' flexItem sx={{ height: '100%' }} />
+						<CodeBlockVs
+							rawDataTemplate={rawData?.raw}
+							rawDataPreview={virtualServiceInfo?.raw}
+							control={control}
+							isLoadingFillTemplate={isLoadingFillTemplate}
+							isCreateMode={isCreate}
+							setValue={setValue}
+						/>
 					</Box>
 				</Box>
+			</Box>
 
-				<ErrorSnackBarVs
-					errors={errors}
-					isFormReady={isFormReady}
-					errorCreateVs={errorCreateVs}
-					errorUpdateVs={errorUpdateVs}
-					errorFillTemplate={errorFillTemplate}
-					isSubmitting={isSubmitting}
-				/>
-			</form>
-		</>
+			<ErrorSnackBarVs
+				errors={errors}
+				isFormReady={isFormReady}
+				errorCreateVs={errorCreateVs}
+				errorUpdateVs={errorUpdateVs}
+				errorFillTemplate={errorFillTemplate}
+				isSubmitting={isSubmitting}
+			/>
+		</form>
 	)
 }
