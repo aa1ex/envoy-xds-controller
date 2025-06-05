@@ -1,4 +1,4 @@
-export const styleBox = {
+export const dNdBox = {
 	width: '100%',
 	border: '1px solid gray',
 	borderRadius: 1,

@@ -9,7 +9,6 @@ import {
 	AccessLogConfigListItem,
 	ListAccessLogConfigsResponse
 } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
-import { AccessGroupListItem, ListAccessGroupsResponse } from '../../gen/access_group/v1/access_group_pb.ts'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import Box from '@mui/material/Box'
@@ -19,33 +18,20 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { AutocompleteRenderInputParams, TextField } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 
-type nameFieldKeys = Extract<
-	keyof IVirtualServiceForm,
-	'templateUid' | 'listenerUid' | 'accessLogConfigUid' | 'accessGroup'
->
+type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'templateUid' | 'listenerUid' | 'accessLogConfigUid'>
 
-type Item = ListenerListItem | VirtualServiceTemplateListItem | AccessLogConfigListItem | AccessGroupListItem
+type Item = ListenerListItem | VirtualServiceTemplateListItem | AccessLogConfigListItem
 
 interface IAutocompleteVsProps {
 	nameField: nameFieldKeys
 	control: Control<IVirtualServiceForm>
-	data:
-		| ListListenersResponse
-		| ListVirtualServiceTemplatesResponse
-		| ListAccessLogConfigsResponse
-		| ListAccessGroupsResponse
-		| undefined
+	data: ListListenersResponse | ListVirtualServiceTemplatesResponse | ListAccessLogConfigsResponse | undefined
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean
 }
 
-const getItemKey = (item: Item) => ('uid' in item ? item.uid : item.name)
-const getItemLabel = (item: Item) => item.name
-const getItemDescription = (item: Item) => ('description' in item ? item.description : '')
-
 const fieldTitles: Record<string, string> = {
-	accessGroup: 'AccessGroup',
 	templateUid: 'Template',
 	listenerUid: 'Listeners',
 	accessLogConfigUid: 'AccessLogConfig'
@@ -73,16 +59,16 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 		return (
 			<Box
 				component='li'
-				key={getItemKey(option)}
+				key={option.uid}
 				{...optionProps}
 				sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}
 			>
 				<Box sx={{ width: '45%' }}>
-					<Typography>{getItemLabel(option)}</Typography>
+					<Typography>{option.name}</Typography>
 				</Box>
 				<Box sx={{ width: '65%' }}>
 					<Typography variant='body2' sx={{ wordWrap: 'break-word' }} color='text.disabled'>
-						{getItemDescription(option)}
+						{option.description}
 					</Typography>
 				</Box>
 			</Box>
@@ -129,18 +115,27 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 			control={control}
 			rules={{ validate: validationRulesVsForm[nameField] }}
 			render={({ field }) => {
-				const selectedItem = data?.items?.find(item => getItemKey(item) === field.value)
+				const filteredItems = (data?.items || []).filter(item => {
+					if (nameField === 'listenerUid') return item.$typeName === 'listener.v1.ListenerListItem'
+					if (nameField === 'templateUid')
+						return item.$typeName === 'virtual_service_template.v1.VirtualServiceTemplateListItem'
+					if (nameField === 'accessLogConfigUid')
+						return item.$typeName === 'access_log_config.v1.AccessLogConfigListItem'
+					return false
+				})
+
+				const selectedItem = filteredItems.find(item => item.uid === field.value) || null
 
 				return (
 					<Autocomplete
 						className={`autocomplete-${nameField}`}
 						disabled={readMode}
 						loading={isFetching}
-						value={data?.items?.find(item => getItemKey(item) === field.value) || null}
-						options={data?.items || []}
-						getOptionLabel={getItemLabel}
-						isOptionEqualToValue={(option, value) => getItemKey(option) === getItemKey(value)}
-						onChange={(_, newValue) => field.onChange(newValue ? getItemKey(newValue) : '')}
+						options={filteredItems}
+						value={selectedItem}
+						getOptionLabel={option => option.name}
+						isOptionEqualToValue={(option, value) => option.uid === value.uid}
+						onChange={(_, newValue) => field.onChange(newValue ? newValue.uid : '')}
 						renderOption={(props, option) => renderOptions(props, option)}
 						renderInput={params => renderInput(params, selectedItem)}
 					/>

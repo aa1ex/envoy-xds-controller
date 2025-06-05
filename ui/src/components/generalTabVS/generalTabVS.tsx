@@ -2,7 +2,6 @@ import React from 'react'
 import { Control, FieldErrors, UseFormRegister } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { TextFieldFormVs } from '../textFieldFormVs/textFieldFormVs.tsx'
-import { SelectFormVs } from '../selectFormVs/selectFormVs.tsx'
 import { useListenerVs, useNodeListVs, useTemplatesVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { useParams } from 'react-router-dom'
 import { TextAreaFomVs } from '../textAreaFomVs/textAreaFomVs.tsx'
@@ -26,14 +25,6 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 	return (
 		<>
 			<TextFieldFormVs register={register} nameField='name' errors={errors} isDisabled={isEdit} />
-			{/*<SelectNodeVs*/}
-			{/*	nameField={'nodeIds'}*/}
-			{/*	dataNodes={nodeList}*/}
-			{/*	control={control}*/}
-			{/*	errors={errors}*/}
-			{/*	isFetching={isFetchingNodeList}*/}
-			{/*	isErrorFetch={isErrorNodeList}*/}
-			{/*/>*/}
 			<NodeIdsVs
 				nameField={'nodeIds'}
 				dataNodes={nodeList}
@@ -50,15 +41,7 @@ export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, 
 				isFetching={isFetchingTemplates}
 				isErrorFetch={isErrorTemplates}
 			/>
-			{/*<SelectFormVs*/}
-			{/*	nameField={'templateUid'}*/}
-			{/*	data={templates}*/}
-			{/*	control={control}*/}
-			{/*	errors={errors}*/}
-			{/*	isFetching={isFetchingTemplates}*/}
-			{/*	isErrorFetch={isErrorTemplates}*/}
-			{/*/>*/}
-			<SelectFormVs
+			<AutocompleteVs
 				nameField={'listenerUid'}
 				data={listeners}
 				control={control}

@@ -6,16 +6,22 @@ import { toolTipVs, toolTipVsTypography } from './style.ts'
 
 interface IToolTipVsProps {
 	titleMessage: string
+	isDnD?: boolean
+	delay?: number
 }
 
-export const ToolTipVs: React.FC<IToolTipVsProps> = ({ titleMessage }) => {
+export const ToolTipVs: React.FC<IToolTipVsProps> = ({ titleMessage, delay = 800, isDnD }) => {
 	return (
 		<Typography className='toolTipVs' sx={{ ...toolTipVsTypography }}>
-			{titleMessage}
+			{!isDnD ? titleMessage : `Configure ${titleMessage}`}
 			<Tooltip
-				title={`Select ${titleMessage.slice(0, -1)}.`}
+				title={
+					!isDnD
+						? `Select ${titleMessage.slice(0, -1)}.`
+						: `Select ${titleMessage}s and arrange them in the desired order.`
+				}
 				placement='bottom-start'
-				enterDelay={800}
+				enterDelay={delay}
 				disableInteractive
 				slotProps={{ ...toolTipVs }}
 			>
