@@ -1,5 +1,5 @@
 import React from 'react'
-import { Control, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
+import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
@@ -11,10 +11,9 @@ interface ISettingsTabVsProps {
 	control: Control<IVirtualServiceForm>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
-	watch: UseFormWatch<IVirtualServiceForm>
 }
 
-export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue, errors, watch }) => {
+export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue, errors }) => {
 	const { groupId: group } = useParams()
 	const { data: accessLogs, isFetching: isFetchingAccessLogs, isError: isErrorAccessLogs } = useAccessLogsVs(group)
 	const { data: httpFilters, isFetching: isFetchingHttpFilters, isError: isErrorHttpFilters } = useHttpFilterVs(group)
@@ -35,7 +34,6 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 				data={httpFilters}
 				control={control}
 				setValue={setValue}
-				watch={watch}
 				errors={errors}
 				isErrorFetch={isErrorHttpFilters}
 				isFetching={isFetchingHttpFilters}
@@ -45,7 +43,6 @@ export const SettingsTabVs: React.FC<ISettingsTabVsProps> = ({ control, setValue
 				data={routes}
 				control={control}
 				setValue={setValue}
-				watch={watch}
 				errors={errors}
 				isErrorFetch={isErrorRoutes}
 				isFetching={isFetchingRoutes}

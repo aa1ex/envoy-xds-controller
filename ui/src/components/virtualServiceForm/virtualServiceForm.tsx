@@ -278,12 +278,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								</CustomTabPanel>
 
 								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
-									<SettingsTabVs
-										control={control}
-										setValue={setValue}
-										errors={errors}
-										watch={watch}
-									/>
+									<SettingsTabVs control={control} setValue={setValue} errors={errors} />
 								</CustomTabPanel>
 
 								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>

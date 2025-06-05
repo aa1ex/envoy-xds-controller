@@ -1,31 +1,25 @@
 import React from 'react'
-import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from 'react-hook-form'
+import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form'
 import { HTTPFilterListItem, ListHTTPFiltersResponse } from '../../gen/http_filter/v1/http_filter_pb.ts'
 import { ListRoutesResponse, RouteListItem } from '../../gen/route/v1/route_pb.ts'
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import CircularProgress from '@mui/material/CircularProgress'
-import { SortableItemDnd } from '../sortableItemDnd/sortableItemDnd.tsx'
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
-import { dNdBox, styleTooltip } from './style.ts'
+import { dNdBox } from './style.ts'
 import Autocomplete from '@mui/material/Autocomplete'
 import Box from '@mui/material/Box'
-import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
-import List from '@mui/material/List'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { ToolTipVs } from '../toolTipVs/toolTipVs.tsx'
 import { AutocompleteRenderInputParams } from '@mui/material'
+import { DNdElementsBox } from '../dNdElementsBox/dNdElementsBox.tsx'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
+export type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
 interface IdNdSelectFormVsProps {
 	nameField: nameFieldKeys
 	data: ListHTTPFiltersResponse | ListRoutesResponse | undefined
-	watch: UseFormWatch<IVirtualServiceForm>
 	control: Control<IVirtualServiceForm>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 	errors: FieldErrors<IVirtualServiceForm>
@@ -36,7 +30,6 @@ interface IdNdSelectFormVsProps {
 export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	nameField,
 	data,
-	watch,
 	control,
 	setValue,
 	errors,
@@ -44,18 +37,7 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 	isErrorFetch
 }) => {
 	const titleMessage = nameField === 'additionalHttpFilterUids' ? 'HTTP filter' : 'Route'
-	const selectedUids = watch(nameField)
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
-
-	const onDragEnd = (e: DragEndEvent) => {
-		const { active, over } = e
-		if (!over || active.id === over.id) return
-
-		const oldIndex = selectedUids.indexOf(active.id.toString())
-		const newIndex = selectedUids.indexOf(over.id.toString())
-
-		setValue(nameField, arrayMove(selectedUids, oldIndex, newIndex))
-	}
 
 	const renderOptions = (
 		props: React.HTMLAttributes<HTMLLIElement> & {
@@ -137,33 +119,13 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 					/>
 				)}
 			/>
-			<DndContext collisionDetection={closestCenter} onDragEnd={onDragEnd}>
-				<SortableContext items={selectedUids} strategy={verticalListSortingStrategy}>
-					<Box sx={{ display: 'flex', alignItems: 'center' }}>
-						<Tooltip
-							title={`Arrange the ${titleMessage} from top to bottom..`}
-							placement='bottom-start'
-							enterDelay={500}
-							slotProps={{ ...styleTooltip }}
-						>
-							<ArrowDownwardIcon sx={{ fontSize: 19, color: 'gray' }} />
-						</Tooltip>
-						<List sx={{ padding: 1, borderRadius: '4px', width: '100%' }}>
-							{selectedUids.map(uid => {
-								const item = (data?.items || []).find(el => el.uid === uid)
-								return item ? (
-									<SortableItemDnd
-										key={uid}
-										uid={uid}
-										name={item.name}
-										description={item.description}
-									/>
-								) : null
-							})}
-						</List>
-					</Box>
-				</SortableContext>
-			</DndContext>
+			<DNdElementsBox
+				titleMessage={titleMessage}
+				nameField={nameField}
+				control={control}
+				data={data}
+				setValue={setValue}
+			/>
 		</Box>
 	)
 }
