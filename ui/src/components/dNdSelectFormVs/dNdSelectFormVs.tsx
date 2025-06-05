@@ -14,6 +14,8 @@ import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { ToolTipVs } from '../toolTipVs/toolTipVs.tsx'
 import { AutocompleteRenderInputParams } from '@mui/material'
 import { DNdElementsBox } from '../dNdElementsBox/dNdElementsBox.tsx'
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import IconButton from '@mui/material/IconButton'
 
 export type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
@@ -62,6 +64,14 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 						{option.description}
 					</Typography>
 				</Box>
+				<IconButton
+					aria-label='watchCode'
+					onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+						event.stopPropagation()
+					}}
+				>
+					<VisibilityOutlinedIcon />
+				</IconButton>
 			</Box>
 		)
 	}
