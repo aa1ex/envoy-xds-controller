@@ -11,18 +11,18 @@ import {
 } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
 import { Control, Controller, FieldErrors } from 'react-hook-form'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
-import Typography from '@mui/material/Typography'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import Autocomplete from '@mui/material/Autocomplete'
-import { AutocompleteRenderInputParams, ClickAwayListener, Popper, TextField } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
-import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import { RenderInputField } from './renderInputField.tsx'
+import { AutocompleteOption } from './autocompleteOption.tsx'
+import { PopoverOption } from './popoverOption.tsx'
 
-type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'templateUid' | 'listenerUid' | 'accessLogConfigUid'>
+export type nameFieldKeys = Extract<
+	keyof IVirtualServiceForm,
+	'templateUid' | 'listenerUid' | 'accessLogConfigUid' | 'additionalHttpFilterUids' | 'additionalRouteUids'
+>
 
-export type Item = ListenerListItem | VirtualServiceTemplateListItem | AccessLogConfigListItem
+export type ItemVs = ListenerListItem | VirtualServiceTemplateListItem | AccessLogConfigListItem
 
 interface IAutocompleteVsProps {
 	nameField: nameFieldKeys
@@ -33,12 +33,6 @@ interface IAutocompleteVsProps {
 	isErrorFetch: boolean
 }
 
-const fieldTitles: Record<string, string> = {
-	templateUid: 'Template',
-	listenerUid: 'Listeners',
-	accessLogConfigUid: 'AccessLogConfig'
-}
-
 export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 	nameField,
 	data,
@@ -47,17 +41,23 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 	isErrorFetch,
 	isFetching
 }) => {
-	const titleMessage = fieldTitles[nameField] || nameField
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-	const [popoverOption, setPopoverOption] = useState<Item | null>(null)
-	const isPopoverOpen = !!(popoverOption && anchorEl && document.body.contains(anchorEl))
+	const [popoverOption, setPopoverOption] = useState<ItemVs | null>(null)
 
-	const handleOpenPopover = (event: React.MouseEvent<HTMLButtonElement>, option: Item) => {
+	const SUPPORTED_TYPES = new Set([
+		'listener.v1.ListenerListItem',
+		'virtual_service_template.v1.VirtualServiceTemplateListItem',
+		'access_log_config.v1.AccessLogConfigListItem'
+	])
+
+	const handleOpenPopover = (event: React.MouseEvent<HTMLButtonElement>, option: AutocompleteOption) => {
+		if (!SUPPORTED_TYPES.has(option.$typeName)) return
+
 		event.stopPropagation()
 		setAnchorEl(event.currentTarget)
-		setPopoverOption(option)
+		setPopoverOption(option as ItemVs)
 	}
 
 	const handleClosePopover = () => {
@@ -70,66 +70,6 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 			handleClosePopover()
 		}
 	}, [anchorEl])
-
-	// В renderOptions заменяем рендер встроенного бокса на Popper
-	const renderOptions = (props: React.HTMLAttributes<HTMLLIElement> & { key: any }, option: Item) => {
-		const { key, ...optionProps } = props
-
-		return (
-			<Box
-				component='li'
-				key={option.uid}
-				{...optionProps}
-				sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}
-			>
-				<Box sx={{ width: '45%' }}>
-					<Typography>{option.name}</Typography>
-				</Box>
-				<Box sx={{ width: '65%' }}>
-					<Typography variant='body2' sx={{ wordWrap: 'break-word' }} color='text.disabled'>
-						{option.description}
-					</Typography>
-				</Box>
-				<IconButton onClick={e => handleOpenPopover(e, option)}>
-					<VisibilityOutlinedIcon />
-				</IconButton>
-			</Box>
-		)
-	}
-
-	const renderInput = (params: AutocompleteRenderInputParams, selectedItem: any) => {
-		return (
-			<TextField
-				{...params}
-				label={fieldTitles[nameField]}
-				error={!!errors[nameField] || isErrorFetch}
-				helperText={errors[nameField]?.message || (isErrorFetch ? `Error loading ${titleMessage} data` : '')}
-				onKeyDown={e => {
-					const container = document.querySelector(`.autocomplete-${nameField}`)
-					const autocompletePopup = document.querySelector('.MuiAutocomplete-popper')
-					const isAutocompleteOpen = container && autocompletePopup && autocompletePopup.clientHeight > 0
-
-					if (e.key === 'Enter' && isAutocompleteOpen) {
-						e.preventDefault()
-					}
-				}}
-				slotProps={{
-					input: {
-						...params.InputProps,
-						endAdornment: (
-							<>
-								<Typography variant='body2' sx={{ wordWrap: 'break-word' }} color='textDisabled'>
-									{selectedItem?.description || ''}
-								</Typography>
-								{isFetching ? <CircularProgress color='inherit' size={20} /> : null}
-								{params.InputProps.endAdornment}
-							</>
-						)
-					}
-				}}
-			/>
-		)
-	}
 
 	return (
 		<>
@@ -152,7 +92,7 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 					return (
 						<>
 							<Autocomplete
-								className={`autocomplete-${nameField}`}
+								className={`autocompleteVs-${nameField}`}
 								disabled={readMode}
 								loading={isFetching}
 								options={filteredItems}
@@ -160,51 +100,28 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 								getOptionLabel={option => option.name}
 								isOptionEqualToValue={(option, value) => option.uid === value.uid}
 								onChange={(_, newValue) => field.onChange(newValue ? newValue.uid : '')}
-								renderInput={params => renderInput(params, selectedItem)}
-								renderOption={(props, option) => renderOptions(props, option)}
+								renderInput={params => (
+									<RenderInputField
+										className={'autocompleteVs'}
+										params={params}
+										nameField={nameField}
+										errors={errors}
+										isFetching={isFetching}
+										isErrorFetch={isErrorFetch}
+										selectedItem={selectedItem}
+									/>
+								)}
+								renderOption={(props, option) => (
+									<AutocompleteOption
+										key={option.uid}
+										option={option}
+										props={props}
+										onPreviewClick={handleOpenPopover}
+									/>
+								)}
 							/>
-							{isPopoverOpen && anchorEl && (
-								<ClickAwayListener onClickAway={handleClosePopover}>
-									<Popper
-										open={Boolean(anchorEl && popoverOption)}
-										anchorEl={anchorEl}
-										placement='right'
-										disablePortal={false}
-										style={{ zIndex: 1300 }}
-										onClick={e => e.stopPropagation()}
-									>
-										{popoverOption && (
-											<Box
-												sx={{
-													bgcolor: 'background.paper',
-													boxShadow: 3,
-													borderRadius: 1,
-													p: 1,
-													minWidth: 200,
-													userSelect: 'text'
-												}}
-											>
-												<Typography variant='subtitle2'>Код элемента:</Typography>
-												<Typography variant='body2'>{popoverOption.description}</Typography>
-												<Box
-													component='button'
-													onClick={handleClosePopover}
-													sx={{
-														mt: 1,
-														background: 'none',
-														border: 'none',
-														cursor: 'pointer',
-														color: '#1976d2',
-														':hover': { textDecoration: 'underline' }
-													}}
-												>
-													Закрыть
-												</Box>
-											</Box>
-										)}
-									</Popper>
-								</ClickAwayListener>
-							)}
+
+							<PopoverOption anchorEl={anchorEl} option={popoverOption} onClose={handleClosePopover} />
 						</>
 					)
 				}}

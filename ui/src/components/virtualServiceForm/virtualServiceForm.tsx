@@ -34,7 +34,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const navigate = useNavigate()
 	const { groupId } = useParams()
 	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
-	// const [viewTemplateMode, setViewTemplateMode] = useState<boolean>(false)
 
 	const setViewMode = useViewModeStore(state => state.setViewMode)
 
@@ -177,6 +176,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 	const handleResetForm = () => {
 		isCreate ? reset() : handleSetDefaultValues()
+		setTabIndex(0)
 	}
 
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {

@@ -6,7 +6,7 @@ import { useListenerVs, useNodeListVs, useTemplatesVs } from '../../api/grpc/hoo
 import { useParams } from 'react-router-dom'
 import { TextAreaFomVs } from '../textAreaFomVs/textAreaFomVs.tsx'
 import { NodeIdsVs } from '../nodeIdsVs/nodeIdsVs.tsx'
-import { AutocompleteVs } from '../autocompleteVs/autocompleteVs.tsx'
+import { AutocompleteVs } from '../autocompleteVs'
 
 interface IGeneralTabVsProps {
 	register: UseFormRegister<IVirtualServiceForm>

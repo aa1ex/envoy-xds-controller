@@ -3,13 +3,13 @@ import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
-import { styleTooltip } from '../dNdSelectFormVs/style.ts'
+import { styleTooltip } from './style.ts'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import List from '@mui/material/List'
 import { SortableItemDnd } from '../sortableItemDnd/sortableItemDnd.tsx'
 import { Control, UseFormSetValue, useWatch } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
-import { nameFieldKeys } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
+import { nameFieldKeys } from './dNdSelectFormVs.tsx'
 import { ListHTTPFiltersResponse } from '../../gen/http_filter/v1/http_filter_pb.ts'
 import { ListRoutesResponse } from '../../gen/route/v1/route_pb.ts'
 
@@ -21,13 +21,7 @@ interface IDNdElementsBoxProps {
 	data: ListHTTPFiltersResponse | ListRoutesResponse | undefined
 }
 
-export const DNdElementsBox: React.FC<IDNdElementsBoxProps> = ({
-	titleMessage,
-	nameField,
-	control,
-	setValue,
-	data
-}) => {
+export const DNdElements: React.FC<IDNdElementsBoxProps> = ({ titleMessage, nameField, control, setValue, data }) => {
 	const selectedUids = useWatch({ control, name: nameField })
 
 	const onDragEnd = (e: DragEndEvent) => {

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Control, FieldErrors, UseFormSetValue } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
-import { DNdSelectFormVs } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
+import { DNdSelectFormVs } from '../dNdSelectFormVs'
 import { RemoteAddrFormVs } from '../remoteAddrFormVS/remoteAddrFormVS.tsx'
 import { useAccessLogsVs, useHttpFilterVs, useRouteVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import { useParams } from 'react-router-dom'
-import { AutocompleteVs } from '../autocompleteVs/autocompleteVs.tsx'
+import { AutocompleteVs } from '../autocompleteVs'
 
 interface ISettingsTabVsProps {
 	control: Control<IVirtualServiceForm>
