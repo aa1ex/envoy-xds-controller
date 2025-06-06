@@ -2,8 +2,8 @@ import React from 'react'
 import { ItemVs } from './autocompleteVs.tsx'
 import { ClickAwayListener, Popper } from '@mui/material'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import { ItemDnd } from '../dNdSelectFormVs/dNdSelectFormVs.tsx'
+import { AutocompleteCodeEditorVs } from './autocompleteCodeEditorVs.tsx'
 
 interface IPopoverOptionProps {
 	anchorEl: HTMLElement | null
@@ -33,26 +33,12 @@ export const PopoverOption: React.FC<IPopoverOptionProps> = ({ anchorEl, option,
 							boxShadow: 3,
 							borderRadius: 1,
 							p: 1,
-							minWidth: 200,
-							userSelect: 'text'
+							maxWidth: '90vw',
+							overflow: 'auto',
+							display: 'inline-block'
 						}}
 					>
-						<Typography variant='subtitle2'>Код элемента:</Typography>
-						<Typography variant='body2'>{option.description}</Typography>
-						<Box
-							component='button'
-							onClick={onClose}
-							sx={{
-								mt: 1,
-								background: 'none',
-								border: 'none',
-								cursor: 'pointer',
-								color: '#1976d2',
-								':hover': { textDecoration: 'underline' }
-							}}
-						>
-							Закрыть
-						</Box>
+						<AutocompleteCodeEditorVs raw={option.raw} />
 					</Box>
 				)}
 			</Popper>

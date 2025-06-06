@@ -96,5 +96,8 @@ export const validationRulesVsForm: Record<
 		}
 
 		return true
+	},
+	viewTemplateMode: () => {
+		return true
 	}
 }

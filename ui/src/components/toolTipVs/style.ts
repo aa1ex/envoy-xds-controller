@@ -17,5 +17,6 @@ export const toolTipVsTypography = {
 	gap: 0.5,
 	marginTop: 1,
 	color: 'gray',
-	fontSize: 15
+	fontSize: 15,
+	paddingLeft: '4px'
 }
