@@ -19,7 +19,6 @@ import { a11yProps } from '../customTabPanel/style.ts'
 import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
-import { TemplateOptionsFormVs } from '../templateOptionsFormVs/templateOptionsFormVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains/virtualHostDomains.tsx'
 
 import { useTabStore } from '../../store/tabIndexStore.ts'
@@ -29,6 +28,7 @@ import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
 import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
 import { boxForm, tabsStyle, vsForm, vsFormLeftColumn, vsFormWrapper } from './style.ts'
 import { ActionButtonsVs } from '../actionButtonsVs/actionButtonsVs.tsx'
+import { TemplateOptionsFormVsRo } from '../templateOptionsFormVsRO'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
@@ -38,9 +38,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const setViewMode = useViewModeStore(state => state.setViewMode)
 
 	useEffect(() => {
-		if (isCreate) {
-			setViewMode('edit')
-		}
+		if (isCreate) setViewMode('edit')
 	}, [isCreate, setViewMode])
 
 	const tabIndex = useTabStore(state => state.tabIndex)
@@ -110,9 +108,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	}, [])
 
 	useEffect(() => {
-		if (tabIndex === 0 && isSubmitted) {
-			void trigger('name')
-		}
+		if (tabIndex === 0 && isSubmitted) void trigger('name')
 	}, [tabIndex, trigger, isSubmitted])
 
 	useEffect(() => {
@@ -226,6 +222,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			}
 
 			// console.log('data for Update', updateVSData)
+
 			await updateVS(updateVSData)
 			resetQueryUpdateVs()
 			navigate(`/accessGroups/${groupId}/virtualServices`, {
@@ -278,16 +275,26 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 								</CustomTabPanel>
 
 								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
-									<SettingsTabVs control={control} setValue={setValue} errors={errors} />
+									<SettingsTabVs
+										control={control}
+										setValue={setValue}
+										errors={errors}
+										fillTemplate={rawData}
+									/>
 								</CustomTabPanel>
 
 								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
-									<TemplateOptionsFormVs
-										register={register}
+									{/*<TemplateOptionsFormVs*/}
+									{/*	register={register}*/}
+									{/*	control={control}*/}
+									{/*	errors={errors}*/}
+									{/*	getValues={getValues}*/}
+									{/*	clearErrors={clearErrors}*/}
+									{/*/>*/}
+									<TemplateOptionsFormVsRo
 										control={control}
-										errors={errors}
-										getValues={getValues}
-										clearErrors={clearErrors}
+										setValue={setValue}
+										register={register}
 									/>
 								</CustomTabPanel>
 							</Box>

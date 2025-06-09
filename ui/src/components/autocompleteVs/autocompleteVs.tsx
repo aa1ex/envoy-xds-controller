@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { ListenerListItem, ListListenersResponse } from '../../gen/listener/v1/listener_pb.ts'
 import {
+	FillTemplateResponse,
 	ListVirtualServiceTemplatesResponse,
 	VirtualServiceTemplateListItem
 } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
@@ -9,13 +10,14 @@ import {
 	AccessLogConfigListItem,
 	ListAccessLogConfigsResponse
 } from '../../gen/access_log_config/v1/access_log_config_pb.ts'
-import { Control, Controller, FieldErrors } from 'react-hook-form'
+import { Control, Controller, FieldErrors, UseFormSetValue } from 'react-hook-form'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { validationRulesVsForm } from '../../utils/helpers/validationRulesVsForm.ts'
 import Autocomplete from '@mui/material/Autocomplete'
 import { RenderInputField } from './renderInputField.tsx'
 import { AutocompleteOption } from './autocompleteOption.tsx'
 import { PopoverOption } from './popoverOption.tsx'
+import { useAccessLogTemplateOptions } from '../../utils/hooks/useAccessLogTemplateOptions.ts'
 
 export type nameFieldKeys = Extract<
 	keyof IVirtualServiceForm,
@@ -31,6 +33,8 @@ interface IAutocompleteVsProps {
 	errors: FieldErrors<IVirtualServiceForm>
 	isFetching: boolean
 	isErrorFetch: boolean
+	setValue?: UseFormSetValue<IVirtualServiceForm>
+	fillTemplate?: FillTemplateResponse | undefined
 }
 
 export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
@@ -39,12 +43,16 @@ export const AutocompleteVs: React.FC<IAutocompleteVsProps> = ({
 	control,
 	errors,
 	isErrorFetch,
-	isFetching
+	isFetching,
+	setValue,
+	fillTemplate
 }) => {
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const [popoverOption, setPopoverOption] = useState<ItemVs | null>(null)
+
+	useAccessLogTemplateOptions({ setValue, control, fillTemplate })
 
 	const SUPPORTED_TYPES = new Set([
 		'listener.v1.ListenerListItem',
