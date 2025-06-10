@@ -148,6 +148,7 @@ export const useFillTemplate = () => {
 	})
 
 	return {
+		getTemplate: fillTemplateMutation.mutate,
 		fillTemplate: fillTemplateMutation.mutateAsync,
 		isLoadingFillTemplate: fillTemplateMutation.isPending,
 		rawData: fillTemplateMutation.data,

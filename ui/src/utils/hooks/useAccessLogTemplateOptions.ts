@@ -21,10 +21,9 @@ export const useAccessLogTemplateOptions = ({
 		control,
 		name: 'accessLogConfigUid'
 	})
-	console.log({ fillTemplate, readMode, accessLogField, setValue })
+
 	useEffect(() => {
 		if (!fillTemplate?.raw || readMode || !accessLogField || !setValue) return
-		console.log('some')
 
 		try {
 			const parsed = JSON.parse(fillTemplate.raw)

@@ -23,10 +23,7 @@ interface ITemplateOptionsFormVsRoProps {
 export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = ({ register, control }) => {
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
-	const { fields, remove } = useFieldArray({
-		control,
-		name: 'templateOptions'
-	})
+	const { fields, remove } = useFieldArray({ control, name: 'templateOptions' })
 
 	const enumOptionsModifier = Object.entries(TemplateOptionModifier)
 		.filter(([_, value]) => typeof value === 'number')
@@ -48,6 +45,11 @@ export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = 
 							fullWidth
 							disabled={readMode}
 							label='Path'
+							slotProps={{
+								input: {
+									readOnly: true
+								}
+							}}
 						/>
 						<Controller
 							name={`templateOptions.${index}.modifier` as const}
@@ -61,6 +63,12 @@ export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = 
 										fullWidth
 										disabled={readMode}
 										label='Modifier'
+										readOnly
+										sx={{
+											'& .MuiSelect-select': {
+												cursor: 'default'
+											}
+										}}
 									>
 										{enumOptionsModifier
 											.filter(option => option.value !== 0)
@@ -73,7 +81,7 @@ export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = 
 								</FormControl>
 							)}
 						/>
-						<IconButton size='large' onClick={() => remove(index)} color='error' disabled={readMode}>
+						<IconButton size='large' onClick={() => remove(index)} color='error' disabled={true}>
 							<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
 						</IconButton>
 					</Box>
