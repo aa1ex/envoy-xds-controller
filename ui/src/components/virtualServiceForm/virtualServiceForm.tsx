@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 
 import Box from '@mui/material/Box'
@@ -22,25 +22,18 @@ import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains'
 
 import { useTabStore } from '../../store/tabIndexStore.ts'
-import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 
 import { IVirtualServiceForm, IVirtualServiceFormProps } from './types.ts'
 import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
 import { boxForm, tabsStyle, vsForm, vsFormLeftColumn, vsFormWrapper } from './style.ts'
 import { ActionButtonsVs } from '../actionButtonsVs/actionButtonsVs.tsx'
 import { TemplateOptionsFormVsRo } from '../templateOptionsFormVsRO'
-import { useFillTemplateHook, useSetDefaultValuesVSForm } from '../../utils/hooks'
+import { useFillTemplateHook, useSetDefaultValuesVSForm, useVirtualServiceFormMeta } from '../../utils/hooks'
+import { getDefaultVirtualServiceValues } from '../../utils/helpers'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
-	const { groupId } = useParams()
-	const isCreate = useLocation().pathname.split('/').pop() === 'createVs'
-
-	const setViewMode = useViewModeStore(state => state.setViewMode)
-
-	useEffect(() => {
-		if (isCreate) setViewMode('edit')
-	}, [isCreate, setViewMode])
+	const { groupId, isCreate } = useVirtualServiceFormMeta()
 
 	const tabIndex = useTabStore(state => state.tabIndex)
 	const setTabIndex = useTabStore(state => state.setTabIndex)
@@ -61,20 +54,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		trigger
 	} = useForm<IVirtualServiceForm>({
 		mode: 'onChange',
-		defaultValues: {
-			name: '',
-			nodeIds: [],
-			virtualHostDomains: [],
-			accessGroup: isCreate ? groupId : '',
-			additionalHttpFilterUids: [],
-			additionalRouteUids: [],
-			useRemoteAddress: undefined,
-			templateOptions: [],
-			viewTemplateMode: false,
-			virtualHostDomainsMode: false,
-			additionalHttpFilterMode: false,
-			additionalRouteMode: false
-		},
+		defaultValues: getDefaultVirtualServiceValues(isCreate, groupId),
 		shouldUnregister: false
 	})
 
@@ -108,7 +88,13 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		if (!isFormReady) return
 
-		const { viewTemplateMode, virtualHostDomainsMode, ...cleanedData } = data
+		const {
+			viewTemplateMode,
+			virtualHostDomainsMode,
+			additionalHttpFilterMode,
+			additionalRouteMode,
+			...cleanedData
+		} = data
 
 		const virtualHostData: VirtualHost = {
 			$typeName: 'common.v1.VirtualHost',

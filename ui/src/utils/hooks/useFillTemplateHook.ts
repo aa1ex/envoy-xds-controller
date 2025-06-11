@@ -22,6 +22,8 @@ export const useFillTemplateHook = ({ formValues }: IUseFillTemplate) => {
 			accessLogConfigUid,
 			viewTemplateMode,
 			virtualHostDomainsMode,
+			additionalRouteMode,
+			additionalHttpFilterMode,
 			useRemoteAddress,
 			...rest
 		} = formValues || {}
