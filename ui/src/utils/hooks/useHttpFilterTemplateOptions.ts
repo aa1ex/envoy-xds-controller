@@ -3,22 +3,22 @@ import { IVirtualServiceForm } from '../../components/virtualServiceForm/types.t
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { useEffect } from 'react'
 
-interface IUseVHDomainsTemplateOptions {
+interface IUseHttpFilterTemplateOptions {
 	control: Control<IVirtualServiceForm>
 	setValue: UseFormSetValue<IVirtualServiceForm>
 }
 
-export const useVHDomainsTemplateOptions = ({ control, setValue }: IUseVHDomainsTemplateOptions): void => {
+export const useHttpFilterTemplateOptions = ({ control, setValue }: IUseHttpFilterTemplateOptions) => {
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
-	const isReplaceMode = useWatch({ control, name: 'virtualHostDomainsMode' })
-	const vhDomainsField = useWatch({ control, name: 'virtualHostDomains' })
+	const isReplaceMode = useWatch({ control, name: 'additionalHttpFilterMode' })
+	const httpFiltersField = useWatch({ control, name: 'additionalHttpFilterUids' })
 
 	useEffect(() => {
-		if (readMode || !vhDomainsField) return
+		if (readMode || !httpFiltersField) return
 
 		if (isReplaceMode) {
-			setValue('templateOptions', [{ field: 'virtualHost.domains', modifier: 2 }], {
+			setValue('templateOptions', [{ field: 'additionalHttpFilters', modifier: 2 }], {
 				shouldValidate: true,
 				shouldDirty: true,
 				shouldTouch: true
@@ -30,5 +30,5 @@ export const useVHDomainsTemplateOptions = ({ control, setValue }: IUseVHDomains
 				shouldTouch: true
 			})
 		}
-	}, [isReplaceMode, readMode, setValue, vhDomainsField])
+	}, [isReplaceMode, readMode, setValue, httpFiltersField])
 }

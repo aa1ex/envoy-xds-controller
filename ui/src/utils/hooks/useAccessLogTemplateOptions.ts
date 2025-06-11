@@ -17,10 +17,7 @@ export const useAccessLogTemplateOptions = ({
 }: UseAccessLogTemplateOptionsProps): void => {
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
-	const accessLogField = useWatch({
-		control,
-		name: 'accessLogConfigUid'
-	})
+	const accessLogField = useWatch({ control, name: 'accessLogConfigUid' })
 
 	useEffect(() => {
 		if (!fillTemplate?.raw || readMode || !accessLogField || !setValue) return

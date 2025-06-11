@@ -26,4 +26,6 @@ export interface IVirtualServiceForm {
 	templateOptions: ITemplateOption[]
 	viewTemplateMode: boolean
 	virtualHostDomainsMode: boolean
+	additionalHttpFilterMode: boolean
+	additionalRouteMode: boolean
 }

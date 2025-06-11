@@ -145,7 +145,7 @@ export const VirtualHostDomains: React.FC<IVirtualHostDomainsProps> = ({
 		<Box sx={{ ...styleBox }}>
 			<Box display='flex' justifyContent='space-between' alignItems='center'>
 				<TooltipVhDomains />
-				<AddOrReplaceButtons control={control} setValue={setValue} />
+				<AddOrReplaceButtons control={control} setValue={setValue} mode={'virtualHostDomainsMode'} />
 			</Box>
 
 			<Box display='flex' width='100%' alignItems='flex-start'>

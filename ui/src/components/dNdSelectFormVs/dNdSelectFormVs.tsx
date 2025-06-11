@@ -11,6 +11,7 @@ import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { ToolTipVs } from '../toolTipVs/toolTipVs.tsx'
 import { DNdElements } from './dNdElements.tsx'
 import { AutocompleteOption, PopoverOption, RenderInputField } from '../autocompleteVs'
+import { AddOrReplaceButtons } from '../virtualHostDomains'
 
 export type nameFieldKeys = Extract<keyof IVirtualServiceForm, 'additionalHttpFilterUids' | 'additionalRouteUids'>
 
@@ -40,6 +41,8 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 	const [popoverOption, setPopoverOption] = useState<ItemDnd | null>(null)
+	const templateOptionMode =
+		nameField === 'additionalHttpFilterUids' ? 'additionalHttpFilterMode' : 'additionalRouteMode'
 
 	const SUPPORTED_TYPES = new Set(['http_filter.v1.HTTPFilterListItem', 'route.v1.RouteListItem'])
 
@@ -64,7 +67,10 @@ export const DNdSelectFormVs: React.FC<IdNdSelectFormVsProps> = ({
 
 	return (
 		<Box sx={{ ...dNdBox }}>
-			<ToolTipVs titleMessage={titleMessage} delay={500} isDnD={true} />
+			<Box display='flex' justifyContent='space-between' alignItems='center'>
+				<ToolTipVs titleMessage={titleMessage} delay={500} isDnD={true} />
+				<AddOrReplaceButtons control={control} setValue={setValue} mode={templateOptionMode} />
+			</Box>
 			<Controller
 				name={nameField}
 				control={control}

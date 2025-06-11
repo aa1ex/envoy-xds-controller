@@ -17,7 +17,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { RenderInputField } from './renderInputField.tsx'
 import { AutocompleteOption } from './autocompleteOption.tsx'
 import { PopoverOption } from './popoverOption.tsx'
-import { useAccessLogTemplateOptions } from '../../utils/hooks/useAccessLogTemplateOptions.ts'
+import { useAccessLogTemplateOptions } from '../../utils/hooks'
 
 export type nameFieldKeys = Extract<
 	keyof IVirtualServiceForm,

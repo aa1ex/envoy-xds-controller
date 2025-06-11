@@ -99,5 +99,14 @@ export const validationRulesVsForm: Record<
 	},
 	viewTemplateMode: () => {
 		return true
+	},
+	virtualHostDomainsMode: () => {
+		return true
+	},
+	additionalHttpFilterMode: () => {
+		return true
+	},
+	additionalRouteMode: () => {
+		return true
 	}
 }

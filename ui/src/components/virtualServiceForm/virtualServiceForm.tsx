@@ -29,8 +29,7 @@ import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
 import { boxForm, tabsStyle, vsForm, vsFormLeftColumn, vsFormWrapper } from './style.ts'
 import { ActionButtonsVs } from '../actionButtonsVs/actionButtonsVs.tsx'
 import { TemplateOptionsFormVsRo } from '../templateOptionsFormVsRO'
-import { useFillTemplateHook } from '../../utils/hooks/useFillTemplateHook.ts'
-import { useSetDefaultValuesVSForm } from '../../utils/hooks/useSetDefaultValuesVSForm.ts'
+import { useFillTemplateHook, useSetDefaultValuesVSForm } from '../../utils/hooks'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
 	const navigate = useNavigate()
@@ -72,7 +71,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 			useRemoteAddress: undefined,
 			templateOptions: [],
 			viewTemplateMode: false,
-			virtualHostDomainsMode: false
+			virtualHostDomainsMode: false,
+			additionalHttpFilterMode: false,
+			additionalRouteMode: false
 		},
 		shouldUnregister: false
 	})
