@@ -1,5 +1,5 @@
-import React from 'react'
-import { Control, Controller, useFieldArray, UseFormRegister, UseFormSetValue } from 'react-hook-form'
+import React, { useCallback } from 'react'
+import { Control, Controller, FieldArrayWithId, useFieldArray, UseFormRegister, UseFormSetValue } from 'react-hook-form'
 import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
@@ -13,6 +13,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { handleRemoveTemplateOption } from '../../utils/helpers'
 
 interface ITemplateOptionsFormVsRoProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -20,10 +21,20 @@ interface ITemplateOptionsFormVsRoProps {
 	setValue?: UseFormSetValue<IVirtualServiceForm>
 }
 
-export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = ({ register, control }) => {
+export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = ({ register, control, setValue }) => {
 	const readMode = useViewModeStore(state => state.viewMode) === 'read'
 
 	const { fields, remove } = useFieldArray({ control, name: 'templateOptions' })
+
+	const onRemoveTemplateOption = useCallback(
+		(field: FieldArrayWithId<IVirtualServiceForm, 'templateOptions'>, index: number) => {
+			remove(index)
+			if (setValue) {
+				handleRemoveTemplateOption({ field, setValue })
+			}
+		},
+		[remove, setValue]
+	)
 
 	const enumOptionsModifier = Object.entries(TemplateOptionModifier)
 		.filter(([_, value]) => typeof value === 'number')
@@ -81,7 +92,12 @@ export const TemplateOptionsFormVsRo: React.FC<ITemplateOptionsFormVsRoProps> = 
 								</FormControl>
 							)}
 						/>
-						<IconButton size='large' onClick={() => remove(index)} color='error' disabled={true}>
+						<IconButton
+							size='large'
+							onClick={() => onRemoveTemplateOption(field, index)}
+							color='error'
+							disabled={readMode}
+						>
 							<DeleteIcon color={readMode ? 'disabled' : 'primary'} />
 						</IconButton>
 					</Box>

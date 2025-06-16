@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
-import themeSettings from '../../theme/theme'
+import { themeSettings } from '../../theme'
 
 export const useThemeMode = () => {
 	const [mode, setMode] = useState('light')
