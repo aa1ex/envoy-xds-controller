@@ -1,4 +1,4 @@
-import { ITemplateOption } from '../../components/virtualServiceForm/types'
+import { ITemplateOption } from '../../components/virtualServiceForm'
 
 interface IUpdateTemplateOptions {
 	currentTemplateOptions: ITemplateOption[]

@@ -1,7 +1,7 @@
 import { Control, UseFormSetValue, useWatch } from 'react-hook-form'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { useEffect, useState } from 'react'
-import { IVirtualServiceForm } from '../../components/virtualServiceForm/types.ts'
+import { IVirtualServiceForm } from '../../components/virtualServiceForm'
 import { FillTemplateResponse } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import { updateTemplateOptions } from '../helpers'
 

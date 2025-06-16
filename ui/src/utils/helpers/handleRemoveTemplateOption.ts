@@ -1,5 +1,5 @@
 import { FieldArrayWithId, UseFormSetValue } from 'react-hook-form'
-import { IVirtualServiceForm } from '../../components/virtualServiceForm/types.ts'
+import { IVirtualServiceForm } from '../../components/virtualServiceForm'
 
 interface HandleRemoveParams {
 	field: FieldArrayWithId<IVirtualServiceForm, 'templateOptions'>

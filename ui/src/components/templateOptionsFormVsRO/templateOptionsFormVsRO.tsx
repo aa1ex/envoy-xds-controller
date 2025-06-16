@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Control, Controller, FieldArrayWithId, useFieldArray, UseFormRegister, UseFormSetValue } from 'react-hook-form'
-import { IVirtualServiceForm } from '../virtualServiceForm/types.ts'
+import { IVirtualServiceForm } from '../virtualServiceForm'
 import { useViewModeStore } from '../../store/viewModeVsStore.ts'
 import { TemplateOptionModifier } from '../../gen/virtual_service_template/v1/virtual_service_template_pb.ts'
 import Box from '@mui/material/Box'

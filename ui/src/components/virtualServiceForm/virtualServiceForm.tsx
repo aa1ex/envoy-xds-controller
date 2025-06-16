@@ -1,17 +1,10 @@
 import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { SubmitHandler, useForm, useWatch } from 'react-hook-form'
 
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Tabs from '@mui/material/Tabs'
 import { Tab } from '@mui/material'
-
-import {
-	CreateVirtualServiceRequest,
-	UpdateVirtualServiceRequest
-} from '../../gen/virtual_service/v1/virtual_service_pb'
-import { VirtualHost } from '../../gen/common/v1/common_pb.ts'
 
 import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
@@ -28,11 +21,15 @@ import { CodeBlockVs } from '../codeBlockVs/codeBlockVs.tsx'
 import { boxForm, tabsStyle, vsForm, vsFormLeftColumn, vsFormWrapper } from './style.ts'
 import { ActionButtonsVs } from '../actionButtonsVs/actionButtonsVs.tsx'
 import { TemplateOptionsFormVsRo } from '../templateOptionsFormVsRO'
-import { useFillTemplateHook, useSetDefaultValuesVSForm, useVirtualServiceFormMeta } from '../../utils/hooks'
+import {
+	useFillTemplateHook,
+	useSetDefaultValuesVSForm,
+	useVirtualServiceFormMeta,
+	useVirtualServiceSubmit
+} from '../../utils/hooks'
 import { getDefaultVirtualServiceValues } from '../../utils/helpers'
 
 export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtualServiceInfo }) => {
-	const navigate = useNavigate()
 	const { groupId, isCreate } = useVirtualServiceFormMeta()
 
 	const tabIndex = useTabStore(state => state.tabIndex)
@@ -85,70 +82,19 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 		setTabIndex(newTabIndex)
 	}
 
+	const { submitVSService } = useVirtualServiceSubmit({
+		isCreate,
+		groupId,
+		virtualServiceInfo,
+		createVirtualService,
+		updateVS,
+		resetQueryUpdateVs,
+		refetch
+	})
+
 	const onSubmit: SubmitHandler<IVirtualServiceForm> = async data => {
 		if (!isFormReady) return
-
-		const {
-			viewTemplateMode,
-			virtualHostDomainsMode,
-			additionalHttpFilterMode,
-			additionalRouteMode,
-			...cleanedData
-		} = data
-
-		const virtualHostData: VirtualHost = {
-			$typeName: 'common.v1.VirtualHost',
-			domains: cleanedData.virtualHostDomains || []
-		}
-
-		const baseVSData = {
-			...cleanedData,
-			virtualHost: virtualHostData,
-			templateOptions: cleanedData.templateOptions?.some(option => option.field !== '' || option.modifier !== 0)
-				? cleanedData.templateOptions.map(option => ({
-						...option,
-						$typeName: 'virtual_service_template.v1.TemplateOption' as const
-					}))
-				: [],
-			accessLogConfig: cleanedData.accessLogConfigUid
-				? { case: 'accessLogConfigUid' as const, value: cleanedData.accessLogConfigUid }
-				: { case: undefined }
-		}
-
-		if (isCreate) {
-			const createVSData: CreateVirtualServiceRequest = {
-				...baseVSData,
-				$typeName: 'virtual_service.v1.CreateVirtualServiceRequest' as const
-			}
-
-			// console.log('data for create', createVSData)
-			await createVirtualService(createVSData)
-			navigate(`/accessGroups/${groupId}/virtualServices`, {
-				state: {
-					successMessage: `Virtual Service ${cleanedData.name.toUpperCase()} created successfully`
-				}
-			})
-		}
-		if (!isCreate && virtualServiceInfo) {
-			const { name, ...baseVSDataWithoutName } = baseVSData
-			const updateVSData: UpdateVirtualServiceRequest = {
-				...baseVSDataWithoutName,
-				uid: virtualServiceInfo?.uid,
-				$typeName: 'virtual_service.v1.UpdateVirtualServiceRequest' as const
-			}
-
-			// console.log('data for Update', updateVSData)
-
-			await updateVS(updateVSData)
-			resetQueryUpdateVs()
-			navigate(`/accessGroups/${groupId}/virtualServices`, {
-				state: {
-					successMessage: `Virtual Service ${cleanedData.name.toUpperCase()} update successfully`
-				}
-			})
-		}
-
-		await refetch()
+		await submitVSService(data)
 	}
 
 	return (
