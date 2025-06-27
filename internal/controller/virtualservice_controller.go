@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-
 	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -61,8 +60,18 @@ func (r *VirtualServiceReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, r.Updater.DeleteVirtualService(ctx, req.NamespacedName)
 	}
 
+	prevStatus := vs.Status.DeepCopy()
 	if err := r.Updater.ApplyVirtualService(ctx, &vs); err != nil {
-		return ctrl.Result{}, err
+		vs.UpdateStatus(false, err.Error())
+	} else {
+		vs.UpdateStatus(true, "")
+	}
+
+	if prevStatus.Valid != vs.Status.Valid ||
+		prevStatus.Message != vs.Status.Message {
+		if err := r.Status().Update(ctx, &vs); err != nil {
+			return ctrl.Result{}, err
+		}
 	}
 
 	rlog.Info("Finished Reconciling VirtualService")

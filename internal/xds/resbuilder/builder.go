@@ -88,7 +88,7 @@ func BuildResources(vs *v1alpha1.VirtualService, store *store.Store) (*Resources
 	// Otherwise, build resources from virtual service configuration
 	resources, err := buildResourcesFromVirtualService(vs, xdsListener, listenerNN, nn, store)
 	if err != nil {
-		return nil, fmt.Errorf("failed to build resources for vs '%s': %w", vs.Name, err)
+		return nil, err
 	}
 
 	return resources, nil
