@@ -22,10 +22,10 @@ spec:
     - jsonPath: .metadata.creationTimestamp
       name: Age
       type: date
-    - jsonPath: .metadata.message
+    - jsonPath: .status.message
       name: Message
       type: string
-    - jsonPath: .metadata.invalid
+    - jsonPath: .status.invalid
       name: Invalid
       type: boolean
     - jsonPath: .metadata.labels['exc-access-group']

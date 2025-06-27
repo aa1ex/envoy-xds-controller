@@ -40,8 +40,8 @@ type VirtualServiceStatus struct {
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:shortName=vs,categories=all
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
-// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=".metadata.message"
-// +kubebuilder:printcolumn:name="Invalid",type="boolean",JSONPath=".metadata.invalid"
+// +kubebuilder:printcolumn:name="Message",type="string",JSONPath=".status.message"
+// +kubebuilder:printcolumn:name="Invalid",type="boolean",JSONPath=".status.invalid"
 // +kubebuilder:printcolumn:name="AccessGroup",type="string",JSONPath=".metadata.labels['exc-access-group']"
 
 // VirtualService is the Schema for the virtualservices API.

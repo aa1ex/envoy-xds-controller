@@ -30,6 +30,10 @@ func (s *VirtualServiceStore) GetVirtualService(_ context.Context, req *connect.
 		IsEditable:  vs.IsEditable(),
 		Description: vs.GetDescription(),
 		Raw:         string(vs.Raw()),
+		Status: &v1.Status{
+			Invalid: vs.Status.Invalid,
+			Message: vs.Status.Message,
+		},
 	}
 	if vs.Spec.Template != nil {
 		template := s.store.GetVirtualServiceTemplate(helpers.NamespacedName{
