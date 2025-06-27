@@ -208,17 +208,17 @@ func (vs *VirtualService) Raw() []byte {
 	return data
 }
 
-func (vs *VirtualService) UpdateStatus(valid bool, message string) {
+func (vs *VirtualService) UpdateStatus(invalid bool, message string) {
 	if vs == nil {
 		return
 	}
-	vs.Status.Valid = valid
-	vs.Status.Message = Message(message)
+	vs.Status.Invalid = invalid
+	vs.Status.Message = message
 }
 
 func (vs *VirtualService) IsStatusInvalid() bool {
 	if vs == nil {
 		return false
 	}
-	return !vs.Status.Valid && vs.Status.Message != "" // HACK
+	return vs.Status.Invalid
 }

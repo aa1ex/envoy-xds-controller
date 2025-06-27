@@ -22,7 +22,6 @@ func (c *CacheUpdater) ApplyVirtualService(ctx context.Context, vs *v1alpha1.Vir
 		}
 		return nil
 	}
-	vs.UpdateStatus(true, "") // reset status before validating
 	c.store.SetVirtualService(vs)
 	err := c.rebuildSnapshot(ctx)
 	if err != nil {

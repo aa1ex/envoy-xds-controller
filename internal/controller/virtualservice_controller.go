@@ -62,12 +62,12 @@ func (r *VirtualServiceReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	prevStatus := vs.Status.DeepCopy()
 	if err := r.Updater.ApplyVirtualService(ctx, &vs); err != nil {
-		vs.UpdateStatus(false, err.Error())
+		vs.UpdateStatus(true, err.Error())
 	} else {
-		vs.UpdateStatus(true, "")
+		vs.UpdateStatus(false, "")
 	}
 
-	if prevStatus.Valid != vs.Status.Valid ||
+	if prevStatus.Invalid != vs.Status.Invalid ||
 		prevStatus.Message != vs.Status.Message {
 		if err := r.Status().Update(ctx, &vs); err != nil {
 			return ctrl.Result{}, err
