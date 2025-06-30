@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"sync"
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 	v1 "k8s.io/api/core/v1"
@@ -33,8 +34,9 @@ import (
 // SecretReconciler reconciles a Secret object
 type SecretReconciler struct {
 	client.Client
-	Scheme  *runtime.Scheme
-	Updater *updater.CacheUpdater
+	Scheme    *runtime.Scheme
+	Updater   *updater.CacheUpdater
+	Semaphore *sync.WaitGroup
 }
 
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch
@@ -49,6 +51,7 @@ type SecretReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *SecretReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	r.Semaphore.Wait()
 	rlog := log.FromContext(ctx).WithName("secret-reconciler").WithValues("secret", req.NamespacedName)
 	rlog.Info("Reconciling Secret")
 

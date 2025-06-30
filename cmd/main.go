@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 
 	xdsClients "github.com/kaasops/envoy-xds-controller/internal/xds/clients"
 
@@ -258,74 +259,86 @@ func main() {
 	}
 	defer fWatcher.Cancel()
 
+	sem := &sync.WaitGroup{}
+	sem.Add(1)
+
 	if err = (&controller.ClusterReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Cluster")
 		os.Exit(1)
 	}
 	if err = (&controller.ListenerReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Listener")
 		os.Exit(1)
 	}
 	if err = (&controller.RouteReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Route")
 		os.Exit(1)
 	}
 	if err = (&controller.VirtualServiceReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualService")
 		os.Exit(1)
 	}
 	if err = (&controller.AccessLogConfigReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "AccessLogConfig")
 		os.Exit(1)
 	}
 	if err = (&controller.HttpFilterReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "HttpFilter")
 		os.Exit(1)
 	}
 	if err = (&controller.PolicyReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Policy")
 		os.Exit(1)
 	}
 	if err = (&controller.VirtualServiceTemplateReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "VirtualServiceTemplate")
 		os.Exit(1)
 	}
 	if err = (&controller.SecretReconciler{
-		Client:  mgr.GetClient(),
-		Scheme:  mgr.GetScheme(),
-		Updater: cacheUpdater,
+		Client:    mgr.GetClient(),
+		Scheme:    mgr.GetScheme(),
+		Updater:   cacheUpdater,
+		Semaphore: sem,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Secret")
 		os.Exit(1)
@@ -419,6 +432,10 @@ func main() {
 	}
 
 	var startServers manager.RunnableFunc = func(ctx context.Context) error {
+		defer func() {
+			sem.Done()
+		}()
+
 		setupServers := log.FromContext(ctx)
 		setupServers.Info("Starting servers")
 

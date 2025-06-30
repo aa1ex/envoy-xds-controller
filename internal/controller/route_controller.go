@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"sync"
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
@@ -32,8 +33,9 @@ import (
 // RouteReconciler reconciles a Route object
 type RouteReconciler struct {
 	client.Client
-	Scheme  *runtime.Scheme
-	Updater *updater.CacheUpdater
+	Scheme    *runtime.Scheme
+	Updater   *updater.CacheUpdater
+	Semaphore *sync.WaitGroup
 }
 
 // +kubebuilder:rbac:groups=envoy.kaasops.io,resources=routes,verbs=get;list;watch;create;update;patch;delete
@@ -50,6 +52,8 @@ type RouteReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *RouteReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+	r.Semaphore.Wait()
+
 	rlog := log.FromContext(ctx).WithName("route-reconciler").WithValues("route", req.NamespacedName)
 	rlog.Info("Reconciling Route")
 
