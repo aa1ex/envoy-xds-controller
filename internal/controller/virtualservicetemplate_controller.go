@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-	"sync"
 
 	"github.com/kaasops/envoy-xds-controller/internal/xds/updater"
 
@@ -33,9 +32,9 @@ import (
 // VirtualServiceTemplateReconciler reconciles a VirtualServiceTemplate object
 type VirtualServiceTemplateReconciler struct {
 	client.Client
-	Scheme    *runtime.Scheme
-	Updater   *updater.CacheUpdater
-	Semaphore *sync.WaitGroup
+	Scheme         *runtime.Scheme
+	Updater        *updater.CacheUpdater
+	CacheReadyChan chan struct{}
 }
 
 // +kubebuilder:rbac:groups="",resources=secrets,verbs=get;list;watch
@@ -53,7 +52,7 @@ type VirtualServiceTemplateReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.19.1/pkg/reconcile
 func (r *VirtualServiceTemplateReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	r.Semaphore.Wait()
+	<-r.CacheReadyChan
 	rlog := log.FromContext(ctx).WithName("virtualServiceTemplate-reconciler").WithValues("virtualServiceTemplate", req.NamespacedName)
 	rlog.Info("Reconciling VirtualServiceTemplate")
 
