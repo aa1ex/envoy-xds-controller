@@ -12,6 +12,15 @@ spec:
   tlsConfig:
     autoDiscovery: true
   virtualHost:
+    request_headers_to_add:
+      - append_action: OVERWRITE_IF_EXISTS_OR_ADD
+        header:
+          key: X-Field
+          value: "{{ .X_Field }}"
+      - append_action: OVERWRITE_IF_EXISTS_OR_ADD
+        header:
+          key: X-Field-2
+          value: "{{ .X_Field_2 }}"
     routes:
       - match:
           prefix: "/"
@@ -20,11 +29,11 @@ spec:
           body:
             inline_string: "{\"message\":\"Hello from template\"}"
   extraFields:
-    - name: X-Field
+    - name: X_Field
       type: string
       description: Demo field
       required: true
-    - name: X-Field-2
+    - name: X_Field_2
       type: string
-      description: Demo field
+      description: Demo field 2
       required: true

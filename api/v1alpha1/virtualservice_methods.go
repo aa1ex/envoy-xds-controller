@@ -1,10 +1,12 @@
 package v1alpha1
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
+	"text/template"
 
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"github.com/kaasops/envoy-xds-controller/internal/merge"
@@ -88,9 +90,33 @@ func (vs *VirtualService) SetEditable(editable bool) {
 
 func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, templateOpts ...TemplateOpts) error {
 	vst.NormalizeSpec()
+	
+	// Validate required extraFields
+	if len(vst.Spec.ExtraFields) > 0 {
+		for _, field := range vst.Spec.ExtraFields {
+			if field.Required {
+				value, exists := vs.Spec.ExtraFields[field.Name]
+				if !exists || value == "" {
+					return fmt.Errorf("required extra field '%s' is missing or empty", field.Name)
+				}
+			}
+		}
+	}
+	
 	baseData, err := json.Marshal(vst.Spec.VirtualServiceCommonSpec)
 	if err != nil {
 		return err
+	}
+	if len(vs.Spec.ExtraFields) > 0 && len(vst.Spec.ExtraFields) > 0 {
+		tmpl, err := template.New("template").Funcs(template.FuncMap{}).Parse(string(baseData))
+		if err != nil {
+			return fmt.Errorf("failed to parse template: %w", err)
+		}
+		var buf bytes.Buffer
+		if err := tmpl.Execute(&buf, vs.Spec.ExtraFields); err != nil {
+			return fmt.Errorf("failed to execute template: %w", err)
+		}
+		baseData = buf.Bytes()
 	}
 	svcData, err := json.Marshal(vs.Spec.VirtualServiceCommonSpec)
 	if err != nil {
@@ -120,8 +146,9 @@ func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, template
 			})
 		}
 	}
-	mergedDate := merge.JSONRawMessages(baseData, svcData, tOpts)
-	err = json.Unmarshal(mergedDate, &vs.Spec.VirtualServiceCommonSpec)
+	mergedData := merge.JSONRawMessages(baseData, svcData, tOpts)
+
+	err = json.Unmarshal(mergedData, &vs.Spec.VirtualServiceCommonSpec)
 	if err != nil {
 		return err
 	}
