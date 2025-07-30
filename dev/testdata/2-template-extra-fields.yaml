@@ -1,39 +1,51 @@
 apiVersion: envoy.kaasops.io/v1alpha1
 kind: VirtualServiceTemplate
 metadata:
-  name: extra-fields-template
+  name: api-service-template
 spec:
   listener:
     name: https
   accessLogConfig:
     name: access-log-config
-  additionalHttpFilters:
-    - name: http-filter
   tlsConfig:
     autoDiscovery: true
   virtualHost:
     request_headers_to_add:
       - append_action: OVERWRITE_IF_EXISTS_OR_ADD
         header:
-          key: X-Field
-          value: "{{ .X_Field }}"
+          key: X-API-Version
+          value: "{{ .ApiVersion }}"
       - append_action: OVERWRITE_IF_EXISTS_OR_ADD
         header:
-          key: X-Field-2
-          value: "{{ .X_Field_2 }}"
+          key: X-Service-Tier
+          value: "{{ .ServiceTier }}"
     routes:
       - match:
-          prefix: "/"
-        direct_response:
-          status: 200
-          body:
-            inline_string: "{\"message\":\"Hello from template\"}"
+          prefix: "/{{ .ApiVersion }}/{{ .ServicePath }}"
+        route:
+          cluster: "{{ .ServiceName }}"
+          timeout: "{{ .Timeout }}"
   extraFields:
-    - name: X_Field
+    - name: ServiceName
       type: string
-      description: Demo field
+      description: "The name of the service cluster"
       required: true
-    - name: X_Field_2
+    - name: ServicePath
       type: string
-      description: Demo field 2
+      description: "The path segment for the service"
       required: true
+    - name: ApiVersion
+      type: string
+      description: "API version (v1, v2, etc.)"
+      required: true
+      default: "v1"
+    - name: ServiceTier
+      type: enum
+      enum: ["frontend", "backend", "data"]
+      description: "Service tier"
+      required: true
+    - name: Timeout
+      type: string
+      description: "Request timeout"
+      required: false
+      default: "30s"
