@@ -378,3 +378,7 @@ helm-template:
 .PHONY: dev-envoy
 dev-envoy:
 	kubectl apply -f dev/envoy
+
+.PHONY: dev-frontend
+dev-frontend:
+	cd ui && npm run dev

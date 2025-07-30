@@ -69,6 +69,8 @@ func (s *VirtualServiceStore) CreateVirtualService(
 	vs.SetDescription(req.Msg.Description)
 	vs.Spec.UseRemoteAddress = req.Msg.UseRemoteAddress
 
+	fmt.Println(vs.Spec.ExtraFields)
+
 	if err := s.buildAndCreateVirtualService(ctx, vs); err != nil {
 		return nil, err
 	}
@@ -92,6 +94,7 @@ func (s *VirtualServiceStore) initializeVirtualService(req *connect.Request[v1.C
 	vs.SetAccessGroup(req.Msg.AccessGroup)
 	vs.SetNodeIDs(req.Msg.NodeIds)
 	vs.Namespace = s.targetNs
+	vs.Spec.ExtraFields = req.Msg.ExtraFields
 	return vs
 }
 func (s *VirtualServiceStore) processTemplate(

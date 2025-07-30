@@ -6,13 +6,14 @@ import Divider from '@mui/material/Divider'
 import Tabs from '@mui/material/Tabs'
 import { Tab } from '@mui/material'
 
-import { useCreateVs, useListVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
+import { useCreateVs, useListVs, useTemplatesVs, useUpdateVs } from '../../api/grpc/hooks/useVirtualService.ts'
 import CustomTabPanel from '../customTabPanel/CustomTabPanel.tsx'
 import { a11yProps } from '../customTabPanel/style.ts'
 import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains'
+import { ExtraFieldsTabVs } from '../extraFieldsTabVs'
 
 import { useTabStore } from '../../store/tabIndexStore.ts'
 
@@ -38,6 +39,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const { refetch } = useListVs(false, groupId)
 	const { createVirtualService, isFetchingCreateVs, errorCreateVs } = useCreateVs()
 	const { updateVS, isFetchingUpdateVs, errorUpdateVs, resetQueryUpdateVs } = useUpdateVs()
+	const { data: templatesData } = useTemplatesVs(groupId)
 
 	const {
 		register,
@@ -56,6 +58,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	})
 
 	const [name, nodeIds, templateUid] = useWatch({ control, name: ['name', 'nodeIds', 'templateUid'] })
+	
+	// Find the selected template and check if it has extra fields
+	const selectedTemplate = templatesData?.items?.find(template => template.uid === templateUid)
+	const hasExtraFields = selectedTemplate?.extraFields && selectedTemplate.extraFields.length > 0
 
 	const isFormReady =
 		isValid && Boolean(name?.length) && Array.isArray(nodeIds) && nodeIds.length > 0 && Boolean(templateUid)
@@ -108,9 +114,10 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					sx={{ ...tabsStyle }}
 				>
 					<Tab label='General' {...a11yProps(0, 'vertical')} />
-					<Tab label='Domains' {...a11yProps(1, 'vertical')} />
-					<Tab label='Settings' {...a11yProps(2, 'vertical')} />
-					<Tab label='Template' {...a11yProps(3, 'vertical')} />
+					{hasExtraFields && <Tab label='Extra Fields' {...a11yProps(1, 'vertical')} />}
+					<Tab label='Domains' {...a11yProps(hasExtraFields ? 2 : 1, 'vertical')} />
+					<Tab label='Settings' {...a11yProps(hasExtraFields ? 3 : 2, 'vertical')} />
+					<Tab label='Template' {...a11yProps(hasExtraFields ? 4 : 3, 'vertical')} />
 				</Tabs>
 				<Box className='vsFormWrapper' sx={{ ...vsFormWrapper }}>
 					<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
@@ -125,7 +132,17 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									/>
 								</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
+								{hasExtraFields && (
+									<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
+										<ExtraFieldsTabVs
+											control={control}
+											errors={errors}
+											setValue={setValue}
+										/>
+									</CustomTabPanel>
+								)}
+
+								<CustomTabPanel value={tabIndex} index={hasExtraFields ? 2 : 1} variant={'vertical'}>
 									<VirtualHostDomains
 										control={control}
 										setValue={setValue}
@@ -135,7 +152,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									/>
 								</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
+								<CustomTabPanel value={tabIndex} index={hasExtraFields ? 3 : 2} variant={'vertical'}>
 									<SettingsTabVs
 										control={control}
 										setValue={setValue}
@@ -144,7 +161,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									/>
 								</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
+								<CustomTabPanel value={tabIndex} index={hasExtraFields ? 4 : 3} variant={'vertical'}>
 									<TemplateOptionsFormVsRo
 										control={control}
 										setValue={setValue}
