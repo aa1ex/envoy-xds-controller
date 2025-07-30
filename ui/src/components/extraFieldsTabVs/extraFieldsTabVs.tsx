@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Control, Controller, FieldErrors, UseFormGetValues, UseFormSetValue, useWatch } from 'react-hook-form'
+import { Control, Controller, FieldErrors, UseFormSetValue, useWatch } from 'react-hook-form'
 import { Box, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import { IVirtualServiceForm } from '../virtualServiceForm'
 import { useTemplatesVs } from '../../api/grpc/hooks/useVirtualService.ts'
@@ -69,14 +69,14 @@ export const ExtraFieldsTabVs: React.FC<IExtraFieldsTabVsProps> = ({ control, er
 					rules={{
 						required: `${field.name} is required`
 					}}
-					render={() => null} // Hidden field, no UI
+					render={() => <React.Fragment />} // Hidden field, no UI
 				/>
 			));
 	};
 
 	if (!selectedTemplate || extraFields.length === 0) {
 		return (
-			<Box p={2}>
+			<Box>
 				<Typography variant='body1'>No extra fields are defined for this template.</Typography>
 				{/* Register hidden fields for validation */}
 				{registerHiddenFields()}
@@ -85,10 +85,7 @@ export const ExtraFieldsTabVs: React.FC<IExtraFieldsTabVsProps> = ({ control, er
 	}
 
 	return (
-		<Box p={2} display='flex' flexDirection='column' gap={2}>
-			<Typography variant='h6' gutterBottom>
-				Extra Fields
-			</Typography>
+		<Box display='flex' flexDirection='column'>
 
 			{extraFields.map(field => (
 				<Controller
@@ -103,40 +100,44 @@ export const ExtraFieldsTabVs: React.FC<IExtraFieldsTabVsProps> = ({ control, er
 						// For enum type fields, render a select
 						if (field.type === 'enum' && field.enum && field.enum.length > 0) {
 							return (
-								<FormControl fullWidth error={!!errors.extraFields?.[field.name]} required={field.required}>
-									<InputLabel error={!!errors.extraFields?.[field.name]}>{field.name}</InputLabel>
-									<Select
-										label={field.name}
-										value={formField.value || ''}
-										onChange={formField.onChange}
-										disabled={!isEditable || viewMode === 'read'}
-										error={!!errors.extraFields?.[field.name]}
-									>
-										{field.enum.map(option => (
-											<MenuItem key={option} value={option}>
-												{option}
-											</MenuItem>
-										))}
-									</Select>
-									<FormHelperText error={!!errors.extraFields?.[field.name]}>
-										{errors.extraFields?.[field.name]?.message || field.description || ' '}
-									</FormHelperText>
-								</FormControl>
+								<Box mb={2}>
+									<FormControl fullWidth error={!!errors.extraFields?.[field.name]} required={field.required}>
+										<InputLabel error={!!errors.extraFields?.[field.name]}>{field.name}</InputLabel>
+										<Select
+											label={field.name}
+											value={formField.value || ''}
+											onChange={formField.onChange}
+											disabled={!isEditable || viewMode === 'read'}
+											error={!!errors.extraFields?.[field.name]}
+										>
+											{field.enum.map(option => (
+												<MenuItem key={option} value={option}>
+													{option}
+												</MenuItem>
+											))}
+										</Select>
+										<FormHelperText error={!!errors.extraFields?.[field.name]}>
+											{errors.extraFields?.[field.name]?.message || field.description || ' '}
+										</FormHelperText>
+									</FormControl>
+								</Box>
 							)
 						}
 
 						// For other types, render a text field
 						return (
-							<TextField
-								fullWidth
-								label={field.name}
-								value={formField.value || ''}
-								onChange={formField.onChange}
-								error={!!errors.extraFields?.[field.name]}
-								helperText={errors.extraFields?.[field.name]?.message || field.description || ' '}
-								required={field.required}
-								disabled={!isEditable || viewMode === 'read'}
-							/>
+							<Box mb={2}>
+								<TextField
+									fullWidth
+									label={field.name}
+									value={formField.value || ''}
+									onChange={formField.onChange}
+									error={!!errors.extraFields?.[field.name]}
+									helperText={errors.extraFields?.[field.name]?.message || field.description || ' '}
+									required={field.required}
+									disabled={!isEditable || viewMode === 'read'}
+								/>
+							</Box>
 						)
 					}}
 				/>

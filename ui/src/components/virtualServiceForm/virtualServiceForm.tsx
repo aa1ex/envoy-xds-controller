@@ -85,29 +85,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	}
 
 	const handleChangeTabIndex = async (_e: React.SyntheticEvent, newTabIndex: number) => {
-		// When leaving the Extra Fields tab, validate all extraFields
-		if (tabIndex === 1 && hasExtraFields) {
-			// Get all extraField names from the selected template
-			const extraFieldNames = selectedTemplate?.extraFields?.map(field => `extraFields.${field.name}`) || [];
-			// Trigger validation for all extraFields
-			if (extraFieldNames.length > 0) {
-				await trigger(extraFieldNames);
-			}
-		}
-		
+		// Extra fields validation is now handled in the General tab (index 0)
+		// We don't need special validation when switching tabs anymore
 		setTabIndex(newTabIndex)
-		
-		// After switching to a new tab, validate fields on that tab
-		// This ensures errors are shown when returning to a tab
-		if (newTabIndex === 1 && hasExtraFields) {
-			// Validate extraFields when switching to the Extra Fields tab
-			const extraFieldNames = selectedTemplate?.extraFields?.map(field => `extraFields.${field.name}`) || [];
-			if (extraFieldNames.length > 0) {
-				setTimeout(() => {
-					void trigger(extraFieldNames);
-				}, 0);
-			}
-		}
 	}
 
 	const { submitVSService } = useVirtualServiceSubmit({
@@ -138,15 +118,9 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 					sx={{ ...tabsStyle }}
 				>
 					<Tab label='General' {...a11yProps(0, 'vertical')} />
-					{/* Always include Extra Fields tab in DOM but conditionally show it */}
-					<Tab 
-						label='Extra Fields' 
-						{...a11yProps(1, 'vertical')} 
-						style={{ display: hasExtraFields ? 'block' : 'none' }} 
-					/>
-					<Tab label='Domains' {...a11yProps(2, 'vertical')} />
-					<Tab label='Settings' {...a11yProps(3, 'vertical')} />
-					<Tab label='Template' {...a11yProps(4, 'vertical')} />
+					<Tab label='Domains' {...a11yProps(1, 'vertical')} />
+					<Tab label='Settings' {...a11yProps(2, 'vertical')} />
+					<Tab label='Template' {...a11yProps(3, 'vertical')} />
 				</Tabs>
 				<Box className='vsFormWrapper' sx={{ ...vsFormWrapper }}>
 					<Box display='flex' className='vsColumnWrapper' gap={1.5} height='100%'>
@@ -158,20 +132,11 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 										control={control}
 										errors={errors}
 										isEdit={!isCreate}
-									/>
-								</CustomTabPanel>
-
-								{/* Always render ExtraFieldsTabVs to register fields, but only show it when hasExtraFields is true */}
-								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'} style={{ display: hasExtraFields ? 'block' : 'none' }}>
-									<ExtraFieldsTabVs
-										control={control}
-										errors={errors}
 										setValue={setValue}
-										isEditable={isCreate ? true : !!virtualServiceInfo?.isEditable}
 									/>
 								</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
+								<CustomTabPanel value={tabIndex} index={1} variant={'vertical'}>
 									<VirtualHostDomains
 										control={control}
 										setValue={setValue}
@@ -181,7 +146,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									/>
 								</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
+								<CustomTabPanel value={tabIndex} index={2} variant={'vertical'}>
 									<SettingsTabVs
 										control={control}
 										setValue={setValue}
@@ -190,7 +155,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 									/>
 								</CustomTabPanel>
 
-								<CustomTabPanel value={tabIndex} index={4} variant={'vertical'}>
+								<CustomTabPanel value={tabIndex} index={3} variant={'vertical'}>
 									<TemplateOptionsFormVsRo
 										control={control}
 										setValue={setValue}
