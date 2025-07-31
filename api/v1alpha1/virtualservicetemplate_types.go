@@ -41,7 +41,7 @@ type VirtualServiceTemplateSpec struct {
 
 type ExtraField struct {
 	Name        string   `json:"name"`
-	Description string   `json:"description"`
+	Description string   `json:"description,omitempty"`
 	Type        string   `json:"type"`
 	Required    bool     `json:"required"`
 	Enum        []string `json:"enum,omitempty"`

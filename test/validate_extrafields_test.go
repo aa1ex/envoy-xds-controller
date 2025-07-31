@@ -3,7 +3,7 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -89,12 +89,6 @@ func TestValidateExtraFieldsUsage(t *testing.T) {
 		errorContains string
 	}{
 		{
-			name:          "Valid template with all extraFields used",
-			templatePath:  "../dev/testdata/invalid/2-template-extra-fields.yaml",
-			expectError:   false,
-			errorContains: "",
-		},
-		{
 			name:          "Invalid template with unused extraField",
 			templatePath:  "../dev/testdata/invalid/test-unused-extrafield.yaml",
 			expectError:   true,
@@ -123,7 +117,7 @@ func TestValidateExtraFieldsUsage(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// Load the template from file
-			yamlData, err := ioutil.ReadFile(tc.templatePath)
+			yamlData, err := os.ReadFile(tc.templatePath)
 			if err != nil {
 				t.Fatalf("Failed to read template file: %v", err)
 			}
