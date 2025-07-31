@@ -8,8 +8,7 @@ import { TextAreaFomVs } from '../textAreaFomVs/textAreaFomVs.tsx'
 import { NodeIdsVs } from '../nodeIdsVs/nodeIdsVs.tsx'
 import { AutocompleteVs } from '../autocompleteVs'
 import { ExtraFieldsTabVs } from '../extraFieldsTabVs'
-import { Box, Divider, Typography } from '@mui/material'
-import { useViewModeStore } from '../../store/viewModeVsStore.ts'
+import { Box, Divider } from '@mui/material'
 
 interface IGeneralTabVsProps {
 	register: UseFormRegister<IVirtualServiceForm>
@@ -21,7 +20,6 @@ interface IGeneralTabVsProps {
 
 export const GeneralTabVs: React.FC<IGeneralTabVsProps> = ({ register, control, errors, isEdit, setValue }) => {
 	const { groupId } = useParams()
-	const viewMode = useViewModeStore(state => state.viewMode)
 
 	const { data: nodeList, isFetching: isFetchingNodeList, isError: isErrorNodeList } = useNodeListVs(groupId)
 	const { data: templates, isFetching: isFetchingTemplates, isError: isErrorTemplates } = useTemplatesVs(groupId)

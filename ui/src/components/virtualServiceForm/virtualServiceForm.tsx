@@ -13,7 +13,6 @@ import { ErrorSnackBarVs } from '../errorSnackBarVs/errorSnackBarVs.tsx'
 import { GeneralTabVs } from '../generalTabVS/generalTabVS.tsx'
 import { SettingsTabVs } from '../settingsTabVs/settingsTabVs.tsx'
 import { VirtualHostDomains } from '../virtualHostDomains'
-import { ExtraFieldsTabVs } from '../extraFieldsTabVs'
 
 import { useTabStore } from '../../store/tabIndexStore.ts'
 
@@ -39,7 +38,7 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 	const { refetch } = useListVs(false, groupId)
 	const { createVirtualService, isFetchingCreateVs, errorCreateVs } = useCreateVs()
 	const { updateVS, isFetchingUpdateVs, errorUpdateVs, resetQueryUpdateVs } = useUpdateVs()
-	const { data: templatesData } = useTemplatesVs(groupId)
+	useTemplatesVs(groupId) // Fetch templates data for the form
 
 	const {
 		register,
@@ -59,9 +58,6 @@ export const VirtualServiceForm: React.FC<IVirtualServiceFormProps> = ({ virtual
 
 	const [name, nodeIds, templateUid] = useWatch({ control, name: ['name', 'nodeIds', 'templateUid'] })
 	
-	// Find the selected template and check if it has extra fields
-	const selectedTemplate = templatesData?.items?.find(template => template.uid === templateUid)
-	const hasExtraFields = selectedTemplate?.extraFields && selectedTemplate.extraFields.length > 0
 
 	const isFormReady =
 		isValid && Boolean(name?.length) && Array.isArray(nodeIds) && nodeIds.length > 0 && Boolean(templateUid)

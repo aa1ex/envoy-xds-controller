@@ -203,7 +203,7 @@ Each extra field can have the following properties:
 | Property | Description | Required |
 |----------|-------------|----------|
 | `name` | The name of the field (used in template references) | Yes |
-| `type` | Data type of the field (string, enum, etc.) | Yes |
+| `type` | Data type of the field. Valid types are: `string` and `enum` | Yes |
 | `description` | Human-readable description of the field | No |
 | `required` | Whether the field must be provided (true/false) | No (defaults to false) |
 | `enum` | List of allowed values (for enum type) | Only for enum type |
