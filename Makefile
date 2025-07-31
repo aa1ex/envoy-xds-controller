@@ -314,7 +314,7 @@ kd:
 
 .PHONY: dev-apply-resources
 dev-apply-resources:
-	kubectl -n envoy-xds-controller apply -f dev/testdata
+	kubectl -n envoy-xds-controller apply -f dev/testdata/common
 
 .PHONY: dev-delete-resources
 dev-delete-resources:
