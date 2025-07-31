@@ -90,31 +90,31 @@ func TestValidateExtraFieldsUsage(t *testing.T) {
 	}{
 		{
 			name:          "Valid template with all extraFields used",
-			templatePath:  "../dev/testdata/2-template-extra-fields.yaml",
+			templatePath:  "../dev/testdata/invalid/2-template-extra-fields.yaml",
 			expectError:   false,
 			errorContains: "",
 		},
 		{
 			name:          "Invalid template with unused extraField",
-			templatePath:  "../dev/testdata/test-unused-extrafield.yaml",
+			templatePath:  "../dev/testdata/invalid/test-unused-extrafield.yaml",
 			expectError:   true,
 			errorContains: "UnusedField",
 		},
 		{
 			name:          "Invalid template with empty extraField name",
-			templatePath:  "../dev/testdata/test-empty-name-extrafield.yaml",
+			templatePath:  "../dev/testdata/invalid/test-empty-name-extrafield.yaml",
 			expectError:   true,
 			errorContains: "extraField name cannot be empty",
 		},
 		{
 			name:          "Invalid template with unknown extraField type",
-			templatePath:  "../dev/testdata/test-unknown-type-extrafield.yaml",
+			templatePath:  "../dev/testdata/invalid/test-unknown-type-extrafield.yaml",
 			expectError:   true,
 			errorContains: "unknown type",
 		},
 		{
 			name:          "Invalid template with enum type but no enum values",
-			templatePath:  "../dev/testdata/test-empty-enum-extrafield.yaml",
+			templatePath:  "../dev/testdata/invalid/test-empty-enum-extrafield.yaml",
 			expectError:   true,
 			errorContains: "no enum values are defined",
 		},

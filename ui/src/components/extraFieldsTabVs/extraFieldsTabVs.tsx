@@ -33,24 +33,35 @@ export const ExtraFieldsTabVs: React.FC<IExtraFieldsTabVsProps> = ({ control, er
 
 	// Initialize extraFields in form data when template changes
 	useEffect(() => {
+		// Create a new extraFields object
+		const newExtraFields: Record<string, string> = {}
+		
 		if (extraFields.length > 0) {
-			const initialExtraFields: Record<string, string> = {}
+			// Get current values
 			const currentValues = currentExtraFields || {}
-
-			// Set default values for extra fields
+			
+			// For each field in the template
 			extraFields.forEach(field => {
-				if (field.default) {
-					// Only set default if the field doesn't already have a value
-					if (!currentValues[field.name]) {
-						initialExtraFields[field.name] = field.default
-					}
+				// If the field already has a value in the current form, preserve it
+				if (currentValues[field.name]) {
+					newExtraFields[field.name] = currentValues[field.name]
+				} 
+				// Otherwise, use the default value if available
+				else if (field.default) {
+					newExtraFields[field.name] = field.default
+				}
+				// If no default, initialize with empty string
+				else {
+					newExtraFields[field.name] = ''
 				}
 			})
-
-			// Merge with existing values to preserve them
-			if (Object.keys(initialExtraFields).length > 0) {
-				setValue('extraFields', { ...currentValues, ...initialExtraFields })
-			}
+			
+			// Set the new extraFields, completely replacing the old ones
+			// This ensures fields from previous templates are not preserved
+			setValue('extraFields', newExtraFields)
+		} else {
+			// If there are no extraFields in the template, clear all extraFields
+			setValue('extraFields', {})
 		}
 	}, [selectedTemplateUid, extraFields, setValue])
 
