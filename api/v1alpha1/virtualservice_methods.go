@@ -90,7 +90,7 @@ func (vs *VirtualService) SetEditable(editable bool) {
 
 func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, templateOpts ...TemplateOpts) error {
 	vst.NormalizeSpec()
-	
+
 	// Validate required extraFields
 	if len(vst.Spec.ExtraFields) > 0 {
 		for _, field := range vst.Spec.ExtraFields {
@@ -100,9 +100,24 @@ func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, template
 					return fmt.Errorf("required extra field '%s' is missing or empty", field.Name)
 				}
 			}
+			if field.Type == "enum" {
+				value, exists := vs.Spec.ExtraFields[field.Name]
+				if exists {
+					notFound := true
+					for _, enum := range field.Enum {
+						if enum == value {
+							notFound = false
+							break
+						}
+					}
+					if notFound {
+						return fmt.Errorf("extra field '%s' has invalid value '%s'", field.Name, value)
+					}
+				}
+			}
 		}
 	}
-	
+
 	baseData, err := json.Marshal(vst.Spec.VirtualServiceCommonSpec)
 	if err != nil {
 		return err
