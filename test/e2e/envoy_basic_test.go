@@ -56,6 +56,13 @@ func basicEnvoyContext() {
 	})
 
 	It("should ensure the envoy returns expected response", func() {
+		By("applying manifests")
+		manifests := []string{
+			"test/testdata/e2e/basic_https_service/listener.yaml",
+			"test/testdata/e2e/basic_https_service/tls-cert.yaml",
+			"test/testdata/e2e/basic_https_service/virtual-service.yaml",
+		}
+		fixture.ApplyManifests(manifests...)
 		response := fixture.FetchDataFromEnvoy("https://exc.kaasops.io:10443/")
 		Expect(strings.TrimSpace(response)).To(Equal("{\"message\":\"Hello\"}"))
 	})
@@ -102,8 +109,8 @@ func basicEnvoyContext() {
 
 		By("verifying Envoy configuration")
 		expectations := map[string]string{
-			"configs.2.dynamic_listeners.1.name":                                                    "default/http",
-			"configs.2.dynamic_listeners.1.active_state.listener.address.socket_address.port_value": "8080",
+			"configs.2.dynamic_listeners.0.name":                                                    "default/http",
+			"configs.2.dynamic_listeners.0.active_state.listener.address.socket_address.port_value": "8080",
 		}
 		fixture.VerifyEnvoyConfig(expectations)
 

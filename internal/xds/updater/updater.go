@@ -195,6 +195,10 @@ func buildSnapshots(
 			}
 		}
 		if hasChanges {
+			if err := snapshot.Consistent(); err != nil {
+				errs = append(errs, err)
+				continue
+			}
 			err = snapshotCache.SetSnapshot(ctx, nodeID, snapshot)
 			if err != nil {
 				errs = append(errs, err)

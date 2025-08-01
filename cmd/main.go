@@ -21,6 +21,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"flag"
+	corev1 "k8s.io/api/core/v1"
 	"net/http"
 	"os"
 	"strconv"
@@ -42,7 +43,6 @@ import (
 
 	"github.com/envoyproxy/go-control-plane/pkg/server/v3"
 	"github.com/kelseyhightower/envconfig"
-	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
