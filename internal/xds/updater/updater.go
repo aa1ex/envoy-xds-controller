@@ -205,7 +205,12 @@ func buildSnapshots(
 	}
 
 	for nodeID := range nodeIDsForCleanup {
-		snapshotCache.ClearSnapshot(nodeID)
+		//snapshotCache.ClearSnapshot(nodeID)
+		err = snapshotCache.SetSnapshot(ctx, nodeID, &cache.Snapshot{})
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
 	}
 
 	if len(errs) > 0 {

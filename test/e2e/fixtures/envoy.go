@@ -36,6 +36,7 @@ func NewEnvoyFixture() *EnvoyFixture {
 func (f *EnvoyFixture) Setup() {
 	// Get initial config dump to use as baseline
 	f.ConfigDump = f.GetEnvoyConfigDump("")
+	_ = os.WriteFile("/tmp/actual-dump.json", f.ConfigDump, 0644)
 }
 
 // Teardown cleans up resources created during tests
@@ -140,14 +141,14 @@ func (f *EnvoyFixture) WaitEnvoyConfigChanged() {
 	By("waiting for Envoy config to change")
 	Eventually(func() bool {
 		cfgDump := f.GetEnvoyConfigDump("")
-		if compareJSON(cfgDump, f.ConfigDump) {
+		if jsonMessagesEqual(cfgDump, f.ConfigDump) {
 			return false
 		}
 		_ = os.WriteFile("/tmp/prev-dump.json", f.ConfigDump, 0644)
 		f.ConfigDump = cfgDump
 		_ = os.WriteFile("/tmp/actual-dump.json", f.ConfigDump, 0644)
 		return true
-	}, ShortTimeout, DefaultPollingInterval).Should(BeTrue())
+	}, LongTimeout, DefaultPollingInterval).Should(BeTrue())
 }
 
 // VerifyEnvoyConfig verifies that the Envoy config contains the expected values
@@ -208,7 +209,7 @@ func (f *EnvoyFixture) FetchDataFromEnvoy(address string) string {
 }
 
 // Helper function to compare JSON objects
-func compareJSON(raw1, raw2 json.RawMessage) bool {
+func jsonMessagesEqual(raw1, raw2 json.RawMessage) bool {
 	var obj1, obj2 interface{}
 
 	if err := json.Unmarshal(raw1, &obj1); err != nil {

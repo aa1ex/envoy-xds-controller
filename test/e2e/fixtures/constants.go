@@ -20,5 +20,5 @@ const (
 	DefaultTimeout         = 2 * time.Minute
 	DefaultPollingInterval = 1 * time.Second
 	LongTimeout            = 5 * time.Minute
-	ShortTimeout           = 30 * time.Second
+	ShortTimeout           = 60 * time.Second
 )

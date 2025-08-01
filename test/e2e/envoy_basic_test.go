@@ -14,6 +14,7 @@ func basicEnvoyContext() {
 	var fixture *fixtures.EnvoyFixture
 
 	BeforeEach(func() {
+		By("setting up EnvoyFixture")
 		fixture = fixtures.NewEnvoyFixture()
 		fixture.Setup()
 		DeferCleanup(fixture.Teardown)
@@ -34,7 +35,6 @@ func basicEnvoyContext() {
 		}
 		fixture.ApplyManifests(manifests...)
 
-		By("waiting for Envoy config to change")
 		fixture.WaitEnvoyConfigChanged()
 
 		By("verifying Envoy configuration")
@@ -71,25 +71,15 @@ func basicEnvoyContext() {
 	})
 
 	It("should apply access log config manifest", func() {
-		// First apply the basic HTTPS service configuration if not already applied
-		By("ensuring basic HTTPS service is configured")
-		if !fixture.IsManifestApplied("test/testdata/e2e/basic_https_service/listener.yaml") {
-			basicManifests := []string{
-				"test/testdata/e2e/basic_https_service/listener.yaml",
-				"test/testdata/e2e/basic_https_service/tls-cert.yaml",
-				"test/testdata/e2e/basic_https_service/virtual-service.yaml",
-			}
-			fixture.ApplyManifests(basicManifests...)
-		}
-
 		// Now apply the file access logging configuration
 		By("applying file access logging configuration")
 		fixture.ApplyManifests(
+			"test/testdata/e2e/basic_https_service/listener.yaml",
+			"test/testdata/e2e/basic_https_service/tls-cert.yaml",
 			"test/testdata/e2e/basic_https_service/access-log-config.yaml",
 			"test/testdata/e2e/basic_https_service/virtual-service-v2.yaml",
 		)
 
-		By("waiting for Envoy config to change")
 		fixture.WaitEnvoyConfigChanged()
 
 		By("verifying access log config in Envoy")
