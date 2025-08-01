@@ -269,14 +269,14 @@ func envoyContext() {
 				expectedErrText: "listener is not tls, virtual service has tls config",
 			},
 			{
-				manifest:        "test/testdata/e2e/vs7/virtual-service-template-2.yaml",
+				manifest:        "test/testdata/e2e/template_validation/virtual-service-template-2.yaml",
 				expectedErrText: "failed to apply VirtualServiceTemplate: multiple root routes found",
 				applyBefore: []string{
-					"test/testdata/e2e/vs7/cert.yaml",
-					"test/testdata/e2e/vs7/listener.yaml",
-					"test/testdata/e2e/vs7/route.yaml",
-					"test/testdata/e2e/vs7/virtual-service-template-1.yaml",
-					"test/testdata/e2e/vs7/virtual-service.yaml",
+					"test/testdata/e2e/template_validation/cert.yaml",
+					"test/testdata/e2e/template_validation/listener.yaml",
+					"test/testdata/e2e/template_validation/route.yaml",
+					"test/testdata/e2e/template_validation/virtual-service-template-1.yaml",
+					"test/testdata/e2e/template_validation/virtual-service.yaml",
 				},
 			},
 		} {
@@ -316,9 +316,9 @@ func envoyContext() {
 		By("apply manifests")
 
 		manifests := []string{
-			"test/testdata/e2e/vs1/listener.yaml",
-			"test/testdata/e2e/vs1/tls-cert.yaml",
-			"test/testdata/e2e/vs1/virtual-service.yaml",
+			"test/testdata/e2e/basic_https_service/listener.yaml",
+			"test/testdata/e2e/basic_https_service/tls-cert.yaml",
+			"test/testdata/e2e/basic_https_service/virtual-service.yaml",
 		}
 
 		for _, manifest := range manifests {
@@ -362,10 +362,10 @@ func envoyContext() {
 		By("apply manifests")
 
 		manifests := []string{
-			"test/testdata/e2e/vs2/access-log-config.yaml",
-			"test/testdata/e2e/vs2/http-filter.yaml",
-			"test/testdata/e2e/vs2/virtual-service-template.yaml",
-			"test/testdata/e2e/vs2/virtual-service.yaml",
+			"test/testdata/e2e/virtual_service_templates/access-log-config.yaml",
+			"test/testdata/e2e/virtual_service_templates/http-filter.yaml",
+			"test/testdata/e2e/virtual_service_templates/virtual-service-template.yaml",
+			"test/testdata/e2e/virtual_service_templates/virtual-service.yaml",
 		}
 
 		for _, manifest := range manifests {
@@ -415,28 +415,28 @@ func envoyContext() {
 
 	It("should ensure that the resources in use cannot be deleted", func() {
 		By("try to delete linked secret")
-		err := utils.DeleteManifests("test/testdata/e2e/vs1/tls-cert.yaml")
+		err := utils.DeleteManifests("test/testdata/e2e/basic_https_service/tls-cert.yaml")
 		Expect(err).To(HaveOccurred())
 
 		By("try to delete linked virtual service template")
-		err = utils.DeleteManifests("test/testdata/e2e/vs2/virtual-service-template.yaml")
+		err = utils.DeleteManifests("test/testdata/e2e/virtual_service_templates/virtual-service-template.yaml")
 		Expect(err).To(HaveOccurred())
 
 		By("try to delete linked listener")
-		err = utils.DeleteManifests("test/testdata/e2e/vs1/listener.yaml")
+		err = utils.DeleteManifests("test/testdata/e2e/basic_https_service/listener.yaml")
 		Expect(err).To(HaveOccurred())
 
 		By("try to delete linked http-filter")
-		err = utils.DeleteManifests("test/testdata/e2e/vs2/http-filter.yaml")
+		err = utils.DeleteManifests("test/testdata/e2e/virtual_service_templates/http-filter.yaml")
 		Expect(err).To(HaveOccurred())
 
 		By("try to delete linked access log config")
-		err = utils.DeleteManifests("test/testdata/e2e/vs2/access-log-config.yaml")
+		err = utils.DeleteManifests("test/testdata/e2e/virtual_service_templates/access-log-config.yaml")
 		Expect(err).To(HaveOccurred())
 	})
 
 	It("should apply access log config manifest", func() {
-		err := utils.ApplyManifests("test/testdata/e2e/vs3/access-log-config.yaml")
+		err := utils.ApplyManifests("test/testdata/e2e/file_access_logging/access-log-config.yaml")
 		Expect(err).NotTo(HaveOccurred(), "Failed to apply manifest")
 	})
 
@@ -460,10 +460,10 @@ func envoyContext() {
 		By("apply manifests")
 
 		manifests := []string{
-			"test/testdata/e2e/vs4/tcp-echo-server.yaml",
-			"test/testdata/e2e/vs4/cluster.yaml",
-			"test/testdata/e2e/vs4/listener.yaml",
-			"test/testdata/e2e/vs4/virtual-service.yaml",
+			"test/testdata/e2e/tcp_proxy/tcp-echo-server.yaml",
+			"test/testdata/e2e/tcp_proxy/cluster.yaml",
+			"test/testdata/e2e/tcp_proxy/listener.yaml",
+			"test/testdata/e2e/tcp_proxy/virtual-service.yaml",
 		}
 
 		for _, manifest := range manifests {
@@ -526,8 +526,8 @@ func envoyContext() {
 	It("should apply http config", func() {
 		By("apply manifests")
 		for _, manifest := range []string{
-			"test/testdata/e2e/vs5/http-listener.yaml",
-			"test/testdata/e2e/vs5/vs.yaml",
+			"test/testdata/e2e/http_service/http-listener.yaml",
+			"test/testdata/e2e/http_service/vs.yaml",
 		} {
 			err := utils.ApplyManifests(manifest)
 			Expect(err).NotTo(HaveOccurred(), "Failed to apply manifest: "+manifest)
@@ -555,17 +555,17 @@ func envoyContext() {
 
 	It("should cleanup resources", func() {
 		for _, manifest := range []string{
-			"test/testdata/e2e/vs5/vs.yaml",
-			"test/testdata/e2e/vs5/http-listener.yaml",
-			"test/testdata/e2e/vs4/virtual-service.yaml",
-			"test/testdata/e2e/vs4/tcp-echo-server.yaml",
-			"test/testdata/e2e/vs4/listener.yaml",
-			"test/testdata/e2e/vs4/cluster.yaml",
-			"test/testdata/e2e/vs2/virtual-service-template.yaml",
-			"test/testdata/e2e/vs2/access-log-config.yaml",
-			"test/testdata/e2e/vs2/http-filter.yaml",
-			"test/testdata/e2e/vs1/listener.yaml",
-			"test/testdata/e2e/vs1/tls-cert.yaml",
+			"test/testdata/e2e/http_service/vs.yaml",
+			"test/testdata/e2e/http_service/http-listener.yaml",
+			"test/testdata/e2e/tcp_proxy/virtual-service.yaml",
+			"test/testdata/e2e/tcp_proxy/tcp-echo-server.yaml",
+			"test/testdata/e2e/tcp_proxy/listener.yaml",
+			"test/testdata/e2e/tcp_proxy/cluster.yaml",
+			"test/testdata/e2e/virtual_service_templates/virtual-service-template.yaml",
+			"test/testdata/e2e/virtual_service_templates/access-log-config.yaml",
+			"test/testdata/e2e/virtual_service_templates/http-filter.yaml",
+			"test/testdata/e2e/basic_https_service/listener.yaml",
+			"test/testdata/e2e/basic_https_service/tls-cert.yaml",
 		} {
 			err := utils.DeleteManifests(manifest)
 			Expect(err).NotTo(HaveOccurred(), "Failed to delete manifest: "+manifest)

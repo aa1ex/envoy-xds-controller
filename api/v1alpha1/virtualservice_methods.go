@@ -97,7 +97,7 @@ func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, template
 		validExtraFields := make(map[string]bool)
 		for _, field := range vst.Spec.ExtraFields {
 			validExtraFields[field.Name] = true
-			
+
 			// Validate required fields
 			if field.Required {
 				value, exists := vs.Spec.ExtraFields[field.Name]
@@ -105,7 +105,7 @@ func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, template
 					return fmt.Errorf("required extra field '%s' is missing or empty", field.Name)
 				}
 			}
-			
+
 			// Validate enum fields
 			if field.Type == "enum" {
 				value, exists := vs.Spec.ExtraFields[field.Name]
@@ -123,7 +123,7 @@ func (vs *VirtualService) FillFromTemplate(vst *VirtualServiceTemplate, template
 				}
 			}
 		}
-		
+
 		// Validate that only extraFields defined in the template are present
 		for fieldName := range vs.Spec.ExtraFields {
 			if !validExtraFields[fieldName] {

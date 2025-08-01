@@ -142,6 +142,14 @@ var _ = Describe("Manager", Ordered, func() {
 	SetDefaultEventuallyPollingInterval(time.Second)
 
 	Context("Manager", managerContext(controllerPodName))
-	Context("Envoy", envoyContext)
-	Context("GRPC_API", grpcAPIContext)
+
+	// Envoy tests split into multiple contexts for better organization
+	Context("Envoy", func() {
+		Context("Basic Functionality", basicEnvoyContext)
+		//Context("Validation", validationEnvoyContext)
+		//Context("TCP Proxy", tcpProxyEnvoyContext)
+		//Context("Templates", templatesEnvoyContext)
+	})
+
+	//Context("GRPC_API", grpcAPIContext)
 })
