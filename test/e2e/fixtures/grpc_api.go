@@ -3,7 +3,7 @@ package fixtures
 import (
 	"fmt"
 	"os/exec"
-	"strings"
+	"time"
 
 	"github.com/kaasops/envoy-xds-controller/test/utils"
 	. "github.com/onsi/ginkgo/v2"
@@ -29,22 +29,7 @@ func NewGRPCAPIFixture() *GRPCAPIFixture {
 
 // Setup initializes the gRPC API test environment
 func (f *GRPCAPIFixture) Setup() {
-	By("creating a pod for gRPC API requests")
-	cmd := exec.Command("kubectl", "run", f.PodName, "--restart=Never",
-		"--image=fullstorydev/grpcurl:latest",
-		"--", "sleep", "3600") // Keep the pod running for the duration of the tests
-	_, err := utils.Run(cmd)
-	Expect(err).NotTo(HaveOccurred(), "Failed to create gRPC client pod")
-
-	// Wait for the pod to be ready
-	Eventually(func() string {
-		cmd := exec.Command("kubectl", "get", "pods", f.PodName, "-o", "jsonpath={.status.phase}")
-		output, err := utils.Run(cmd)
-		if err != nil {
-			return ""
-		}
-		return output
-	}, DefaultTimeout, DefaultPollingInterval).Should(Equal("Running"))
+	// No need to create a pod here anymore as it will be created on-demand in FetchDataViaGRPC
 }
 
 // Teardown cleans up resources created during tests
@@ -59,9 +44,7 @@ func (f *GRPCAPIFixture) Teardown() {
 	}
 	f.AppliedManifests = []string{}
 
-	// Delete the gRPC client pod
-	cmd := exec.Command("kubectl", "delete", "pod", f.PodName, "--ignore-not-found=true")
-	_, _ = utils.Run(cmd)
+	// No need to delete the pod here as it's now created and deleted on-demand in FetchDataViaGRPC
 }
 
 // ApplyManifests applies the given manifests and adds them to the tracking list
@@ -90,20 +73,43 @@ func (f *GRPCAPIFixture) DeleteManifests(manifests ...string) {
 }
 
 // FetchDataViaGRPC sends a gRPC request and returns the response
-func (f *GRPCAPIFixture) FetchDataViaGRPC(data, method string) string {
+// It creates a pod on-demand, executes the request, and then deletes the pod
+func (f *GRPCAPIFixture) FetchDataViaGRPC(params, method string) string {
 	By(fmt.Sprintf("sending gRPC request to method %s", method))
 
-	// Escape quotes in the data for shell command
-	data = strings.ReplaceAll(data, `"`, `\"`)
+	// Create a temporary pod for the gRPC request
+	By("creating a temporary pod for gRPC API request")
+	tempPodName := fmt.Sprintf("%s-%d", f.PodName, time.Now().UnixNano())
+	createCmd := exec.Command("kubectl", "run", tempPodName, "-n", Namespace, "--restart=Never",
+		"--image=fullstorydev/grpcurl:v1.9.3-alpine",
+		"--", "-plaintext", "-d", params,
+		"exc-e2e-envoy-xds-controller-resource-api:10000",
+		method)
+	_, err := utils.Run(createCmd)
+	Expect(err).NotTo(HaveOccurred(), "Failed to create temporary gRPC client pod")
 
-	cmd := exec.Command("kubectl", "exec", f.PodName, "--",
-		"grpcurl", "-plaintext", "-d", fmt.Sprintf(`"%s"`, data),
-		"envoy-xds-controller-grpc-api.envoy-xds-controller.svc.cluster.local:9090", method)
+	// Make sure to clean up the pod when we're done
+	defer func() {
+		deleteCmd := exec.Command("kubectl", "delete", "pod", "-n", Namespace, tempPodName, "--ignore-not-found=true")
+		_, _ = utils.Run(deleteCmd)
+	}()
 
-	output, err := utils.Run(cmd)
-	Expect(err).NotTo(HaveOccurred(), "Failed to execute gRPC request")
+	// Wait for the pod to be ready
+	Eventually(func() string {
+		cmd := exec.Command("kubectl", "get", "pods", "-n", Namespace, tempPodName, "-o", "jsonpath={.status.phase}")
+		output, err := utils.Run(cmd)
+		if err != nil {
+			return ""
+		}
+		return output
+	}, DefaultTimeout, DefaultPollingInterval).Should(Equal("Succeeded"))
 
-	return output
+	By("getting the gRPC pod logs")
+	getLogsCmd := exec.Command("kubectl", "logs", "-n", Namespace, tempPodName)
+	getLogsCmdOut, err := utils.Run(getLogsCmd)
+	Expect(err).NotTo(HaveOccurred(), "Failed to retrieve gRPC pod logs")
+
+	return getLogsCmdOut
 }
 
 // VerifyGRPCResponse verifies that the gRPC response contains the expected values

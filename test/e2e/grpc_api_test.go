@@ -181,7 +181,7 @@ func grpcAPIContext() {
 			}`, templateUID, listenerUID)
 
 			response = fixture.FetchDataViaGRPC(createVSRequest, "virtual_service.v1.VirtualServiceStoreService.CreateVirtualService")
-			Expect(gjson.Get(response, "name").String()).To(Equal("test-virtual-service"))
+			Expect(strings.TrimSpace(response)).To(Equal("{}"))
 
 			By("verifying virtual service is available via API")
 			Eventually(func() bool {

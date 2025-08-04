@@ -154,5 +154,5 @@ var _ = Describe("Manager", Ordered, func() {
 		Context("Templates", templatesEnvoyContext)
 	})
 
-	//Context("GRPC_API", grpcAPIContext)
+	Context("GRPC_API", grpcAPIContext)
 })
