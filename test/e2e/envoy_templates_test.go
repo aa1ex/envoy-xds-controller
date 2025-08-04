@@ -30,6 +30,8 @@ func templatesEnvoyContext() {
 		By("applying template manifests")
 		manifests := []string{
 			"test/testdata/e2e/virtual_service_templates/access-log-config.yaml",
+			"test/testdata/e2e/virtual_service_templates/tls-cert.yaml",
+			"test/testdata/e2e/virtual_service_templates/listener.yaml",
 			"test/testdata/e2e/virtual_service_templates/http-filter.yaml",
 			"test/testdata/e2e/virtual_service_templates/virtual-service-template.yaml",
 			"test/testdata/e2e/virtual_service_templates/virtual-service.yaml",

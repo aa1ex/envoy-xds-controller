@@ -149,9 +149,9 @@ var _ = Describe("Manager", Ordered, func() {
 	// Envoy tests split into multiple contexts for better organization
 	Context("Envoy", func() {
 		Context("Basic Functionality", basicEnvoyContext)
-		//Context("Validation", validationEnvoyContext)
-		//Context("TCP Proxy", tcpProxyEnvoyContext)
-		//Context("Templates", templatesEnvoyContext)
+		Context("Validation", validationEnvoyContext)
+		Context("TCP Proxy", tcpProxyEnvoyContext)
+		Context("Templates", templatesEnvoyContext)
 	})
 
 	//Context("GRPC_API", grpcAPIContext)
