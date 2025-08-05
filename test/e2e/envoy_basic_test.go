@@ -38,6 +38,7 @@ func basicEnvoyContext() {
 		fixture.WaitEnvoyConfigChanged()
 
 		By("verifying Envoy configuration")
+		// nolint: lll
 		expectations := map[string]string{
 			"configs.0.bootstrap.node.id":                                                                                                  "test",
 			"configs.0.bootstrap.node.cluster":                                                                                             "e2e",
@@ -90,6 +91,7 @@ func basicEnvoyContext() {
 		fixture.WaitEnvoyConfigChanged()
 
 		By("verifying access log config in Envoy")
+		// nolint: lll
 		expectations := map[string]string{
 			"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.@type": "type.googleapis.com/envoy.extensions.access_loggers.file.v3.FileAccessLog",
 			"configs.2.dynamic_listeners.0.active_state.listener.filter_chains.0.filters.0.typed_config.access_log.0.typed_config.path":  "/tmp/virtual-service.log",

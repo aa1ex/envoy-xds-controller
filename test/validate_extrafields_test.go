@@ -74,6 +74,7 @@ func validateExtraFieldsUsage(vst *v1alpha1.VirtualServiceTemplate) error {
 
 	// Return an error if there are unused extraFields
 	if len(unusedFields) > 0 {
+		// nolint: lll
 		return fmt.Errorf("the following extraFields are defined but not used in the template: %s", strings.Join(unusedFields, ", "))
 	}
 

@@ -21,10 +21,11 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"flag"
-	corev1 "k8s.io/api/core/v1"
 	"net/http"
 	"os"
 	"strconv"
+
+	corev1 "k8s.io/api/core/v1"
 
 	xdsClients "github.com/kaasops/envoy-xds-controller/internal/xds/clients"
 

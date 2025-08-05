@@ -39,7 +39,7 @@ func (f *GRPCAPIFixture) Teardown() {
 		manifest := f.AppliedManifests[i]
 		err := utils.DeleteManifests(manifest)
 		if err != nil {
-			fmt.Fprintf(GinkgoWriter, "Warning: Failed to delete manifest: %s, error: %v\n", manifest, err)
+			_, _ = fmt.Fprintf(GinkgoWriter, "Warning: Failed to delete manifest: %s, error: %v\n", manifest, err)
 		}
 	}
 	f.AppliedManifests = []string{}

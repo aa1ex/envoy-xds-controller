@@ -42,6 +42,7 @@ func templatesEnvoyContext() {
 		fixture.WaitEnvoyConfigChanged()
 
 		By("verifying Envoy configuration")
+		// nolint: lll
 		expectations := map[string]string{
 			"configs.0.bootstrap.node.id":                                                                                                  "test",
 			"configs.0.bootstrap.node.cluster":                                                                                             "e2e",
@@ -99,6 +100,7 @@ func templatesEnvoyContext() {
 		fixture.WaitEnvoyConfigChanged()
 
 		By("verifying Envoy configuration")
+		// nolint: lll
 		expectations := map[string]string{
 			"configs.0.bootstrap.node.id":                                                                                "test",
 			"configs.0.bootstrap.node.cluster":                                                                           "e2e",

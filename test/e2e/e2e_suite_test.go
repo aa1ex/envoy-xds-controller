@@ -76,6 +76,7 @@ var _ = BeforeSuite(func() {
 	ExpectWithOffset(1, err).NotTo(HaveOccurred(), "Failed to build the manager(Operator) image")
 
 	By("building the init-cert image")
+	// nolint: lll
 	cmd = exec.Command("make", "docker-build-init-cert", fmt.Sprintf("INIT_CERT_IMG=%s:%s", initCertImage, projectImageTag))
 	_, err = utils.Run(cmd)
 	ExpectWithOffset(1, err).NotTo(HaveOccurred(), "Failed to build the init-cert image")

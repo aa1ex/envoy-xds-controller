@@ -96,6 +96,7 @@ func main() {
 	if err != nil {
 		logger.Info("Certificate secret not found, creating new one")
 		// Create new certificate
+		// nolint: lll
 		if err := createCertificate(ctx, k8sClient, certSecret, cfg.InstallationNamespace, cfg.Webhook.ServiceName); err != nil {
 			logger.Error(err, "failed to create certificate")
 			os.Exit(1)
@@ -105,6 +106,7 @@ func main() {
 		// Check if certificate needs to be updated
 		if shouldUpdateCertificate(certSecret) {
 			logger.Info("Certificate needs to be updated, creating new one")
+			// nolint: lll
 			if err := createCertificate(ctx, k8sClient, certSecret, cfg.InstallationNamespace, cfg.Webhook.ServiceName); err != nil {
 				logger.Error(err, "failed to update certificate")
 				os.Exit(1)
@@ -117,6 +119,7 @@ func main() {
 	// Update webhook configuration with CA bundle
 	caBundle, ok := certSecret.Data[corev1.ServiceAccountRootCAKey]
 	if !ok {
+		// nolint: lll
 		logger.Error(fmt.Errorf("missing %s field in %s secret", corev1.ServiceAccountRootCAKey, cfg.Webhook.TLSSecretName), "invalid certificate secret")
 		os.Exit(1)
 	}
@@ -130,7 +133,12 @@ func main() {
 }
 
 // createCertificate creates a new certificate and updates the secret
-func createCertificate(ctx context.Context, k8sClient client.Client, certSecret *corev1.Secret, namespace, serviceName string) error {
+func createCertificate(
+	ctx context.Context,
+	k8sClient client.Client,
+	certSecret *corev1.Secret,
+	namespace, serviceName string,
+) error {
 	ca, err := cert.GenerateCertificateAuthority()
 	if err != nil {
 		return fmt.Errorf("failed to generate certificate authority: %w", err)
@@ -170,6 +178,7 @@ func shouldUpdateCertificate(secret *corev1.Secret) bool {
 		return true
 	}
 
+	// nolint: lll
 	certificate, key, err := cert.GetCertificateWithPrivateKeyFromBytes(secret.Data[corev1.TLSCertKey], secret.Data[corev1.TLSPrivateKeyKey])
 	if err != nil {
 		return true
@@ -181,15 +190,17 @@ func shouldUpdateCertificate(secret *corev1.Secret) bool {
 
 	// Check if the certificate is valid for at least 30 days
 	minValidityDuration := 30 * 24 * time.Hour
-	if time.Until(certificate.NotAfter) < minValidityDuration {
-		return true
-	}
 
-	return false
+	return time.Until(certificate.NotAfter) < minValidityDuration
 }
 
 // updateValidatingWebhookConfiguration updates the ValidatingWebhookConfiguration with the CA bundle
-func updateValidatingWebhookConfiguration(ctx context.Context, k8sClient client.Client, webhookName string, caBundle []byte) error {
+func updateValidatingWebhookConfiguration(
+	ctx context.Context,
+	k8sClient client.Client,
+	webhookName string,
+	caBundle []byte,
+) error {
 	webhook := &admissionregistrationv1.ValidatingWebhookConfiguration{}
 	err := k8sClient.Get(ctx, types.NamespacedName{Name: webhookName}, webhook)
 	if err != nil {
