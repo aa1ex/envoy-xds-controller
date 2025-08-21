@@ -11,6 +11,17 @@ metrics:
 xds:
   port: 9000
 
+# Enable syncing snapshots to Redis (via --enable-redis-sync flag)
+enableRedisSync: true
+
+# Redis client configuration for internal/xds/redisstore
+redis:
+  addr: "redis.redis:6379"
+  password: ""
+  db: 0
+  namespace: "xds"
+  timeoutMs: 2000
+
 resourceAPI:
   targetNamespace: ""
   enabled: false

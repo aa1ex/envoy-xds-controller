@@ -62,7 +62,7 @@ spec:
       {{- end }}
       containers:
       - image: {{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}
-        {{- if or .Values.args .Values.cacheAPI.enabled }}
+        {{- if or .Values.args (or .Values.cacheAPI.enabled .Values.enableRedisSync) }}
         args:
           {{- if .Values.args }}
           {{- toYaml .Values.args | nindent 10 }}
@@ -78,6 +78,9 @@ spec:
           - --cache-api-scheme={{ .Values.cacheAPI.scheme }}
           - --cache-api-addr={{ .Values.cacheAPI.address }}
           {{- end }}
+          {{- if .Values.enableRedisSync }}
+          - --enable-redis-sync=true
+          {{- end }}
         {{- end }}
         env:
           - name: XDS_PORT
@@ -86,6 +89,18 @@ spec:
             value: {{ .Release.Namespace }}
           - name: TARGET_NAMESPACE
             value: {{ .Values.resourceAPI.targetNamespace | default .Release.Namespace }}
+        {{- if .Values.enableRedisSync }}
+          - name: REDIS_ADDR
+            value: {{ .Values.redis.addr | quote }}
+          - name: REDIS_PASSWORD
+            value: {{ .Values.redis.password | quote }}
+          - name: REDIS_DB
+            value: "{{ .Values.redis.db }}"
+          - name: XDS_REDIS_NS
+            value: {{ .Values.redis.namespace | quote }}
+          - name: XDS_REDIS_TIMEOUT_MS
+            value: "{{ .Values.redis.timeoutMs }}"
+        {{- end }}
         {{- if .Values.auth.enabled }}
           - name: OIDC_ENABLED
             valueFrom:

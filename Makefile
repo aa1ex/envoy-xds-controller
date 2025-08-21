@@ -410,3 +410,7 @@ dev-envoy:
 .PHONY: dev-frontend
 dev-frontend:
 	cd ui && npm run dev
+
+.PHONY: dev-redis
+dev-redis:
+	bash scripts/dev-redis.sh

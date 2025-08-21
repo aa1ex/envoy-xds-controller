@@ -25,7 +25,9 @@ import (
 	"os"
 	"strconv"
 
+	cachev3 "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	"github.com/kaasops/envoy-xds-controller/internal/buildinfo"
+	"github.com/kaasops/envoy-xds-controller/internal/xds/redisstore"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 
 	corev1 "k8s.io/api/core/v1"
@@ -129,6 +131,7 @@ func main() {
 	var accessControlModelPath string
 	var accessControlPolicyPath string
 	var configPath string
+	var enableRedisSync bool
 	flag.StringVar(&metricsAddr, "metrics-bind-address", "0", "The address the metrics endpoint binds to. "+
 		"Use :8443 for HTTPS or :8080 for HTTP, or leave as 0 to disable the metrics service.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
@@ -145,6 +148,7 @@ func main() {
 	flag.StringVar(&cacheAPIAddr, "cache-api-addr", "localhost:9999", "Cache API address")
 	flag.IntVar(&grpcAPIPort, "grpc-api-port", 10000, "GRPC API port")
 	flag.BoolVar(&devMode, "development", false, "Enable dev mode")
+	flag.BoolVar(&enableRedisSync, "enable-redis-sync", false, "Enable Redis Sync")
 	flag.StringVar(&accessControlModelPath,
 		"access-control-model-path",
 		"/etc/exc/access-control/model.conf",
@@ -255,6 +259,20 @@ func main() {
 
 	resStore := store.New()
 	snapshotCache := cache.NewSnapshotCache()
+
+	if enableRedisSync {
+		redisClient := redisstore.NewFromEnv()
+		snapshotCache.RegisterHooks(cache.Hooks{
+			BeforeSetSnapshot: func(ctx context.Context, node string, snapshot cachev3.ResourceSnapshot) {
+				err = redisClient.SaveSnapshot(ctx, node, snapshot)
+				if err != nil {
+					setupLog.Error(err, "unable to save snapshot to redis")
+				}
+				setupLog.Info("saved snapshot to redis", "node", node)
+			},
+		})
+	}
+
 	cacheUpdater := updater.NewCacheUpdater(snapshotCache, resStore)
 	fWatcher, err := filewatcher.NewFileWatcher()
 	if err != nil {
