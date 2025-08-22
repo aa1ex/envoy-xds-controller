@@ -29,6 +29,10 @@ A dedicated namespace is used (by default, `xds`).
      - `listeners` — JSON array of envoy.config.listener.v3.Listener in Protobuf JSON format
      - `endpoints` — JSON array of envoy.config.endpoint.v3.ClusterLoadAssignment (EDS) in Protobuf JSON format (optional)
      - `secrets` — JSON array of envoy.extensions.transport_sockets.tls.v3.Secret in Protobuf JSON format (optional)
+     - `metadata` — JSON object with additional metadata (optional). It includes system fields:
+       - `added_at` — RFC3339 UTC timestamp when the snapshot was stored
+       - `hash` — deterministic hash of the snapshot (calculated by internal/xds/cache/helpers.GetSnapshotHash)
+       It may also contain user-provided string key/value pairs.
 
 An empty or missing field for a collection is treated as an empty list.
 

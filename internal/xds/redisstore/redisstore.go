@@ -16,11 +16,28 @@ import (
 	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
 	cachev3 "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	resourcev3 "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
-	_ "github.com/kaasops/envoy-xds-controller/internal/xds/cache"
+	xdshelpers "github.com/kaasops/envoy-xds-controller/internal/xds/cache"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
+
+const (
+	defaultNamespace = "xds"
+	defaultVersion   = "1"
+
+	fieldVersion   = "version"
+	fieldClusters  = "clusters"
+	fieldRoutes    = "routes"
+	fieldListeners = "listeners"
+	fieldEndpoints = "endpoints"
+	fieldSecrets   = "secrets"
+	fieldMetadata  = "metadata"
+)
+
+// Redis key helpers
+func (c *Client) nodesKey() string { return fmt.Sprintf("%s:nodes", c.ns) }
+func (c *Client) snapshotKey(nodeID string) string { return fmt.Sprintf("%s:snapshot:%s", c.ns, nodeID) }
 
 // Options holds configuration for Redis connection and key namespace.
 type Options struct {
@@ -47,7 +64,7 @@ func New(opts Options) *Client {
 	}
 	ns := opts.Namespace
 	if ns == "" {
-		ns = "xds"
+		ns = defaultNamespace
 	}
 	return &Client{rdb: rdb, ns: ns, to: timeout}
 }
@@ -58,7 +75,7 @@ func NewFromEnv() *Client {
 	addr := getenvDefault("REDIS_ADDR", "127.0.0.1:6379")
 	password := os.Getenv("REDIS_PASSWORD")
 	db := getenvIntDefault("REDIS_DB", 0)
-	ns := getenvDefault("XDS_REDIS_NS", "xds")
+	ns := getenvDefault("XDS_REDIS_NS", defaultNamespace)
 	timeout := time.Duration(getenvIntDefault("XDS_REDIS_TIMEOUT_MS", 2000)) * time.Millisecond
 	return New(Options{Addr: addr, Password: password, DB: db, Namespace: ns, Timeout: timeout})
 }
@@ -70,7 +87,7 @@ func (c *Client) LoadSnapshots(ctx context.Context) (map[string]*cachev3.Snapsho
 
 	result := make(map[string]*cachev3.Snapshot)
 
-	nodesKey := fmt.Sprintf("%s:nodes", c.ns)
+	nodesKey := c.nodesKey()
 	nodes, err := c.rdb.SMembers(ctx, nodesKey).Result()
 	if err != nil {
 		return result, fmt.Errorf("redis: read nodes from %s: %w", nodesKey, err)
@@ -80,7 +97,7 @@ func (c *Client) LoadSnapshots(ctx context.Context) (map[string]*cachev3.Snapsho
 	}
 
 	for _, nodeID := range nodes {
-		hashKey := fmt.Sprintf("%s:snapshot:%s", c.ns, nodeID)
+		hashKey := c.snapshotKey(nodeID)
 		fields, err := c.rdb.HGetAll(ctx, hashKey).Result()
 		if err != nil {
 			// skip broken node
@@ -90,28 +107,28 @@ func (c *Client) LoadSnapshots(ctx context.Context) (map[string]*cachev3.Snapsho
 			continue
 		}
 
-		version := fields["version"]
+		version := fields[fieldVersion]
 		if version == "" {
-			version = "1"
+			version = defaultVersion
 		}
 
-		clusters, err := decodeClusters(fields["clusters"])
+		clusters, err := decodeClusters(fields[fieldClusters])
 		if err != nil {
 			continue
 		}
-		routes, err := decodeRoutes(fields["routes"])
+		routes, err := decodeRoutes(fields[fieldRoutes])
 		if err != nil {
 			continue
 		}
-		listeners, err := decodeListeners(fields["listeners"])
+		listeners, err := decodeListeners(fields[fieldListeners])
 		if err != nil {
 			continue
 		}
-		endpoints, err := decodeEndpoints(fields["endpoints"])
+		endpoints, err := decodeEndpoints(fields[fieldEndpoints])
 		if err != nil {
 			continue
 		}
-		secrets, err := decodeSecrets(fields["secrets"])
+		secrets, err := decodeSecrets(fields[fieldSecrets])
 		if err != nil {
 			continue
 		}
@@ -140,7 +157,20 @@ func (c *Client) LoadSnapshots(ctx context.Context) (map[string]*cachev3.Snapsho
 // SaveSnapshot serializes given snapshot and writes it to Redis.
 // It stores: version (single string), clusters/routes/listeners/endpoints as Protobuf JSON arrays.
 // Also ensures nodeID is present in <ns>:nodes set.
+// Additionally, it stores metadata (JSON object) under the "metadata" field with at least:
+// - added_at: RFC3339 UTC timestamp
+// - hash: snapshot hash calculated via internal/xds/cache/helpers.GetSnapshotHash
 func (c *Client) SaveSnapshot(ctx context.Context, nodeID string, snapshot cachev3.ResourceSnapshot) error {
+	return c.saveSnapshotInternal(ctx, nodeID, snapshot, nil)
+}
+
+// SaveSnapshotWithMetadata does the same as SaveSnapshot but also accepts custom user metadata
+// (map[string]string) which will be merged into the stored metadata object.
+func (c *Client) SaveSnapshotWithMetadata(ctx context.Context, nodeID string, snapshot cachev3.ResourceSnapshot, userMeta map[string]string) error {
+	return c.saveSnapshotInternal(ctx, nodeID, snapshot, userMeta)
+}
+
+func (c *Client) saveSnapshotInternal(ctx context.Context, nodeID string, snapshot cachev3.ResourceSnapshot, userMeta map[string]string) error {
 	if nodeID == "" || snapshot == nil {
 		return fmt.Errorf("invalid input: nodeID and snapshot are required")
 	}
@@ -155,7 +185,7 @@ func (c *Client) SaveSnapshot(ctx context.Context, nodeID string, snapshot cache
 		snapshot.GetVersion(resourcev3.SecretType),
 	)
 	if version == "" {
-		version = "1"
+		version = defaultVersion
 	}
 
 	clustersJSON, err := encodeResourcesJSON(snapshot.GetResources(resourcev3.ClusterType))
@@ -179,19 +209,75 @@ func (c *Client) SaveSnapshot(ctx context.Context, nodeID string, snapshot cache
 		return fmt.Errorf("encode secrets: %w", err)
 	}
 
-	hashKey := fmt.Sprintf("%s:snapshot:%s", c.ns, nodeID)
+	// Prepare metadata: added_at + hash + user-provided
+	meta := map[string]string{}
+	for k, v := range userMeta {
+		// copy user meta
+		meta[k] = v
+	}
+	meta["added_at"] = time.Now().UTC().Format(time.RFC3339)
+
+	// Compute snapshot hash using helper
+	var snapForHash *cachev3.Snapshot
+	if s, ok := snapshot.(*cachev3.Snapshot); ok {
+		snapForHash = s
+	} else {
+		// Reconstruct a *cache.Snapshot with the chosen single version for hashing
+		res := map[resourcev3.Type][]types.Resource{}
+		if m := snapshot.GetResources(resourcev3.ClusterType); len(m) > 0 {
+			arr := make([]types.Resource, 0, len(m))
+			for _, r := range m { arr = append(arr, r) }
+			res[resourcev3.ClusterType] = arr
+		}
+		if m := snapshot.GetResources(resourcev3.RouteType); len(m) > 0 {
+			arr := make([]types.Resource, 0, len(m))
+			for _, r := range m { arr = append(arr, r) }
+			res[resourcev3.RouteType] = arr
+		}
+		if m := snapshot.GetResources(resourcev3.ListenerType); len(m) > 0 {
+			arr := make([]types.Resource, 0, len(m))
+			for _, r := range m { arr = append(arr, r) }
+			res[resourcev3.ListenerType] = arr
+		}
+		if m := snapshot.GetResources(resourcev3.EndpointType); len(m) > 0 {
+			arr := make([]types.Resource, 0, len(m))
+			for _, r := range m { arr = append(arr, r) }
+			res[resourcev3.EndpointType] = arr
+		}
+		if m := snapshot.GetResources(resourcev3.SecretType); len(m) > 0 {
+			arr := make([]types.Resource, 0, len(m))
+			for _, r := range m { arr = append(arr, r) }
+			res[resourcev3.SecretType] = arr
+		}
+		if s, err := cachev3.NewSnapshot(version, res); err == nil {
+			snapForHash = s
+		}
+	}
+	if snapForHash != nil {
+		if h, err := xdshelpers.GetSnapshotHash(snapForHash); err == nil && h != "" {
+			meta["hash"] = h
+		}
+	}
+
+	metaJSON := "{}"
+	if b, err := json.Marshal(meta); err == nil {
+		metaJSON = string(b)
+	}
+
+	hashKey := c.snapshotKey(nodeID)
 	pipe := c.rdb.Pipeline()
 	// Always set version and arrays (arrays can be [] or omitted if empty, but writing [] is fine)
 	pipe.HSet(ctx, hashKey, map[string]interface{}{
-		"version":   version,
-		"clusters":  clustersJSON,
-		"routes":    routesJSON,
-		"listeners": listenersJSON,
-		"endpoints": endpointsJSON,
-		"secrets":   secretsJSON,
+		fieldVersion:   version,
+		fieldClusters:  clustersJSON,
+		fieldRoutes:    routesJSON,
+		fieldListeners: listenersJSON,
+		fieldEndpoints: endpointsJSON,
+		fieldSecrets:   secretsJSON,
+		fieldMetadata:  metaJSON,
 	})
 	// add node to set
-	pipe.SAdd(ctx, fmt.Sprintf("%s:nodes", c.ns), nodeID)
+	pipe.SAdd(ctx, c.nodesKey(), nodeID)
 
 	if _, err := pipe.Exec(ctx); err != nil {
 		return fmt.Errorf("redis pipeline exec: %w", err)
@@ -227,104 +313,46 @@ func getenvIntDefault(key string, def int) int {
 
 // decode helpers (Proto JSON -> resources)
 
-func decodeClusters(raw string) ([]types.Resource, error) {
-	var raws []json.RawMessage
+// decodeResourceArray decodes a JSON array of protobuf messages into []types.Resource.
+// name is used only for contextual error messages.
+func decodeResourceArray(raw string, newMsg func() proto.Message, name string) ([]types.Resource, error) {
 	if raw == "" {
 		return nil, nil
 	}
+	var raws []json.RawMessage
 	if err := json.Unmarshal([]byte(raw), &raws); err != nil {
-		return nil, fmt.Errorf("json unmarshal clusters: %w", err)
+		return nil, fmt.Errorf("json unmarshal %s: %w", name, err)
 	}
 	res := make([]types.Resource, 0, len(raws))
+	opts := protojson.UnmarshalOptions{DiscardUnknown: true}
 	for _, r := range raws {
-		c := &clusterv3.Cluster{}
-		opts := protojson.UnmarshalOptions{DiscardUnknown: true}
-		if err := opts.Unmarshal(r, c); err != nil {
-			return nil, fmt.Errorf("protojson clusters: %w", err)
+		m := newMsg()
+		if err := opts.Unmarshal(r, m); err != nil {
+			return nil, fmt.Errorf("protojson %s: %w", name, err)
 		}
-		res = append(res, c)
+		res = append(res, m)
 	}
 	return res, nil
+}
+
+func decodeClusters(raw string) ([]types.Resource, error) {
+	return decodeResourceArray(raw, func() proto.Message { return &clusterv3.Cluster{} }, "clusters")
 }
 
 func decodeRoutes(raw string) ([]types.Resource, error) {
-	var raws []json.RawMessage
-	if raw == "" {
-		return nil, nil
-	}
-	if err := json.Unmarshal([]byte(raw), &raws); err != nil {
-		return nil, fmt.Errorf("json unmarshal routes: %w", err)
-	}
-	res := make([]types.Resource, 0, len(raws))
-	for _, r := range raws {
-		rc := &routev3.RouteConfiguration{}
-		opts := protojson.UnmarshalOptions{DiscardUnknown: true}
-		if err := opts.Unmarshal(r, rc); err != nil {
-			return nil, fmt.Errorf("protojson routes: %w", err)
-		}
-		res = append(res, rc)
-	}
-	return res, nil
+	return decodeResourceArray(raw, func() proto.Message { return &routev3.RouteConfiguration{} }, "routes")
 }
 
 func decodeListeners(raw string) ([]types.Resource, error) {
-	var raws []json.RawMessage
-	if raw == "" {
-		return nil, nil
-	}
-	if err := json.Unmarshal([]byte(raw), &raws); err != nil {
-		return nil, fmt.Errorf("json unmarshal listeners: %w", err)
-	}
-	res := make([]types.Resource, 0, len(raws))
-	for _, r := range raws {
-		l := &listenerv3.Listener{}
-		opts := protojson.UnmarshalOptions{DiscardUnknown: true}
-		if err := opts.Unmarshal(r, l); err != nil {
-			return nil, fmt.Errorf("protojson listeners: %w", err)
-		}
-		res = append(res, l)
-	}
-	return res, nil
+	return decodeResourceArray(raw, func() proto.Message { return &listenerv3.Listener{} }, "listeners")
 }
 
 func decodeEndpoints(raw string) ([]types.Resource, error) {
-	var raws []json.RawMessage
-	if raw == "" {
-		return nil, nil
-	}
-	if err := json.Unmarshal([]byte(raw), &raws); err != nil {
-		return nil, fmt.Errorf("json unmarshal endpoints: %w", err)
-	}
-	res := make([]types.Resource, 0, len(raws))
-	for _, r := range raws {
-		e := &endpointv3.ClusterLoadAssignment{}
-		opts := protojson.UnmarshalOptions{DiscardUnknown: true}
-		if err := opts.Unmarshal(r, e); err != nil {
-			return nil, fmt.Errorf("protojson endpoints: %w", err)
-		}
-		res = append(res, e)
-	}
-	return res, nil
+	return decodeResourceArray(raw, func() proto.Message { return &endpointv3.ClusterLoadAssignment{} }, "endpoints")
 }
 
 func decodeSecrets(raw string) ([]types.Resource, error) {
-	var raws []json.RawMessage
-	if raw == "" {
-		return nil, nil
-	}
-	if err := json.Unmarshal([]byte(raw), &raws); err != nil {
-		return nil, fmt.Errorf("json unmarshal secrets: %w", err)
-	}
-	res := make([]types.Resource, 0, len(raws))
-	for _, r := range raws {
-		s := &tlsv3.Secret{}
-		opts := protojson.UnmarshalOptions{DiscardUnknown: true}
-		if err := opts.Unmarshal(r, s); err != nil {
-			return nil, fmt.Errorf("protojson secrets: %w", err)
-		}
-		res = append(res, s)
-	}
-	return res, nil
+	return decodeResourceArray(raw, func() proto.Message { return &tlsv3.Secret{} }, "secrets")
 }
 
 // encode resources slice to a single JSON array string using Protobuf JSON format
