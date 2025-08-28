@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XDS Gateway UI</title>
+  <link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+  <header>
+    <h1>Envoy XDS Gateway</h1>
+    <div class="auth">
+      <label title="Authorization token for the API (if protection enabled)">Access token: <input id="authToken" type="password" placeholder="optional" /></label>
+      <button id="saveToken" title="Save token to the browser">Save</button>
+      <span id="tokenStatus"></span>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2 title="Manage planes">Planes</h2>
+      <p class="hint">View and manage planes available for routing.</p>
+      <div class="row">
+        <button id="btnListPlanes" title="Fetch all planes from the store">List planes</button>
+      </div>
+      <pre id="planesOut" class="out" title="The result of the request will appear here"></pre>
+
+      <h3>Add/Update plane</h3>
+      <div class="form">
+        <input id="planeId" placeholder="Plane ID (plane_id)" title="Unique plane identifier" />
+        <input id="planeAddress" placeholder="Address (IP or hostname)" title="Example: 10.0.0.1 or edge.example.org" />
+        <input id="planePort" type="number" placeholder="Port" title="Example: 18000" />
+        <input id="planeRegion" placeholder="Region (optional)" title="Helps select the nearest plane" />
+        <input id="planeWeight" type="number" placeholder="Weight (optional)" title="Higher weight increases selection probability" />
+        <label title="Enable/disable the plane"><input id="planeEnabled" type="checkbox" checked /> enabled</label>
+        <button id="btnPutPlane" title="Create or update the plane entry">Save plane</button>
+      </div>
+
+      <h3>Get plane</h3>
+      <div class="form">
+        <input id="getPlaneId" placeholder="Plane ID" title="Specify plane ID to read" />
+        <button id="btnGetPlane" title="Get plane information">Get</button>
+        <pre id="getPlaneOut" class="out"></pre>
+      </div>
+
+      <h3>Delete plane</h3>
+      <div class="form">
+        <input id="delPlaneId" placeholder="Plane ID" title="Specify plane ID to delete" />
+        <button id="btnDelPlane" title="Delete the plane from the store">Delete</button>
+      </div>
+
+      <h3>Default route</h3>
+      <div class="form">
+        <input id="defaultPlane" placeholder="Default plane ID" title="Plane used for clients without explicit rules" />
+        <button id="btnSetDefault" title="Set default route">Set</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Client routing</h2>
+      <p class="hint">Manage routing rules for a specific client and check final resolution.</p>
+      <div class="form">
+        <input id="clientKey" placeholder="Client key (client_key)" title="Unique client identifier" />
+      </div>
+
+      <h3>Client info</h3>
+      <div class="row">
+        <button id="btnGetClient" title="Get client details and route source">GET /clients/:key</button>
+      </div>
+      <pre id="clientOut" class="out"></pre>
+
+      <h3>Set/Remove client route</h3>
+      <div class="form">
+        <input id="clientTarget" placeholder='Target plane (plane_id)' title='Value for PUT {"target": "..."}' />
+        <button id="btnPutClient" title="Assign an explicit route to the client">Assign</button>
+        <button id="btnDelClient" title="Remove the client explicit route">Remove</button>
+      </div>
+
+      <h3>Resolve client</h3>
+      <div class="row">
+        <button id="btnResolve" title="Show final plane for the client considering all rules">GET /resolve/:key</button>
+      </div>
+      <pre id="resolveOut" class="out"></pre>
+
+      <h3>Client routes</h3>
+      <div class="row">
+        <button id="btnListClientRoutes" title="Fetch all client routes">List client routes</button>
+      </div>
+      <pre id="clientsOut" class="out" title="Client routes"></pre>
+
+      <h3>Cohorts</h3>
+      <div class="row">
+        <button id="btnListCohorts" title="Fetch all cohort routes">List cohorts</button>
+      </div>
+      <pre id="cohortsOut" class="out" title="Cohort routes"></pre>
+      <div class="form">
+        <input id="cohortName" placeholder="Cohort name" title="Client group name" />
+        <input id="cohortTarget" placeholder='Target plane for cohort' title='Value for PUT {"target": "..."}' />
+        <button id="btnPutCohort" title="Set route for the cohort">Save cohort route</button>
+        <button id="btnDelCohort" title="Delete cohort route">Delete cohort route</button>
+      </div>
+
+      <h3>Client cohort</h3>
+      <div class="form">
+        <input id="clientCohort" placeholder='Client cohort' title='Value for PUT {"name": "..."}' />
+        <button id="btnPutClientCohort" title="Assign cohort to client">Assign</button>
+        <button id="btnDelClientCohort" title="Remove client cohort">Remove</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <small>Simple embedded UI. Works with /api/v1. Token is stored in the browser localStorage.</small>
+  </footer>
+
+  <script src="/ui/app.js"></script>
+</body>
+</html>

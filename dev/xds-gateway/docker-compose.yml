@@ -1,0 +1,113 @@
+version: "3.9"
+
+# Dev/testing stack for xds-gateway
+# Services:
+#  - redis: key-value store for rules and cache invalidation
+#  - xds-gateway: Policy Service (REST + gRPC ext_proc)
+#  - xds-service-a/b: two separate xDS control planes (upstreams for routing)
+#  - envoy: Front Envoy proxy using ext_proc to choose target xDS plane
+#  - init-planes: one-shot seeding of planes/default route via REST API
+#
+# Start:    docker compose up --build
+# Stop:     docker compose down -v
+# Gateway:  http://localhost:8080 (REST), gRPC ext_proc on localhost:8081
+# Envoy in: ADS/gRPC on localhost:10000 (admin on 9901)
+
+services:
+  redis:
+    image: redis:8.0.3
+    command: ["redis-server", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+
+  # Web UI to inspect and manage Redis
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:${REDIS_ADDR}:${REDIS_DB:-0}:${REDIS_PASSWORD:-}
+    depends_on:
+      - redis
+    ports:
+      - "8082:8081"  # UI http://localhost:8082
+
+  xds-gateway:
+    hostname: xds-gateway
+    build:
+      context: ../../
+      dockerfile: cmd/xds-gateway/Dockerfile
+      args:
+        VERSION: dev
+        COMMIT_HASH: local
+        BUILD_DATE: "dev"
+    command: ["-development","-grpc-port","${GRPC_PORT:-8081}","-http","${HTTP_ADDR:-:8080}"]
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+    ports:
+      - "8080:8080"   # REST API
+      - "8081:8081"   # gRPC ExtProc
+
+  xds-service-a:
+    build:
+      context: ../../
+      dockerfile: cmd/xds-service/Dockerfile
+      args:
+        VERSION: dev
+        COMMIT_HASH: local
+        BUILD_DATE: "dev"
+    command: ["-development","-port","18000","-http",":18080"]
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+    ports:
+      - "18080:18080"
+      - "18000:18000"
+    expose:
+      - "18000"
+      - "18080"
+
+  xds-service-b:
+    build:
+      context: ../../
+      dockerfile: cmd/xds-service/Dockerfile
+      args:
+        VERSION: dev
+        COMMIT_HASH: local
+        BUILD_DATE: "dev"
+    command: ["-development","-port","18000","-http",":18080","-auto-sync","-sync-interval","10s"]
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+    ports:
+      - "18081:18080"
+    expose:
+      - "18000"
+      - "18080"
+
+  # One-shot init to seed planes and default route in Redis via gateway REST API
+  init-planes:
+    image: curlimages/curl:8.14.1
+    depends_on:
+      - xds-gateway
+      - xds-service-a
+      - xds-service-b
+    volumes:
+      - ./init-planes.sh:/init-planes.sh
+    entrypoint: ["sh", "/init-planes.sh"]
+    restart: "no"
+
+  envoy:
+    image: envoyproxy/envoy:v1.35.1
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--mode", "serve"]
+    volumes:
+      - ./envoy-gateway.yaml:/etc/envoy/envoy.yaml:ro
+    depends_on:
+      - xds-gateway
+      - xds-service-a
+      - xds-service-b
+    ports:
+      - "10000:10000" # Front listener for Envoy clients (ADS/gRPC)
+      - "9901:9901"   # Admin
