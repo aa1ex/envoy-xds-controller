@@ -1,0 +1,129 @@
+@startuml
+' Envoy xDS Controller - High-level Architecture (Component Diagram)
+' This PlantUML diagram captures the main components and interactions.
+' It is intended to serve as an overview for contributors and operators.
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam monochrome false
+skinparam defaultFontName Monospaced
+skinparam ArrowThickness 1.2
+skinparam ArrowColor #555555
+skinparam linetype ortho
+left to right direction
+skinparam nodesep 50
+skinparam ranksep 50
+
+title Envoy xDS Controller — Architecture Overview
+
+skinparam roundcorner 8
+skinparam component {
+  BackgroundColor #FFFFFF
+}
+skinparam component<<service>> {
+  BackgroundColor #EEF7FF
+  BorderColor #3B82F6
+}
+skinparam component<<envoy>> {
+  BackgroundColor #FFF7E6
+  BorderColor #F59E0B
+}
+skinparam database {
+  BackgroundColor #FFF5F5
+  BorderColor #EF4444
+}
+skinparam cloud {
+  BackgroundColor #F3F4F6
+  BorderColor #9CA3AF
+}
+
+rectangle "Kubernetes Cluster" as k8s {
+
+  component "envoy-xds-controller" <<service>> as controller {
+    component "xDS API" <<service>> as xdsApi
+    component "Reconcilers / Operators" <<service>> as recon
+  }
+
+  database "Redis" as redis
+
+  component "Envoy (Gateway)" <<envoy>> as envoyGw
+
+  component "xds-gateway" <<service>> as xdsGw {
+    component "HTTP API (Gin)" <<service>> as httpApi
+    component "gRPC ExtProc" <<service>> as extProc
+    component "Resolver & Cache Mgmt" <<service>> as resolver
+  }
+
+  component "xds-service" <<service>> as xdsSvc
+}
+
+component "Envoy (Client)" <<envoy>> as envoyCl
+
+rectangle "Administrators / CI" as admins {
+  component "Web UI / CLI" as ui
+}
+
+cloud "Kubernetes API Server" as apiserver
+
+' Relationships
+ui -[hidden]-> httpApi
+admins -[hidden]-> k8s
+apiserver -[hidden]-> controller
+
+ui --> httpApi : Manage routes/policies\n(HTTP)
+recon --> apiserver : Watch CRDs\n(List/Watch)
+recon --> redis : Write snapshots / routes
+resolver --> redis : Read/Subscribe
+redis --> resolver : Pub/Sub events\n(invalidate caches)
+
+' Envoy data/control flows
+envoyGw --> extProc : External Processing\n(gRPC)
+
+' Internal links
+httpApi --> resolver : CRUD operations
+extProc --> resolver : Resolve routes/policies at runtime
+
+' xDS Service (separate from controller)
+xdsSvc --> redis : Read snapshots / routes
+envoyGw --> xdsSvc : Connect via xDS\n(LDS/RDS/CDS/EDS)
+envoyGw --> xdsApi : Connect via xDS\n(LDS/RDS/CDS/EDS)
+envoyCl --> envoyGw : Connect to Gateway\n(xDS requests proxied)
+
+' Notes
+note right of xdsGw
+- Reads configuration from Redis
+- Exposes HTTP API secured by optional token
+- gRPC ExtProc for dynamic request/response processing
+end note
+
+note right of controller
+- Watches K8s/CRDs and builds xDS snapshots
+- Publishes snapshots to Redis for xds-service
+end note
+
+note right of xdsSvc
+- Standalone xDS server for Envoy
+- Does NOT build snapshots from CRs
+- Fetches snapshots from Redis
+end note
+
+note right of redis
+- Central cache/snapshot store
+- Pub/Sub used for cache invalidation in xds-gateway
+end note
+
+
+legend right
+Legend:
+- Rectangle (component): in-cluster component/service
+- Rectangle with title (rectangle { }): boundary/group (e.g., Kubernetes Cluster)
+- Cylinder (database): data store (Redis)
+- Cloud (cloud): external system (Kubernetes API Server)
+- Solid arrow (-->) : interaction/protocol (labeled: HTTP, gRPC, xDS, etc.)
+- Hidden arrow (-[hidden]->): layout/positioning only
+- Note (note): explanatory comment
+- Envoy (Gateway): edge proxy; hosts gRPC ext_proc; connects to xds-service for xDS and proxies ADS to clients
+- Envoy (Client): service-side proxy; managed via Envoy Gateway (all xDS/ADS requests go through it)
+end legend
+
+@enduml

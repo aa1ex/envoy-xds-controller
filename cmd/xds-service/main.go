@@ -17,18 +17,18 @@ import (
 	cachev3 "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	resourcev3 "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/server/v3"
+	"github.com/go-logr/logr"
 	"github.com/go-logr/zapr"
 	"github.com/kaasops/envoy-xds-controller/internal/xds"
 	excCache "github.com/kaasops/envoy-xds-controller/internal/xds/cache"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/callbacks"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/redisstore"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 )
 
 var (
-	serviceLog = ctrl.Log.WithName("xds-service")
+	serviceLog logr.Logger
 )
 
 var adminTmpl = template.Must(template.New("admin").Parse(`<!DOCTYPE html>
@@ -116,16 +116,22 @@ func main() {
 	flag.BoolVar(&autoSync, "auto-sync", false, "enable automatic periodic sync from Redis")
 	flag.DurationVar(&syncInterval, "sync-interval", 30*time.Second, "interval for automatic sync from Redis")
 	flag.BoolVar(&devMode, "development", false, "Enable dev mode")
-	// zap logger options and initialization
-	opts := zap.Options{Development: devMode}
-	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
-	zapLevel := zap.Level(zapcore.InfoLevel)
+	var cfg zap.Config
 	if devMode {
-		zapLevel = zap.Level(zapcore.DebugLevel)
+		cfg = zap.NewDevelopmentConfig()
+		cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	} else {
+		cfg = zap.NewProductionConfig()
+		cfg.EncoderConfig.TimeKey = "ts"
+		cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	}
-	zapLogger := zap.NewRaw(zap.UseFlagOptions(&opts), zapLevel)
-	ctrl.SetLogger(zapr.NewLogger(zapLogger))
+	zl, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+	defer zl.Sync()
+	serviceLog = zapr.NewLogger(zl).WithName("xds-service")
 
 	// Runtime switch for auto-sync, initialized from flag
 	var autoSyncEnabled atomic.Bool

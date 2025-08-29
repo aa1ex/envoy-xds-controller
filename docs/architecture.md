@@ -10,6 +10,11 @@ The Envoy XDS Controller architecture follows a Kubernetes controller pattern wi
 
 ![architecture.png](images/architecture.png)
 
+See also the C4 model diagrams in docs/c4/model.puml:
+- C1: System Context
+- C2: Containers
+- C3: Components for xds-gateway and controller
+
 ## Logical Architecture Components
 
 ### 1. Kubernetes Controller Manager

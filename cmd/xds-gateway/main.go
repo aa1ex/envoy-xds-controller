@@ -14,21 +14,21 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-logr/logr"
 	"github.com/go-logr/zapr"
 	"github.com/kaasops/envoy-xds-controller/internal/gateway/extproc"
 	"github.com/kaasops/envoy-xds-controller/internal/gateway/httpapi"
 	"github.com/kaasops/envoy-xds-controller/internal/gateway/resolver"
 	"github.com/kaasops/envoy-xds-controller/internal/gateway/store"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	extprocv3 "github.com/envoyproxy/go-control-plane/envoy/service/ext_proc/v3"
 	"google.golang.org/grpc"
 )
 
 var (
-	log = ctrl.Log.WithName("xds-gateway")
+	log logr.Logger
 )
 
 func getenv(key, def string) string {
@@ -74,16 +74,22 @@ func main() {
 	flag.StringVar(&httpAddr, "http", getenv("HTTP_ADDR", ":8080"), "HTTP listen address")
 	flag.BoolVar(&devMode, "development", getenvBool("DEBUG", false), "Enable dev mode logging and gin")
 
-	// zap logger options
-	opts := zap.Options{Development: devMode}
-	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
-	zapLevel := zap.Level(zapcore.InfoLevel)
+	var cfg zap.Config
 	if devMode {
-		zapLevel = zap.Level(zapcore.DebugLevel)
+		cfg = zap.NewDevelopmentConfig()
+		cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	} else {
+		cfg = zap.NewProductionConfig()
+		cfg.EncoderConfig.TimeKey = "ts"
+		cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	}
-	zapLogger := zap.NewRaw(zap.UseFlagOptions(&opts), zapLevel)
-	ctrl.SetLogger(zapr.NewLogger(zapLogger))
+	zl, err := cfg.Build()
+	if err != nil {
+		panic(err)
+	}
+	defer zl.Sync()
+	log = zapr.NewLogger(zl).WithName("xds-gateway")
 
 	if !devMode {
 		gin.SetMode(gin.ReleaseMode)

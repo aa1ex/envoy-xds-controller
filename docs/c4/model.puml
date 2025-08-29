@@ -1,0 +1,123 @@
+' Envoy xDS Controller — C4 Model (derived from docs/architecture.puml)
+' Source docs considered: docs/architecture.puml, docs/architecture.md, docs/overview.md,
+' docs/components/*, docs/xds-gateway.md
+
+' Common includes for C4-PlantUML
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' -------------------------------------------------------------------------------------
+' C1 — System Context
+' -------------------------------------------------------------------------------------
+@startuml C1_Context
+LAYOUT_LEFT_RIGHT()
+Title Envoy xDS Platform — Context (C1)
+
+Person(admin, "Administrator / CI", "Manages policies and observes state")
+
+System_Boundary(k8s, "Kubernetes Cluster") {
+  System(system, "Envoy xDS Platform", "Envoy configuration management system: controller, xds-service, xds-gateway")
+  SystemDb(redis, "Redis", "Snapshots/routes; Pub/Sub for cache invalidation")
+}
+
+System_Ext(k8sApi, "Kubernetes API Server", "CRDs and Kubernetes objects")
+System_Ext(envoyGw, "Envoy (Gateway)", "Edge proxy; proxies ADS; calls ExtProc")
+System_Ext(envoyCl, "Envoy (Client)", "Service proxy; connects to Gateway")
+
+Rel(admin, system, "Management and monitoring", "HTTP API / CLI")
+Rel(system, k8sApi, "List/Watch CRDs", "Kubernetes API")
+Rel(system, redis, "Store snapshots/routes; Pub/Sub", "Redis")
+Rel(envoyGw, system, "ADS/xDS; gRPC ExtProc", "gRPC / xDS")
+Rel(envoyCl, envoyGw, "Connect to gateway", "xDS (ADS)")
+
+SHOW_LEGEND()
+@enduml
+
+
+' -------------------------------------------------------------------------------------
+' C2 — Container Diagram
+' -------------------------------------------------------------------------------------
+@startuml C2_Containers
+LAYOUT_LEFT_RIGHT()
+Title Envoy xDS Platform — Containers (C2)
+
+Person(admin, "Administrator / CI")
+System_Ext(k8sApi, "Kubernetes API Server", "CRDs/Objects")
+Container_Ext(envoyGw, "Envoy (Gateway)", "Envoy", "Edge proxy; proxies ADS; calls ExtProc")
+Container_Ext(envoyCl, "Envoy (Client)", "Envoy", "Service proxy; connects to Gateway")
+
+System_Boundary(cluster, "Kubernetes Cluster") {
+  System_Boundary(platform, "Envoy xDS Platform") {
+    Container(controller, "envoy-xds-controller", "Go", "Reconcilers/Operators; builds xDS snapshots; optional xDS API")
+    Container(xdsSvc, "xds-service", "Go + gRPC", "ADS/xDS server; reads snapshots from Redis; admin HTTP")
+    Container(xdsGw, "xds-gateway", "Go + gRPC/HTTP", "Policy Service: gRPC ExtProc; HTTP Mgmt API; Resolver & Cache")
+    ContainerDb(redis, "Redis", "Redis", "Snapshot/route store; Pub/Sub")
+  }
+}
+
+Rel(admin, xdsGw, "Manage policies and state", "HTTP (REST)")
+Rel(controller, k8sApi, "List/Watch CRDs", "Kubernetes API")
+Rel(controller, redis, "Writes snapshots/routes")
+Rel(xdsSvc, redis, "Reads snapshots")
+Rel(envoyGw, xdsSvc, "Connect to ADS/xDS", "gRPC")
+Rel(envoyGw, controller, "Connect to xDS (optional)", "gRPC")
+Rel(envoyGw, xdsGw, "External Processing", "gRPC ExtProc")
+Rel(xdsGw, redis, "Read/Subscribe", "Redis")
+Rel_R(redis, xdsGw, "Pub/Sub invalidation", "Redis")
+Rel(envoyCl, envoyGw, "xDS requests are proxied", "ADS/xDS")
+
+SHOW_LEGEND()
+@enduml
+
+
+' -------------------------------------------------------------------------------------
+' C3 — Component Diagram: xds-gateway
+' -------------------------------------------------------------------------------------
+@startuml C3_xds_gateway_components
+LAYOUT_LEFT_RIGHT()
+Title xds-gateway — Components (C3)
+
+Container_Ext(envoyGw, "Envoy (Gateway)", "Envoy", "Performs HTTP ext_proc")
+ContainerDb(redis, "Redis", "Redis", "Route store; Pub/Sub")
+Person(admin, "Administrator / CI")
+
+Container_Boundary(xdsGw, "xds-gateway") {
+  Component(extProc, "gRPC ExtProc", "Envoy External Processing v3", "Dynamic routing decisions")
+  Component(httpApi, "HTTP API (Gin)", "REST JSON", "CRUD of policies/registry; state inspection")
+  Component(resolver, "Resolver & Cache", "Go", "Resolve plane/route; TTL cache; subscribe to Pub/Sub")
+}
+
+Rel(admin, httpApi, "Management", "HTTP")
+Rel(envoyGw, extProc, "External Processing", "gRPC")
+Rel(httpApi, resolver, "CRUD/inspection (in-proc)")
+Rel(extProc, resolver, "Resolve() (in-proc)")
+Rel(resolver, redis, "Read/Subscribe", "Redis")
+Rel_R(redis, resolver, "Pub/Sub invalidation", "Redis")
+
+SHOW_LEGEND()
+@enduml
+
+
+' -------------------------------------------------------------------------------------
+' C3 — Component Diagram: envoy-xds-controller
+' -------------------------------------------------------------------------------------
+@startuml C3_controller_components
+LAYOUT_LEFT_RIGHT()
+Title envoy-xds-controller — Components (C3)
+
+System_Ext(k8sApi, "Kubernetes API Server", "CRDs/Objects")
+ContainerDb(redis, "Redis", "Redis", "Snapshots/routes")
+Container_Ext(envoyGw, "Envoy (Gateway)", "Envoy", "May connect directly to controller's xDS (optional)")
+
+Container_Boundary(controller, "envoy-xds-controller") {
+  Component(recon, "Reconcilers / Operators", "controller-runtime", "Watch CRDs; build xDS resources and snapshots")
+  Component(xdsApi, "xDS API (optional)", "gRPC ADS", "xDS service using internal snapshots")
+}
+
+Rel(recon, k8sApi, "List/Watch CRDs", "Kubernetes API")
+Rel(recon, redis, "Writes snapshots/routes", "Redis")
+Rel(envoyGw, xdsApi, "xDS (optional)", "gRPC")
+
+' Note: The xDS API in the controller can be disabled and a separate xds-service used
+@enduml
