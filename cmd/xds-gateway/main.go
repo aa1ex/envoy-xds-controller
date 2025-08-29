@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"net"
@@ -98,6 +99,14 @@ func main() {
 
 	storeClient := store.New(store.Options{Addr: redisAddr, Password: redisPWD, DB: redisDB, Timeout: 5 * time.Second})
 
+	// Check Redis availability on startup
+	pingCtx, cancelPing := context.WithTimeout(ctx, 5*time.Second)
+	defer cancelPing()
+	if err := storeClient.Ping(pingCtx); err != nil {
+		log.Error(err, "redis ping failed", "addr", redisAddr, "db", redisDB)
+		os.Exit(1)
+	}
+
 	cacheTTL := time.Duration(getenvInt("CACHE_TTL_SECONDS", 60)) * time.Second
 	negTTL := time.Duration(getenvInt("NEGATIVE_CACHE_TTL_SECONDS", 10)) * time.Second
 	res := resolver.New(storeClient, cacheTTL, negTTL)
@@ -152,7 +161,7 @@ func main() {
 	// Run servers
 	done := make(chan struct{})
 	go func() {
-		if err := httpSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Error(err, "http server error")
 		}
 		close(done)

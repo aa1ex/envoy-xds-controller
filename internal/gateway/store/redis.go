@@ -14,17 +14,17 @@ import (
 )
 
 const (
-	Namespace           = "xds-gw:"
-	KeyPlane            = Namespace + "plane:%s"            // plane_id
-	KeyRouteClient      = Namespace + "route:client:%s"      // norm(client_key)
-	KeyClientCohort     = Namespace + "client:cohort:%s"     // norm(client_key)
-	KeyRouteCohort      = Namespace + "route:cohort:%s"      // norm(cohort)
-	KeyRouteDefault     = Namespace + "route:default"
-	ChannelEvents       = Namespace + "events"
-	EventTypePlane      = "plane"
-	EventTypeRoute      = "route"
-	EventTypeCohort     = "cohort"
-	EventTypeDefault    = "default"
+	Namespace        = "xds-gw:"
+	KeyPlane         = Namespace + "plane:%s"         // plane_id
+	KeyRouteClient   = Namespace + "route:client:%s"  // norm(client_key)
+	KeyClientCohort  = Namespace + "client:cohort:%s" // norm(client_key)
+	KeyRouteCohort   = Namespace + "route:cohort:%s"  // norm(cohort)
+	KeyRouteDefault  = Namespace + "route:default"
+	ChannelEvents    = Namespace + "events"
+	EventTypePlane   = "plane"
+	EventTypeRoute   = "route"
+	EventTypeCohort  = "cohort"
+	EventTypeDefault = "default"
 )
 
 type Store struct {
@@ -51,6 +51,11 @@ func New(opts Options) *Store {
 	r := redis.NewClient(&redis.Options{Addr: opts.Addr, Password: opts.Password, DB: opts.DB})
 	_ = to // currently unused for commands via Context
 	return &Store{rdb: r}
+}
+
+// Ping checks connectivity to Redis.
+func (s *Store) Ping(ctx context.Context) error {
+	return s.rdb.Ping(ctx).Err()
 }
 
 func NormalizeKey(s string) string {

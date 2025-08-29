@@ -279,7 +279,7 @@ func main() {
 				continue
 			}
 			info := map[string]any{
-				"nodeId":   nodeID,
+				"nodeId": nodeID,
 				"versions": map[string]string{
 					"clusters":  snap.GetVersion(resourcev3.ClusterType),
 					"routes":    snap.GetVersion(resourcev3.RouteType),
@@ -319,7 +319,7 @@ func main() {
 			return
 		}
 		res := map[string]any{
-			"nodeId":   nodeID,
+			"nodeId": nodeID,
 			"versions": map[string]string{
 				"clusters":  snap.GetVersion(resourcev3.ClusterType),
 				"routes":    snap.GetVersion(resourcev3.RouteType),

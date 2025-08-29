@@ -16,10 +16,10 @@ type Entry[T any] struct {
 }
 
 type TTLCache[T any] struct {
-	mu       sync.RWMutex
-	data     map[string]Entry[T]
-	ttl      time.Duration
-	negTTL   time.Duration
+	mu     sync.RWMutex
+	data   map[string]Entry[T]
+	ttl    time.Duration
+	negTTL time.Duration
 }
 
 func NewTTLCache[T any](ttl, negativeTTL time.Duration) *TTLCache[T] {

@@ -1,0 +1,12 @@
+{{- if and .Values.xdsService.enabled .Values.xdsService.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "chart.fullname" . }}-xds-service-config
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+data:
+  {{- range $k, $v := .Values.xdsService.config }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}
+{{- end }}

@@ -283,7 +283,6 @@ func (a *API) resolveClient(c *gin.Context) {
 	c.JSON(http.StatusOK, res.Resolved)
 }
 
-
 func (a *API) listCohorts(c *gin.Context) {
 	cs, err := a.store.ListCohortRoutes(c.Request.Context())
 	if err != nil {

@@ -1,0 +1,12 @@
+{{- if and .Values.xdsGateway.enabled .Values.xdsGateway.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "chart.fullname" . }}-xds-gateway-config
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+data:
+  {{- range $k, $v := .Values.xdsGateway.config }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}
+{{- end }}

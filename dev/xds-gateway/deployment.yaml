@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-gateway
+  namespace: envoy-xds-controller
+  labels:
+    app: envoy-gateway
+    component: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy-gateway
+      component: gateway
+  template:
+    metadata:
+      labels:
+        app: envoy-gateway
+        component: gateway
+    spec:
+      containers:
+        - name: envoy
+          image: envoyproxy/envoy:v1.30.2
+          imagePullPolicy: IfNotPresent
+          args:
+            - -c
+            - /etc/envoy/envoy.yaml
+          ports:
+            - containerPort: 10000
+              name: grpc
+            - containerPort: 19100
+              name: admin
+          volumeMounts:
+            - name: envoy-config
+              mountPath: /etc/envoy
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: admin
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /server_info
+              port: admin
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: envoy-config
+          configMap:
+            name: envoy-gateway-config
+            items:
+              - key: envoy.yaml
+                path: envoy.yaml

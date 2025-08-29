@@ -12,11 +12,11 @@ import (
 )
 
 type Resolver struct {
-	store            *store.Store
-	clientRouteCache *cache.TTLCache[string]
+	store             *store.Store
+	clientRouteCache  *cache.TTLCache[string]
 	clientCohortCache *cache.TTLCache[string]
-	cohortRouteCache *cache.TTLCache[string]
-	planeCache       *cache.TTLCache[gateway.Plane]
+	cohortRouteCache  *cache.TTLCache[string]
+	planeCache        *cache.TTLCache[gateway.Plane]
 
 	resolvesTotal atomic.Int64
 }
@@ -57,34 +57,58 @@ func ensureClusterName(planeID string) string {
 
 func (r *Resolver) getClientRoute(ctx context.Context, clientKey string) (string, error) {
 	if v, ok, neg := r.clientRouteCache.Get(clientKey); ok {
-		if neg { return "", nil }
+		if neg {
+			return "", nil
+		}
 		return v, nil
 	}
 	v, err := r.store.GetClientRoute(ctx, clientKey)
-	if err != nil { return "", err }
-	if v == "" { r.clientRouteCache.SetNegative(clientKey) } else { r.clientRouteCache.Set(clientKey, v) }
+	if err != nil {
+		return "", err
+	}
+	if v == "" {
+		r.clientRouteCache.SetNegative(clientKey)
+	} else {
+		r.clientRouteCache.Set(clientKey, v)
+	}
 	return v, nil
 }
 
 func (r *Resolver) getClientCohort(ctx context.Context, clientKey string) (string, error) {
 	if v, ok, neg := r.clientCohortCache.Get(clientKey); ok {
-		if neg { return "", nil }
+		if neg {
+			return "", nil
+		}
 		return v, nil
 	}
 	v, err := r.store.GetClientCohort(ctx, clientKey)
-	if err != nil { return "", err }
-	if v == "" { r.clientCohortCache.SetNegative(clientKey) } else { r.clientCohortCache.Set(clientKey, v) }
+	if err != nil {
+		return "", err
+	}
+	if v == "" {
+		r.clientCohortCache.SetNegative(clientKey)
+	} else {
+		r.clientCohortCache.Set(clientKey, v)
+	}
 	return v, nil
 }
 
 func (r *Resolver) getCohortRoute(ctx context.Context, cohort string) (string, error) {
 	if v, ok, neg := r.cohortRouteCache.Get(cohort); ok {
-		if neg { return "", nil }
+		if neg {
+			return "", nil
+		}
 		return v, nil
 	}
 	v, err := r.store.GetCohortRoute(ctx, cohort)
-	if err != nil { return "", err }
-	if v == "" { r.cohortRouteCache.SetNegative(cohort) } else { r.cohortRouteCache.Set(cohort, v) }
+	if err != nil {
+		return "", err
+	}
+	if v == "" {
+		r.cohortRouteCache.SetNegative(cohort)
+	} else {
+		r.cohortRouteCache.Set(cohort, v)
+	}
 	return v, nil
 }
 
@@ -94,14 +118,24 @@ func (r *Resolver) getDefault(ctx context.Context) (string, error) {
 }
 
 func (r *Resolver) getPlane(ctx context.Context, planeID string) (*gateway.Plane, error) {
-	if planeID == "" { return nil, nil }
+	if planeID == "" {
+		return nil, nil
+	}
 	if p, ok, neg := r.planeCache.Get(planeID); ok {
-		if neg { return nil, nil }
+		if neg {
+			return nil, nil
+		}
 		return &p, nil
 	}
 	p, err := r.store.GetPlane(ctx, planeID)
-	if err != nil { return nil, err }
-	if p == nil { r.planeCache.SetNegative(planeID) } else { r.planeCache.Set(planeID, *p) }
+	if err != nil {
+		return nil, err
+	}
+	if p == nil {
+		r.planeCache.SetNegative(planeID)
+	} else {
+		r.planeCache.Set(planeID, *p)
+	}
 	return p, nil
 }
 
@@ -139,7 +173,9 @@ func (r *Resolver) Resolve(ctx context.Context, clientKey string) (Result, error
 
 func (r *Resolver) validateOrFallback(ctx context.Context, planeID, source, clientKey string) (Result, bool, error) {
 	p, err := r.getPlane(ctx, planeID)
-	if err != nil { return Result{}, false, err }
+	if err != nil {
+		return Result{}, false, err
+	}
 	if p != nil && p.Enabled {
 		return Result{Resolved: gateway.ResolveResult{PlaneID: planeID, Source: source, PlaneEnabled: true}, Cluster: ensureClusterName(planeID)}, true, nil
 	}
@@ -160,7 +196,9 @@ func (r *Resolver) validateOrFallback(ctx context.Context, planeID, source, clie
 	case "cohort":
 		if def, err := r.getDefault(ctx); err == nil && def != "" {
 			p2, err := r.getPlane(ctx, def)
-			if err != nil { return Result{}, false, err }
+			if err != nil {
+				return Result{}, false, err
+			}
 			if p2 != nil && p2.Enabled {
 				return Result{Resolved: gateway.ResolveResult{PlaneID: def, Source: "default", PlaneEnabled: true}, Cluster: ensureClusterName(def)}, true, nil
 			}

@@ -1,0 +1,33 @@
+{{- if .Values.xdsService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "chart.fullname" . }}-xds-service
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  {{- with .Values.extraLabels }}
+    {{ toYaml . | indent 4 }}
+  {{- end }}
+  {{- with .Values.xdsService.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ default .Values.service.type .Values.xdsService.service.type }}
+  ports:
+    - name: grpc
+      port: {{ .Values.xdsService.ports.xds }}
+      targetPort: {{ .Values.xdsService.ports.xds }}
+      protocol: TCP
+    - name: http
+      port: {{ .Values.xdsService.ports.http }}
+      targetPort: {{ .Values.xdsService.ports.http }}
+      protocol: TCP
+  selector:
+    {{- if .Values.xdsService.selector }}
+    {{- toYaml .Values.xdsService.selector | nindent 4 }}
+    {{- else }}
+    app.kubernetes.io/name: xds-service
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- end }}
+{{- end }}

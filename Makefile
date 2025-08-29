@@ -5,10 +5,14 @@ TAG ?= $(REV)
 IMG_WITHOUT_TAG ?= $(REGISTRY)/envoy-xds-controller
 UI_IMG_WITHOUT_TAG ?= $(REGISTRY)/envoy-xds-controller-ui
 INIT_CERT_IMG_WITHOUT_TAG ?= $(REGISTRY)/envoy-xds-controller-init-cert
+XDS_SERVICE_IMG_WITHOUT_TAG ?= $(REGISTRY)/xds-service
+XDS_GATEWAY_IMG_WITHOUT_TAG ?= $(REGISTRY)/xds-gateway
 
 IMG ?= $(IMG_WITHOUT_TAG):$(TAG)
 UI_IMG ?= $(UI_IMG_WITHOUT_TAG):$(TAG)
 INIT_CERT_IMG ?= $(INIT_CERT_IMG_WITHOUT_TAG):$(TAG)
+XDS_SERVICE_IMG ?= $(XDS_SERVICE_IMG_WITHOUT_TAG):$(TAG)
+XDS_GATEWAY_IMG ?= $(XDS_GATEWAY_IMG_WITHOUT_TAG):$(TAG)
 
 DEPLOY_TIMEOUT ?= 5m
 
@@ -146,8 +150,24 @@ docker-build-ui: ## Build docker image with the ui.
 docker-build-init-cert: ## Build docker image with the init-cert.
 	$(CONTAINER_TOOL) build -t ${INIT_CERT_IMG} -f cmd/init-cert/Dockerfile .
 
+.PHONY: docker-build-xds-service
+docker-build-xds-service: ## Build docker image for xds-service.
+	$(CONTAINER_TOOL) build \
+		--build-arg VERSION=$(TAG) \
+		--build-arg COMMIT_HASH=$(REV) \
+		--build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
+		-t ${XDS_SERVICE_IMG} -f cmd/xds-service/Dockerfile .
+
+.PHONY: docker-build-xds-gateway
+docker-build-xds-gateway: ## Build docker image for xds-gateway.
+	$(CONTAINER_TOOL) build \
+		--build-arg VERSION=$(TAG) \
+		--build-arg COMMIT_HASH=$(REV) \
+		--build-arg BUILD_DATE=$(shell date -u +"%Y-%m-%dT%H:%M:%SZ") \
+		-t ${XDS_GATEWAY_IMG} -f cmd/xds-gateway/Dockerfile .
+
 .PHONY: docker-build-all
-docker-build-all: docker-build docker-build-ui docker-build-init-cert
+docker-build-all: docker-build docker-build-ui docker-build-init-cert docker-build-xds-service docker-build-xds-gateway
 
 .PHONY: docker-build-all-local
 docker-build-all-local: set-local docker-build-all
@@ -164,8 +184,16 @@ docker-push-ui: ## Push docker image with the ui
 docker-push-init-cert: ## Push docker image with the init-cert
 	$(CONTAINER_TOOL) push ${INIT_CERT_IMG}
 
+.PHONY: docker-push-xds-service
+docker-push-xds-service: ## Push docker image for xds-service
+	$(CONTAINER_TOOL) push ${XDS_SERVICE_IMG}
+
+.PHONY: docker-push-xds-gateway
+docker-push-xds-gateway: ## Push docker image for xds-gateway
+	$(CONTAINER_TOOL) push ${XDS_GATEWAY_IMG}
+
 .PHONY: docker-push-all
-docker-push-all: docker-push docker-push-ui docker-push-init-cert
+docker-push-all: docker-push docker-push-ui docker-push-init-cert docker-push-xds-service docker-push-xds-gateway
 
 .PHONY: docker-push-all-local
 docker-push-all-local: set-local docker-push-all
@@ -359,8 +387,33 @@ helm-deploy-backend-local: manifests set-local## Install Envoy xDS Controller in
  		--create-namespace ./helm/charts/envoy-xds-controller \
  		--debug --timeout='$(DEPLOY_TIMEOUT)' --wait
 
+.PHONY: helm-deploy-backend-with-xds-local
+helm-deploy-backend-with-xds-local: manifests set-local dev-redis## Install controller plus xds-service and xds-gateway locally.
+	@$(LOG_TARGET)
+	helm install exc --set metrics.address=:8443 \
+ 		--set 'watchNamespaces={default}' \
+ 		--set image.repository=$(IMG_WITHOUT_TAG) \
+ 		--set image.tag=$(TAG) \
+		--set initCert.image.repository=$(INIT_CERT_IMG_WITHOUT_TAG) \
+		--set initCert.image.tag=$(TAG) \
+ 		--set cacheAPI.enabled=true \
+ 		--set resourceAPI.enabled=true \
+ 		--set xdsService.enabled=true \
+ 		--set xdsService.image.repository=$(XDS_SERVICE_IMG_WITHOUT_TAG) \
+ 		--set xdsService.image.tag=$(TAG) \
+ 		--set xdsGateway.enabled=true \
+ 		--set xdsGateway.image.repository=$(XDS_GATEWAY_IMG_WITHOUT_TAG) \
+ 		--set xdsGateway.image.tag=$(TAG) \
+ 		--namespace envoy-xds-controller \
+ 		--create-namespace ./helm/charts/envoy-xds-controller \
+ 		--debug --timeout='$(DEPLOY_TIMEOUT)' --wait
+
 .PHONY: dev-backend
-dev-backend: set-local docker-build docker-push install-prometheus helm-deploy-backend-local
+dev-backend: set-local docker-build docker-push docker-build-init-cert docker-push-init-cert install-prometheus helm-deploy-backend-local
+
+.PHONY: dev-backend-with-xds
+## Do the same as dev-backend but also deploy xds-service and xds-gateway in the cluster
+dev-backend-with-xds: set-local docker-build docker-push docker-build-init-cert docker-push-init-cert docker-build-xds-service docker-build-xds-gateway docker-push-xds-service docker-push-xds-gateway install-prometheus helm-deploy-backend-with-xds-local
 
 .PHONY: deploy-e2e
 deploy-e2e: manifests

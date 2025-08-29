@@ -37,7 +37,9 @@ const (
 
 // Redis key helpers
 func (c *Client) nodesKey() string { return fmt.Sprintf("%s:nodes", c.ns) }
-func (c *Client) snapshotKey(nodeID string) string { return fmt.Sprintf("%s:snapshot:%s", c.ns, nodeID) }
+func (c *Client) snapshotKey(nodeID string) string {
+	return fmt.Sprintf("%s:snapshot:%s", c.ns, nodeID)
+}
 
 // Options holds configuration for Redis connection and key namespace.
 type Options struct {
@@ -226,27 +228,37 @@ func (c *Client) saveSnapshotInternal(ctx context.Context, nodeID string, snapsh
 		res := map[resourcev3.Type][]types.Resource{}
 		if m := snapshot.GetResources(resourcev3.ClusterType); len(m) > 0 {
 			arr := make([]types.Resource, 0, len(m))
-			for _, r := range m { arr = append(arr, r) }
+			for _, r := range m {
+				arr = append(arr, r)
+			}
 			res[resourcev3.ClusterType] = arr
 		}
 		if m := snapshot.GetResources(resourcev3.RouteType); len(m) > 0 {
 			arr := make([]types.Resource, 0, len(m))
-			for _, r := range m { arr = append(arr, r) }
+			for _, r := range m {
+				arr = append(arr, r)
+			}
 			res[resourcev3.RouteType] = arr
 		}
 		if m := snapshot.GetResources(resourcev3.ListenerType); len(m) > 0 {
 			arr := make([]types.Resource, 0, len(m))
-			for _, r := range m { arr = append(arr, r) }
+			for _, r := range m {
+				arr = append(arr, r)
+			}
 			res[resourcev3.ListenerType] = arr
 		}
 		if m := snapshot.GetResources(resourcev3.EndpointType); len(m) > 0 {
 			arr := make([]types.Resource, 0, len(m))
-			for _, r := range m { arr = append(arr, r) }
+			for _, r := range m {
+				arr = append(arr, r)
+			}
 			res[resourcev3.EndpointType] = arr
 		}
 		if m := snapshot.GetResources(resourcev3.SecretType); len(m) > 0 {
 			arr := make([]types.Resource, 0, len(m))
-			for _, r := range m { arr = append(arr, r) }
+			for _, r := range m {
+				arr = append(arr, r)
+			}
 			res[resourcev3.SecretType] = arr
 		}
 		if s, err := cachev3.NewSnapshot(version, res); err == nil {

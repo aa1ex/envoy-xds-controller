@@ -277,3 +277,69 @@ config:
     - "group3"
     - "dev"
     - "test"
+
+# Additional standalone services (optional)
+xdsService:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: kaasops/xds-service
+    tag: ""
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    annotations: {}
+  ports:
+    xds: 18000
+    http: 18080
+  # Enable periodic sync from Redis snapshots via -auto-sync flag
+  enableAutoSync: false
+  # Interval for automatic sync (applies when enableAutoSync=true); format like 30s, 1m
+  syncInterval: "30s"
+  # Extra CLI args to append (advanced)
+  extraArgs: []
+  # Extra environment variables (map rendered as env list)
+  extraEnv: {}
+  resources: {}
+  # Free-form key/value pairs to expose as env vars via ConfigMap (e.g., DEFAULT_PLANE_ID: xds_A)
+  config: {}
+  # Pod annotations
+  podAnnotations: {}
+  # Label selector for the xds-service pods. If empty, defaults to app.kubernetes.io/name: xds-service
+  selector: {}
+
+xdsGateway:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: kaasops/xds-gateway
+    tag: ""
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    annotations: {}
+  ports:
+    http: 8080
+    grpc: 8081
+  # Default plane id to use when no specific route is resolved; if set, exported via env DEFAULT_PLANE_ID
+  defaultPlaneId: ""
+  # Cache TTLs (seconds) for policy resolve cache
+  cacheTtlSeconds: 60
+  negativeCacheTtlSeconds: 10
+  # Optional bearer token for REST API auth; specify either value or an existing secretRef
+  authToken:
+    value: ""
+    secretRef:
+      name: ""
+      key: ""
+  # Extra CLI args to append (advanced)
+  extraArgs: []
+  # Extra environment variables (map rendered as env list)
+  extraEnv: {}
+  resources: {}
+  # Free-form key/value pairs to expose as env vars via ConfigMap (e.g., DEFAULT_PLANE_ID: xds_A)
+  config: {}
+  # Pod annotations
+  podAnnotations: {}
+  # Label selector for the xds-gateway pods. If empty, defaults to app.kubernetes.io/name: xds-gateway
+  selector: {}
