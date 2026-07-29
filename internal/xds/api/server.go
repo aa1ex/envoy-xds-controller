@@ -33,8 +33,6 @@ import (
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service/v1/virtual_servicev1connect"
 	"github.com/kaasops/envoy-xds-controller/pkg/api/grpc/virtual_service_template/v1/virtual_service_templatev1connect"
 	"github.com/rs/cors"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	ginzap "github.com/gin-contrib/zap"
@@ -198,7 +196,6 @@ func (c *Client) RunGRPC(port int, s store.Store, mgrClient client.Client, targe
 		}
 		path, handler = permissionsv1connect.NewPermissionsServiceHandler(grpcapi.NewPermissionsService(enforcer, c))
 		mux.Handle(path, handler)
-		handler = mux
 
 		if err := c.fWatcher.Add(c.cfg.Auth.AccessControlModel, func(_ string) {
 			c.logger.Info("rbac model changed")
@@ -224,12 +221,18 @@ func (c *Client) RunGRPC(port int, s store.Store, mgrClient client.Client, targe
 		handler = mux
 	}
 
+	// Serve HTTP/2 without TLS (h2c): x/net/http2/h2c is deprecated in favor of
+	// net/http Protocols.
+	srv := &http.Server{
+		Addr:    net.JoinHostPort("", strconv.Itoa(port)),
+		Handler: cors.AllowAll().Handler(handler),
+	}
+	srv.Protocols = new(http.Protocols)
+	srv.Protocols.SetHTTP1(true)
+	srv.Protocols.SetUnencryptedHTTP2(true)
+
 	go func() {
-		_ = http.ListenAndServe(
-			net.JoinHostPort("", strconv.Itoa(port)),
-			// Use h2c so we can serve HTTP/2 without TLS.
-			h2c.NewHandler(cors.AllowAll().Handler(handler), &http2.Server{}),
-		)
+		_ = srv.ListenAndServe()
 	}()
 	return nil
 }
