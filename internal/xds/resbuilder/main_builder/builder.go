@@ -294,7 +294,7 @@ func (b *Builder) buildResourcesFromVirtualService(
 	}
 
 	// 2. Build route configuration
-	virtualHost, routeConfig, err := b.routingBuilder.BuildRouteConfiguration(vs, xdsListener, nn)
+	virtualHost, routeConfig, err := b.routingBuilder.BuildRouteConfiguration(vs, xdsListener, nn, httpFilters)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build route configuration: %w", err)
 	}
