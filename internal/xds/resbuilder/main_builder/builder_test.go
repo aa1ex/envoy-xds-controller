@@ -68,8 +68,9 @@ func (m *MockRoutingBuilder) BuildRouteConfiguration(
 	vs *v1alpha1.VirtualService,
 	xdsListener *listenerv3.Listener,
 	nn helpers.NamespacedName,
+	httpFilters []*hcmv3.HttpFilter,
 ) (*routev3.VirtualHost, *routev3.RouteConfiguration, error) {
-	args := m.Called(vs, xdsListener, nn)
+	args := m.Called(vs, xdsListener, nn, httpFilters)
 	return args.Get(0).(*routev3.VirtualHost), args.Get(1).(*routev3.RouteConfiguration), args.Error(2)
 }
 

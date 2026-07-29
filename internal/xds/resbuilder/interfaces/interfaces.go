@@ -31,7 +31,8 @@ type FilterChainBuilder interface {
 // RoutingBuilder is responsible for building routing configuration
 type RoutingBuilder interface {
 	BuildRouteConfiguration(vs *v1alpha1.VirtualService, xdsListener *listenerv3.Listener,
-		nn helpers.NamespacedName) (*routev3.VirtualHost, *routev3.RouteConfiguration, error)
+		nn helpers.NamespacedName, httpFilters []*hcmv3.HttpFilter,
+	) (*routev3.VirtualHost, *routev3.RouteConfiguration, error)
 	BuildVirtualHost(vs *v1alpha1.VirtualService, nn helpers.NamespacedName) (*routev3.VirtualHost, error)
 }
 

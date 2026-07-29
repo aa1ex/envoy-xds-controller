@@ -5,11 +5,13 @@ import (
 
 	listenerv3 "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	routev3 "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
+	hcmv3 "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	"github.com/kaasops/envoy-xds-controller/api/v1alpha1"
 	"github.com/kaasops/envoy-xds-controller/internal/helpers"
 	"github.com/kaasops/envoy-xds-controller/internal/protoutil"
 	"github.com/kaasops/envoy-xds-controller/internal/store"
 	"github.com/kaasops/envoy-xds-controller/internal/xds/resbuilder/utils"
+	"google.golang.org/protobuf/types/known/anypb"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -31,6 +33,7 @@ func (b *Builder) BuildRouteConfiguration(
 	vs *v1alpha1.VirtualService,
 	xdsListener *listenerv3.Listener,
 	nn helpers.NamespacedName,
+	httpFilters []*hcmv3.HttpFilter,
 ) (*routev3.VirtualHost, *routev3.RouteConfiguration, error) {
 	virtualHost, err := b.BuildVirtualHost(vs, nn)
 	if err != nil {
@@ -50,7 +53,11 @@ func (b *Builder) BuildRouteConfiguration(
 	// Add fallback virtual host for TLS listeners if needed
 	listenerIsTLS := utils.IsTLSListener(xdsListener)
 	hasPort443 := utils.ListenerHasPort443(xdsListener)
-	b.AddFallbackVirtualHostIfNeeded(routeConfiguration, virtualHost, listenerIsTLS, hasPort443)
+	if err := b.AddFallbackVirtualHostIfNeeded(
+		routeConfiguration, virtualHost, httpFilters, listenerIsTLS, hasPort443,
+	); err != nil {
+		return nil, nil, err
+	}
 
 	return virtualHost, routeConfiguration, nil
 }
@@ -234,7 +241,12 @@ func (b *Builder) moveRouteToEnd(virtualHost *routev3.VirtualHost, index int) {
 
 // BuildFallbackVirtualHost creates a fallback virtual host for TLS listeners
 // This addresses https://github.com/envoyproxy/envoy/issues/37810
-func (b *Builder) BuildFallbackVirtualHost() *routev3.VirtualHost {
+func (b *Builder) BuildFallbackVirtualHost(httpFilters []*hcmv3.HttpFilter) (*routev3.VirtualHost, error) {
+	perFilterConfig, err := buildFallbackPerFilterConfig(httpFilters)
+	if err != nil {
+		return nil, err
+	}
+
 	return &routev3.VirtualHost{
 		Name:    "421vh",
 		Domains: []string{"*"},
@@ -250,23 +262,61 @@ func (b *Builder) BuildFallbackVirtualHost() *routev3.VirtualHost {
 				},
 			},
 		},
+		TypedPerFilterConfig: perFilterConfig,
+	}, nil
+}
+
+// buildFallbackPerFilterConfig disables HTTP filters that would answer the request
+// before the fallback virtual host can return 421.
+// HTTP filters are configured for the whole filter chain, so they also apply to the
+// fallback virtual host: OAuth2 redirects an unauthenticated request to the authorization
+// endpoint, and the client never learns it has to open a new connection.
+// Filter names are user-defined, so they are taken from the actual filter chain
+// instead of being hardcoded.
+func buildFallbackPerFilterConfig(httpFilters []*hcmv3.HttpFilter) (map[string]*anypb.Any, error) {
+	var perFilterConfig map[string]*anypb.Any
+
+	for _, httpFilter := range httpFilters {
+		if httpFilter.GetTypedConfig().GetTypeUrl() != utils.TypeURLOAuth2 {
+			continue
+		}
+
+		disabled, err := anypb.New(&routev3.FilterConfig{Disabled: true})
+		if err != nil {
+			return nil, fmt.Errorf("failed to disable http filter %s: %w", httpFilter.GetName(), err)
+		}
+
+		if perFilterConfig == nil {
+			perFilterConfig = make(map[string]*anypb.Any, 1)
+		}
+		perFilterConfig[httpFilter.GetName()] = disabled
 	}
+
+	return perFilterConfig, nil
 }
 
 // AddFallbackVirtualHostIfNeeded adds a fallback virtual host to route configuration if needed
 func (b *Builder) AddFallbackVirtualHostIfNeeded(
 	routeConfig *routev3.RouteConfiguration,
 	virtualHost *routev3.VirtualHost,
+	httpFilters []*hcmv3.HttpFilter,
 	isTLSListener, hasPort443 bool,
-) {
+) error {
 	// Add fallback route for TLS listeners
 	// https://github.com/envoyproxy/envoy/issues/37810
 	shouldAddFallback := isTLSListener &&
 		!(len(virtualHost.Domains) == 1 && virtualHost.Domains[0] == "*") &&
 		hasPort443
 
-	if shouldAddFallback {
-		fallbackVH := b.BuildFallbackVirtualHost()
-		routeConfig.VirtualHosts = append(routeConfig.VirtualHosts, fallbackVH)
+	if !shouldAddFallback {
+		return nil
 	}
+
+	fallbackVH, err := b.BuildFallbackVirtualHost(httpFilters)
+	if err != nil {
+		return err
+	}
+	routeConfig.VirtualHosts = append(routeConfig.VirtualHosts, fallbackVH)
+
+	return nil
 }
