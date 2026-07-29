@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5/request"
 )
 
 const AvailableNodeIDs = "available_node_ids"

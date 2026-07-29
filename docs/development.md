@@ -19,7 +19,7 @@ This document provides guidelines and instructions for developing the Envoy XDS 
 
 ### Prerequisites
 
-- Go v1.24.0+
+- Go v1.25.0+
 - Docker v17.03+
 - kubectl v1.11.3+
 - Access to a Kubernetes cluster v1.11.3+
